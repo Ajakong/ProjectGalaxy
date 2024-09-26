@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="MyLib">
+      <UniqueIdentifier>{8fb12522-d51e-424d-84bf-0af011e516a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyLib\Physics">
+      <UniqueIdentifier>{5d480999-ef8c-4051-9503-920c8c143e8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,6 +54,39 @@
     <ClCompile Include="Game\Galaxy.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="MyLib\DebugDraw.cpp">
+      <Filter>MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Geometry.cpp">
+      <Filter>MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Vec2.cpp">
+      <Filter>MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Vec3.cpp">
+      <Filter>MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\Collidable.cpp">
+      <Filter>MyLib\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\ColliderBase.cpp">
+      <Filter>MyLib\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\ColliderBox.cpp">
+      <Filter>MyLib\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\ColliderCapsule.cpp">
+      <Filter>MyLib\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\ColliderSphere.cpp">
+      <Filter>MyLib\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\Physics.cpp">
+      <Filter>MyLib\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\Rigidbody.cpp">
+      <Filter>MyLib\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -82,6 +121,42 @@
     </ClInclude>
     <ClInclude Include="Game\Galaxy.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\DebugDraw.h">
+      <Filter>MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Geometry.h">
+      <Filter>MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\ObjectTag.h">
+      <Filter>MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Vec2.h">
+      <Filter>MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Vec3.h">
+      <Filter>MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\Collidable.h">
+      <Filter>MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderBase.h">
+      <Filter>MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderBox.h">
+      <Filter>MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderCapsule.h">
+      <Filter>MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderSphere.h">
+      <Filter>MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\Physics.h">
+      <Filter>MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\Rigidbody.h">
+      <Filter>MyLib\Physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
