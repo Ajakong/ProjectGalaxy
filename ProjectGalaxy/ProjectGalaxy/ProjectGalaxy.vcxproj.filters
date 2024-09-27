@@ -19,6 +19,45 @@
     <Filter Include="MyLib\Physics">
       <UniqueIdentifier>{5d480999-ef8c-4051-9503-920c8c143e8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Planet">
+      <UniqueIdentifier>{cc50842f-bba6-42f7-816f-238fc30b866c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Planet\cpp">
+      <UniqueIdentifier>{6b698be2-41ef-4a34-8ef0-4507022bf997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Planet\h">
+      <UniqueIdentifier>{1309e411-b875-46c8-84b5-94643944ee58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadManager">
+      <UniqueIdentifier>{bb2497ff-4c6a-4a4f-906b-f89e7bebcc5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{0f63f007-1c38-4f59-8589-8518580f25b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Camera">
+      <UniqueIdentifier>{cc487f0c-cdb0-4a49-a8fb-9148c63d5175}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Player">
+      <UniqueIdentifier>{52bfddfa-3849-4d1e-a110-665d065a62f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Enemy">
+      <UniqueIdentifier>{18906718-ef22-4eee-9bf5-dd737c7b0f19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Enemy\Takobo">
+      <UniqueIdentifier>{13fe7081-98d9-4fd3-bc0e-ee177c8ffbaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Enemy\Gorori">
+      <UniqueIdentifier>{aee3e4af-9538-4344-a2a4-a1f0b24c39a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Enemy\Killer">
+      <UniqueIdentifier>{eeb50e86-29a4-4446-87c6-bfffcf5aa700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Enemy\KillerTheSeeker">
+      <UniqueIdentifier>{3aa7a438-cf88-4447-8fd0-0da9c78e25ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\ClearObject">
+      <UniqueIdentifier>{75a19a5b-c5ba-4e08-9fc1-c4ffbfd96855}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -86,6 +125,54 @@
     </ClCompile>
     <ClCompile Include="MyLib\Physics\Rigidbody.cpp">
       <Filter>MyLib\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet\BossPlanet.cpp">
+      <Filter>Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet\BoxPlanet.cpp">
+      <Filter>Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet\Planet.cpp">
+      <Filter>Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet\SpherePlanet.cpp">
+      <Filter>Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadManager\EffectManager.cpp">
+      <Filter>LoadManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadManager\FontManager.cpp">
+      <Filter>LoadManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadManager\GraphManager.cpp">
+      <Filter>LoadManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadManager\ModelManager.cpp">
+      <Filter>LoadManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadManager\ScreenManager.cpp">
+      <Filter>LoadManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadManager\SoundManager.cpp">
+      <Filter>LoadManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Camera\Camera.cpp">
+      <Filter>Object\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Player\Player.cpp">
+      <Filter>Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\Gorori.cpp">
+      <Filter>Object\Enemy\Gorori</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\Killer.cpp">
+      <Filter>Object\Enemy\Killer</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\KillerTheSeeker.cpp">
+      <Filter>Object\Enemy\KillerTheSeeker</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\Takobo.cpp">
+      <Filter>Object\Enemy\Takobo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +244,54 @@
     </ClInclude>
     <ClInclude Include="MyLib\Physics\Rigidbody.h">
       <Filter>MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet\BossPlanet.h">
+      <Filter>Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet\BoxPlanet.h">
+      <Filter>Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet\Planet.h">
+      <Filter>Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet\SpherePlanet.h">
+      <Filter>Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\EffectManager.h">
+      <Filter>LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\FontManager.h">
+      <Filter>LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\GraphManager.h">
+      <Filter>LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\ModelManager.h">
+      <Filter>LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\ScreenManager.h">
+      <Filter>LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\SoundManager.h">
+      <Filter>LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Camera\Camera.h">
+      <Filter>Object\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Player\Player.h">
+      <Filter>Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Gorori.h">
+      <Filter>Object\Enemy\Gorori</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Killer.h">
+      <Filter>Object\Enemy\Killer</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\KillerTheSeeker.h">
+      <Filter>Object\Enemy\KillerTheSeeker</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Takobo.h">
+      <Filter>Object\Enemy\Takobo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
