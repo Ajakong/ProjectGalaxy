@@ -1,11 +1,11 @@
 #include "Player.h"
 #include"Pad.h"
-#include"MyLib/Physics/ColliderSphere.h"
+#include"ColliderSphere.h"
 #include"Camera.h"
 #include"SoundManager.h"
-#include"Enemy/Gorori.h"
-#include"Enemy/EnemySphere.h"
-#include"Enemy/KillerTheSeeker.h"
+#include"Gorori.h"
+#include"EnemySphere.h"
+#include"KillerTheSeeker.h"
 #include"ModelManager.h"
 #include"Quaternion.h"
 
@@ -486,8 +486,8 @@ void Player::NeutralUpdate()
 
 	//アナログスティック無効な範囲を除外する
 	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = std::min(rate, 1.0f);
-	rate = std::max(rate, 0.0f);
+	rate = min(rate, 1.0f);
+	rate = max(rate, 0.0f);
 	if (std::abs(move.Length()) >= 0.2f)
 	{
 		ChangeAnim(kAnimationNumRun);
@@ -550,8 +550,8 @@ void Player::WalkingUpdate()
 
 	//アナログスティック無効な範囲を除外する
 	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = std::min(rate, 1.0f);
-	rate = std::max(rate, 0.0f);
+	rate = min(rate, 1.0f);
+	rate = max(rate, 0.0f);
 	if (std::abs(move.Length()) < 0.2f)
 	{
 		ChangeAnim(kAnimationNumIdle);
@@ -628,8 +628,8 @@ void Player::SpiningUpdate()
 
 	//アナログスティック無効な範囲を除外する
 	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = std::min(rate, 1.0f);
-	rate = std::max(rate, 0.0f);
+	rate = min(rate, 1.0f);
+	rate = max(rate, 0.0f);
 
 	//速度が決定できるので移動ベクトルに反映
 	move = move.GetNormalized();
@@ -677,8 +677,8 @@ void Player::JumpingSpinUpdate()
 
 	//アナログスティック無効な範囲を除外する
 	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = std::min(rate, 1.0f);
-	rate = std::max(rate, 0.0f);
+	rate = min(rate, 1.0f);
+	rate = max(rate, 0.0f);
 
 	//速度が決定できるので移動ベクトルに反映
 	move = move.GetNormalized();

@@ -1,5 +1,5 @@
 #pragma once
-#include"MyLib/Vec3.h"
+#include"Vec3.h"
 #include"Quaternion.h"
 using namespace std;
 

@@ -1,7 +1,7 @@
 #include "Gorori.h"
-#include"../MyLib/Physics/ColliderSphere.h"
-#include"../MyLib/Physics/Physics.h"
-#include"../SoundManager.h"
+#include"ColliderSphere.h"
+#include"Physics.h"
+#include"SoundManager.h"
 
 namespace
 {

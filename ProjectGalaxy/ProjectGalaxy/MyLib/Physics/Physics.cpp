@@ -2,8 +2,8 @@
 #include <cassert>
 #include "Collidable.h"
 #include "ColliderSphere.h"
-#include "../DebugDraw.h"
-#include"../../Planet.h"
+#include "DebugDraw.h"
+#include"Planet.h"
 
 using namespace MyEngine;
 

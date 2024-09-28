@@ -13,75 +13,66 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="MyLib">
-      <UniqueIdentifier>{8fb12522-d51e-424d-84bf-0af011e516a5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MyLib\Physics">
-      <UniqueIdentifier>{5d480999-ef8c-4051-9503-920c8c143e8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Planet">
-      <UniqueIdentifier>{cc50842f-bba6-42f7-816f-238fc30b866c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Planet\cpp">
-      <UniqueIdentifier>{6b698be2-41ef-4a34-8ef0-4507022bf997}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Planet\h">
-      <UniqueIdentifier>{1309e411-b875-46c8-84b5-94643944ee58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="LoadManager">
+    <Filter Include="ソース ファイル\LoadManager">
       <UniqueIdentifier>{bb2497ff-4c6a-4a4f-906b-f89e7bebcc5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object">
+    <Filter Include="ソース ファイル\MyLib">
+      <UniqueIdentifier>{8fb12522-d51e-424d-84bf-0af011e516a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\MyLib\Physics">
+      <UniqueIdentifier>{5d480999-ef8c-4051-9503-920c8c143e8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object">
       <UniqueIdentifier>{0f63f007-1c38-4f59-8589-8518580f25b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Camera">
+    <Filter Include="ソース ファイル\Object\Camera">
       <UniqueIdentifier>{cc487f0c-cdb0-4a49-a8fb-9148c63d5175}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Player">
+    <Filter Include="ソース ファイル\Object\Player">
       <UniqueIdentifier>{52bfddfa-3849-4d1e-a110-665d065a62f2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Enemy">
+    <Filter Include="ソース ファイル\Object\Enemy">
       <UniqueIdentifier>{18906718-ef22-4eee-9bf5-dd737c7b0f19}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Enemy\Takobo">
+    <Filter Include="ソース ファイル\Object\Enemy\Takobo">
       <UniqueIdentifier>{13fe7081-98d9-4fd3-bc0e-ee177c8ffbaf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Enemy\Gorori">
+    <Filter Include="ソース ファイル\Object\Enemy\Gorori">
       <UniqueIdentifier>{aee3e4af-9538-4344-a2a4-a1f0b24c39a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Enemy\Killer">
+    <Filter Include="ソース ファイル\Object\Enemy\Killer">
       <UniqueIdentifier>{eeb50e86-29a4-4446-87c6-bfffcf5aa700}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Enemy\KillerTheSeeker">
+    <Filter Include="ソース ファイル\Object\Enemy\KillerTheSeeker">
       <UniqueIdentifier>{3aa7a438-cf88-4447-8fd0-0da9c78e25ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\ClearObject">
+    <Filter Include="ソース ファイル\Object\ClearObject">
       <UniqueIdentifier>{75a19a5b-c5ba-4e08-9fc1-c4ffbfd96855}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Planet">
+      <UniqueIdentifier>{cc50842f-bba6-42f7-816f-238fc30b866c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Planet\cpp">
+      <UniqueIdentifier>{6b698be2-41ef-4a34-8ef0-4507022bf997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Planet\h">
+      <UniqueIdentifier>{1309e411-b875-46c8-84b5-94643944ee58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object\Item">
+      <UniqueIdentifier>{822b5fbd-5283-4374-9c89-90ad0db107ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene">
+      <UniqueIdentifier>{2ca5f853-f36e-4738-963f-7d04c5ef71c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Scene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\SceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\GamePlayingScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\TitleScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Pad.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\GameOverScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Game\GameManager.cpp">
@@ -94,110 +85,122 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\DebugDraw.cpp">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Geometry.cpp">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Vec2.cpp">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Vec3.cpp">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics\Collidable.cpp">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics\ColliderBase.cpp">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics\ColliderBox.cpp">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics\ColliderCapsule.cpp">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics\ColliderSphere.cpp">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics\Physics.cpp">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics\Rigidbody.cpp">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Planet\BossPlanet.cpp">
-      <Filter>Planet\cpp</Filter>
+      <Filter>ソース ファイル\Planet\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Planet\BoxPlanet.cpp">
-      <Filter>Planet\cpp</Filter>
+      <Filter>ソース ファイル\Planet\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Planet\Planet.cpp">
-      <Filter>Planet\cpp</Filter>
+      <Filter>ソース ファイル\Planet\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Planet\SpherePlanet.cpp">
-      <Filter>Planet\cpp</Filter>
+      <Filter>ソース ファイル\Planet\cpp</Filter>
     </ClCompile>
     <ClCompile Include="LoadManager\EffectManager.cpp">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClCompile>
     <ClCompile Include="LoadManager\FontManager.cpp">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClCompile>
     <ClCompile Include="LoadManager\GraphManager.cpp">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClCompile>
     <ClCompile Include="LoadManager\ModelManager.cpp">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClCompile>
     <ClCompile Include="LoadManager\ScreenManager.cpp">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClCompile>
     <ClCompile Include="LoadManager\SoundManager.cpp">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClCompile>
     <ClCompile Include="Object\Camera\Camera.cpp">
-      <Filter>Object\Camera</Filter>
+      <Filter>ソース ファイル\Object\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Object\Player\Player.cpp">
-      <Filter>Object\Player</Filter>
+      <Filter>ソース ファイル\Object\Player</Filter>
     </ClCompile>
     <ClCompile Include="Object\Enemy\Gorori.cpp">
-      <Filter>Object\Enemy\Gorori</Filter>
+      <Filter>ソース ファイル\Object\Enemy\Gorori</Filter>
     </ClCompile>
     <ClCompile Include="Object\Enemy\Killer.cpp">
-      <Filter>Object\Enemy\Killer</Filter>
+      <Filter>ソース ファイル\Object\Enemy\Killer</Filter>
     </ClCompile>
     <ClCompile Include="Object\Enemy\KillerTheSeeker.cpp">
-      <Filter>Object\Enemy\KillerTheSeeker</Filter>
+      <Filter>ソース ファイル\Object\Enemy\KillerTheSeeker</Filter>
     </ClCompile>
     <ClCompile Include="Object\Enemy\Takobo.cpp">
-      <Filter>Object\Enemy\Takobo</Filter>
+      <Filter>ソース ファイル\Object\Enemy\Takobo</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\ClearObject\ClearObject.cpp">
+      <Filter>ソース ファイル\Object\ClearObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Item\Item.cpp">
+      <Filter>ソース ファイル\Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GameOverScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GamePlayingScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ClearScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\PauseScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Scene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SceneManager.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Scene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\GamePlayingScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\TitleScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Pad.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\GameOverScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Game\GameManager.h">
@@ -210,88 +213,115 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\DebugDraw.h">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Geometry.h">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\ObjectTag.h">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Vec2.h">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Vec3.h">
-      <Filter>MyLib</Filter>
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics\Collidable.h">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics\ColliderBase.h">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics\ColliderBox.h">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics\ColliderCapsule.h">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics\ColliderSphere.h">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics\Physics.h">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics\Rigidbody.h">
-      <Filter>MyLib\Physics</Filter>
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Planet\BossPlanet.h">
-      <Filter>Planet\h</Filter>
+      <Filter>ソース ファイル\Planet\h</Filter>
     </ClInclude>
     <ClInclude Include="Planet\BoxPlanet.h">
-      <Filter>Planet\h</Filter>
+      <Filter>ソース ファイル\Planet\h</Filter>
     </ClInclude>
     <ClInclude Include="Planet\Planet.h">
-      <Filter>Planet\h</Filter>
+      <Filter>ソース ファイル\Planet\h</Filter>
     </ClInclude>
     <ClInclude Include="Planet\SpherePlanet.h">
-      <Filter>Planet\h</Filter>
+      <Filter>ソース ファイル\Planet\h</Filter>
     </ClInclude>
     <ClInclude Include="LoadManager\EffectManager.h">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClInclude>
     <ClInclude Include="LoadManager\FontManager.h">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClInclude>
     <ClInclude Include="LoadManager\GraphManager.h">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClInclude>
     <ClInclude Include="LoadManager\ModelManager.h">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClInclude>
     <ClInclude Include="LoadManager\ScreenManager.h">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClInclude>
     <ClInclude Include="LoadManager\SoundManager.h">
-      <Filter>LoadManager</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClInclude>
     <ClInclude Include="Object\Camera\Camera.h">
-      <Filter>Object\Camera</Filter>
+      <Filter>ソース ファイル\Object\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Object\Player\Player.h">
-      <Filter>Object\Player</Filter>
+      <Filter>ソース ファイル\Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="Object\Enemy\Gorori.h">
-      <Filter>Object\Enemy\Gorori</Filter>
+      <Filter>ソース ファイル\Object\Enemy\Gorori</Filter>
     </ClInclude>
     <ClInclude Include="Object\Enemy\Killer.h">
-      <Filter>Object\Enemy\Killer</Filter>
+      <Filter>ソース ファイル\Object\Enemy\Killer</Filter>
     </ClInclude>
     <ClInclude Include="Object\Enemy\KillerTheSeeker.h">
-      <Filter>Object\Enemy\KillerTheSeeker</Filter>
+      <Filter>ソース ファイル\Object\Enemy\KillerTheSeeker</Filter>
     </ClInclude>
     <ClInclude Include="Object\Enemy\Takobo.h">
-      <Filter>Object\Enemy\Takobo</Filter>
+      <Filter>ソース ファイル\Object\Enemy\Takobo</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\ClearObject\ClearObject.h">
+      <Filter>ソース ファイル\Object\ClearObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item\Item.h">
+      <Filter>ソース ファイル\Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GameOverScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GamePlayingScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ClearScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\PauseScene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scene.h">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneManager.h">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

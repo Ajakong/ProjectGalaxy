@@ -1,5 +1,17 @@
 #pragma once
 #include"MyLib/Vec3.h"
+#include<memory>
+#include<vector>
+class Camera;
+class Player;
+class Planet;
+class BossPlanet;
+class ClearObject;
+class WarpGate;
+class Takobo;
+class KillerTheSeeker;
+class Gorori;
+class Item;
 
 class Galaxy//GameManagerが管理,惑星やオブジェクトの情報を持っている
 {
@@ -42,7 +54,6 @@ private:
 	int cbuffH = CreateShaderConstantBuffer(sizeof(UserData));
 	UserData* userData = static_cast<UserData*>(GetBufferShaderConstantBuffer(cbuffH));
 
-	std::shared_ptr<Ui> ui;
 	std::shared_ptr<Camera> camera;
 	std::shared_ptr<Player> player;
 	std::vector<std::shared_ptr<Planet>> planet;

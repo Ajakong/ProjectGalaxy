@@ -2,7 +2,6 @@
 #include"Galaxy.h"
 // EffekseerForDXLib.hをインクルードします。
 #include "EffekseerForDXLib.h"
-#include "GameManager.h"
 #include"Camera.h"
 #include"Physics.h"
 #include"Player.h"
@@ -14,7 +13,6 @@
 #include"Item.h"
 #include"ClearObject.h"
 #include<cassert>
-#include"WorldTimer.h"
 #include"Pad.h"
 #include"SoundManager.h"
 #include"GraphManager.h"
@@ -23,6 +21,7 @@
 #include"ModelManager.h"
 #include"Game.h"
 
+using namespace std;
 
 namespace
 {
@@ -81,7 +80,7 @@ namespace
 	const char* kMiniMapScreenName = "MiniMap";
 }
 
-GameManager::GameManager() :
+Galaxy::Galaxy() :
 	// 通常のRT
 	RT(MakeScreen(640, 480, true)),
 	RT2(MakeScreen(640, 480, true)),
@@ -97,7 +96,6 @@ GameManager::GameManager() :
 	itemNum(0),
 	m_isBossWatch(false)
 {
-	ui = std::make_shared<Ui>();
 	player = std::make_shared<Player>(modelH);
 	camera = std::make_shared<Camera>();
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -500, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
@@ -122,13 +120,13 @@ GameManager::GameManager() :
 
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
-	m_managerUpdate = &GameManager::IntroUpdate;
-	m_managerDraw = &GameManager::IntroDraw;
+	m_managerUpdate = &Galaxy::IntroUpdate;
+	m_managerDraw = &Galaxy::IntroDraw;
 
 	m_miniMapScreenHandle = ScreenManager::GetInstance().GetScreenData(kMiniMapScreenName, Game::kScreenWidth, Game::kScreenHeight);
 }
 
-GameManager::~GameManager()
+Galaxy::~Galaxy()
 {
 	planet.clear();
 	takobo.clear();
@@ -137,7 +135,7 @@ GameManager::~GameManager()
 	warpGate.clear();
 }
 
-void GameManager::Init()
+void Galaxy::Init()
 {
 	SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 1.0f, 1.0f));
 
@@ -156,14 +154,14 @@ void GameManager::Init()
 
 		// モデルの大きさを取得
 		auto modelMaxPos = MV1GetMeshMaxPosition(modelH, i);
-		maxPos.x = std::max(maxPos.x, modelMaxPos.x);
-		maxPos.y = std::max(maxPos.y, modelMaxPos.y);
-		maxPos.z = std::max(maxPos.z, modelMaxPos.z);
+		maxPos.x = max(maxPos.x, modelMaxPos.x);
+		maxPos.y = max(maxPos.y, modelMaxPos.y);
+		maxPos.z = max(maxPos.z, modelMaxPos.z);
 
 		auto modelMinPos = MV1GetMeshMinPosition(modelH, i);
-		minPos.x = std::min(minPos.x, modelMinPos.x);
-		minPos.y = std::min(minPos.y, modelMinPos.y);
-		minPos.z = std::min(minPos.z, modelMinPos.z);
+		minPos.x = min(minPos.x, modelMinPos.x);
+		minPos.y = min(minPos.y, modelMinPos.y);
+		minPos.z = min(minPos.z, modelMinPos.z);
 
 		auto vtype = MV1GetTriangleListVertexType(modelH, i);
 		if (vtype == DX_MV1_VERTEX_TYPE_NMAP_1FRAME)
@@ -216,20 +214,18 @@ void GameManager::Init()
 
 }
 
-void GameManager::Update()
+void Galaxy::Update()
 {
 	(this->*m_managerUpdate)();
 }
 
-void GameManager::Draw()
+void Galaxy::Draw()
 {
 	(this->*m_managerDraw)();
 }
 
-void GameManager::IntroUpdate()
+void Galaxy::IntroUpdate()
 {
-	ui->FadeUpdate();
-
 	MyEngine::Physics::GetInstance().Update();//当たり判定を更新
 	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = GetCameraRightVector();
@@ -258,17 +254,9 @@ void GameManager::IntroUpdate()
 	{
 		MV1SetMeshBackCulling(modelH, i, DX_CULLING_LEFT);
 	}
-
-	if (ui->GetFadeCount() > 100)
-	{
-		m_cameraUpVec = GetCameraUpVector();
-
-		m_managerUpdate = &GameManager::GamePlayingUpdate;
-		m_managerDraw = &GameManager::GamePlayingDraw;
-	}
 }
 
-void GameManager::IntroDraw()
+void Galaxy::IntroDraw()
 {
 	MV1SetPosition(m_skyDomeH, VGet(0, 0, 0));
 
@@ -291,10 +279,9 @@ void GameManager::IntroDraw()
 	DxLib::SetRenderTargetToShader(1, -1);		// RTの解除
 	DxLib::SetRenderTargetToShader(2, -1);		// RTの解除
 
-	ui->Draw(fontHandle, static_cast<float>(player->WatchHp()), player->GetSearchRemainTime());
 }
 
-void GameManager::GamePlayingUpdate()
+void Galaxy::GamePlayingUpdate()
 {
 
 	camera->Update(player->GetPos());
@@ -320,33 +307,6 @@ void GameManager::GamePlayingUpdate()
 		camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
 
 	}
-
-
-	//// 使用するシェーダをセットしておく
-	//SetUseVertexShader(vsH);
-	//SetUsePixelShader(psH);
-
-	//UpdateShaderConstantBuffer(cbuffH);
-	//SetShaderConstantBuffer(cbuffH, DX_SHADERTYPE_PIXEL, 4);
-
-	//// シェーダーやってる部分
-	//SetUseTextureToShader(3, dissolveH);
-	//SetUseTextureToShader(4, sphMapH);
-	//SetUseTextureToShader(5, roughH);
-	//SetUseTextureToShader(6, metalH);
-	//SetUseTextureToShader(7, toonH);
-	////		SetRenderTargetToShader(0, RT);	// 0番にRTを設定
-	//SetRenderTargetToShader(1, depthRT);
-	//SetRenderTargetToShader(2, normRT);
-
-	//MV1SetUseOrigShader(true);
-
-	/* カメラの設定
-	 RTを設定するとカメラの初期化が入ってるかもなので、RTの設定後にカメラの設定を行う*/
-
-	 /*camera->SetUpVec(planet->GetNormVec(player->GetPos()));
-	 camera->Update(player->GetPos());*/
-
 
 	bossPlanet->Update();//ボスステージの更新
 	for (auto& item : planet)item->Update();//ステージの更新
@@ -473,7 +433,6 @@ void GameManager::GamePlayingUpdate()
 		warpGate.back()->SetWarpPos(Vec3(6000, 0, 2000));
 		MyEngine::Physics::GetInstance().Entry(warpGate.back());
 		camera->WatchThis(warpGate.back()->GetRigidbody()->GetPos(), Vec3(1600, 0, 600), planet[0]->GetNormVec(warpGate.back()->GetRigidbody()->GetPos()));
-		ui->FadeNextMission();
 	}
 	if (poworStone.size() <= 1 && warpGate.size() == 1)
 	{
@@ -501,15 +460,10 @@ void GameManager::GamePlayingUpdate()
 		m_isBossWatch = true;
 		camera->WatchThis(killerTheSeeker.back()->GetMyPos(), killerTheSeeker.back()->GetMyPos() + Vec3(0, 0, -1200), bossPlanet->GetNormVec(killerTheSeeker.back()->GetMyPos()));
 	}
-	if (player->GetNowPlanetPos() == Vec3(6000, 0, 2000))
-	{
-		ui->OutNextMission();
-	}
-
-	WorldTimer::Update();
+	
 }
 
-void GameManager::GamePlayingDraw()
+void Galaxy::GamePlayingDraw()
 {
 	DxLib::SetDrawScreen(m_miniMapScreenHandle);
 
@@ -613,8 +567,6 @@ void GameManager::GamePlayingDraw()
 
 	DxLib::SetRenderTargetToShader(1, -1);		// RTの解除
 	DxLib::SetRenderTargetToShader(2, -1);		// RTの解除
-
-	ui->Draw(fontHandle, static_cast<float>(player->WatchHp()), player->GetSearchRemainTime());
 
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 
