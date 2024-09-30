@@ -23,7 +23,7 @@ int ModelManager::GetModelData(const char* modelname)
 	if (m_pathAndModelInfoes.find(modelname) == m_pathAndModelInfoes.end())
 	{
 		ModelInfo m = ModelInfo();
-		string fileName = "Model/";
+		string fileName = "Data/Model/";
 		m.handle = DxLib::MV1LoadModel((fileName + (string)modelname).c_str());
 		m.used = false;
 		m_pathAndModelInfoes[modelname] = m;
@@ -37,7 +37,7 @@ int ModelManager::GetModelData(const char* modelname)
 
 void ModelManager::DeleteModelData(const char* modelname)
 {
-	string fileName = "Model/";
+	string fileName = "Data/Model/";
 	DxLib::DeleteGraph(m_pathAndModelInfoes[modelname].handle);
 	m_pathAndModelInfoes.erase(modelname);
 }

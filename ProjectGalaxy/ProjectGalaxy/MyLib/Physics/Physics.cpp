@@ -102,12 +102,6 @@ void Physics::Update()
 		}
 		OnCollideInfo(info.own, info.send, info.kind);
 	}
-
-	for (const auto& item : m_collidables)
-	{
-		item->m_rigid->SetPrevVelocity(item->m_rigid->GetVelocity());
-		item->m_rigid->SetVelocity(Vec3(0, 0, 0));
-	}
 }
 
 void MyEngine::Physics::Clear()

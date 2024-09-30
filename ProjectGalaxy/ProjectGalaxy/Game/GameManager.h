@@ -1,8 +1,11 @@
 #pragma once
 #include"Vec3.h"
-#include"Galaxy.h"
+#include<memory>
+#include<vector>
 
 class Vec3;
+class Galaxy;
+class Player;
 
 class GameManager
 {
@@ -30,7 +33,8 @@ private:
 
 private:
 
-	std::shared_ptr<Galaxy> galaxy;
+	std::vector<std::shared_ptr<Galaxy>> galaxy;
+	std::shared_ptr<Player> player;
 
 	//このフラグを見てシーンを移行する
 	bool m_isGameOverFlag = false;

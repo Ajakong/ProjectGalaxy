@@ -1,10 +1,10 @@
 #include "WarpGate.h"
-#include"../MyLib/Physics/ColliderSphere.h"
-#include"../Player.h"
+#include"ColliderSphere.h"
+#include"Player.h"
 #include<EffekseerForDXLib.h>
-#include"../SoundManager.h"
-#include"../EffectManager.h"
-#include"../ScreenManager.h"
+#include"SoundManager.h"
+#include"EffectManager.h"
+#include"ScreenManager.h"
 
 namespace
 {

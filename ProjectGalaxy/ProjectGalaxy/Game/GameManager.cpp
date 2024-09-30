@@ -1,8 +1,19 @@
 #include "GameManager.h"
+#include"Physics.h"
+#include"SerialPlanetGalaxy.h"
+#include"Player.h"
+#include"ModelManager.h"
+using namespace MyEngine;
 
-GameManager::GameManager():
-	galaxy(std::make_shared<Galaxy>())
+namespace
 {
+	const char* kPlayerFileName = "SpaceHarrier.mv1";
+}
+
+GameManager::GameManager() :
+	player(std::make_shared<Player>(ModelManager::GetInstance().GetModelData(kPlayerFileName)))
+{
+	galaxy.push_back(std::make_shared<SerialPlanetGalaxy>(player));
 }
 
 GameManager::~GameManager()
@@ -11,17 +22,27 @@ GameManager::~GameManager()
 
 void GameManager::Init()
 {
-	galaxy->Init();
+	galaxy.back()->Init();
 }
 
 void GameManager::Update()
 {
-	galaxy->Update();
+	galaxy.back()->Update();
+	Physics::GetInstance().Update();
+	if (galaxy.back()->GetClear())
+	{
+		galaxy.pop_back();
+		//galaxy.push_back();/*ここでステージ選択のフィールドを入れなおす*/
+	}
+	if (galaxy.size() == 0)
+	{
+		m_isClearFlag = true;
+	}
 }
 
 void GameManager::Draw()
 {
-	galaxy->Draw();
+	galaxy.back()->Draw();
 }
 
 void GameManager::IntroUpdate()

@@ -64,9 +64,21 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{2ca5f853-f36e-4738-963f-7d04c5ef71c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Object\WarpGate">
+      <UniqueIdentifier>{00d3c7f7-d408-4b57-8498-58ce29860230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Galaxy">
+      <UniqueIdentifier>{7fb33df1-788b-49a6-b0bf-97d95f98b22c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Galaxy\cpp">
+      <UniqueIdentifier>{da41859a-75df-4526-a2ff-a3fd79c762a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Galaxy\h">
+      <UniqueIdentifier>{40def9f4-c252-4e5d-953d-e68bd94a289c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
@@ -79,9 +91,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Game\World.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Galaxy.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\DebugDraw.cpp">
@@ -192,6 +201,24 @@
     <ClCompile Include="Scene\SceneManager.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Object\WarpGate\WarpGate.cpp">
+      <Filter>ソース ファイル\Object\WarpGate</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\Enemy.cpp">
+      <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\EnemyManager.cpp">
+      <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\EnemySphere.cpp">
+      <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Galaxy.cpp">
+      <Filter>ソース ファイル\Galaxy\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SerialPlanetGalaxy.cpp">
+      <Filter>ソース ファイル\Galaxy\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -207,9 +234,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Game\World.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Galaxy.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\DebugDraw.h">
@@ -322,6 +346,24 @@
     </ClInclude>
     <ClInclude Include="Scene\SceneManager.h">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\WarpGate\WarpGate.h">
+      <Filter>ソース ファイル\Object\WarpGate</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Enemy.h">
+      <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\EnemyManager.h">
+      <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\EnemySphere.h">
+      <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Galaxy.h">
+      <Filter>ソース ファイル\Galaxy\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SerialPlanetGalaxy.h">
+      <Filter>ソース ファイル\Galaxy\h</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

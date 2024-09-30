@@ -15,7 +15,9 @@ public:
 	Vec3(float inX, float inY, float inZ);
 	Vec3(DxLib::VECTOR vec);
 	static Vec3 Up();
+	static Vec3 Down();
 	static Vec3 Right();
+	static Vec3 Left();
 	static Vec3 Front();
 	static Vec3 Zero();
 

@@ -51,7 +51,7 @@ namespace
 
 	const char* kGetSearchSEName = "Search.mp3";
 	const char* name = "Player";
-	const char* kFileName = "";
+	const char* kFileName = "SpaceHarrier.mv1";
 	constexpr int kAnimationNumTpose = 0;
 	constexpr int kAnimationNumHit = 1;
 	constexpr int kAnimationNumJump = 2;
@@ -143,10 +143,7 @@ void Player::Update()
 			m_searchRemainTime++;
 		}
 	}
-	//(this->*m_cameraUpdate)();
-	//m_camera->SetUpVec(GetCameraUpVector());
-	//m_camera->Update(m_rigid->GetPos()+Vec3(GetCameraUpVector())*300);
-
+	
 	if (m_visibleCount > 200)
 	{
 		m_isVisibleFlag = false;
@@ -192,7 +189,6 @@ void Player::Update()
 		m_animBlendRate = 1.0f;
 	}
 
-	//SetLightPositionHandle(m_pointLightHandle, m_rigid->GetPos().VGet());
 }
 
 void Player::SetMatrix()
@@ -200,45 +196,34 @@ void Player::SetMatrix()
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 
 	MATRIX mat;
-	mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir* -1 )));
-	//mat = MGetRotX(DX_PI_F/2/*atan2(Vec3::Up().y, m_rigid->GetPos().z)*/);
-	//mat = MMult(mat, MGetRotZ(0/*atan2(Vec3::Up().y, m_rigid->GetPos().x)*/));
+	if (Cross(Vec3::Front(), m_moveDir * -1).z > 0)
+	{
+		mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir)));
+	}
+	else
+	{
+		mat = MGetRotY((DX_PI_F*2)-acos(Dot(Vec3::Front(), m_moveDir)));
+	}
+	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
+
 	Vec3 axis = Cross(Vec3::Up(), m_upVec);
 
 	mat=MMult(mat, MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()));
 
-	/*mat =;*/
-
-	//mat = MMult(mat, MGetRotVec2(Vec3::Front().VGet(), (m_moveDir).VGet()));
-//	////カメラのいる角度から
-//	////コントローラーによる移動方向を決定する
-	//	Quaternion myQ;
-//	myQ=myQ.CreateRotationQuaternion(acos(Dot(Vec3::Up(), m_upVec)), axis);
-//	m_postUpVec = m_upVec;
-//	MATRIX mat;
-//	MATRIX matNorm = MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet());
-//	MATRIX rot=MGetRotElem(matNorm);
-//	MATRIX matFront = MGetRotVec2(Vec3::Front().VGet(), m_frontVec.VGet());
-//	MGetRotElem(matNorm);
-//	MATRIX matAns = MMult(matNorm,matFront);
-//
-//
-//	
-//
-//#if _DEBUG
-//
-//	
-//#endif
-//	/*MATRIX scale = MGetScale(VGet(0.05f,0.05f,0.05f));
-//	MATRIX rot= myQ.ToMat();
-//	MATRIX trans = MGetTranslate(m_rigid->GetPos().VGet());
-//	mat = scale;
-//	mat = MMult(scale, rot);
-//	mat = MMult(mat, trans);*/
+	/*Quaternion myQ;
+	if (axis.z > 0)
+	{
+		myQ = myQ.CreateRotationQuaternion(acos(Dot(Vec3::Up(), m_upVec)), axis);
+	}
+	else
+	{
+		myQ = myQ.CreateRotationQuaternion((DX_PI_F*2)-acos(Dot(Vec3::Up(), m_upVec)), axis);
+	}
+	mat = MMult(mat, myQ.ToMat());*/
+	
 	MV1SetRotationMatrix(m_modelHandle, mat);
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 
-	//MV1SetMatrix(m_modelHandle, matNorm);
 }
 
 void Player::Draw()
