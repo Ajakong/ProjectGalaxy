@@ -590,6 +590,14 @@ void Player::JumpingUpdate()
 	}
 }
 
+void Player::AimingUpdate()
+{
+	if (Pad::IsTrigger(PAD_INPUT_Y))
+	{
+		m_playerUpdate = &Player::NeutralUpdate;
+	}
+}
+
 void Player::SpiningUpdate()
 {
 	//アナログスティックを使って移動

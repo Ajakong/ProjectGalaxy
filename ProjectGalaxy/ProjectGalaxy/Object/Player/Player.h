@@ -73,6 +73,7 @@ private:
 	void SpiningUpdate();
 	void JumpingSpinUpdate();
 	void JumpingUpdate();
+	void AimingUpdate();
 	/// <summary>
 	/// É_ÉÅÅ[ÉWéû
 	/// </summary>
@@ -170,6 +171,7 @@ private:
 	bool m_isJumpFlag = false;
 	bool m_isBoostFlag = false;
 	bool m_isSearchFlag = false;
+	bool m_isAimFlag = false;
 	bool m_isClearFlag=false;
 
 	int m_visibleCount = 0;
