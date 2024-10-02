@@ -22,9 +22,12 @@ public:
 	Vec3 GetMoveDir() const{ return m_moveDir; }
 	Vec3 GetNowPlanetPos() { return m_nowPlanetPos; }
 	Vec3 GetNormVec() { return Vec3(m_rigid->GetPos() - m_nowPlanetPos).GetNormalized(); }
+	Vec3 GetFrontVec() { return m_frontVec.GetNormalized(); }
+	Vec3 GetSideVec() { return m_sideVec.GetNormalized(); }
 	float GetRegenerationRange() { return m_regeneRange; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
 	bool GetBoostFlag() { return m_isBoostFlag; }
+	bool OnAiming() { return m_isAimFlag; }
 
 	void SetBoost() { m_isBoostFlag = true; }
 	void SetCameraAngle(float cameraAngle);
@@ -138,6 +141,8 @@ private:
 	Vec3 m_frontVec;
 	Vec3 m_sideVec;
 	Vec3 m_upVec;
+
+	Vec3 m_shotDir;
 
 	int m_currentAnimNo;//現在のアニメーション
 	int m_prevAnimNo;//変更前のアニメーション

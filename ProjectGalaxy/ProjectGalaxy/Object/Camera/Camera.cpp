@@ -71,6 +71,38 @@ void Camera::Update(Vec3 LookPoint)
 	(this->*m_cameraUpdate)(LookPoint);
 }
 
+void Camera::SetCamera(Vec3 LookPoint)
+{
+	m_lookPoint = LookPoint;
+	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
+	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
+
+	Vec3 velocity;
+	velocity.x = (m_cameraPoint.x - m_pos.x) / 15.f;
+	velocity.y = (m_cameraPoint.y - m_pos.y) / 15.f;
+	velocity.z = (m_cameraPoint.z - m_pos.z) / 15.f;
+	m_pos += velocity;//イージング
+
+	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());
+	m_postLookPointPos = m_lookPoint;
+}
+
+void Camera::SetAimCamera(Vec3 LookPoint)
+{
+	m_lookPoint = LookPoint;
+	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
+	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
+
+	m_pos = m_cameraPoint;
+
+	//DrawSphere3D(m_pos.VGet(), 20, 8, 0xffffff, 0xffffff, true);
+
+	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_pos+LookPoint).VGet(), m_upVec.VGet());
+	//SetCameraPositionAndTargetAndUpVec(VGet(0,400,-500), VGet(0,0,0), m_upVec.VGet());
+
+	m_postLookPointPos = m_lookPoint+m_pos;
+}
+
 void Camera::DebagDraw()
 {
 }
@@ -89,21 +121,18 @@ void Camera::NeutralUpdate(Vec3 LookPoint)
 {
 	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxコントローラーのL
 	{
-		m_cameraUpdate = &Camera::SetCameraFirstPersonPos;
+		m_cameraUpdate = &Camera::AimingUpdate;
 	}
-	m_lookPoint = LookPoint;
-	SetLightPositionHandle(m_lightHandle,Vec3(LookPoint+m_upVec*120).VGet());
-	SetLightDirectionHandle(m_lightHandle,(Vec3(GetCameraUpVector())*-1).VGet());
-	
-	Vec3 velocity;
-	velocity.x = (m_cameraPoint.x - m_pos.x) / 15.f;
-	velocity.y = (m_cameraPoint.y - m_pos.y) / 15.f;
-	velocity.z = (m_cameraPoint.z - m_pos.z) / 15.f;
-	m_pos += velocity;//イージング
+	SetCamera(LookPoint);
+}
 
-	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_lookPoint + m_upVec.GetNormalized() * 100.0f).VGet(), m_upVec.VGet());
-	m_postLookPointPos = m_lookPoint;
-	m_frontVec = GetCameraFrontVector();
+void Camera::AimingUpdate(Vec3 LookPoint)
+{
+	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxコントローラーのL
+	{
+		m_cameraUpdate = &Camera::NeutralUpdate;
+	}
+	SetAimCamera(LookPoint);
 }
 
 void Camera::WatchThisUpdate(Vec3 LookPoint)
