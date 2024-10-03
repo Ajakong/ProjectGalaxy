@@ -6,6 +6,10 @@ public:
 	virtual bool IsDelete() { return m_isDeleteFlag; }
 	void DeleteFlag() { m_isDeleteFlag = true; }
 	bool GetCounterFlag() { return m_counterFlag; }
+
+	void SetCounterFlag() { m_counterFlag = true; }
+	Vec3 GetVelocity() { return m_velocity; }
+	void SetVelocity(Vec3 vel) { m_velocity = vel; }
 protected:
 	SphereBase(MyEngine::Collidable::Priority priority, ObjectTag tag,Vec3 pos, Vec3 velocity,int color,float radius);
 	virtual ~SphereBase();
@@ -15,9 +19,7 @@ protected:
 	virtual void Draw()=0;
 
 	
-	void SetCounterFlag() { m_counterFlag = true; }
-	Vec3 GetVelocity() { return m_velocity; }
-	void SetVelocity(Vec3 vel) { m_velocity = vel; }
+	
 	
 	
 protected:

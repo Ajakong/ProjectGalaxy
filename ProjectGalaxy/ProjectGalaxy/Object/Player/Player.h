@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "MyLib/Physics/Collidable.h"
-#include"MyLib/Vec3.h"
+#include "Collidable.h"
+#include"Vec3.h"
 
 class Camera;
+class PlayerSphere;
 
 class Player : public MyEngine::Collidable
 {
@@ -123,6 +124,7 @@ private:
 	int m_color;
 	int m_spinCount;
 	Vec3 m_postUpVec;
+	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
 
 	bool m_isOnDamageFlag;
 	bool m_isSpinFlag;
@@ -144,6 +146,7 @@ private:
 	Vec3 m_upVec;
 
 	Vec3 m_shotDir;
+
 
 	int m_currentAnimNo;//現在のアニメーション
 	int m_prevAnimNo;//変更前のアニメーション

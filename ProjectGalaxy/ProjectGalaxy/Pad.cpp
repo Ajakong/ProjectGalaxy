@@ -1,11 +1,11 @@
-#include"Dxlib.h"
+ï»¿#include"Dxlib.h"
 #include"Pad.h"
 
 namespace
 {
-	// ‘O‚ÌƒtƒŒ[ƒ€‚Ìƒpƒbƒh‰Ÿ‚µ‰º‚°ó‘Ô
+	// å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®ãƒ‘ãƒƒãƒ‰æŠ¼ã—ä¸‹ã’çŠ¶æ…‹
 	int lastPad = 0;
-	// ŒÂ‚ÌƒtƒŒ[ƒ€‚Ìƒpƒbƒh‰Ÿ‚µ‰º‚°ó‘Ô
+	// å€‹ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®ãƒ‘ãƒƒãƒ‰æŠ¼ã—ä¸‹ã’çŠ¶æ…‹
 	int nowPad = 0;
 }
 
@@ -13,10 +13,10 @@ namespace Pad
 {
 	void Pad::Update()
 	{
-		// ‘O‚ÌƒtƒŒ[ƒ€‚Éæ“¾‚µ‚½ƒpƒbƒhî•ñ‚ğˆê‚ÂŒÃ‚¢î•ñ‚É‚·‚é
+		// å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã«å–å¾—ã—ãŸãƒ‘ãƒƒãƒ‰æƒ…å ±ã‚’ä¸€ã¤å¤ã„æƒ…å ±ã«ã™ã‚‹
 		lastPad = nowPad;
 
-		// Œ»İ‚Ìƒpƒbƒh‚Ìî•ñ‚ğæ“¾‚·‚é
+		// ç¾åœ¨ã®ãƒ‘ãƒƒãƒ‰ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹
 		nowPad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
 	}
 
@@ -27,16 +27,16 @@ namespace Pad
 
 	bool IsTrigger(int key)
 	{
-		bool isNow = (nowPad & key);	// ‚±‚ÌƒtƒŒ[ƒ€
-		bool isLast = (lastPad & key);	// ‘O‚ÌƒtƒŒ[ƒ€
+		bool isNow = (nowPad & key);	// ã“ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
+		bool isLast = (lastPad & key);	// å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
 
 		return (isNow && !isLast);
 	}
 
 	bool IsRelase(int key)
 	{
-		bool isNow = (nowPad & key);	// ‚±‚ÌƒtƒŒ[ƒ€
-		bool isLast = (lastPad & key);	// ‘O‚ÌƒtƒŒ[ƒ€
+		bool isNow = (nowPad & key);	// ã“ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
+		bool isLast = (lastPad & key);	// å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
 
 		return (!isNow && isLast);
 	}

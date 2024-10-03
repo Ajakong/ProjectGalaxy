@@ -5,6 +5,7 @@
 #include"SoundManager.h"
 #include"Gorori.h"
 #include"EnemySphere.h"
+#include"PlayerSphere.h"
 #include"KillerTheSeeker.h"
 #include"ModelManager.h"
 #include"GraphManager.h"
@@ -686,6 +687,11 @@ void Player::AimingUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
 		m_playerUpdate = &Player::NeutralUpdate;
+	}
+	if (Pad::IsTrigger(PAD_INPUT_Z))
+	{
+		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), m_rigid->GetPos(),m_shotDir , 1, 0xff0000));
+		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 	}
 
 	m_rigid->SetVelocity(move);
