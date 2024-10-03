@@ -151,7 +151,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
-	Vec3 front =player->GetFrontVec() * -1;//-1をかけて逆ベクトルにしている
+	Vec3 front =player->GetFrontVec();//-1をかけて逆ベクトルにしている
 
 	//相対的な軸ベクトルの設定
 	
@@ -169,7 +169,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	{
 		if (player->OnAiming())
 		{
-			camera->SetCameraPoint(player->GetPos()+ player->GetFrontVec() * 300);
+			camera->SetCameraPoint(player->GetPos()+ player->GetFrontVec() *- 40+player->GetNormVec()*80+player->GetSideVec()*20);
 		}
 		else
 		{
@@ -191,6 +191,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 void SerialPlanetGalaxy::GamePlayingDraw()
 {
+	if (player->OnAiming())camera->SetDebugCameraPoint();
 	Vec3 pos = MV1GetPosition(m_skyDomeH);
 	DxLib::MV1DrawModel(m_skyDomeH);
 
@@ -220,5 +221,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	DrawFormatString(0, 0, 0xffffff, "NormVec(%f,%f,%f)", player->GetNormVec().x, player->GetNormVec().y, player->GetNormVec().z);
 	DrawFormatString(0, 25, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
-	DrawFormatString(0, 50, 0xffffff, "Camera(%f,%f,%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z);
+	DrawFormatString(0, 50, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
+	DrawFormatString(0, 75, 0xffffff, "Camera(%f,%f,%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z);
+
+	
 }

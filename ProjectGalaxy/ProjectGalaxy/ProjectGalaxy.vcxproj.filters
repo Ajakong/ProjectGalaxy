@@ -76,6 +76,9 @@
     <Filter Include="ソース ファイル\Galaxy\h">
       <UniqueIdentifier>{40def9f4-c252-4e5d-953d-e68bd94a289c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Object\Base">
+      <UniqueIdentifier>{5ee8200d-d218-4715-8901-fa6cdb3d0ef9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -218,6 +221,12 @@
     </ClCompile>
     <ClCompile Include="Game\SerialPlanetGalaxy.cpp">
       <Filter>ソース ファイル\Galaxy\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Base\SphereBase.cpp">
+      <Filter>ソース ファイル\Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerSphere.cpp">
+      <Filter>ソース ファイル\Object\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -364,6 +373,12 @@
     </ClInclude>
     <ClInclude Include="Game\SerialPlanetGalaxy.h">
       <Filter>ソース ファイル\Galaxy\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Base\SphereBase.h">
+      <Filter>ソース ファイル\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSphere.h">
+      <Filter>ソース ファイル\Object\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

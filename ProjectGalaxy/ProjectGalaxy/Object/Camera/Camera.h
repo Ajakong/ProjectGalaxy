@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include"Vec3.h"
 #include"Quaternion.h"
 using namespace std;
@@ -9,12 +9,13 @@ class Player;
 class Camera
 {
 public:
-	Camera();							// ƒRƒ“ƒXƒgƒ‰ƒNƒ^.
-	~Camera();							// ƒfƒXƒgƒ‰ƒNƒ^.
+	Camera();							// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
+	~Camera();							// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
 
-	void Update(Vec3 LookPoint);	// XV.
+	void Update(Vec3 LookPoint);	// æ›´æ–°.
 	void SetCamera(Vec3 LookPoint);
 	void SetAimCamera(Vec3 LookPoint);
+	void SetDebugCameraPoint();
 	void DebagDraw();
 	Vec3 cameraToPlayer(const Vec3& targetPos);
 	
@@ -30,10 +31,11 @@ public:
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
 	void SetBoost(bool boost) { m_isBoost = boost; }
 	void SetCameraPoint(Vec3 pos) { if (m_watchCount == 0)m_cameraPoint = pos; }
+	
 	void WatchThis(Vec3 lookpoint,Vec3 cameraPos,Vec3 upVec);
 	void NeutralUpdate(Vec3 LookPoint);
 	void AimingUpdate(Vec3 LookPoint);
-	//ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+	//ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 	using cameraState_t = void(Camera::*)(Vec3 lookpoint);
 	cameraState_t m_cameraUpdate;
 private:
@@ -48,8 +50,8 @@ private:
 
 	Vec3 m_frontVec;
 	Quaternion m_myQ;
-	Vec3 m_pos;			// ƒ|ƒWƒVƒ‡ƒ“.
-	Vec3 m_cameraPoint;//ƒJƒƒ‰‚ªˆÚ“®‚µ‚Ä‚Ù‚µ‚¢ˆÊ’u
+	Vec3 m_pos;			// ãƒã‚¸ã‚·ãƒ§ãƒ³.
+	Vec3 m_cameraPoint;//ã‚«ãƒ¡ãƒ©ãŒç§»å‹•ã—ã¦ã»ã—ã„ä½ç½®
 	Vec3 m_lookPoint;
 	Vec3 m_postLookPointPos;
 	float m_cameraAngle = -DX_PI_F / 2;
@@ -58,7 +60,7 @@ private:
 	Vec3 m_playerNormVec;
 	Vec3 m_upVec;
 	/// <summary>
-	/// ƒvƒŒƒCƒ„[‚©‚çŒ©‚½ƒJƒƒ‰‚ÌˆÊ’uƒxƒNƒgƒ‹
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰è¦‹ãŸã‚«ãƒ¡ãƒ©ã®ä½ç½®ãƒ™ã‚¯ãƒˆãƒ«
 	/// </summary>
 	Vec3 m_playerToCameraVec;
 	Vec3 m_fowardVec;

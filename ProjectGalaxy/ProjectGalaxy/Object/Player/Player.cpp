@@ -53,13 +53,20 @@ namespace
 	const char* kGetSearchSEName = "Search.mp3";
 	const char* name = "Player";
 	const char* kFileName = "SpaceHarrier.mv1";
-	const char* kAimGraphFileName = "Elements_pro.png";
+	
 	constexpr int kAnimationNumTpose = 0;
 	constexpr int kAnimationNumHit = 1;
 	constexpr int kAnimationNumJump = 2;
 	constexpr int kAnimationNumRun = 3;
 	constexpr int kAnimationNumSpin = 4;
 	constexpr int kAnimationNumIdle = 5;
+
+	//照準
+	const char* kAimGraphFileName = "Elements_pro.png";
+	constexpr int kAimGraphSrkX = 3140;
+	constexpr int kAimGraphSrkY = 200;
+	constexpr int kAimGraphWidth = 400;
+	constexpr int kAimGraphHeight = 370;
 }
 
 float GetAngle(Vec3 a, Vec3 b)
@@ -129,6 +136,17 @@ void Player::Update()
 	m_isSearchFlag = false;
 	(this->*m_playerUpdate)();
 	m_chargeRemainTime++;
+	if (Pad::IsTrigger(PAD_INPUT_Y))
+	{
+		if (m_isAimFlag)
+		{
+			m_isAimFlag = false;
+		}
+		else
+		{
+			m_isAimFlag = true;
+		}
+	}
 	if ((Pad::IsTrigger(PAD_INPUT_Z)) && m_searchRemainTime >= 2)PlaySoundMem(m_searchSEHandle, DX_PLAYTYPE_BACK);
 	if ((Pad::IsPress(PAD_INPUT_Z)))
 	{
@@ -192,7 +210,7 @@ void Player::Update()
 	{
 		m_animBlendRate = 1.0f;
 	}
-
+	
 }
 
 void Player::SetMatrix()
@@ -247,6 +265,7 @@ void Player::Draw()
 
 	//printfDx("%d", HitCount);
 #endif
+	if(m_isAimFlag)DrawRectRotaGraph(800, 450, kAimGraphSrkX, kAimGraphSrkY, kAimGraphWidth, kAimGraphHeight, 0.3, 0, m_aimGraphHandle, true);
 }
 
 void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
@@ -468,9 +487,9 @@ void Player::NeutralUpdate()
 	//ベクトルの長さを0.0~1.0の割合に変換する
 	float rate = len / kAnalogInputMax;
 	m_sideVec = GetCameraRightVector();
-	m_frontVec = Cross(m_upVec, m_sideVec).GetNormalized();
+	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
 
-	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
+	move = m_frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
 
 	//アナログスティック無効な範囲を除外する
@@ -509,7 +528,6 @@ void Player::NeutralUpdate()
 	}
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
-		m_isAimFlag = true;
 		m_playerUpdate = &Player::AimingUpdate;
 	}
 	
@@ -537,8 +555,9 @@ void Player::WalkingUpdate()
 	//ベクトルの長さを0.0~1.0の割合に変換する
 	float rate = len / kAnalogInputMax;
 	m_sideVec = GetCameraRightVector();
-	m_frontVec = Cross(m_upVec, m_sideVec).GetNormalized();
-	move = m_frontVec*-1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
+	m_sideVec.Normalize();
+	m_frontVec = Cross(m_sideVec,m_upVec).GetNormalized();
+	move = m_frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
 
 
@@ -575,7 +594,10 @@ void Player::WalkingUpdate()
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
-
+	if (Pad::IsTrigger(PAD_INPUT_Y))
+	{
+		m_playerUpdate = &Player::AimingUpdate;
+	}
 	m_rigid->SetVelocity(move);
 }
 
@@ -611,7 +633,6 @@ void Player::AimingUpdate()
 	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
 	analogY = -analogY;
 
-
 	//アナログスティックの入力10%~80%を使用する
 	//ベクトルの長さが最大1000になる
 	//ベクトルの長さを取得
@@ -621,7 +642,8 @@ void Player::AimingUpdate()
 	//ベクトルの長さを0.0~1.0の割合に変換する
 	float rate = len / kAnalogInputMax;
 	m_sideVec = GetCameraRightVector();
-	m_frontVec = Cross(m_upVec, m_sideVec).GetNormalized();
+	m_sideVec.Normalize();
+	m_frontVec =Cross(m_sideVec,m_upVec).GetNormalized();
 
 	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
@@ -663,7 +685,6 @@ void Player::AimingUpdate()
 	}
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
-		m_isAimFlag = false;
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 
@@ -688,6 +709,7 @@ void Player::SpiningUpdate()
 	//ベクトルの長さを0.0~1.0の割合に変換する
 	float rate = len / kAnalogInputMax;
 	m_sideVec = GetCameraRightVector();
+	m_sideVec.Normalize();
 	m_frontVec = Cross(m_upVec, m_sideVec).GetNormalized();
 	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
@@ -737,6 +759,7 @@ void Player::JumpingSpinUpdate()
 	//ベクトルの長さを0.0~1.0の割合に変換する
 	float rate = len / kAnalogInputMax;
 	m_sideVec = GetCameraRightVector();
+	m_sideVec.Normalize();
 	m_frontVec = Cross(m_upVec, m_sideVec).GetNormalized();
 	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);

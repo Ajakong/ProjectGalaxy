@@ -1,6 +1,6 @@
-﻿#include "EnemySphere.h"
-#include "Enemy.h"
-#include "../MyLib/Physics/ColliderSphere.h"
+﻿#include "PlayerSphere.h"
+#include "Player.h"
+#include "ColliderSphere.h"
 namespace
 {
 	/// <summary>
@@ -13,8 +13,8 @@ namespace
 	constexpr int kSphereCreateFrame = 50;
 	const char* name = "Sphere";
 }
-EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, int moveNum, int color) : SphereBase(priority,tag,pos,velocity,color,kSphereRadius),
-m_enemy(std::dynamic_pointer_cast<Enemy>(enemy))
+PlayerSphere::PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>player, Vec3 pos, Vec3 velocity, int moveNum, int color) : SphereBase(priority, tag, pos, velocity, color, kSphereRadius),
+m_player(std::dynamic_pointer_cast<Player>(player))
 {
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
@@ -24,43 +24,38 @@ m_enemy(std::dynamic_pointer_cast<Enemy>(enemy))
 	//moveNumによって挙動が変わるのかもしれない(実装するかわからん)
 	//if (moveNum == 0)
 	{
-		m_moveUpdate = &EnemySphere::StraightUpdate;
+		m_moveUpdate = &PlayerSphere::StraightUpdate;
 	}
 }
 
-EnemySphere::~EnemySphere()
+PlayerSphere::~PlayerSphere()
 {
 }
 
-void EnemySphere::Init()
+void PlayerSphere::Init()
 {
 }
 
-void EnemySphere::Update()
+void PlayerSphere::Update()
 {
 	(this->*m_moveUpdate)();
-	DeleteJudge();
 }
 
-void EnemySphere::Draw()
+void PlayerSphere::Draw()
 {
 	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, false);
 }
 
-void EnemySphere::Hit()
+void PlayerSphere::Hit()
 {
 	//m_isDeleteFlag = true;
 }
 
-void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {
 }
 
-void EnemySphere::StraightUpdate()
+void PlayerSphere::StraightUpdate()
 {
 	m_rigid->SetVelocity(VGet(m_velocity.x * 20, m_velocity.y * 20, m_velocity.z * 20));
-}
-
-void EnemySphere::DeleteJudge()
-{
 }
