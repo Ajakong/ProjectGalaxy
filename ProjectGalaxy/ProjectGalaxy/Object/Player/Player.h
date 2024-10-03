@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "MyLib/Physics/Collidable.h"
 #include"MyLib/Vec3.h"
 
@@ -46,7 +46,7 @@ public:
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider);
-	//ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+	//ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 	using playerState_t = void(Player::*)();
 	playerState_t m_playerUpdate;
 
@@ -56,20 +56,20 @@ public:
 
 	void BoostUpdate();
 private:
-	//ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìis
-	//ƒ‹[ƒv‚µ‚½‚©‚Ç‚¤‚©‚ğ•Ô‚·
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®é€²è¡Œ
+	//ãƒ«ãƒ¼ãƒ—ã—ãŸã‹ã©ã†ã‹ã‚’è¿”ã™
 	bool UpdateAnim(int attachNo);
-	//ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì•ÏX
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å¤‰æ›´
 	void ChangeAnim(int animIndex);
 
-	//ó‘Ô•ÊŠÖ”(ƒ|ƒCƒ“ƒ^‚ÅŒÄ‚Ño‚·)
-	/*m_playerUpdate‚Åg‚¤*/
+	//çŠ¶æ…‹åˆ¥é–¢æ•°(ãƒã‚¤ãƒ³ã‚¿ã§å‘¼ã³å‡ºã™)
+	/*m_playerUpdateã§ä½¿ã†*/
 	/// <summary>
-	/// ŠJn’¼Œã‚ÉŒÄ‚Î‚ê‚é
+	/// é–‹å§‹ç›´å¾Œã«å‘¼ã°ã‚Œã‚‹
 	/// </summary>
 	void StartUpdate();
 	/// <summary>
-	/// ’Êí
+	/// é€šå¸¸æ™‚
 	/// </summary>
 	void NeutralUpdate();
 	void WalkingUpdate();
@@ -78,14 +78,14 @@ private:
 	void JumpingUpdate();
 	void AimingUpdate();
 	/// <summary>
-	/// ƒ_ƒ[ƒW
+	/// ãƒ€ãƒ¡ãƒ¼ã‚¸æ™‚
 	/// </summary>
 	void DamegeUpdate();
 	/// <summary>
-	/// ‰ñ”ğ
+	/// å›é¿
 	/// </summary>
 	void AvoidUpdate();
-	/*m_cameraUpdate‚Åg‚¤*/
+	/*m_cameraUpdateã§ä½¿ã†*/
 	void Planet1Update();
 
 	
@@ -94,7 +94,7 @@ private:
 private:
 	struct UserData
 	{
-		float dissolveY;	// ƒfƒBƒ]ƒ‹ƒ”‚µ‚½‚¢‚‚³
+		float dissolveY;	// ãƒ‡ã‚£ã‚¾ãƒ«ãƒ´ã—ãŸã„é«˜ã•
 		float minY;
 		float maxY;
 		float dummy;
@@ -105,13 +105,14 @@ private:
 
 	float m_Hp;
 	int m_modelHandle = 0;
+	int m_aimGraphHandle = 0;
 
 	int rotRad = 0;
 
 	int m_itemCount=0;
 
 	/// <summary>
-	/// s“®‚ÌƒtƒŒ[ƒ€‚ğŠÇ—‚·‚é
+	/// è¡Œå‹•ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’ç®¡ç†ã™ã‚‹
 	/// </summary>
 	int actionFrame = 0;
 	int m_pointLightHandle = -1;
@@ -144,16 +145,16 @@ private:
 
 	Vec3 m_shotDir;
 
-	int m_currentAnimNo;//Œ»İ‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
-	int m_prevAnimNo;//•ÏX‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
-	float m_animBlendRate;//ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì‡¬Š„‡
-	//0.0f:prev‚ªÄ¶
-	//1.0:current‚ªÄ¶
+	int m_currentAnimNo;//ç¾åœ¨ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
+	int m_prevAnimNo;//å¤‰æ›´å‰ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
+	float m_animBlendRate;//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæˆå‰²åˆ
+	//0.0f:prevãŒå†ç”Ÿ
+	//1.0:currentãŒå†ç”Ÿ
 	int m_reverseFlag=0;
 	int m_damageFrame;
 	int m_damageFrameSpeed;
 
-	//ƒAƒjƒ[ƒVƒ‡ƒ“•Ï”
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å¤‰æ•°
 	int m_anim_nutral = 0;
 	int m_anim_move = 0;
 	int m_anim_hit = 0;

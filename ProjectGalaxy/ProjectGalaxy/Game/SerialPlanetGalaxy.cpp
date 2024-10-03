@@ -1,6 +1,6 @@
-#include "SerialPlanetGalaxy.h"
+﻿#include "SerialPlanetGalaxy.h"
 #include"DxLib.h"
-// EffekseerForDXLib.h���C���N���[�h���܂��B
+// EffekseerForDXLib.hをインクルードします。
 #include "EffekseerForDXLib.h"
 #include"Camera.h"
 #include"Physics.h"
@@ -26,14 +26,14 @@ using namespace std;
 namespace
 {
 	//UI
-	//�~�b�V����
+	//ミッション
 	constexpr int kUiText_SrkX = 150;
 	constexpr int kUiText_SrkY = 170;
 	constexpr int kUiText_Width = 1050;
 	constexpr int kUiText_Height = 450;
 	constexpr float kUiText_Exrate = 0.2f;
 
-	//HP�o�[�̘g
+	//HPバーの枠
 	constexpr int kUiHpbarFrame_PosX = 150;
 	constexpr int kUiHpbarFrame_PosY = 35;
 	constexpr int kUiHpbarFrame_SrkX = 2600;
@@ -42,7 +42,7 @@ namespace
 	constexpr int kUiHpbarFrame_Height = 144;
 	constexpr float kUiHpbarFrame_Exrate = 0.3f;
 
-	//ChargeRemainTime�̃o�[
+	//ChargeRemainTimeのバー
 	constexpr int kUiCRT_PosX = 20;
 	constexpr int kUiCRT_PosY = 70;
 	constexpr int kUiCRT_SrkX = 2655;
@@ -52,13 +52,13 @@ namespace
 	constexpr int kUiCRT_Height = 80;
 	constexpr float kUiCRT_Exrate = 0.3f;
 
-	//HP�o�[
+	//HPバー
 	constexpr int kUiHpbar_PosX = 15;
 	constexpr int kUiHpbar_PosY = 25;
 	constexpr int kUiHpbar_Height = 23;
-	constexpr float kUiHpbar_mag = 5.35f;//HP�Ɋ|�����炢�������ɂȂ�{��
+	constexpr float kUiHpbar_mag = 5.35f;//HPに掛けたらいい感じになる倍率
 
-	//�^�C�}�[�̘g
+	//タイマーの枠
 	constexpr int kUiTimeCountFrame_PosX = 1400;
 	constexpr int kUiTimeCountFrame_PosY = 100;
 	constexpr int kUiTimeCountFrame_SrkX = 1280;
@@ -67,11 +67,11 @@ namespace
 	constexpr int kUiTimeCountFrame_Height = 410;
 	constexpr float kUiTimeCountFrame_Exrate = 0.3f;
 
-	//�^�C�}�[
+	//タイマー
 	constexpr int kUiTimeCount_PosX = 1350;
 	constexpr int kUiTimeCount_PosY = 90;
 
-	//�J����
+	//カメラ
 	constexpr float kCameraDistanceFront = 800.f;
 	constexpr float kCameraDistanceAddFrontInJump = 300.f;
 	constexpr float kCameraDistanceUp = 500.f;
@@ -107,17 +107,17 @@ void SerialPlanetGalaxy::Init()
 {
 	SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 1.0f, 1.0f));
 
-	player->SetMatrix();//���f���ɍs��𔽉f
+	player->SetMatrix();//モデルに行列を反映
 
-	// �[�x�l�L�^�o�b�t�@�pRT
+	// 深度値記録バッファ用RT
 	DxLib::SetCreateGraphChannelBitDepth(32);
 	DxLib::SetCreateDrawValidGraphChannelNum(1);
 
-	MyEngine::Physics::GetInstance().Entry(player);//�������Z�N���X�ɓo�^
+	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 	for (auto& item : planet)
 	{
 		item->Init();
-		MyEngine::Physics::GetInstance().Entry(item);//�������Z�N���X�ɓo�^
+		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
 	}
 }
 
@@ -151,14 +151,14 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
-	Vec3 front =player->GetFrontVec() * -1;//-1�������ċt�x�N�g���ɂ��Ă���
+	Vec3 front =player->GetFrontVec() * -1;//-1をかけて逆ベクトルにしている
 
-	//���ΓI�Ȏ��x�N�g���̐ݒ�
+	//相対的な軸ベクトルの設定
 	
 	player->SetUpVec(planetToPlayer);
 
 	camera->SetBoost(player->GetBoostFlag());
-	//�{���̓J�����ƃv���C���[�̊p�x��90�x�ȓ��ɂȂ����Ƃ��v���C���[�̓����������ł���悤�ɂ������B
+	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
 	camera->SetUpVec(player->GetNormVec());
 
 	if (player->GetBoostFlag())
@@ -177,15 +177,15 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		}
 	}
 
-	for (auto& item : planet)item->Update();//�X�e�[�W�̍X�V
+	for (auto& item : planet)item->Update();//ステージの更新
 
 	player->Update();
 
-	userData->dissolveY = player->GetRegenerationRange();//�V�F�[�_�[�p�v���p�e�B
+	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 
-	MyEngine::Physics::GetInstance().Update();//�����蔻��̍X�V
+	MyEngine::Physics::GetInstance().Update();//当たり判定の更新
 
-	player->SetMatrix();//�s��𔽉f
+	player->SetMatrix();//行列を反映
 	
 }
 
@@ -205,7 +205,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	if (player->IsSearch())
 	{
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_MUL, 255);
-		// ������ƈÂ���`��`��
+		// ちょっと暗い矩形を描画
 		DxLib::DrawBox(0, 0, 1600, 900,
 			0x444488, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);

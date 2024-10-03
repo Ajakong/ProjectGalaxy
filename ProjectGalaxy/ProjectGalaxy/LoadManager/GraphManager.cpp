@@ -1,4 +1,4 @@
-#include "GraphManager.h"
+﻿#include "GraphManager.h"
 #include<string>
 #include<vector>
 
@@ -23,7 +23,7 @@ int GraphManager::GetGraphData(const char* graphname)
 	if (m_pathAndGraphInfoes.find(graphname) == m_pathAndGraphInfoes.end())
 	{
 		GraphInfo m = GraphInfo();
-		string fileName = "Image/";
+		string fileName = "Data/Image/";
 		m.handle = DxLib::LoadGraph((fileName + (string)graphname).c_str());
 		m.used = false;
 		m_pathAndGraphInfoes[graphname] = m;
@@ -37,7 +37,7 @@ int GraphManager::GetGraphData(const char* graphname)
 
 void GraphManager::DeleteGraphData(const char* graphname)
 {
-	string fileName = "Image/";
+	string fileName = "Data/Image/";
 	DxLib::DeleteGraph(m_pathAndGraphInfoes[graphname].handle);
 	m_pathAndGraphInfoes.erase(graphname);
 }
