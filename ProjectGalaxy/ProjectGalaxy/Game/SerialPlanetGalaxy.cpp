@@ -219,5 +219,6 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	DrawFormatString(0, 0, 0xffffff, "NormVec(%f,%f,%f)", player->GetNormVec().x, player->GetNormVec().y, player->GetNormVec().z);
+	DrawFormatString(0, 25, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
 	DrawFormatString(0, 50, 0xffffff, "Camera(%f,%f,%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z);
 }
