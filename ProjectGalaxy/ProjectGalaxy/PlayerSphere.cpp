@@ -21,6 +21,7 @@ m_player(std::dynamic_pointer_cast<Player>(player))
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = m_radius;
 	m_color = color;
+	SetAntiGravity(true);
 	//moveNumによって挙動が変わるのかもしれない(実装するかわからん)
 	//if (moveNum == 0)
 	{
@@ -57,5 +58,5 @@ void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
 
 void PlayerSphere::StraightUpdate()
 {
-	m_rigid->SetVelocity(VGet(m_velocity.x * 20, m_velocity.y * 20, m_velocity.z * 20));
+	m_rigid->SetVelocity(VGet(m_velocity.x*20, m_velocity.y*20, m_velocity.z*20));
 }

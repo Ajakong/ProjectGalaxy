@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <memory>
 #include <vector>
 #include "../ObjectTag.h"
@@ -11,26 +11,29 @@ namespace MyEngine
 //	class ColliderBase;
 
 	/// <summary>
-	/// Õ“Ë‚Å‚«‚é‚à‚Ì
+	/// è¡çªã§ãã‚‹ã‚‚ã®
 	/// </summary>
 	class Collidable : public std::enable_shared_from_this<Collidable>
 	{
 		friend Physics;
 	public:
-		// —Dæ“x”»•Ê
+		// å„ªå…ˆåº¦åˆ¤åˆ¥
 		enum class Priority : int
 		{
-			Low,		// ’á
-			Middle,		// ’†
-			High,		// ‚
-			Static,		// “®‚©‚È‚¢iÅ‚j
+			Low,		// ä½
+			Middle,		// ä¸­
+			High,		// é«˜
+			Static,		// å‹•ã‹ãªã„ï¼ˆæœ€é«˜ï¼‰
 		};
 	public:
 		Collidable(Priority priority, ObjectTag tag);
 		Collidable(std::shared_ptr<Collidable> col);
 		virtual ~Collidable();
 
-		// Õ“Ë‚µ‚½‚Æ‚«
+		virtual void Update() = 0;
+		virtual void Draw()=0;
+
+		// è¡çªã—ãŸã¨ã
 		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider) {}
 		virtual void OnCollideStay(std::shared_ptr<Collidable> colider) {}
 		virtual void OnCollideExit(std::shared_ptr<Collidable> colider) {}
@@ -44,13 +47,13 @@ namespace MyEngine
 		void SetObjectTag(ObjectTag tag) { m_tag = tag; }
 		bool IsAntiGravity() { return m_isAntiGravity; }
 		void SetUpVec(Vec3 vel) { m_upVec = vel; }
-		// “–‚½‚è”»’è‚ğ–³‹iƒXƒ‹[j‚·‚éƒ^ƒO‚Ì’Ç‰Á/íœ
+		// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ï¼ˆã‚¹ãƒ«ãƒ¼ï¼‰ã™ã‚‹ã‚¿ã‚°ã®è¿½åŠ /å‰Šé™¤
 		void AddThroughTag(ObjectTag tag);
 		void RemoveThroughTag(ObjectTag tag);
 		std::shared_ptr<Rigidbody> PlanetOnlyGetRigid() { return m_rigid; };
 		void SetReverceGravityVec(Vec3 gravityReverce) { m_upVec = gravityReverce; }
 
-		// “–‚½‚è”»’è‚ğ–³‹iƒXƒ‹[j‚·‚é‘ÎÛ‚©‚Ç‚¤‚©
+		// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ï¼ˆã‚¹ãƒ«ãƒ¼ï¼‰ã™ã‚‹å¯¾è±¡ã‹ã©ã†ã‹
 		bool IsThroughTarget(std::shared_ptr<Collidable>) const;
 
 		Vec3 GetKnockBackVelocity() { return (m_rigid->GetVelocity())*-1; }
@@ -61,9 +64,9 @@ namespace MyEngine
 
 		void SetAntiGravity(bool flag = true) { m_isAntiGravity=flag; }
 	protected:
-		// •¨—ƒf[ƒ^
+		// ç‰©ç†ãƒ‡ãƒ¼ã‚¿
 		std::shared_ptr<Rigidbody> m_rigid;
-		// “–‚½‚è”»’èƒf[ƒ^
+		// å½“ãŸã‚Šåˆ¤å®šãƒ‡ãƒ¼ã‚¿
 		std::list<std::shared_ptr<ColliderBase>> m_colliders;
 		Vec3 m_upVec;
 

@@ -25,6 +25,7 @@ public:
 	Vec3 GetNormVec() { return Vec3(m_rigid->GetPos() - m_nowPlanetPos).GetNormalized(); }
 	Vec3 GetFrontVec() { return m_frontVec.GetNormalized(); }
 	Vec3 GetSideVec() { return m_sideVec.GetNormalized(); }
+	Vec3 GetShotDir() { return m_shotDir; }
 	float GetRegenerationRange() { return m_regeneRange; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
 	bool GetBoostFlag() { return m_isBoostFlag; }
@@ -44,6 +45,7 @@ public:
 	int& SetReverse() { return m_reverseFlag; }
 	int GetSearchRemainTime() { return m_searchRemainTime; }
 	bool GetJumpFlag() { return m_isJumpFlag; }
+
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider);
@@ -88,6 +90,8 @@ private:
 	void AvoidUpdate();
 	/*m_cameraUpdateで使う*/
 	void Planet1Update();
+
+	void SetShotDir();
 
 	
 	Vec3 GetCameraToPlayer()const;
@@ -146,6 +150,7 @@ private:
 	Vec3 m_upVec;
 
 	Vec3 m_shotDir;
+	Vec3 m_modelBodyRotate;
 
 
 	int m_currentAnimNo;//現在のアニメーション

@@ -141,14 +141,16 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
+	player->Update();
 	if (player->OnAiming())
 	{
-		camera->Update(player->GetFrontVec());
+		camera->Update(player->GetShotDir());
 	}
 	else
 	{
 		camera->Update(player->GetPos());
 	}
+	
 	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
 	Vec3 front =player->GetFrontVec();//-1をかけて逆ベクトルにしている
@@ -169,7 +171,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	{
 		if (player->OnAiming())
 		{
-			camera->SetCameraPoint(player->GetPos()+ player->GetFrontVec() *- 40+player->GetNormVec()*80+player->GetSideVec()*20);
+			camera->SetCameraPoint(player->GetPos()+ player->GetShotDir() *- 50+player->GetNormVec()*80+player->GetSideVec()*20);
 		}
 		else
 		{
@@ -178,8 +180,6 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 
 	for (auto& item : planet)item->Update();//ステージの更新
-
-	player->Update();
 
 	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 
@@ -198,10 +198,10 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	for (auto& item : planet)
 	{
 		item->SetIsSearch(player->IsSearch());
-		item->Draw();
+		
 	}
 
-	player->Draw();
+	MyEngine::Physics::GetInstance().Draw();
 	
 	if (player->IsSearch())
 	{
@@ -222,7 +222,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 0, 0xffffff, "NormVec(%f,%f,%f)", player->GetNormVec().x, player->GetNormVec().y, player->GetNormVec().z);
 	DrawFormatString(0, 25, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
 	DrawFormatString(0, 50, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
-	DrawFormatString(0, 75, 0xffffff, "Camera(%f,%f,%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z);
-
+	DrawFormatString(0, 75, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
+	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
 	
 }

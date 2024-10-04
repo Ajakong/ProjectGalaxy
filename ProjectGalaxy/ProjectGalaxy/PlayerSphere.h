@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "SphereBase.h"
+class Player;
+
 class PlayerSphere : public SphereBase
 {
 public:
@@ -22,6 +24,6 @@ protected:
 	virtual void  StraightUpdate();//球を直線状に飛ばす
 
 protected:
-	std::shared_ptr<Enemy>m_player;
+	std::shared_ptr<Player>m_player;
 };
 

@@ -10,6 +10,7 @@
 #include"ModelManager.h"
 #include"GraphManager.h"
 #include"Quaternion.h"
+#include"Physics.h"
 
 /// <summary>
 /// やること:足の当たり判定を生成・踏みつけに使う
@@ -75,6 +76,11 @@ float GetAngle(Vec3 a, Vec3 b)
 	return acos(Dot(a.GetNormalized(), b.GetNormalized())) * 180 / DX_PI_F;
 }
 
+void MTransCopy(MATRIX& in, const MATRIX& src) {
+	in.m[3][0] = src.m[3][0]; in.m[3][1] = src.m[3][1]; in.m[3][2] = src.m[3][2]; in.m[3][3] = 1.f;
+}
+
+
 Player::Player(int modelhandle) : Collidable(Priority::High, ObjectTag::Player),
 m_modelHandle(MV1DuplicateModel(ModelManager::GetInstance().GetModelData(kFileName))),
 m_anim_move(),
@@ -104,6 +110,8 @@ m_parrySEHandle(SoundManager::GetInstance().GetSoundData(kOnParrySEName)),
 m_damageFrameSpeed(1),
 m_postUpVec(Vec3::Up()),
 m_frontVec(Vec3(0,0,1)),
+m_modelBodyRotate(m_frontVec),
+m_shotDir(Vec3(0,0,1)),
 m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName))
 {
 	{
@@ -166,6 +174,31 @@ void Player::Update()
 			m_searchRemainTime++;
 		}
 	}
+	if (m_isAimFlag)
+	{
+
+		SetShotDir();
+		
+		int index = MV1SearchFrame(m_modelHandle, "mixamorig:Spine");
+		MATRIX shotDirMat =MGetRotVec2(m_shotDir.VGet(),m_modelBodyRotate.VGet() );
+		m_modelBodyRotate=m_shotDir;
+		MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
+		MATRIX mat = MMult(shotDirMat, localMat);
+		MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
+		if (Pad::IsTrigger(PAD_INPUT_3))
+		{
+			Vec3 shotPos = m_rigid->GetPos();
+			shotPos += m_upVec.GetNormalized() * 70;
+			m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, 1, 0xff0000));
+			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+		}
+
+	}
+
+	for (auto& item : m_sphere)
+	{
+		item->Update();
+	}
 	
 	if (m_visibleCount > 200)
 	{
@@ -219,13 +252,13 @@ void Player::SetMatrix()
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 
 	MATRIX mat;
-	if (Cross(Vec3::Front(), m_moveDir * -1).z > 0)
+	if (Cross(m_frontVec, m_moveDir * -1).z > 0)
 	{
-		mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir)));
+		mat = MGetRotY(acos(Dot(m_frontVec*-1, m_moveDir)));
 	}
 	else
 	{
-		mat = MGetRotY((DX_PI_F*2)-acos(Dot(Vec3::Front(), m_moveDir)));
+		mat = MGetRotY((DX_PI_F*2)-acos(Dot(m_frontVec*-1, m_moveDir)));
 	}
 	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
 
@@ -476,6 +509,7 @@ void Player::NeutralUpdate()
 	int analogX = 0, analogY = 0;
 
 	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+	
 	analogY = -analogY;
 
 	
@@ -688,12 +722,7 @@ void Player::AimingUpdate()
 	{
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
-	if (Pad::IsTrigger(PAD_INPUT_Z))
-	{
-		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), m_rigid->GetPos(),m_shotDir , 1, 0xff0000));
-		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
-	}
-
+	
 	m_rigid->SetVelocity(move);
 	
 }
@@ -716,7 +745,7 @@ void Player::SpiningUpdate()
 	float rate = len / kAnalogInputMax;
 	m_sideVec = GetCameraRightVector();
 	m_sideVec.Normalize();
-	m_frontVec = Cross(m_upVec, m_sideVec).GetNormalized();
+	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
 	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
 
@@ -766,7 +795,7 @@ void Player::JumpingSpinUpdate()
 	float rate = len / kAnalogInputMax;
 	m_sideVec = GetCameraRightVector();
 	m_sideVec.Normalize();
-	m_frontVec = Cross(m_upVec, m_sideVec).GetNormalized();
+	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
 	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
 
@@ -855,4 +884,17 @@ void Player::Planet1Update()
 {
 
 
+}
+
+void Player::SetShotDir()
+{
+	int directX = 0, directY = 0;
+	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
+	directY = -directY;
+
+
+	m_shotDir = m_sideVec*static_cast<float>(directX)*0.0001f;
+	m_shotDir += m_upVec * static_cast<float>(directY) * 0.000001f;
+	m_shotDir += m_frontVec;
+	m_shotDir.Normalize();
 }

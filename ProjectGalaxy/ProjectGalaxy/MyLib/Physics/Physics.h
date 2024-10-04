@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <memory>
 #include <list>
 #include <functional>
@@ -41,6 +41,7 @@ namespace MyEngine
 		void Exit(const std::shared_ptr<Collidable>& collidable);
 
 		void Update();
+		void Draw();
 
 		void Clear();
 

@@ -1,4 +1,4 @@
-#include "Physics.h"
+ï»¿#include "Physics.h"
 #include <cassert>
 #include "Collidable.h"
 #include "ColliderSphere.h"
@@ -9,7 +9,7 @@ using namespace MyEngine;
 
 namespace
 {
-	// ”»’èÅ‘å‰ñ”
+	// åˆ¤å®šæœ€å¤§å›æ•°
 	constexpr int CHECK_COUNT_MAX = 500;
 }
 
@@ -26,18 +26,18 @@ Physics& Physics::GetInstance()
 void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 {
 	bool isFound = std::find(m_collidables.begin(), m_collidables.end(), collidable) != m_collidables.end();
-	//// –¢“o˜^‚È‚ç’Ç‰Á
+	//// æœªç™»éŒ²ãªã‚‰è¿½åŠ 
 	//if (!isFound)
 	//{
 	//    m_collidables.emplace_back(collidable);
 	//}
-	//// “o˜^Ï‚İ‚È‚ç–³‹
+	//// ç™»éŒ²æ¸ˆã¿ãªã‚‰ç„¡è¦–
 	//else
 	//{
 	//    assert(false);
 	//}
 
-	// –¢“o˜^‚È‚ç’Ç‰Á
+	// æœªç™»éŒ²ãªã‚‰è¿½åŠ 
 	if (!isFound && collidable->GetTag() != ObjectTag::Stage)
 	{
 		m_collidables.emplace_back(collidable);
@@ -47,7 +47,7 @@ void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 		m_stageCollidables.emplace_back(collidable);
 		m_collidables.emplace_back(collidable);
 	}
-	// “o˜^Ï‚İ‚È‚ç–³‹
+	// ç™»éŒ²æ¸ˆã¿ãªã‚‰ç„¡è¦–
 	else
 	{
 		assert(false);
@@ -57,7 +57,7 @@ void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 {
 	auto it = std::find(m_collidables.begin(), m_collidables.end(), collidable);
-	// “o˜^Ï‚İ‚È‚çíœ
+	// ç™»éŒ²æ¸ˆã¿ãªã‚‰å‰Šé™¤
 	if (it!= m_collidables.end())
 	{
 		int index =static_cast<int>( distance(m_collidables.begin(), it));
@@ -68,7 +68,7 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 		}
 		m_collidables.erase(iterater);
 	}
-	// –¢“o˜^‚È‚ç–³‹
+	// æœªç™»éŒ²ãªã‚‰ç„¡è¦–
 	else
 	{
 		assert(false);
@@ -94,13 +94,21 @@ void Physics::Update()
 
 	for (const auto& info : m_onCollideInfo)
 	{
-		if (static_cast<int>(info.send->m_tag) > 10|| static_cast<int>(info.send->m_tag)<0)continue;//‰‹}ˆ’uÏ‚İ:Exit‚µ‚Ä‚à—š—ğ‚Éc‚Á‚Ä‚¢‚é‚ªQÆ‚Å‚«‚¸‚É—áŠO‚ªƒXƒ[‚³‚ê‚é
-		if (static_cast<int>(info.own->m_tag) > 10 || static_cast<int>(info.own->m_tag) < 0)continue;//:ã‚É“¯‚¶
+		if (static_cast<int>(info.send->m_tag) > 10|| static_cast<int>(info.send->m_tag)<0)continue;//å¿œæ€¥å‡¦ç½®æ¸ˆã¿:Exitã—ã¦ã‚‚å±¥æ­´ã«æ®‹ã£ã¦ã„ã‚‹ãŒå‚ç…§ã§ããšã«ä¾‹å¤–ãŒã‚¹ãƒ­ãƒ¼ã•ã‚Œã‚‹
+		if (static_cast<int>(info.own->m_tag) > 10 || static_cast<int>(info.own->m_tag) < 0)continue;//:ä¸Šã«åŒã˜
 		if (info.own->GetTag() == ObjectTag::ClearObject)
 		{
 			int a = 0;
 		}
 		OnCollideInfo(info.own, info.send, info.kind);
+	}
+}
+
+void MyEngine::Physics::Draw()
+{
+	for (const auto& obj : m_collidables)
+	{
+		obj->Draw();
 	}
 }
 
@@ -117,7 +125,7 @@ void MyEngine::Physics::Clear()
 }
 
 /// <summary>
-/// •¨—‚©‚ç‚ÌˆÚ“®‚ğ–¢—ˆ‚ÌÀ•W‚É“K—p
+/// ç‰©ç†ã‹ã‚‰ã®ç§»å‹•ã‚’æœªæ¥ã®åº§æ¨™ã«é©ç”¨
 /// </summary>
 void MyEngine::Physics::MoveNextPos() const
 {
@@ -200,7 +208,7 @@ void MyEngine::Physics::CheckCollide()
 			for (const auto& objB : m_collidables)
 			{
 				if (objA == objB) continue;
-				// ‚Ç‚¿‚ç‚©‚ÌƒXƒ‹[‘ÎÛ‚Æ‚µ‚Äƒ^ƒO‚ª“ü‚Á‚Ä‚¢‚½‚ç–³‹
+				// ã©ã¡ã‚‰ã‹ã®ã‚¹ãƒ«ãƒ¼å¯¾è±¡ã¨ã—ã¦ã‚¿ã‚°ãŒå…¥ã£ã¦ã„ãŸã‚‰ç„¡è¦–
 				if (objA->IsThroughTarget(objB) || objB->IsThroughTarget(objA))continue;
 				for (const auto& colA : objA->m_colliders)
 				{
@@ -221,7 +229,7 @@ void MyEngine::Physics::CheckCollide()
 						}
 
 
-						// Trigger‚Ìê‡‚ÍˆÊ’u•â³‚Í‚µ‚È‚¢
+						// Triggerã®å ´åˆã¯ä½ç½®è£œæ­£ã¯ã—ãªã„
 						if (isTrigger)
 						{
 							isCheck = false;
@@ -240,7 +248,7 @@ void MyEngine::Physics::CheckCollide()
 						}
 
 						FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider);
-						// ˆÊ’u•â³‚ğ‚µ‚½‚ç‚à‚¤ˆê“x‰‚ß‚©‚çs‚¤
+						// ä½ç½®è£œæ­£ã‚’ã—ãŸã‚‰ã‚‚ã†ä¸€åº¦åˆã‚ã‹ã‚‰è¡Œã†
 						isCheck = true;
 						break;
 					}
@@ -256,7 +264,7 @@ void MyEngine::Physics::CheckCollide()
 
 		if (isCheck && checkCount > CHECK_COUNT_MAX)
 		{
-			//printfDx("‹K’è”(%d)‚ğ’´‚¦‚Ü‚µ‚½", CHECK_COUNT_MAX);
+			//printfDx("è¦å®šæ•°(%d)ã‚’è¶…ãˆã¾ã—ãŸ", CHECK_COUNT_MAX);
 			break;
 		}
 	}
@@ -297,13 +305,13 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			auto primarySphere = dynamic_cast<ColliderSphere*>(primaryCollider.get());
 			auto secondarySphere = dynamic_cast<ColliderSphere*>(secondaryCollider.get());
 
-			// primary‚©‚çsecondary‚Ö‚ÌƒxƒNƒgƒ‹‚ğì¬
+			// primaryã‹ã‚‰secondaryã¸ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’ä½œæˆ
 			auto primaryToSecondary = secondaryRigid->GetNextPos() - primaryRigid->GetNextPos();
-			// ‚»‚Ì‚Ü‚Ü‚¾‚Æ‚¿‚å‚¤‚Ç“–‚½‚éˆÊ’u‚É‚È‚é‚Ì‚Å­‚µ—]•ª‚É—£‚·
+			// ãã®ã¾ã¾ã ã¨ã¡ã‚‡ã†ã©å½“ãŸã‚‹ä½ç½®ã«ãªã‚‹ã®ã§å°‘ã—ä½™åˆ†ã«é›¢ã™
 			float  awayDist = primarySphere->radius + secondarySphere->radius + 0.0001f;
-			// ’·‚³‚ğ’²®
+			// é•·ã•ã‚’èª¿æ•´
 			primaryToSecondary = primaryToSecondary.GetNormalized() * awayDist;
-			// primary‚©‚çƒxƒNƒgƒ‹•ûŒü‚É‰Ÿ‚·
+			// primaryã‹ã‚‰ãƒ™ã‚¯ãƒˆãƒ«æ–¹å‘ã«æŠ¼ã™
 			fixedPos = primaryRigid->GetNextPos() + primaryToSecondary;
 		}
 	}
@@ -313,11 +321,11 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 
 void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB, SendCollideInfo& info)
 {
-	// A‚ªe‚Æ‚µ‚Äæ“¾‚µ‚Ä‚¢‚é‚©
+	// AãŒè¦ªã¨ã—ã¦å–å¾—ã—ã¦ã„ã‚‹ã‹
 	bool isParentA = info.find(objA) != info.end();
-	// B‚ªe‚Æ‚µ‚Äæ“¾‚µ‚Ä‚¢‚é‚©
+	// BãŒè¦ªã¨ã—ã¦å–å¾—ã—ã¦ã„ã‚‹ã‹
 	bool isParentB = info.find(objB) != info.end();
-	// A‚ªB‚Ç‚¿‚ç‚©‚ªæ“¾‚µ‚Ä‚¢‚éê‡
+	// AãŒBã©ã¡ã‚‰ã‹ãŒå–å¾—ã—ã¦ã„ã‚‹å ´åˆ
 	if (isParentA || isParentB)
 	{
 		std::shared_ptr<Collidable> parent = objA;
@@ -327,18 +335,18 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std:
 			parent = objB;
 			child = objA;
 		}
-		// e‚ªq‚ğ‚Á‚Ä‚¢‚é‚©
+		// è¦ªãŒå­ã‚’æŒã£ã¦ã„ã‚‹ã‹
 		bool isChild = std::find(info[parent].begin(), info[parent].end(), child) != info[parent].end();
-		// q‚Æ‚µ‚Ä‚Á‚Ä‚¢‚È‚¯‚ê‚Î’Ç‰Á
+		// å­ã¨ã—ã¦æŒã£ã¦ã„ãªã‘ã‚Œã°è¿½åŠ 
 		if (!isChild)
 		{
 			info[parent].emplace_back(child);
 		}
 	}
-	// ‚Ç‚¿‚ç‚àæ“¾‚µ‚Ä‚¢‚È‚¢ê‡
+	// ã©ã¡ã‚‰ã‚‚å–å¾—ã—ã¦ã„ãªã„å ´åˆ
 	else
 	{
-		// •’Ê‚É’Ç‰Á
+		// æ™®é€šã«è¿½åŠ 
 		info[objA].emplace_back(objB);
 	}
 }
@@ -347,7 +355,7 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 {
 	for (auto& parent : newSendInfo)
 	{
-		// ˆÈ‘O‚Ìî•ñ‚Ée‚Æ‚µ‚Ä“o˜^‚³‚ê‚Ä‚¢‚é‚©
+		// ä»¥å‰ã®æƒ…å ±ã«è¦ªã¨ã—ã¦ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹ã‹
 		bool isPreParent = preSendInfo.find(parent.first) != preSendInfo.end();
 		bool isAllEnter = true;
 
@@ -356,12 +364,12 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 			bool isPreChild = false;
 			if (isPreParent)
 			{
-				// ˆÈ‘O‚Ìî•ñ‚Éq‚Æ‚µ‚Ä“o˜^‚³‚ê‚Ä‚¢‚é‚©
+				// ä»¥å‰ã®æƒ…å ±ã«å­ã¨ã—ã¦ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹ã‹
 				auto& preParent = preSendInfo[parent.first];
 				isPreChild = std::find(preParent.begin(), preParent.end(), child) != preParent.end();
 			}
 
-			// ¡‰ñ“ü‚Á‚Ä‚«‚½ê‡‚ÍEnter‚ğŒÄ‚Ô(q‚Æ‚µ‚Ä“o˜^‚³‚ê‚Ä‚¢‚È‚¢)
+			// ä»Šå›å…¥ã£ã¦ããŸå ´åˆã¯Enterã‚’å‘¼ã¶(å­ã¨ã—ã¦ç™»éŒ²ã•ã‚Œã¦ã„ãªã„)
 			if (!isPreChild)
 			{
 				if (isTrigger)
@@ -376,7 +384,7 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 				}
 			}
 
-			// Stay‚Í–ˆ“xŒÄ‚Ô
+			// Stayã¯æ¯åº¦å‘¼ã¶
 			if (isTrigger)
 			{
 				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerStay);
@@ -388,26 +396,26 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideStay);
 			}
 
-			// “o˜^‚³‚ê‚Ä‚¢‚½î•ñ‚ğíœ
+			// ç™»éŒ²ã•ã‚Œã¦ã„ãŸæƒ…å ±ã‚’å‰Šé™¤
 			if (isPreChild)
 			{
 				preSendInfo[parent.first].remove(child);
 			}
-			// ‘S‚Ä“o˜^‚³‚ê‚Ä‚¢‚È‚©‚Á‚½‚Æ‚·‚é
+			// å…¨ã¦ç™»éŒ²ã•ã‚Œã¦ã„ãªã‹ã£ãŸã¨ã™ã‚‹
 			else
 			{
 				isAllEnter = false;
 			}
 		}
 
-		// ‘S‚Ä“o˜^‚³‚ê‚Ä‚¢‚½‚çe‚Ìî•ñ‚àÁ‚·
+		// å…¨ã¦ç™»éŒ²ã•ã‚Œã¦ã„ãŸã‚‰è¦ªã®æƒ…å ±ã‚‚æ¶ˆã™
 		if (isAllEnter)
 		{
 			preSendInfo.erase(parent.first);
 		}
 	}
 
-	// c‚Á‚Ä‚¢‚é‘Oî•ñ‚©‚çExist‚ğŒÄ‚Ô(“o˜^‚ªc‚Á‚Ä‚¢‚é¡‰ñ”²‚¯‚½)
+	// æ®‹ã£ã¦ã„ã‚‹å‰æƒ…å ±ã‹ã‚‰Existã‚’å‘¼ã¶(ç™»éŒ²ãŒæ®‹ã£ã¦ã„ã‚‹ï¼ä»Šå›æŠœã‘ãŸ)
 	for (auto& parent : preSendInfo)
 	{
 		for (auto& child : parent.second)
@@ -465,7 +473,7 @@ void MyEngine::Physics::OnCollideInfo(std::shared_ptr<Collidable> own, std::shar
 }
 
 /// <summary>
-/// ÅI“I‚È–¢—ˆ‚ÌÀ•W‚©‚çŒ»İ‚ÌÀ•W‚É“K—p
+/// æœ€çµ‚çš„ãªæœªæ¥ã®åº§æ¨™ã‹ã‚‰ç¾åœ¨ã®åº§æ¨™ã«é©ç”¨
 /// </summary>
 void Physics::FixPos() const
 {

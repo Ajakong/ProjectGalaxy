@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 enum class ObjectTag
 {
@@ -9,6 +9,7 @@ enum class ObjectTag
 	Gorori,
 	KillerTheSeeker,
 	EnemyAttack,
+	PlayerBullet,
 	WarpGate,
 	Item,
 	ClearObject
