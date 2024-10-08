@@ -119,7 +119,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
     int modelHandle = MV1LoadModel("SpaceHarrier.mv1");
     int prevAnimNo=-1;
     int currentAnimNo=0;
-    int animBlendRate=0;
+    float animBlendRate=0;
     // FOV(視野角)を60度に
     SetupCamera_Perspective(60.0f * (static_cast<float>(DX_PI_F) / 180.0f));
 
@@ -208,8 +208,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
         }
 
-        UpdateAnim(modelHandle);
-        
+        UpdateAnim(currentAnimNo,modelHandle);
+        //変更前のアニメーション100%
+        MV1SetAttachAnimBlendRate(modelHandle, prevAnimNo, 1.0f - animBlendRate);
+        //変更後のアニメーション0%
+        MV1SetAttachAnimBlendRate(modelHandle, currentAnimNo, animBlendRate);
+        animBlendRate += 0.05f;
+        if (animBlendRate > 1.0f)
+        {
+            animBlendRate = 1.0f;
+        }
         MV1DrawModel(modelHandle);
 
 

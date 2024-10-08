@@ -177,22 +177,35 @@ void Player::Update()
 	if (m_isAimFlag)
 	{
 
-		SetShotDir();
 		
-		int index = MV1SearchFrame(m_modelHandle, "mixamorig:Spine");
-		MATRIX shotDirMat =MGetRotVec2(m_shotDir.VGet(),m_modelBodyRotate.VGet() );
-		m_modelBodyRotate=m_shotDir;
-		MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
-		MATRIX mat = MMult(shotDirMat, localMat);
-		MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
-		if (Pad::IsTrigger(PAD_INPUT_3))
-		{
-			Vec3 shotPos = m_rigid->GetPos();
-			shotPos += m_upVec.GetNormalized() * 70;
-			m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, 1, 0xff0000));
-			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
-		}
 
+	}
+
+	SetShotDir();
+
+	int index = MV1SearchFrame(m_modelHandle, "mixamorig:Spine");
+	MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), m_shotDir.VGet());
+	nowVec = m_shotDir.VGet();
+
+	MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
+	MATRIX mat = MMult(shotDirMat, localMat);
+	MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			DrawFormatString(i * 80, j * 16, GetColor(255, 255, 255), "%f", mat.m[i][j]);
+		}
+	}
+
+	if (Pad::IsTrigger(PAD_INPUT_3))
+	{
+		Vec3 shotPos = m_rigid->GetPos();
+		shotPos += m_upVec.GetNormalized() * 70;
+		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, 1, 0xff0000));
+		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+		//nowVec = VGet(0, 0, -1);
+		//MV1SetFrameUserLocalMatrix(m_modelHandle, index, MGetIdent());
 	}
 
 	for (auto& item : m_sphere)
@@ -244,7 +257,6 @@ void Player::Update()
 	{
 		m_animBlendRate = 1.0f;
 	}
-	
 }
 
 void Player::SetMatrix()
@@ -264,22 +276,14 @@ void Player::SetMatrix()
 
 	Vec3 axis = Cross(Vec3::Up(), m_upVec);
 
-	mat=MMult(mat, MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()));
+	mat = MMult(mat, MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()));
 
-	/*Quaternion myQ;
-	if (axis.z > 0)
-	{
-		myQ = myQ.CreateRotationQuaternion(acos(Dot(Vec3::Up(), m_upVec)), axis);
-	}
-	else
-	{
-		myQ = myQ.CreateRotationQuaternion((DX_PI_F*2)-acos(Dot(Vec3::Up(), m_upVec)), axis);
-	}
-	mat = MMult(mat, myQ.ToMat());*/
+	//Quaternion myQ;
+	//myQ.LookAt(m_frontVec);
+	//mat = MMult(mat, myQ.ToMat());
 	
 	MV1SetRotationMatrix(m_modelHandle, mat);
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
-
 }
 
 void Player::Draw()
@@ -294,6 +298,8 @@ void Player::Draw()
 	{
 		DrawSphere3D(m_rigid->GetPos().VGet(), m_attackRadius, 10, 0x00ff00, 0xffffff, false);
 	}
+
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x00ff00);
 #if _DEBUG
 
 
@@ -595,7 +601,6 @@ void Player::WalkingUpdate()
 	move = m_frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
 
-
 	//アナログスティック無効な範囲を除外する
 	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
 	rate = min(rate, 1.0f);
@@ -682,7 +687,6 @@ void Player::AimingUpdate()
 
 	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
-
 
 	//アナログスティック無効な範囲を除外する
 	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
@@ -799,7 +803,6 @@ void Player::JumpingSpinUpdate()
 	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
 	move += m_sideVec * static_cast<float>(analogX);
 
-
 	//アナログスティック無効な範囲を除外する
 	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
 	rate = min(rate, 1.0f);
@@ -828,7 +831,6 @@ void Player::JumpingSpinUpdate()
 		m_playerUpdate = &Player::JumpingUpdate;
 		m_spinAngle = 0;
 	}
-
 }
 
 void Player::BoostUpdate()
@@ -882,8 +884,6 @@ void Player::AvoidUpdate()
 
 void Player::Planet1Update()
 {
-
-
 }
 
 void Player::SetShotDir()
@@ -892,9 +892,8 @@ void Player::SetShotDir()
 	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
 	directY = -directY;
 
-
-	m_shotDir = m_sideVec*static_cast<float>(directX)*0.0001f;
-	m_shotDir += m_upVec * static_cast<float>(directY) * 0.000001f;
-	m_shotDir += m_frontVec;
-	m_shotDir.Normalize();
+	m_shotDir = m_sideVec*static_cast<float>(directX) * 0.001f;
+	m_shotDir = m_shotDir+(m_upVec*static_cast<float>(directY) * 0.0005f);
+	m_shotDir = m_shotDir + m_frontVec;
+	m_shotDir = m_shotDir.GetNormalized();
 }

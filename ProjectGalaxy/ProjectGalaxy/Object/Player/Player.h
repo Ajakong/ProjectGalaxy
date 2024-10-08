@@ -144,6 +144,7 @@ private:
 	//std::shared_ptr<Camera> m_camera;
 	Vec3 m_moveDir;
 	Vec3 m_nowPlanetPos;
+	Vec3 nowVec;
 
 	Vec3 m_frontVec;
 	Vec3 m_sideVec;

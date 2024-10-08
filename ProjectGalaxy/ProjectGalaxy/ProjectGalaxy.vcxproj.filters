@@ -228,6 +228,9 @@
     <ClCompile Include="PlayerSphere.cpp">
       <Filter>ソース ファイル\Object\Player</Filter>
     </ClCompile>
+    <ClCompile Include="MyLib\Quaternion.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -379,6 +382,9 @@
     </ClInclude>
     <ClInclude Include="PlayerSphere.h">
       <Filter>ソース ファイル\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Quaternion.h">
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

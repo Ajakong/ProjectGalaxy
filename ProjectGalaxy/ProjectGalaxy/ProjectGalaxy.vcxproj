@@ -162,6 +162,7 @@
     <ClCompile Include="MyLib\Physics\ColliderSphere.cpp" />
     <ClCompile Include="MyLib\Physics\Physics.cpp" />
     <ClCompile Include="MyLib\Physics\Rigidbody.cpp" />
+    <ClCompile Include="MyLib\Quaternion.cpp" />
     <ClCompile Include="MyLib\Vec2.cpp" />
     <ClCompile Include="MyLib\Vec3.cpp" />
     <ClCompile Include="Object\Base\SphereBase.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="MyLib\Physics\ColliderSphere.h" />
     <ClInclude Include="MyLib\Physics\Physics.h" />
     <ClInclude Include="MyLib\Physics\Rigidbody.h" />
+    <ClInclude Include="MyLib\Quaternion.h" />
     <ClInclude Include="MyLib\Vec2.h" />
     <ClInclude Include="MyLib\Vec3.h" />
     <ClInclude Include="Object\Base\SphereBase.h" />
