@@ -1,6 +1,6 @@
 ﻿#include "PlayerSphere.h"
-#include "Player.h"
 #include "ColliderSphere.h"
+#include "PlayerSphere.h"
 namespace
 {
 	/// <summary>
@@ -13,7 +13,7 @@ namespace
 	constexpr int kSphereCreateFrame = 50;
 	const char* name = "Sphere";
 }
-PlayerSphere::PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag Vec3 pos, Vec3 velocity, int moveNum, int color) : SphereBase(priority, tag, pos, velocity, color, kSphereRadius)
+PlayerSphere::PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, Vec3 pos, Vec3 velocity, int moveNum, int color) : SphereBase(priority, tag, pos, velocity, color, kSphereRadius)
 {
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere);

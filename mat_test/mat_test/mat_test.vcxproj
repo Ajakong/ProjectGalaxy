@@ -133,7 +133,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ProjectGalaxy\ProjectGalaxy\PlayerSphere.cpp" />
     <ClCompile Include="Base\SphereBase.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="main.cpp" />
@@ -150,9 +149,9 @@
     <ClCompile Include="MyLib\Vec2.cpp" />
     <ClCompile Include="MyLib\Vec3.cpp" />
     <ClCompile Include="Pad.cpp" />
+    <ClCompile Include="PlayerSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ProjectGalaxy\ProjectGalaxy\PlayerSphere.h" />
     <ClInclude Include="Base\SphereBase.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="MyLib\DebugDraw.h" />
@@ -169,6 +168,7 @@
     <ClInclude Include="MyLib\Vec2.h" />
     <ClInclude Include="MyLib\Vec3.h" />
     <ClInclude Include="Pad.h" />
+    <ClInclude Include="PlayerSphere.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

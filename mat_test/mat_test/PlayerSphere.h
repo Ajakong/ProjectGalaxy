@@ -5,7 +5,7 @@ class Player;
 class PlayerSphere : public SphereBase
 {
 public:
-	PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, Vec3 pos, Vec3 velocity, int moveNum, int color = 0xff0000);
+	PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag,Vec3 pos, Vec3 velocity, int moveNum, int color= 0xff0000);
 	virtual ~PlayerSphere();
 
 	virtual void Init();
@@ -24,6 +24,5 @@ protected:
 	virtual void  StraightUpdate();//球を直線状に飛ばす
 
 protected:
-	std::shared_ptr<Player>m_player;
 };
 

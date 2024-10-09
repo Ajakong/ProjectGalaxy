@@ -73,7 +73,16 @@ namespace
 
 float GetAngle(Vec3 a, Vec3 b)
 {
-	return acos(Dot(a.GetNormalized(), b.GetNormalized())) * 180 / DX_PI_F;
+	float cos = Dot(a.GetNormalized(), b.GetNormalized());//ない席は180度まで
+	float rad = acos(cos);
+	if (sqrt(1-cos*cos) > 0)//正の数しか返ってこねぇ
+	{
+		return rad;
+	}
+	else
+	{
+		return -rad;
+	}
 }
 
 void MTransCopy(MATRIX& in, const MATRIX& src) {
@@ -188,7 +197,7 @@ void Player::Update()
 	MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), m_shotDir.VGet());
 	nowVec = m_shotDir.VGet();
 
-	MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
+	/*MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
 	MATRIX mat = MMult(shotDirMat, localMat);
 	MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
 	for (int i = 0; i < 4; i++)
@@ -197,7 +206,7 @@ void Player::Update()
 		{
 			DrawFormatString(i * 80, j * 16, GetColor(255, 255, 255), "%f", mat.m[i][j]);
 		}
-	}
+	}*/
 
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
@@ -260,27 +269,24 @@ void Player::SetMatrix()
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 
 	MATRIX mat;
-	/*if (Cross(m_frontVec, m_moveDir * -1).z > 0)
-	{
-		mat = MGetRotY(acos(Dot(m_frontVec*-1, m_moveDir)));
-	}
-	else
-	{
-		mat = MGetRotY((DX_PI_F*2)-acos(Dot(m_frontVec*-1, m_moveDir)));
-	}*/
+
 	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
 
-	//Vec3 axis = Cross(Vec3::Up(), m_upVec);
-
-	mat = MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet());
-
-	//Quaternion myQ;
-	//myQ.LookAt(m_frontVec);
-	//mat = MMult(mat, myQ.ToMat());
+	Vec3 axis = Cross(Vec3::Up(), m_upVec);
+	m_sideVec = axis;
 	
+	mat = MGetRotAxis(axis.GetNormalized().VGet(),GetAngle(Vec3::Up(), m_upVec.GetNormalized()));
+	
+	/*mat = MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()); */
+
+	Quaternion myQ;
+	
+	mat = MMult(mat, myQ.ToMat());
+
 	MV1SetRotationMatrix(m_modelHandle, mat);
 	//MV1SetRotationXYZ(m_modelHandle, Vec3(0, atan2(m_inputVec.z, -m_inputVec.x) + DX_PI_F / 2, 0).VGet());
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+
 }
 
 void Player::Draw()
@@ -296,9 +302,11 @@ void Player::Draw()
 		DrawSphere3D(m_rigid->GetPos().VGet(), m_attackRadius, 10, 0x00ff00, 0xffffff, false);
 	}
 
-	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x00ff00);
+	
 #if _DEBUG
-
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_upVec * 100).VGet(), 0xff0000);
 
 	//printfDx("%d", HitCount);
 #endif

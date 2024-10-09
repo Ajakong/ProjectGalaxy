@@ -248,7 +248,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         MV1SetScale(stageHandle, VGet(0.05f, 0.05f, 0.05f));
         MV1SetScale(modelHandle,VGet(0.05f, 0.05f, 0.05f));
 
-        MV1SetRotationXYZ(modelHandle, Vec3(0, atan2(moveDir.z, -moveDir.x)+DX_PI_F/2,0).VGet());
+       
+        
+        auto rotatemat = MGetRotAxis(upVec.VGet(), atan2(-moveDir.x,-moveDir.z));
+        MV1SetRotationMatrix(modelHandle, rotatemat /*Vec3(0, atan2(moveDir.z, -moveDir.x) + DX_PI_F / 2, 0).VGet()*/);
+        
+
         //à íuÇÃê›íË
         MV1SetPosition(stageHandle, Vec3(0, -50, 0).VGet());
         MV1SetPosition(modelHandle, playerPos.VGet());

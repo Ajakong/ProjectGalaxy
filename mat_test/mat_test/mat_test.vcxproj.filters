@@ -69,11 +69,11 @@
     <ClCompile Include="Pad.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectGalaxy\ProjectGalaxy\PlayerSphere.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Base\SphereBase.cpp">
       <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerSphere.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,11 +122,11 @@
     <ClInclude Include="Pad.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectGalaxy\ProjectGalaxy\PlayerSphere.h">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Base\SphereBase.h">
       <Filter>ソース ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSphere.h">
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
