@@ -112,7 +112,8 @@ m_postUpVec(Vec3::Up()),
 m_frontVec(Vec3(0,0,1)),
 m_modelBodyRotate(m_frontVec),
 m_shotDir(Vec3(0,0,1)),
-m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName))
+m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
+m_inputVec(0,0,-1)
 {
 	{
 		m_rigid->SetPos(Vec3(0, 0, 0));
@@ -200,12 +201,7 @@ void Player::Update()
 
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
-		Vec3 shotPos = m_rigid->GetPos();
-		shotPos += m_upVec.GetNormalized() * 70;
-		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, 1, 0xff0000));
-		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
-		//nowVec = VGet(0, 0, -1);
-		//MV1SetFrameUserLocalMatrix(m_modelHandle, index, MGetIdent());
+		ShotTheStar();
 	}
 
 	for (auto& item : m_sphere)
@@ -264,25 +260,26 @@ void Player::SetMatrix()
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 
 	MATRIX mat;
-	if (Cross(m_frontVec, m_moveDir * -1).z > 0)
+	/*if (Cross(m_frontVec, m_moveDir * -1).z > 0)
 	{
 		mat = MGetRotY(acos(Dot(m_frontVec*-1, m_moveDir)));
 	}
 	else
 	{
 		mat = MGetRotY((DX_PI_F*2)-acos(Dot(m_frontVec*-1, m_moveDir)));
-	}
+	}*/
 	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
 
-	Vec3 axis = Cross(Vec3::Up(), m_upVec);
+	//Vec3 axis = Cross(Vec3::Up(), m_upVec);
 
-	mat = MMult(mat, MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()));
+	mat = MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet());
 
 	//Quaternion myQ;
 	//myQ.LookAt(m_frontVec);
 	//mat = MMult(mat, myQ.ToMat());
 	
 	MV1SetRotationMatrix(m_modelHandle, mat);
+	//MV1SetRotationXYZ(m_modelHandle, Vec3(0, atan2(m_inputVec.z, -m_inputVec.x) + DX_PI_F / 2, 0).VGet());
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 }
 
@@ -512,44 +509,13 @@ void Player::NeutralUpdate()
 	item->radius = m_attackRadius;
 	//アナログスティックを使って移動
 
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+	Vec3 move = Move();
 	
-	analogY = -analogY;
-
-	
-	//アナログスティックの入力10%~80%を使用する
-	//ベクトルの長さが最大1000になる
-	//ベクトルの長さを取得
-	Vec3 move;
-
-	float len = move.Length();
-	//ベクトルの長さを0.0~1.0の割合に変換する
-	float rate = len / kAnalogInputMax;
-	m_sideVec = GetCameraRightVector();
-	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
-
-	move = m_frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
-	move += m_sideVec * static_cast<float>(analogX);
-
-	//アナログスティック無効な範囲を除外する
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-	if (std::abs(move.Length()) >= 0.2f)
+	if (std::abs(move.Length()) >= 0.2f*kMaxSpeed)
 	{
 		ChangeAnim(kAnimationNumRun);
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
-	//速度が決定できるので移動ベクトルに反映
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
-
-	//m_angle = fmodf(m_cameraAngle, 360);//mod:余り　
-	//MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
-	m_moveDir = move;
-	move = move * speed;
 	//プレイヤーの最大移動速度は0.01f/frame
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
@@ -580,44 +546,19 @@ void Player::WalkingUpdate()
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
 	item->radius = m_attackRadius;
-	//アナログスティックを使って移動
-
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-	analogY = -analogY;
 	
-	//アナログスティックの入力10%~80%を使用する
-	//ベクトルの長さが最大1000になる
-	//ベクトルの長さを取得
 	Vec3 move;
 
-	float len = move.Length();
-	//ベクトルの長さを0.0~1.0の割合に変換する
-	float rate = len / kAnalogInputMax;
-	m_sideVec = GetCameraRightVector();
-	m_sideVec.Normalize();
-	m_frontVec = Cross(m_sideVec,m_upVec).GetNormalized();
-	move = m_frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
-	move += m_sideVec * static_cast<float>(analogX);
+	move = Move();
+	m_inputVec=move;
 
-	//アナログスティック無効な範囲を除外する
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-	if (std::abs(move.Length()) < 0.2f)
+	if (std::abs(move.Length()) < 0.2f*kMaxSpeed)
 	{
 		ChangeAnim(kAnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
-	//速度が決定できるので移動ベクトルに反映
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
 
-	//m_angle = fmodf(m_cameraAngle, 360);//mod:余り　
-	//MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
-	m_moveDir = move;
-	move = move * speed;
+
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
 		ChangeAnim(kAnimationNumJump);
@@ -666,45 +607,9 @@ void Player::AimingUpdate()
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
 	item->radius = m_attackRadius;
-	//アナログスティックを使って移動
-
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-	analogY = -analogY;
-
-	//アナログスティックの入力10%~80%を使用する
-	//ベクトルの長さが最大1000になる
-	//ベクトルの長さを取得
+	
 	Vec3 move;
-
-	float len = move.Length();
-	//ベクトルの長さを0.0~1.0の割合に変換する
-	float rate = len / kAnalogInputMax;
-	m_sideVec = GetCameraRightVector();
-	m_sideVec.Normalize();
-	m_frontVec =Cross(m_sideVec,m_upVec).GetNormalized();
-
-	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
-	move += m_sideVec * static_cast<float>(analogX);
-
-	//アナログスティック無効な範囲を除外する
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-	if (std::abs(move.Length()) >= 0.2f)
-	{
-		ChangeAnim(kAnimationNumRun);
-		m_playerUpdate = &Player::WalkingUpdate;
-	}
-	//速度が決定できるので移動ベクトルに反映
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
-
-	//m_angle = fmodf(m_cameraAngle, 360);//mod:余り　
-	//MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
-	m_moveDir = move;
-	move = move * speed;
+	move = Move();
 	//プレイヤーの最大移動速度は0.01f/frame
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
@@ -733,37 +638,9 @@ void Player::AimingUpdate()
 
 void Player::SpiningUpdate()
 {
-	//アナログスティックを使って移動
-
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-	analogY = -analogY;
-	//アナログスティックの入力10%~80%を使用する
-	//ベクトルの長さが最大1000になる
-	//ベクトルの長さを取得
 	Vec3 move;
 
-	float len = move.Length();
-	//ベクトルの長さを0.0~1.0の割合に変換する
-	float rate = len / kAnalogInputMax;
-	m_sideVec = GetCameraRightVector();
-	m_sideVec.Normalize();
-	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
-	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
-	move += m_sideVec * static_cast<float>(analogX);
-
-	//アナログスティック無効な範囲を除外する
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-
-	//速度が決定できるので移動ベクトルに反映
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
-
-	m_moveDir = move;
-	move = move * speed;
+	move = Move();
 
 	m_rigid->SetVelocity(move);
 
@@ -785,35 +662,8 @@ void Player::JumpingSpinUpdate()
 {
 	//アナログスティックを使って移動
 
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-	analogY = -analogY;
-	//アナログスティックの入力10%~80%を使用する
-	//ベクトルの長さが最大1000になる
-	//ベクトルの長さを取得
 	Vec3 move;
-
-	float len = move.Length();
-	//ベクトルの長さを0.0~1.0の割合に変換する
-	float rate = len / kAnalogInputMax;
-	m_sideVec = GetCameraRightVector();
-	m_sideVec.Normalize();
-	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
-	move = m_frontVec * -1 * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
-	move += m_sideVec * static_cast<float>(analogX);
-
-	//アナログスティック無効な範囲を除外する
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-
-	//速度が決定できるので移動ベクトルに反映
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
-
-	m_moveDir = move;
-	move = move * speed;
+	move = Move();
 
 	m_rigid->SetVelocity(move);
 
@@ -844,6 +694,53 @@ void Player::BoostUpdate()
 		ChangeAnim(kAnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
+}
+
+Vec3 Player::Move()
+{
+	int analogX = 0, analogY = 0;
+
+	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+
+	analogY = -analogY;
+
+
+	//アナログスティックの入力10%~80%を使用する
+	//ベクトルの長さが最大1000になる
+	//ベクトルの長さを取得
+	Vec3 move;
+
+	float len = move.Length();
+	//ベクトルの長さを0.0~1.0の割合に変換する
+	float rate = len / kAnalogInputMax;
+	m_sideVec = GetCameraRightVector();
+	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
+
+	move = m_frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
+	move += m_sideVec * static_cast<float>(analogX);
+
+	//アナログスティック無効な範囲を除外する
+	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
+	rate = min(rate, 1.0f);
+	rate = max(rate, 0.0f);
+
+	//速度が決定できるので移動ベクトルに反映
+	move = move.GetNormalized();
+	float speed = kMaxSpeed;
+
+	//m_angle = fmodf(m_cameraAngle, 360);//mod:余り　
+	//MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
+	m_moveDir = move;
+	move = move * speed;
+	return move;
+}
+
+void Player::ShotTheStar()
+{
+	Vec3 shotPos = m_rigid->GetPos();
+	shotPos += m_upVec.GetNormalized() * 70;
+	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, 1, 0xff0000));
+	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 }
 
 void Player::DamegeUpdate()

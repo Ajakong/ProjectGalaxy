@@ -1,5 +1,14 @@
 #include "DxLib.h"
+#include"Vec3.h"
+#include"Camera.h"
+#include"PlayerSphere.h"
+#include<memory>
+#include<list>
+#include"Physics.h"
+#include"Collidable.h"
+#include"Pad.h"
 
+using namespace MyEngine;
 
 namespace
 {
@@ -116,25 +125,29 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
     LONGLONG time;
 
+    
     int modelHandle = MV1LoadModel("SpaceHarrier.mv1");
+    int stageHandle = MV1LoadModel("Stage.mv1");
     int prevAnimNo=-1;
     int currentAnimNo=0;
     float animBlendRate=0;
-    // FOV(視野角)を60度に
-    SetupCamera_Perspective(60.0f * (static_cast<float>(DX_PI_F) / 180.0f));
 
-    CreateSpotLightHandle(VGet(0, 0, 0), VGet(0, -1, 0), DX_PI_F * 2,
-        DX_PI_F * 2,
-        2000.0f,
-        0.0f,
-        0.002f,
-        0.0f);
-
+    shared_ptr<Camera> camera;
+    camera=make_shared<Camera>();
+    list<shared_ptr<Collidable>> star;
+    
     SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 1.0f, 1.0f));
     MV1AttachAnim(modelHandle, 0);
     float rotate = 0;
-    VECTOR nowVec= VGet(0, 0, -1);
-    VECTOR dir;
+    Vec3 playerPos(0,-30,0);
+    Vec3 nowVec= VGet(0, 0, -1);
+    Vec3 dir;
+    Vec3 shotDir;
+    Vec3 moveDir;
+    Vec3 sideVec(1,0,0);
+    Vec3 frontVec(0,0,1);
+    Vec3 upVec(0,1,0);
+
     auto ChangeAnim = [&](int animIndex) { //さらに古いアニメーションがアタッチされている場合はこの時点で削除しておく
         if (prevAnimNo != -1)
         {
@@ -153,8 +166,54 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         //変更前のアニメーション100%
         MV1SetAttachAnimBlendRate(modelHandle, prevAnimNo, 1.0f - animBlendRate);
         //変更後のアニメーション0%
-        MV1SetAttachAnimBlendRate(modelHandle, currentAnimNo, animBlendRate); };
+        MV1SetAttachAnimBlendRate(modelHandle, currentAnimNo, animBlendRate);
+    };
 
+    auto Move = [&]() {
+        int analogX = 0, analogY = 0;
+
+        GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+
+        analogY = -analogY;
+
+
+        //アナログスティックの入力10%~80%を使用する
+        //ベクトルの長さが最大1000になる
+        //ベクトルの長さを取得
+        Vec3 move;
+
+        float len = move.Length();
+        //ベクトルの長さを0.0~1.0の割合に変換する
+        float rate = len / kAnalogInputMax;
+        sideVec = GetCameraRightVector();
+        frontVec = Cross(sideVec, upVec).GetNormalized();
+
+        move = frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
+        move += sideVec * static_cast<float>(analogX);
+
+        //アナログスティック無効な範囲を除外する
+        rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
+        rate = min(rate, 1.0f);
+        rate = max(rate, 0.0f);
+
+        //速度が決定できるので移動ベクトルに反映
+        move = move.GetNormalized();
+        float speed = kMaxSpeed;
+
+        //m_angle = fmodf(m_cameraAngle, 360);//mod:余り　
+        //MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
+        moveDir = move;
+        move = move * speed;
+        return move;
+    };
+
+    auto ShotTheStar = [&]()
+    {
+        Vec3 shotPos = playerPos;
+        shotPos += upVec.GetNormalized() * 70;
+        star.push_back(make_shared<PlayerSphere>(Collidable::Priority::Low, ObjectTag::PlayerBullet,shotPos, shotDir, 1, 0xff0000));
+        MyEngine::Physics::GetInstance().Entry(star.back());
+    };
 
     ChangeAnim(kAnimationNumIdle);
    
@@ -168,28 +227,45 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         {
             ChangeWindowMode(true);
         }
-        SetCameraPositionAndTargetAndUpVec(VGet(0,0,-200),VGet(0,0,0),VGet(0,1,0));
-
+        
         int directX = 0, directY = 0;
         GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
         directY = -directY;
 
-        
+        dir = VScale(GetCameraRightVector(), static_cast<float>(directX) * 0.001f);
+        dir+=VScale( VGet(0,1,0), static_cast<float>(directY) * 0.001f);
+        shotDir = dir;
+        dir += Vec3(0,0,-1);
+        shotDir += moveDir;
+        dir.Normalize();
+        shotDir.Normalize();
 
-        dir = VScale(VGet(1,0,0) , static_cast<float>(directX) * 0.001f);
-        dir=VAdd(dir , VScale( VGet(0,1,0), static_cast<float>(directY) * 0.001f));
-        dir=VAdd(dir,VGet(0,0,-1));
-        dir=VNorm(dir);
 
+        playerPos += Move();
+        camera->SetCameraPoint(playerPos-Vec3(0,-200,-200));
+        camera->Update(playerPos);
 
+        MV1SetScale(stageHandle, VGet(0.05f, 0.05f, 0.05f));
         MV1SetScale(modelHandle,VGet(0.05f, 0.05f, 0.05f));
-        MV1SetPosition(modelHandle, VGet(0, -30, 0));
+
+        MV1SetRotationXYZ(modelHandle, Vec3(0, atan2(moveDir.z, -moveDir.x)+DX_PI_F/2,0).VGet());
+        //位置の設定
+        MV1SetPosition(stageHandle, Vec3(0, -50, 0).VGet());
+        MV1SetPosition(modelHandle, playerPos.VGet());
+
+        for (auto& item : star)
+        {
+            item->Update();
+        }
+
+        Pad::Update();
+
+        Physics::GetInstance().Update();
 
         //rotate += 0.1f;
         int index = MV1SearchFrame(modelHandle, "mixamorig:Spine");
-        MATRIX shotDirMat = MGetRotVec2(nowVec,dir);
+        MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), dir.VGet());
         nowVec = dir;
-
         MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
         MATRIX mat = MMult(shotDirMat, localMat);
         MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
@@ -201,11 +277,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
             }
         }
 
-        if (GetJoypadInputState(DX_INPUT_KEY_PAD1) == PAD_INPUT_3)
+        if (Pad::IsTrigger(PAD_INPUT_3))
         {
+            ShotTheStar();
             nowVec = VGet(0, 0, -1);
             MV1SetFrameUserLocalMatrix(modelHandle, index, MGetIdent());
-
         }
 
         UpdateAnim(currentAnimNo,modelHandle);
@@ -218,8 +294,22 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         {
             animBlendRate = 1.0f;
         }
+        //モデルの描画
+
+        MV1DrawModel(stageHandle);
         MV1DrawModel(modelHandle);
 
+        for (auto& item : star)
+        {
+            item->Draw();
+        }
+
+#ifdef  _DEBUG
+
+        DrawLine3D(Vec3(playerPos+upVec*50).VGet(), Vec3(playerPos + frontVec * 80+upVec*50).VGet(), 0xffffff);
+        DrawLine3D(Vec3(playerPos + upVec * 50).VGet(), Vec3(playerPos + shotDir * 80 + upVec * 50).VGet(), 0x00ff00);
+
+#endif //  _DEBUG
 
   
         ScreenFlip();

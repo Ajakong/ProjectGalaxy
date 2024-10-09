@@ -59,6 +59,10 @@ public:
 
 	void BoostUpdate();
 private:
+	Vec3 Move();
+
+	void ShotTheStar();
+
 	//アニメーションの進行
 	//ループしたかどうかを返す
 	bool UpdateAnim(int attachNo);
@@ -145,6 +149,7 @@ private:
 	Vec3 m_moveDir;
 	Vec3 m_nowPlanetPos;
 	Vec3 nowVec;
+	Vec3 m_inputVec;
 
 	Vec3 m_frontVec;
 	Vec3 m_sideVec;

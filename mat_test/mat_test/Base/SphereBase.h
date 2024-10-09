@@ -18,6 +18,10 @@ protected:
 	virtual void Update()=0;
 	virtual void Draw()=0;
 
+	
+	
+	
+	
 protected:
 	int m_color = 0;
 
