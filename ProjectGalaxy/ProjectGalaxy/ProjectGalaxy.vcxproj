@@ -175,7 +175,9 @@
     <ClCompile Include="Object\Enemy\Killer.cpp" />
     <ClCompile Include="Object\Enemy\KillerTheSeeker.cpp" />
     <ClCompile Include="Object\Enemy\Takobo.cpp" />
+    <ClCompile Include="Object\Gimmick\StarCapture.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
+    <ClCompile Include="Object\ObjectManager.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
     <ClCompile Include="Object\WarpGate\WarpGate.cpp" />
     <ClCompile Include="Pad.cpp" />
@@ -228,7 +230,9 @@
     <ClInclude Include="Object\Enemy\Killer.h" />
     <ClInclude Include="Object\Enemy\KillerTheSeeker.h" />
     <ClInclude Include="Object\Enemy\Takobo.h" />
+    <ClInclude Include="Object\Gimmick\StarCapture.h" />
     <ClInclude Include="Object\Item\Item.h" />
+    <ClInclude Include="Object\ObjectManager.h" />
     <ClInclude Include="Object\Player\Player.h" />
     <ClInclude Include="Object\WarpGate\WarpGate.h" />
     <ClInclude Include="Pad.h" />

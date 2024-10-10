@@ -41,11 +41,55 @@ private:
 
 			return tempQ;
 		}
+
 	};
 
 	Q Qu;
 
 public:
+	Quaternion QMult(Quaternion a, Quaternion b)
+	{
+		Quaternion temp;
+
+		/*クオータニオンの掛け算*/
+		temp.Qu.w = a.Qu.w * b.Qu.w - a.Qu.x * b.Qu.x - a.Qu.y * b.Qu.y - a.Qu.z * b.Qu.z;//実部
+		temp.Qu.x = a.Qu.w * b.Qu.x + a.Qu.x * b.Qu.w + a.Qu.y * b.Qu.z - a.Qu.z * b.Qu.y;//虚部x
+		temp.Qu.y = a.Qu.w * b.Qu.y + a.Qu.y * b.Qu.w + a.Qu.z * b.Qu.x - a.Qu.x * b.Qu.z;//虚部y
+		temp.Qu.z = a.Qu.w * b.Qu.z + a.Qu.z * b.Qu.w + a.Qu.x * b.Qu.y - a.Qu.y * b.Qu.x;//虚部z
+
+		return temp;
+	}
+	Quaternion AddRotationQuaternion(double radian, Vec3 Axis)
+	{
+		Quaternion ans;
+		ans.Qu.w = Qu.w;
+		ans.Qu.x = Qu.x;
+		ans.Qu.y= Qu.y;
+		ans.Qu.z = Qu.z;
+
+		double norm;
+		double ccc, sss;
+
+		ans.Qu.w = ans.Qu.x = ans.Qu.y = ans.Qu.z = 0.0;
+
+		norm = Axis.x * Axis.x + Axis.y * Axis.y + Axis.z * Axis.z;
+		if (norm <= 0.0) return ans;
+
+		norm = 1.0 / sqrt(norm);
+		Axis.x *= static_cast<float> (norm);
+		Axis.y *= static_cast<float> (norm);
+		Axis.z *= static_cast<float> (norm);
+
+		ccc = cos(0.5 * radian);
+		sss = sin(0.5 * radian);
+
+		ans.Qu.w += static_cast<float>(ccc);
+		ans.Qu.x += static_cast<float>(sss) * Axis.x;
+		ans.Qu.y += static_cast<float>(sss) * Axis.y;
+		ans.Qu.z += static_cast<float>(sss) * Axis.z;
+
+		return ans;
+	}
 	//回転クォータニオン
 	Quaternion CreateRotationQuaternion(double radian, Vec3 Axis)
 	{

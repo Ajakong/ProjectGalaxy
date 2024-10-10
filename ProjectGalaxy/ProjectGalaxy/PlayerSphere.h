@@ -5,7 +5,7 @@ class Player;
 class PlayerSphere : public SphereBase
 {
 public:
-	PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>player, Vec3 pos, Vec3 velocity, int moveNum, int color= 0xff0000);
+	PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>player, Vec3 pos, Vec3 velocity,Vec3 sideVec, int moveNum, int color= 0xff0000);
 	virtual ~PlayerSphere();
 
 	virtual void Init();
@@ -25,5 +25,6 @@ protected:
 
 protected:
 	std::shared_ptr<Player>m_player;
+	Vec3 m_sideVec;
 };
 

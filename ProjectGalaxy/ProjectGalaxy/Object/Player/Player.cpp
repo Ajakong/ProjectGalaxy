@@ -75,6 +75,12 @@ float GetAngle(Vec3 a, Vec3 b)
 {
 	float cos = Dot(a.GetNormalized(), b.GetNormalized());//ない席は180度まで
 	float rad = acos(cos);
+
+#ifdef _DEBUG
+	DrawFormatString(0, 150, 0xffffff, "%f", DX_PI_F / 2);
+	DrawFormatString(0, 175, 0xffffff, "%f", cos);
+#endif
+
 	if (sqrt(1-cos*cos) > 0)//正の数しか返ってこねぇ
 	{
 		return rad;
@@ -270,22 +276,26 @@ void Player::SetMatrix()
 
 	MATRIX mat;
 
+
+
 	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
 
-	Vec3 axis = Cross(Vec3::Up(), m_upVec);
-	m_sideVec = axis;
-	
-	mat = MGetRotAxis(axis.GetNormalized().VGet(),GetAngle(Vec3::Up(), m_upVec.GetNormalized()));
-	
-	/*mat = MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()); */
+	m_sideVec = Cross(m_frontVec, m_upVec);
+	m_sideVec.Normalize();
+	//mat = MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()); 
 
 	Quaternion myQ;
-	
-	mat = MMult(mat, myQ.ToMat());
+	float angle = atan2(-m_moveDir.x, -m_moveDir.z);
+
+	myQ = myQ.CreateRotationQuaternion(angle, Vec3::Up());
+	myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(m_angle,Cross(m_moveDir,m_upVec).GetNormalized()));
+	mat = myQ.ToMat();
 
 	MV1SetRotationMatrix(m_modelHandle, mat);
 	//MV1SetRotationXYZ(m_modelHandle, Vec3(0, atan2(m_inputVec.z, -m_inputVec.x) + DX_PI_F / 2, 0).VGet());
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+
+
 
 }
 
@@ -747,7 +757,7 @@ void Player::ShotTheStar()
 {
 	Vec3 shotPos = m_rigid->GetPos();
 	shotPos += m_upVec.GetNormalized() * 70;
-	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, 1, 0xff0000));
+	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir,m_sideVec, 1, 0xff0000));
 	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 }
 

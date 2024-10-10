@@ -12,5 +12,6 @@ enum class ObjectTag
 	PlayerBullet,
 	WarpGate,
 	Item,
-	ClearObject
+	ClearObject,
+	StarCapture
 };

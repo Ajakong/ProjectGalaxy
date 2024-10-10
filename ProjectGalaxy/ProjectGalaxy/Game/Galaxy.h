@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include"MyLib/Vec3.h"
 #include<memory>
 #include<vector>
 
 class Player;
 
-class Galaxy//GameManager‚ªŠÇ—,˜f¯‚âƒIƒuƒWƒFƒNƒg‚Ìî•ñ‚ğ‚Á‚Ä‚¢‚é
+class Galaxy//GameManagerãŒç®¡ç†,æƒ‘æ˜Ÿã‚„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æƒ…å ±ã‚’æŒã£ã¦ã„ã‚‹
 {
 public:
 	Galaxy(std::shared_ptr<Player> player);
@@ -15,7 +15,15 @@ public:
 	virtual void Update()=0;
 	virtual void Draw()=0;
 	
+	/// <summary>
+	/// ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ©ã‚°ã‚’å–å¾—ã™ã‚‹
+	/// </summary>
+	/// <returns>ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ©ã‚°</returns>
 	bool GetGameOver() const { return m_isGameOverFlag; }
+	/// <summary>
+	/// ã‚¯ãƒªã‚¢ãƒ•ãƒ©ã‚°ã‚’å–å¾—ã™ã‚‹
+	/// </summary>
+	/// <returns>ã‚¯ãƒªã‚¢ãƒ•ãƒ©ã‚°</returns>
 	bool GetClear() const { return m_isClearFlag; }
 
 	using managerState_t = void(Galaxy::*)();
@@ -27,7 +35,7 @@ public:
 protected:
 	std::shared_ptr<Player> player;
 
-	//‚±‚Ìƒtƒ‰ƒO‚ğŒ©‚ÄƒV[ƒ“‚ğˆÚs‚·‚é
+	//ã“ã®ãƒ•ãƒ©ã‚°ã‚’è¦‹ã¦ã‚·ãƒ¼ãƒ³ã‚’ç§»è¡Œã™ã‚‹
 	bool m_isGameOverFlag = false;
 	bool m_isClearFlag = false;	
 };

@@ -21,7 +21,6 @@ public:
 	};
 	virtual ~Quaternion() {}
 
-private:
 	struct Q
 	{
 		float w;
@@ -44,8 +43,23 @@ private:
 	};
 
 	Q Qu;
+private:
+	
+	
 
 public:
+	Quaternion QMult(Quaternion a, Quaternion b)
+	{
+		Quaternion temp;
+
+		/*クオータニオンの掛け算*/
+		temp.Qu.w = a.Qu.w * b.Qu.w - a.Qu.x * b.Qu.x - a.Qu.y * b.Qu.y - a.Qu.z * b.Qu.z;//実部
+		temp.Qu.x = a.Qu.w * b.Qu.x + a.Qu.x * b.Qu.w + a.Qu.y * b.Qu.z - a.Qu.z * b.Qu.y;//虚部x
+		temp.Qu.y = a.Qu.w * b.Qu.y + a.Qu.y * b.Qu.w + a.Qu.z * b.Qu.x - a.Qu.x * b.Qu.z;//虚部y
+		temp.Qu.z = a.Qu.w * b.Qu.z + a.Qu.z * b.Qu.w + a.Qu.x * b.Qu.y - a.Qu.y * b.Qu.x;//虚部z
+
+		return temp;
+	}
 	//回転クォータニオン
 	Quaternion CreateRotationQuaternion(double radian, Vec3 Axis)
 	{

@@ -1,5 +1,6 @@
 #include "DxLib.h"
 #include"Vec3.h"
+#include"Quaternion.h"
 #include"Camera.h"
 #include"PlayerSphere.h"
 #include<memory>
@@ -147,6 +148,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
     Vec3 sideVec(1,0,0);
     Vec3 frontVec(0,0,1);
     Vec3 upVec(0,1,0);
+    float angle=0;
 
     auto ChangeAnim = [&](int animIndex) { //さらに古いアニメーションがアタッチされている場合はこの時点で削除しておく
         if (prevAnimNo != -1)
@@ -248,9 +250,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         MV1SetScale(stageHandle, VGet(0.05f, 0.05f, 0.05f));
         MV1SetScale(modelHandle,VGet(0.05f, 0.05f, 0.05f));
 
+
+        //モデルの回転
+        angle+=0.02f;
+
+        Quaternion myQ;
+        myQ=myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec);
+        myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, Vec3::Right()));
+        auto rotatemat = myQ.ToMat();
+      
        
-        
-        auto rotatemat = MGetRotAxis(upVec.VGet(), atan2(-moveDir.x,-moveDir.z));
         MV1SetRotationMatrix(modelHandle, rotatemat /*Vec3(0, atan2(moveDir.z, -moveDir.x) + DX_PI_F / 2, 0).VGet()*/);
         
 

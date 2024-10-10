@@ -55,9 +55,6 @@
     <Filter Include="ソース ファイル\Planet\cpp">
       <UniqueIdentifier>{6b698be2-41ef-4a34-8ef0-4507022bf997}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Planet\h">
-      <UniqueIdentifier>{1309e411-b875-46c8-84b5-94643944ee58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Object\Item">
       <UniqueIdentifier>{822b5fbd-5283-4374-9c89-90ad0db107ec}</UniqueIdentifier>
     </Filter>
@@ -73,11 +70,62 @@
     <Filter Include="ソース ファイル\Galaxy\cpp">
       <UniqueIdentifier>{da41859a-75df-4526-a2ff-a3fd79c762a2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Galaxy\h">
-      <UniqueIdentifier>{40def9f4-c252-4e5d-953d-e68bd94a289c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Object\Base">
       <UniqueIdentifier>{5ee8200d-d218-4715-8901-fa6cdb3d0ef9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object\Gimmick">
+      <UniqueIdentifier>{00205299-1e35-4243-8a88-44c12ba1f516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Galaxy">
+      <UniqueIdentifier>{27f55858-8bee-4e55-8cce-6553ee6f5ad2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\LoadManager">
+      <UniqueIdentifier>{2e8ef9b4-d8e5-48dc-bfdc-4aa2e81dfee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyLib">
+      <UniqueIdentifier>{96180d83-ec39-447f-bcbc-ff4098a0252d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object">
+      <UniqueIdentifier>{8c848428-d69b-44e9-bfdf-05b89c359769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Planet">
+      <UniqueIdentifier>{002569ac-ba5b-40ee-b397-367299cd28cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Scene">
+      <UniqueIdentifier>{ff28b77d-053e-459b-baa3-d754133d50a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Planet\h">
+      <UniqueIdentifier>{1309e411-b875-46c8-84b5-94643944ee58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\Base">
+      <UniqueIdentifier>{c8361e93-6d29-4ac2-bc46-0e3f59cf9a8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\Camera">
+      <UniqueIdentifier>{0e143613-3514-4742-a216-cdad1da84589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\ClearObject">
+      <UniqueIdentifier>{8e9bdf8f-bd31-4422-8d79-797900051d24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\Enemy">
+      <UniqueIdentifier>{4ec9e0bd-68ff-48ab-bb1d-21ff939a86da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\Item">
+      <UniqueIdentifier>{30359c95-6fb0-42c5-8dc6-3ad7a3990c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\Gimmick">
+      <UniqueIdentifier>{f6abcb6c-98bc-4572-9480-a15fe0874d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\Player">
+      <UniqueIdentifier>{77358e39-eb32-4b4b-b285-c70ae3e9921e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Object\WarpGate">
+      <UniqueIdentifier>{a2fcfd02-488b-4f7a-94cf-ccc2aab0ee3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyLib\Physics">
+      <UniqueIdentifier>{52a1c384-b74c-47aa-b8cc-94d13b81b430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Galaxy\h">
+      <UniqueIdentifier>{40def9f4-c252-4e5d-953d-e68bd94a289c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +279,12 @@
     <ClCompile Include="MyLib\Quaternion.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
+    <ClCompile Include="Object\ObjectManager.cpp">
+      <Filter>ソース ファイル\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Gimmick\StarCapture.cpp">
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -248,143 +302,149 @@
     <ClInclude Include="Game\World.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="MyLib\DebugDraw.h">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Geometry.h">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\ObjectTag.h">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Vec2.h">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Vec3.h">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Physics\Collidable.h">
-      <Filter>ソース ファイル\MyLib\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Physics\ColliderBase.h">
-      <Filter>ソース ファイル\MyLib\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Physics\ColliderBox.h">
-      <Filter>ソース ファイル\MyLib\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Physics\ColliderCapsule.h">
-      <Filter>ソース ファイル\MyLib\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Physics\ColliderSphere.h">
-      <Filter>ソース ファイル\MyLib\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Physics\Physics.h">
-      <Filter>ソース ファイル\MyLib\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Physics\Rigidbody.h">
-      <Filter>ソース ファイル\MyLib\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="Planet\BossPlanet.h">
-      <Filter>ソース ファイル\Planet\h</Filter>
+      <Filter>ヘッダー ファイル\Planet\h</Filter>
     </ClInclude>
     <ClInclude Include="Planet\BoxPlanet.h">
-      <Filter>ソース ファイル\Planet\h</Filter>
+      <Filter>ヘッダー ファイル\Planet\h</Filter>
     </ClInclude>
     <ClInclude Include="Planet\Planet.h">
-      <Filter>ソース ファイル\Planet\h</Filter>
+      <Filter>ヘッダー ファイル\Planet\h</Filter>
     </ClInclude>
     <ClInclude Include="Planet\SpherePlanet.h">
-      <Filter>ソース ファイル\Planet\h</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadManager\EffectManager.h">
-      <Filter>ソース ファイル\LoadManager</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadManager\FontManager.h">
-      <Filter>ソース ファイル\LoadManager</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadManager\GraphManager.h">
-      <Filter>ソース ファイル\LoadManager</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadManager\ModelManager.h">
-      <Filter>ソース ファイル\LoadManager</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadManager\ScreenManager.h">
-      <Filter>ソース ファイル\LoadManager</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadManager\SoundManager.h">
-      <Filter>ソース ファイル\LoadManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Camera\Camera.h">
-      <Filter>ソース ファイル\Object\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Player\Player.h">
-      <Filter>ソース ファイル\Object\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Enemy\Gorori.h">
-      <Filter>ソース ファイル\Object\Enemy\Gorori</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Enemy\Killer.h">
-      <Filter>ソース ファイル\Object\Enemy\Killer</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Enemy\KillerTheSeeker.h">
-      <Filter>ソース ファイル\Object\Enemy\KillerTheSeeker</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Enemy\Takobo.h">
-      <Filter>ソース ファイル\Object\Enemy\Takobo</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\ClearObject\ClearObject.h">
-      <Filter>ソース ファイル\Object\ClearObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Item\Item.h">
-      <Filter>ソース ファイル\Object\Item</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\GameOverScene.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\GamePlayingScene.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\TitleScene.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\ClearScene.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\PauseScene.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\Scene.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\SceneManager.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\WarpGate\WarpGate.h">
-      <Filter>ソース ファイル\Object\WarpGate</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Enemy\Enemy.h">
-      <Filter>ソース ファイル\Object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Enemy\EnemyManager.h">
-      <Filter>ソース ファイル\Object\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Enemy\EnemySphere.h">
-      <Filter>ソース ファイル\Object\Enemy</Filter>
+      <Filter>ヘッダー ファイル\Planet\h</Filter>
     </ClInclude>
     <ClInclude Include="Game\Galaxy.h">
-      <Filter>ソース ファイル\Galaxy\h</Filter>
+      <Filter>ヘッダー ファイル\Galaxy\h</Filter>
     </ClInclude>
     <ClInclude Include="Game\SerialPlanetGalaxy.h">
-      <Filter>ソース ファイル\Galaxy\h</Filter>
+      <Filter>ヘッダー ファイル\Galaxy\h</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Base\SphereBase.h">
-      <Filter>ソース ファイル\Object\Base</Filter>
+    <ClInclude Include="Scene\ClearScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GameOverScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GamePlayingScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\PauseScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneManager.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\ObjectManager.h">
+      <Filter>ヘッダー ファイル\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Player\Player.h">
+      <Filter>ヘッダー ファイル\Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="PlayerSphere.h">
-      <Filter>ソース ファイル\Object\Player</Filter>
+      <Filter>ヘッダー ファイル\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\WarpGate\WarpGate.h">
+      <Filter>ヘッダー ファイル\Object\WarpGate</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Gimmick\StarCapture.h">
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item\Item.h">
+      <Filter>ヘッダー ファイル\Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Enemy.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\EnemyManager.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\EnemySphere.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Takobo.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\KillerTheSeeker.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Killer.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Gorori.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\ClearObject\ClearObject.h">
+      <Filter>ヘッダー ファイル\Object\ClearObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Camera\Camera.h">
+      <Filter>ヘッダー ファイル\Object\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Base\SphereBase.h">
+      <Filter>ヘッダー ファイル\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\DebugDraw.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Geometry.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\ObjectTag.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Quaternion.h">
-      <Filter>ソース ファイル\MyLib</Filter>
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Vec2.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Vec3.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\Collidable.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderBase.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderBox.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderCapsule.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderSphere.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\Physics.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\Rigidbody.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\EffectManager.h">
+      <Filter>ヘッダー ファイル\LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\FontManager.h">
+      <Filter>ヘッダー ファイル\LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\GraphManager.h">
+      <Filter>ヘッダー ファイル\LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\ModelManager.h">
+      <Filter>ヘッダー ファイル\LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\ScreenManager.h">
+      <Filter>ヘッダー ファイル\LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager\SoundManager.h">
+      <Filter>ヘッダー ファイル\LoadManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
