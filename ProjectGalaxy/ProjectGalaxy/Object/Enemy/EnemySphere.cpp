@@ -1,29 +1,27 @@
-#include "EnemySphere.h"
+ï»¿#include "EnemySphere.h"
 #include "Enemy.h"
 #include "../MyLib/Physics/ColliderSphere.h"
 namespace
 {
 	/// <summary>
-	/// ‹…‚Ì“–‚½‚è”»’è”¼Œa
+	/// çƒã®å½“ãŸã‚Šåˆ¤å®šåŠå¾„
 	/// </summary>
 	constexpr float kSphereRadius = 10.0f;
 	/// <summary>
-	/// ‹…‚Ì¶¬ŠÔŠu
+	/// çƒã®ç”Ÿæˆé–“éš”
 	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
 	const char* name = "Sphere";
 }
-EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, int moveNum, int color) : Collidable(priority,tag),
-m_enemy(std::dynamic_pointer_cast<Enemy>(enemy)),
-m_radius(kSphereRadius),
-m_velocity(velocity)
+EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, int moveNum, int color) : SphereBase(priority,tag,pos,velocity,color,kSphereRadius),
+m_enemy(std::dynamic_pointer_cast<Enemy>(enemy))
 {
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = m_radius;
 	m_color = color;
-	//moveNum‚É‚æ‚Á‚Ä‹““®‚ª•Ï‚í‚é‚Ì‚©‚à‚µ‚ê‚È‚¢(À‘•‚·‚é‚©‚í‚©‚ç‚ñ)
+	//moveNumã«ã‚ˆã£ã¦æŒ™å‹•ãŒå¤‰ã‚ã‚‹ã®ã‹ã‚‚ã—ã‚Œãªã„(å®Ÿè£…ã™ã‚‹ã‹ã‚ã‹ã‚‰ã‚“)
 	//if (moveNum == 0)
 	{
 		m_moveUpdate = &EnemySphere::StraightUpdate;

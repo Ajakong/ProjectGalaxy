@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include"Galaxy.h"
 
 class Camera;
@@ -12,7 +12,7 @@ class KillerTheSeeker;
 class Gorori;
 class Item;
 
-class SerialPlanetGalaxy :public Galaxy//GameManager‚ªŠÇ—,˜f¯‚âƒIƒuƒWƒFƒNƒg‚Ìî•ñ‚ğ‚Á‚Ä‚¢‚é
+class SerialPlanetGalaxy :public Galaxy//GameManagerãŒç®¡ç†,æƒ‘æ˜Ÿã‚„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æƒ…å ±ã‚’æŒã£ã¦ã„ã‚‹
 {
 public:
 	SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer);
@@ -21,25 +21,36 @@ public:
 	void Init();
 	void Update();
 	void Draw();
-	int GetMaterialXCount() { return static_cast<int>(11 - poworStone.size()); }
-
+	
 	using managerState_t = void(SerialPlanetGalaxy::*)();
 	managerState_t m_managerUpdate;
 
 	using managerState_t = void(SerialPlanetGalaxy::*)();
 	managerState_t m_managerDraw;
 private:
+	/// <summary>
+	/// ã‚¹ãƒ†ãƒ¼ã‚¸ç´¹ä»‹ã®æ›´æ–°å‡¦ç†
+	/// </summary>
 	void IntroUpdate();
+	/// <summary>
+	/// ã‚¹ãƒ†ãƒ¼ã‚¸ç´¹ä»‹ã®æç”»å‡¦ç†
+	/// </summary>
 	void IntroDraw();
 
+	/// <summary>
+	/// ã‚²ãƒ¼ãƒ ãƒ—ãƒ¬ã‚¤æ™‚ã®æ›´æ–°å‡¦ç†
+	/// </summary>
 	void GamePlayingUpdate();
+	/// <summary>
+	/// ã‚²ãƒ¼ãƒ ãƒ—ãƒ¬ã‚¤æ™‚ã®æç”»å‡¦ç†
+	/// </summary>
 	void GamePlayingDraw();
 
 private:
 
 	struct UserData
 	{
-		float dissolveY;	// ƒfƒBƒ]ƒ‹ƒ”‚µ‚½‚¢‚‚³
+		float dissolveY;	// ãƒ‡ã‚£ã‚¾ãƒ«ãƒ´ã—ãŸã„é«˜ã•
 		float minY;
 		float maxY;
 		float dummy;
@@ -62,26 +73,26 @@ private:
 
 	Vec3 m_cameraUpVec;
 
-	//ƒ{ƒX‚ªoŒ»‚µ‚½‚©
+	//ãƒœã‚¹ãŒå‡ºç¾ã—ãŸã‹
 	bool m_isBossWatch = false;
 
-	//ƒnƒ“ƒhƒ‹W
+	//ãƒãƒ³ãƒ‰ãƒ«é›†
 	int m_skyDomeH;
 	int modelH;
 	int m_warpEffectHandle;
 	int m_miniMapScreenHandle;
 
-	//•¨‘ÌX‚Ì”
+	//ç‰©ä½“Xã®æ•°
 	int itemNum;
 
-	// ’Êí‚ÌRT
+	// é€šå¸¸ã®RT
 	int RT;
 	int RT2;
-	// ƒAƒEƒgƒ‰ƒCƒ“‚ÌRT
+	// ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®RT
 	int outlineRT;
-	// –@üî•ñ‚ÌRT
+	// æ³•ç·šæƒ…å ±ã®RT
 	int normRT;
-	// ‚Ú‚©‚µ—pRT
+	// ã¼ã‹ã—ç”¨RT
 	int blurRT;
 	int shrinkRT;
 	int depthRT;

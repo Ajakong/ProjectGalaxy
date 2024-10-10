@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "MyLib/Vec3.h"
 #include <cmath>
 
@@ -33,20 +33,64 @@ private:
 		{
 			Q tempQ;
 
-			/*ƒNƒI[ƒ^ƒjƒIƒ“‚ÌŠ|‚¯Z*/
-			tempQ.w = w * _q.w - x * _q.x - y * _q.y - z * _q.z;//À•”
-			tempQ.x = w * _q.x + x * _q.w + y * _q.z - z * _q.y;//‹••”x
-			tempQ.y = w * _q.y + y * _q.w + z * _q.x - x * _q.z;//‹••”y
-			tempQ.z = w * _q.z + z * _q.w + x * _q.y - y * _q.x;//‹••”z
+			/*ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®æ›ã‘ç®—*/
+			tempQ.w = w * _q.w - x * _q.x - y * _q.y - z * _q.z;//å®Ÿéƒ¨
+			tempQ.x = w * _q.x + x * _q.w + y * _q.z - z * _q.y;//è™šéƒ¨x
+			tempQ.y = w * _q.y + y * _q.w + z * _q.x - x * _q.z;//è™šéƒ¨y
+			tempQ.z = w * _q.z + z * _q.w + x * _q.y - y * _q.x;//è™šéƒ¨z
 
 			return tempQ;
 		}
+
 	};
 
 	Q Qu;
 
 public:
-	//‰ñ“]ƒNƒH[ƒ^ƒjƒIƒ“
+	Quaternion QMult(Quaternion a, Quaternion b)
+	{
+		Quaternion temp;
+
+		/*ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®æ›ã‘ç®—*/
+		temp.Qu.w = a.Qu.w * b.Qu.w - a.Qu.x * b.Qu.x - a.Qu.y * b.Qu.y - a.Qu.z * b.Qu.z;//å®Ÿéƒ¨
+		temp.Qu.x = a.Qu.w * b.Qu.x + a.Qu.x * b.Qu.w + a.Qu.y * b.Qu.z - a.Qu.z * b.Qu.y;//è™šéƒ¨x
+		temp.Qu.y = a.Qu.w * b.Qu.y + a.Qu.y * b.Qu.w + a.Qu.z * b.Qu.x - a.Qu.x * b.Qu.z;//è™šéƒ¨y
+		temp.Qu.z = a.Qu.w * b.Qu.z + a.Qu.z * b.Qu.w + a.Qu.x * b.Qu.y - a.Qu.y * b.Qu.x;//è™šéƒ¨z
+
+		return temp;
+	}
+	Quaternion AddRotationQuaternion(double radian, Vec3 Axis)
+	{
+		Quaternion ans;
+		ans.Qu.w = Qu.w;
+		ans.Qu.x = Qu.x;
+		ans.Qu.y= Qu.y;
+		ans.Qu.z = Qu.z;
+
+		double norm;
+		double ccc, sss;
+
+		ans.Qu.w = ans.Qu.x = ans.Qu.y = ans.Qu.z = 0.0;
+
+		norm = Axis.x * Axis.x + Axis.y * Axis.y + Axis.z * Axis.z;
+		if (norm <= 0.0) return ans;
+
+		norm = 1.0 / sqrt(norm);
+		Axis.x *= static_cast<float> (norm);
+		Axis.y *= static_cast<float> (norm);
+		Axis.z *= static_cast<float> (norm);
+
+		ccc = cos(0.5 * radian);
+		sss = sin(0.5 * radian);
+
+		ans.Qu.w += static_cast<float>(ccc);
+		ans.Qu.x += static_cast<float>(sss) * Axis.x;
+		ans.Qu.y += static_cast<float>(sss) * Axis.y;
+		ans.Qu.z += static_cast<float>(sss) * Axis.z;
+
+		return ans;
+	}
+	//å›è»¢ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
 	Quaternion CreateRotationQuaternion(double radian, Vec3 Axis)
 	{
 		Quaternion ans;
@@ -75,16 +119,16 @@ public:
 	}
 	void SetQuaternion(Vec3 pos) { Qu.w = 1.0; Qu.x = pos.x; Qu.y = pos.y; Qu.z = pos.z; }
 
-	void SetMove(float _angle, Vec3 _axis)//‰ñ“]²‚ÆŠp‘¬“x‚Ìİ’è
+	void SetMove(float _angle, Vec3 _axis)//å›è»¢è»¸ã¨è§’é€Ÿåº¦ã®è¨­å®š
 	{
 		_axis.Normalize();
-		Qu.w = cos(_angle / 2.0f);//À•”
+		Qu.w = cos(_angle / 2.0f);//å®Ÿéƒ¨
 		Qu.x = _axis.x * sin(_angle / 2.0f);
 		Qu.y = _axis.y * sin(_angle / 2.0f);
 		Qu.z = _axis.z * sin(_angle / 2.0f);
 	}
 	/// <summary>
-	/// •½sˆÚ“®
+	/// å¹³è¡Œç§»å‹•
 	/// </summary>
 	/// <param name="m_pos"></param>
 	/// <param name="_vec"></param>
@@ -94,29 +138,29 @@ public:
 		Q qPos, qInv;
 		Vec3 vPos;
 
-		//3ŸŒ³À•W‚ğƒNƒI[ƒ^ƒjƒIƒ“‚É•ÏŠ·
+		//3æ¬¡å…ƒåº§æ¨™ã‚’ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã«å¤‰æ›
 		qPos.w = 1.0f;
 		qPos.x = m_pos.x;
 		qPos.y = m_pos.y;
 		qPos.z = m_pos.z;
 
-		//‰ñ“]ƒNƒH[ƒ^ƒjƒIƒ“‚ÌƒCƒ“ƒo[ƒX‚Ìì¬
-		//‹tƒNƒH[ƒ^ƒjƒIƒ“‚ğo‚·‚Ì‚Í‘å•Ï‚È‚Ì‚ÅA
-		//3ŸŒ³‚¾‚Æ“¯‚¶’l‚É‚È‚é‹¤–ğƒNƒI[ƒ^ƒjƒIƒ“‚Åì¬(‹••”‚¾‚¯ƒ}ƒCƒiƒX”½“])
+		//å›è»¢ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ã‚¤ãƒ³ãƒãƒ¼ã‚¹ã®ä½œæˆ
+		//é€†ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‚’å‡ºã™ã®ã¯å¤§å¤‰ãªã®ã§ã€
+		//3æ¬¡å…ƒã ã¨åŒã˜å€¤ã«ãªã‚‹å…±å½¹ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã§ä½œæˆ(è™šéƒ¨ã ã‘ãƒã‚¤ãƒŠã‚¹åè»¢)
 		qInv.w = Qu.w;
 		qInv.x = -Qu.x;
 		qInv.y = -Qu.y;
 		qInv.z = -Qu.z;
 
-		//‰ñ“]Œã‚ÌƒNƒI[ƒ^ƒjƒIƒ“‚Ìì¬
+		//å›è»¢å¾Œã®ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ä½œæˆ
 		qPos = Qu * qPos * qInv;
 
-		//‚RŸŒ³À•W‚É–ß‚·
+		//ï¼“æ¬¡å…ƒåº§æ¨™ã«æˆ»ã™
 		vPos.x = qPos.x;
 		vPos.y = qPos.y;
 		vPos.z = qPos.z;
 
-		// ‰ñ“]Œã‚ÉˆÚ“®
+		// å›è»¢å¾Œã«ç§»å‹•
 		vPos.x += _vec.x;
 		vPos.y += _vec.y;
 		vPos.z += _vec.z;
@@ -165,5 +209,20 @@ public:
 		return matQ;
 	}
 	
+	void LookAt(Vec3 Dir)
+	{
+		Vec3 norm = Vec3(0, 0, 1);
+		float dot = Dot(norm, Dir);
+		float theta = acos(dot);
+		Vec3 cross =Cross(norm, Dir);
+		Q q;
+		cross = cross.GetNormalized();
+		theta = theta / 2;
+		Qu.x = cross.x * sin(theta);
+		Qu.y = cross.y * sin(theta);
+		Qu.z = cross.z * sin(theta);
+		Qu.w = cos(theta);
+	}
+
 };
 

@@ -1,4 +1,4 @@
-#include "DxLib.h"
+ï»¿#include "DxLib.h"
 #include "Application.h"
 #include <cassert>
 #include <algorithm>
@@ -22,21 +22,21 @@ namespace MyEngine
 			v.sv = 0.f;
 		}
 
-		//‹éŒ`‚É‚È‚é‚æ‚¤‚É•À‚×‚Ä‚¢‚­
-		//Z‚Ì‡”Ô‚É‚È‚é‚æ‚¤‚É’¸“_‚ğ•À‚×‚Ä‚¢‚­
-		//¶ã
+		//çŸ©å½¢ã«ãªã‚‹ã‚ˆã†ã«ä¸¦ã¹ã¦ã„ã
+		//Zã®é †ç•ªã«ãªã‚‹ã‚ˆã†ã«é ‚ç‚¹ã‚’ä¸¦ã¹ã¦ã„ã
+		//å·¦ä¸Š
 		vertices[0].pos = VGet(x, y, 0.0f);
 		vertices[0].u = 0.0f;
 		vertices[0].v = 0.0f;
-		//‰Eã
+		//å³ä¸Š
 		vertices[1].pos = VGet(x + w, y, 0.0f);
 		vertices[1].u = 1.0f;
 		vertices[1].v = 0.0f;
-		//¶‰º
+		//å·¦ä¸‹
 		vertices[2].pos = VGet(x, y + h, 0.0f);
 		vertices[2].u = 0.0f;
 		vertices[2].v = 1.0f;
-		//‰E‰º
+		//å³ä¸‹
 		vertices[3].pos = VGet(x + w, y + h, 0.0f);
 		vertices[3].u = 1.0f;
 		vertices[3].v = 1.0f;
@@ -46,7 +46,7 @@ namespace MyEngine
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 		}
 
-		//¡‚©‚ç‚Ì•`‰æ‚Ég‚¤‰æ‘œ‚ğİ’è‚·‚é
+		//ä»Šã‹ã‚‰ã®æç”»ã«ä½¿ã†ç”»åƒã‚’è¨­å®šã™ã‚‹
 		SetUseTextureToShader(0, handle);
 		if (secondH != -1)
 		{
@@ -61,28 +61,28 @@ namespace MyEngine
 			SetUseTextureToShader(3, forthH);
 		}
 
-		//¡‚©‚çg‚¤ƒVƒF[ƒ_[‚ğİ’è
+		//ä»Šã‹ã‚‰ä½¿ã†ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®š
 		SetUsePixelShader(psH);
 
 		std::array<uint16_t, 6> indces;
 		indces = { 0,1,3,0,3,2 };
 
-		return DrawPrimitiveIndexed2DToShader(vertices.data(),			//ƒAƒhƒŒƒX
-			static_cast<int>(vertices.size()),			//’¸“_”
+		return DrawPrimitiveIndexed2DToShader(vertices.data(),			//ã‚¢ãƒ‰ãƒ¬ã‚¹
+			static_cast<int>(vertices.size()),			//é ‚ç‚¹æ•°
 			indces.data(),
 			static_cast<int>(indces.size()),
-			DX_PRIMTYPE_TRIANGLELIST);//ƒgƒ|ƒƒW|
+			DX_PRIMTYPE_TRIANGLELIST);//ãƒˆãƒãƒ­ã‚¸ï¼
 	}
 }
 
 
-// ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
+// ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯ WinMain ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
 	Application& application = Application::GetInstance();
 
 	if (!application.Init())
 	{
-		return -1;// ‚±‚ÌƒAƒvƒŠ‚Í•s³I—¹‚µ‚Ü‚µ‚½B
+		return -1;// ã“ã®ã‚¢ãƒ—ãƒªã¯ä¸æ­£çµ‚äº†ã—ã¾ã—ãŸã€‚
 	}
 	application.Run();
 

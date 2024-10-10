@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include<map>
 #include<string>
 #include<EffekseerForDXLib.h>
 struct EffectInfo {
-	int handle;//ƒnƒ“ƒhƒ‹
-	bool used;//ˆê“xˆÈãg—pÏ‚İ‚©H
+	int handle;//ãƒãƒ³ãƒ‰ãƒ«
+	bool used;//ä¸€åº¦ä»¥ä¸Šä½¿ç”¨æ¸ˆã¿ã‹ï¼Ÿ
 };
 class EffectManager
 {
@@ -18,5 +18,7 @@ public:
 	static EffectManager& GetInstance();
 	int GetEffectData(const char* filepath);
 	void DeleteEffectData(const char* effectname);
+
+	
 };
 

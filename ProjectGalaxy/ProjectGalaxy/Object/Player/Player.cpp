@@ -1,40 +1,43 @@
-#include "Player.h"
+ï»¿#include "Player.h"
 #include"Pad.h"
 #include"ColliderSphere.h"
 #include"Camera.h"
 #include"SoundManager.h"
 #include"Gorori.h"
 #include"EnemySphere.h"
+#include"PlayerSphere.h"
 #include"KillerTheSeeker.h"
 #include"ModelManager.h"
+#include"GraphManager.h"
 #include"Quaternion.h"
+#include"Physics.h"
 
 /// <summary>
-/// ‚â‚é‚±‚Æ:‘«‚Ì“–‚½‚è”»’è‚ğ¶¬E“¥‚İ‚Â‚¯‚Ég‚¤
-/// ƒXƒsƒ“ê—p‚Ì“–‚½‚è”»’è‚ğ¶¬E‘Ì‚æ‚è”¼Œa‚ª‘å‚«‚¢“–‚½‚è”»’è‚É‚µAƒXƒsƒ“’†‚É‚¾‚¯oŒ»
+/// ã‚„ã‚‹ã“ã¨:è¶³ã®å½“ãŸã‚Šåˆ¤å®šã‚’ç”Ÿæˆãƒ»è¸ã¿ã¤ã‘ã«ä½¿ã†
+/// ã‚¹ãƒ”ãƒ³å°‚ç”¨ã®å½“ãŸã‚Šåˆ¤å®šã‚’ç”Ÿæˆãƒ»ä½“ã‚ˆã‚ŠåŠå¾„ãŒå¤§ãã„å½“ãŸã‚Šåˆ¤å®šã«ã—ã€ã‚¹ãƒ”ãƒ³ä¸­ã«ã ã‘å‡ºç¾
 /// </summary>
 
 namespace
 {
-	constexpr int kNetralRadius = 20;//’Êí‚Ì“–‚½‚è”¼Œa
+	constexpr int kNetralRadius = 20;//é€šå¸¸æ™‚ã®å½“ãŸã‚ŠåŠå¾„
 
 	constexpr int kDamageFrameMax = 20;
-	//ƒAƒjƒ[ƒVƒ‡ƒ“”Ô†
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç•ªå·
 	constexpr int kIdleAnimIndex = 1;
-	//constexpr int kIdleAnimIndex = 2;//‘Ò‹@ƒeƒXƒg
+	//constexpr int kIdleAnimIndex = 2;//å¾…æ©Ÿãƒ†ã‚¹ãƒˆ
 	constexpr int kAttackAnimIndex = 30;
 
-	constexpr float kAnimFrameSpeed = 30.0f;//ƒAƒjƒ[ƒVƒ‡ƒ“is‘¬“x
+	constexpr float kAnimFrameSpeed = 30.0f;//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é€²è¡Œé€Ÿåº¦
 
-	//ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌØ‚è‘Ö‚¦‚É‚©‚©‚éƒtƒŒ[ƒ€”
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆ‡ã‚Šæ›¿ãˆã«ã‹ã‹ã‚‹ãƒ•ãƒ¬ãƒ¼ãƒ æ•°
 	constexpr float kAnimChangeFrame = 8.0f;
 	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
 
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚É‚æ‚éˆÚ“®ŠÖ˜A
-	constexpr float kMaxSpeed = 5.0f;//ƒvƒŒƒCƒ„[‚ÌÅ‘å‘¬“x
-	constexpr float kAnalogRangeMin = 0.1f;//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚Ì“ü—Í”»’è”ÍˆÍ
+	//ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã«ã‚ˆã‚‹ç§»å‹•é–¢é€£
+	constexpr float kMaxSpeed = 5.0f;//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æœ€å¤§é€Ÿåº¦
+	constexpr float kAnalogRangeMin = 0.1f;//ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›åˆ¤å®šç¯„å›²
 	constexpr float kAnalogRangeMax = 0.8f;
-	constexpr float kAnalogInputMax = 1000.0f;//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚©‚ç“ü—Í‚³‚ê‚éƒxƒNƒgƒ‹‚ÌÅ‘å’l
+	constexpr float kAnalogInputMax = 1000.0f;//ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‹ã‚‰å…¥åŠ›ã•ã‚Œã‚‹ãƒ™ã‚¯ãƒˆãƒ«ã®æœ€å¤§å€¤
 
 	constexpr float kFrameParSecond = 60.0f;
 
@@ -52,18 +55,46 @@ namespace
 	const char* kGetSearchSEName = "Search.mp3";
 	const char* name = "Player";
 	const char* kFileName = "SpaceHarrier.mv1";
+	
 	constexpr int kAnimationNumTpose = 0;
 	constexpr int kAnimationNumHit = 1;
 	constexpr int kAnimationNumJump = 2;
 	constexpr int kAnimationNumRun = 3;
 	constexpr int kAnimationNumSpin = 4;
 	constexpr int kAnimationNumIdle = 5;
+
+	//ç…§æº–
+	const char* kAimGraphFileName = "Elements_pro.png";
+	constexpr int kAimGraphSrkX = 3140;
+	constexpr int kAimGraphSrkY = 200;
+	constexpr int kAimGraphWidth = 400;
+	constexpr int kAimGraphHeight = 370;
 }
 
 float GetAngle(Vec3 a, Vec3 b)
 {
-	return acos(Dot(a.GetNormalized(), b.GetNormalized())) * 180 / DX_PI_F;
+	float cos = Dot(a.GetNormalized(), b.GetNormalized());//ãªã„å¸­ã¯180åº¦ã¾ã§
+	float rad = acos(cos);
+
+#ifdef _DEBUG
+	DrawFormatString(0, 150, 0xffffff, "%f", DX_PI_F / 2);
+	DrawFormatString(0, 175, 0xffffff, "%f", cos);
+#endif
+
+	if (sqrt(1-cos*cos) > 0)//æ­£ã®æ•°ã—ã‹è¿”ã£ã¦ã“ã­ã‡
+	{
+		return rad;
+	}
+	else
+	{
+		return -rad;
+	}
 }
+
+void MTransCopy(MATRIX& in, const MATRIX& src) {
+	in.m[3][0] = src.m[3][0]; in.m[3][1] = src.m[3][1]; in.m[3][2] = src.m[3][2]; in.m[3][3] = 1.f;
+}
+
 
 Player::Player(int modelhandle) : Collidable(Priority::High, ObjectTag::Player),
 m_modelHandle(MV1DuplicateModel(ModelManager::GetInstance().GetModelData(kFileName))),
@@ -92,7 +123,12 @@ m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
 m_attackRadius(0),
 m_parrySEHandle(SoundManager::GetInstance().GetSoundData(kOnParrySEName)),
 m_damageFrameSpeed(1),
-m_postUpVec(Vec3::Up())
+m_postUpVec(Vec3::Up()),
+m_frontVec(Vec3(0,0,1)),
+m_modelBodyRotate(m_frontVec),
+m_shotDir(Vec3(0,0,1)),
+m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
+m_inputVec(0,0,-1)
 {
 	{
 		m_rigid->SetPos(Vec3(0, 0, 0));
@@ -125,6 +161,17 @@ void Player::Update()
 	m_isSearchFlag = false;
 	(this->*m_playerUpdate)();
 	m_chargeRemainTime++;
+	if (Pad::IsTrigger(PAD_INPUT_Y))
+	{
+		if (m_isAimFlag)
+		{
+			m_isAimFlag = false;
+		}
+		else
+		{
+			m_isAimFlag = true;
+		}
+	}
 	if ((Pad::IsTrigger(PAD_INPUT_Z)) && m_searchRemainTime >= 2)PlaySoundMem(m_searchSEHandle, DX_PLAYTYPE_BACK);
 	if ((Pad::IsPress(PAD_INPUT_Z)))
 	{
@@ -142,6 +189,39 @@ void Player::Update()
 			m_chargeRemainTime = 0;
 			m_searchRemainTime++;
 		}
+	}
+	if (m_isAimFlag)
+	{
+
+		
+
+	}
+
+	SetShotDir();
+
+	int index = MV1SearchFrame(m_modelHandle, "mixamorig:Spine");
+	MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), m_shotDir.VGet());
+	nowVec = m_shotDir.VGet();
+
+	/*MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
+	MATRIX mat = MMult(shotDirMat, localMat);
+	MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			DrawFormatString(i * 80, j * 16, GetColor(255, 255, 255), "%f", mat.m[i][j]);
+		}
+	}*/
+
+	if (Pad::IsTrigger(PAD_INPUT_3))
+	{
+		ShotTheStar();
+	}
+
+	for (auto& item : m_sphere)
+	{
+		item->Update();
 	}
 	
 	if (m_visibleCount > 200)
@@ -179,16 +259,15 @@ void Player::Update()
 		m_damageFrame = 0;
 	}
 	UpdateAnim(m_currentAnimNo);
-	//•ÏX‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“100%
+	//å¤‰æ›´å‰ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³100%
 	MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
-	//•ÏXŒã‚ÌƒAƒjƒ[ƒVƒ‡ƒ“0%
+	//å¤‰æ›´å¾Œã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³0%
 	MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 	m_animBlendRate += 0.05f;
 	if (m_animBlendRate > 1.0f)
 	{
 		m_animBlendRate = 1.0f;
 	}
-
 }
 
 void Player::SetMatrix()
@@ -196,33 +275,27 @@ void Player::SetMatrix()
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 
 	MATRIX mat;
-	if (Cross(Vec3::Front(), m_moveDir * -1).z > 0)
-	{
-		mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir)));
-	}
-	else
-	{
-		mat = MGetRotY((DX_PI_F*2)-acos(Dot(Vec3::Front(), m_moveDir)));
-	}
+
+
+
 	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
 
-	Vec3 axis = Cross(Vec3::Up(), m_upVec);
+	m_sideVec = Cross(m_frontVec, m_upVec);
+	m_sideVec.Normalize();
+	//mat = MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()); 
 
-	mat=MMult(mat, MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()));
+	Quaternion myQ;
+	float angle = atan2(-m_moveDir.x, -m_moveDir.z);
 
-	/*Quaternion myQ;
-	if (axis.z > 0)
-	{
-		myQ = myQ.CreateRotationQuaternion(acos(Dot(Vec3::Up(), m_upVec)), axis);
-	}
-	else
-	{
-		myQ = myQ.CreateRotationQuaternion((DX_PI_F*2)-acos(Dot(Vec3::Up(), m_upVec)), axis);
-	}
-	mat = MMult(mat, myQ.ToMat());*/
-	
+	myQ = myQ.CreateRotationQuaternion(angle, Vec3::Up());
+	myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(m_angle,Cross(m_moveDir,m_upVec).GetNormalized()));
+	mat = myQ.ToMat();
+
 	MV1SetRotationMatrix(m_modelHandle, mat);
+	//MV1SetRotationXYZ(m_modelHandle, Vec3(0, atan2(m_inputVec.z, -m_inputVec.x) + DX_PI_F / 2, 0).VGet());
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+
+
 
 }
 
@@ -238,11 +311,16 @@ void Player::Draw()
 	{
 		DrawSphere3D(m_rigid->GetPos().VGet(), m_attackRadius, 10, 0x00ff00, 0xffffff, false);
 	}
-#if _DEBUG
 
+	
+#if _DEBUG
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_upVec * 100).VGet(), 0xff0000);
 
 	//printfDx("%d", HitCount);
 #endif
+	if(m_isAimFlag)DrawRectRotaGraph(800, 450, kAimGraphSrkX, kAimGraphSrkY, kAimGraphWidth, kAimGraphHeight, 0.3, 0, m_aimGraphHandle, true);
 }
 
 void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
@@ -387,15 +465,15 @@ Vec3 Player::GetCameraToPlayer() const
 
 bool Player::UpdateAnim(int attachNo)
 {
-	//ƒAƒjƒ[ƒVƒ‡ƒ“‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚ÅI—¹
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„ã®ã§çµ‚äº†
 	if (attachNo == -1) return false;
 
-	//ƒAƒjƒ[ƒVƒ‡ƒ“‚ğis‚³‚¹‚é
-	float now = MV1GetAttachAnimTime(m_modelHandle, attachNo);//Œ»İ‚ÌÄ¶ƒJƒEƒ“ƒg
-	now += kAnimFrameSpeed / kFrameParSecond;//ƒAƒjƒ[ƒVƒ‡ƒ“ƒJƒEƒ“ƒg‚ği‚ß‚é
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’é€²è¡Œã•ã›ã‚‹
+	float now = MV1GetAttachAnimTime(m_modelHandle, attachNo);//ç¾åœ¨ã®å†ç”Ÿã‚«ã‚¦ãƒ³ãƒˆ
+	now += kAnimFrameSpeed / kFrameParSecond;//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚«ã‚¦ãƒ³ãƒˆã‚’é€²ã‚ã‚‹
 
 
-	//Œ»İÄ¶’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚Ì‘ƒJƒEƒ“ƒg‚ğæ“¾‚·‚é
+	//ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ç·ã‚«ã‚¦ãƒ³ãƒˆã‚’å–å¾—ã™ã‚‹
 	float total = MV1GetAttachAnimTotalTime(m_modelHandle, attachNo);
 	bool isLoop = false;
 	while (now >= total)
@@ -411,24 +489,24 @@ bool Player::UpdateAnim(int attachNo)
 
 void Player::ChangeAnim(int animIndex)
 {
-	//‚³‚ç‚ÉŒÃ‚¢ƒAƒjƒ[ƒVƒ‡ƒ“‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚éê‡‚Í‚±‚Ì“_‚Åíœ‚µ‚Ä‚¨‚­
+	//ã•ã‚‰ã«å¤ã„ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹å ´åˆã¯ã“ã®æ™‚ç‚¹ã§å‰Šé™¤ã—ã¦ãŠã
 	if (m_prevAnimNo != -1)
 	{
 		MV1DetachAnim(m_modelHandle, m_prevAnimNo);
 	}
 
-	//Œ»İÄ¶’†‚Ì‘Ò‹@ƒAƒjƒ[ƒVƒ‡ƒ“‚Í•ÏX‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“ˆµ‚¢‚É
+	//ç¾åœ¨å†ç”Ÿä¸­ã®å¾…æ©Ÿã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã¯å¤‰æ›´å‰ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ‰±ã„ã«
 	m_prevAnimNo = m_currentAnimNo;
 
-	//•ÏXŒã‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚Æ‚µ‚ÄUŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‰ü‚ß‚Äİ’è‚·‚é
+	//å¤‰æ›´å¾Œã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã¨ã—ã¦æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’æ”¹ã‚ã¦è¨­å®šã™ã‚‹
 	m_currentAnimNo = MV1AttachAnim(m_modelHandle, animIndex, -1, false);
 
-	//Ø‚è‘Ö‚¦‚ÌuŠÔ‚Í•ÏX‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ªÄ¶‚³‚ê‚éó‘Ô‚É‚·‚é
+	//åˆ‡ã‚Šæ›¿ãˆã®ç¬é–“ã¯å¤‰æ›´å‰ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒå†ç”Ÿã•ã‚Œã‚‹çŠ¶æ…‹ã«ã™ã‚‹
 	m_animBlendRate = 0.0f;
 
-	//•ÏX‘O‚ÌƒAƒjƒ[ƒVƒ‡ƒ“100%
+	//å¤‰æ›´å‰ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³100%
 	MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
-	//•ÏXŒã‚ÌƒAƒjƒ[ƒVƒ‡ƒ“0%
+	//å¤‰æ›´å¾Œã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³0%
 	MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 
 }
@@ -447,54 +525,24 @@ void Player::NeutralUpdate()
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
 	item->radius = m_attackRadius;
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚ğg‚Á‚ÄˆÚ“®
+	//ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’ä½¿ã£ã¦ç§»å‹•
 
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-	analogY = -analogY;
-
+	Vec3 move = Move();
 	
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚Ì“ü—Í10%~80%‚ğg—p‚·‚é
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ªÅ‘å1000‚É‚È‚é
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğæ“¾
-	Vec3 move;
-
-	float len = move.Length();
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ0.0~1.0‚ÌŠ„‡‚É•ÏŠ·‚·‚é
-	float rate = len / kAnalogInputMax;
-	Vec3 front = GetCameraFrontVector();
-	Vec3 right = GetCameraRightVector();
-	move = m_frontVec * static_cast<float>(analogY);//“ü—Í‚ª‘å‚«‚¢‚Ù‚Ç—˜‹³‚ª‘å‚«‚¢,0‚Ì‚Í0
-	move += m_sideVec * static_cast<float>(analogX);
-
-
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN–³Œø‚È”ÍˆÍ‚ğœŠO‚·‚é
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-	if (std::abs(move.Length()) >= 0.2f)
+	if (std::abs(move.Length()) >= 0.2f*kMaxSpeed)
 	{
 		ChangeAnim(kAnimationNumRun);
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
-	//‘¬“x‚ªŒˆ’è‚Å‚«‚é‚Ì‚ÅˆÚ“®ƒxƒNƒgƒ‹‚É”½‰f
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
-
-	//m_angle = fmodf(m_cameraAngle, 360);//mod:—]‚è@
-	//MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//–{—ˆ‚ÍƒJƒƒ‰‚ğs—ñ‚Å§Œä‚µA‚»‚Ìs—ñ‚ÅY²‰ñ“]
-	m_moveDir = move;
-	move = move * speed;
-	//ƒvƒŒƒCƒ„[‚ÌÅ‘åˆÚ“®‘¬“x‚Í0.01f/frame
-	if (Pad::IsTrigger(PAD_INPUT_1))//XBox‚ÌAƒ{ƒ^ƒ“
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æœ€å¤§ç§»å‹•é€Ÿåº¦ã¯0.01f/frame
+	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxã®Aãƒœã‚¿ãƒ³
 	{
 		ChangeAnim(kAnimationNumJump);
 		m_isJumpFlag = true;
 		move += m_upVec.GetNormalized() * 10;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
-	if (Pad::IsTrigger(PAD_INPUT_B))//XBox‚Ì
+	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxã®
 	{
 		ChangeAnim(kAnimationNumSpin);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
@@ -502,6 +550,10 @@ void Player::NeutralUpdate()
 		item->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
+	}
+	if (Pad::IsTrigger(PAD_INPUT_Y))
+	{
+		m_playerUpdate = &Player::AimingUpdate;
 	}
 	
 	m_rigid->SetVelocity(move);
@@ -512,52 +564,27 @@ void Player::WalkingUpdate()
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
 	item->radius = m_attackRadius;
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚ğg‚Á‚ÄˆÚ“®
-
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-	analogY = -analogY;
 	
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚Ì“ü—Í10%~80%‚ğg—p‚·‚é
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ªÅ‘å1000‚É‚È‚é
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğæ“¾
 	Vec3 move;
 
-	float len = move.Length();
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ0.0~1.0‚ÌŠ„‡‚É•ÏŠ·‚·‚é
-	float rate = len / kAnalogInputMax;
-	Vec3 front = GetCameraFrontVector();
-	Vec3 right = GetCameraRightVector();
-	move = m_frontVec * static_cast<float>(analogY);//“ü—Í‚ª‘å‚«‚¢‚Ù‚Ç—˜‹³‚ª‘å‚«‚¢,0‚Ì‚Í0
-	move += m_sideVec * static_cast<float>(analogX);
+	move = Move();
+	m_inputVec=move;
 
-
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN–³Œø‚È”ÍˆÍ‚ğœŠO‚·‚é
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-	if (std::abs(move.Length()) < 0.2f)
+	if (std::abs(move.Length()) < 0.2f*kMaxSpeed)
 	{
 		ChangeAnim(kAnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
-	//‘¬“x‚ªŒˆ’è‚Å‚«‚é‚Ì‚ÅˆÚ“®ƒxƒNƒgƒ‹‚É”½‰f
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
 
-	//m_angle = fmodf(m_cameraAngle, 360);//mod:—]‚è@
-	//MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//–{—ˆ‚ÍƒJƒƒ‰‚ğs—ñ‚Å§Œä‚µA‚»‚Ìs—ñ‚ÅY²‰ñ“]
-	m_moveDir = move;
-	move = move * speed;
-	if (Pad::IsTrigger(PAD_INPUT_1))//XBox‚ÌAƒ{ƒ^ƒ“
+
+	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxã®Aãƒœã‚¿ãƒ³
 	{
 		ChangeAnim(kAnimationNumJump);
 		m_isJumpFlag = true;
 		move += m_upVec.GetNormalized() * 10;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
-	if (Pad::IsTrigger(PAD_INPUT_B))//XBox‚Ì
+	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxã®
 	{
 		ChangeAnim(kAnimationNumSpin);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
@@ -566,7 +593,10 @@ void Player::WalkingUpdate()
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
-
+	if (Pad::IsTrigger(PAD_INPUT_Y))
+	{
+		m_playerUpdate = &Player::AimingUpdate;
+	}
 	m_rigid->SetVelocity(move);
 }
 
@@ -577,7 +607,7 @@ void Player::JumpingUpdate()
 	item->radius = m_attackRadius;
 	m_rigid->SetVelocity(m_rigid->GetPrevVelocity());
 
-	if (Pad::IsTrigger(PAD_INPUT_B))//XBox‚Ì
+	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxã®
 	{
 		ChangeAnim(kAnimationNumSpin);
 		if (m_spinCount >= 1)return;
@@ -592,44 +622,43 @@ void Player::JumpingUpdate()
 
 void Player::AimingUpdate()
 {
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	m_attackRadius = 0;
+	item->radius = m_attackRadius;
+	
+	Vec3 move;
+	move = Move();
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æœ€å¤§ç§»å‹•é€Ÿåº¦ã¯0.01f/frame
+	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxã®Aãƒœã‚¿ãƒ³
+	{
+		ChangeAnim(kAnimationNumJump);
+		m_isJumpFlag = true;
+		move += m_upVec.GetNormalized() * 10;
+		m_playerUpdate = &Player::JumpingUpdate;
+	}
+	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxã®
+	{
+		ChangeAnim(kAnimationNumSpin);
+		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_attackRadius = kNetralRadius + 10;
+		item->radius = m_attackRadius;
+		m_isSpinFlag = true;
+		m_playerUpdate = &Player::SpiningUpdate;
+	}
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
+	
+	m_rigid->SetVelocity(move);
+	
 }
 
 void Player::SpiningUpdate()
 {
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚ğg‚Á‚ÄˆÚ“®
-
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-	analogY = -analogY;
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚Ì“ü—Í10%~80%‚ğg—p‚·‚é
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ªÅ‘å1000‚É‚È‚é
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğæ“¾
 	Vec3 move;
 
-	float len = move.Length();
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ0.0~1.0‚ÌŠ„‡‚É•ÏŠ·‚·‚é
-	float rate = len / kAnalogInputMax;
-	Vec3 front = GetCameraFrontVector();
-	Vec3 right = GetCameraRightVector();
-	move = m_frontVec * static_cast<float>(analogY);//“ü—Í‚ª‘å‚«‚¢‚Ù‚Ç—˜‹³‚ª‘å‚«‚¢,0‚Ì‚Í0
-	move += m_sideVec * static_cast<float>(analogX);
-
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN–³Œø‚È”ÍˆÍ‚ğœŠO‚·‚é
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-
-	//‘¬“x‚ªŒˆ’è‚Å‚«‚é‚Ì‚ÅˆÚ“®ƒxƒNƒgƒ‹‚É”½‰f
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
-
-	m_moveDir = move;
-	move = move * speed;
+	move = Move();
 
 	m_rigid->SetVelocity(move);
 
@@ -649,36 +678,10 @@ void Player::SpiningUpdate()
 
 void Player::JumpingSpinUpdate()
 {
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚ğg‚Á‚ÄˆÚ“®
+	//ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’ä½¿ã£ã¦ç§»å‹•
 
-	int analogX = 0, analogY = 0;
-
-	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-	analogY = -analogY;
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN‚Ì“ü—Í10%~80%‚ğg—p‚·‚é
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ªÅ‘å1000‚É‚È‚é
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğæ“¾
 	Vec3 move;
-
-	float len = move.Length();
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ0.0~1.0‚ÌŠ„‡‚É•ÏŠ·‚·‚é
-	float rate = len / kAnalogInputMax;
-	Vec3 front = GetCameraFrontVector();
-	Vec3 right = GetCameraRightVector();
-	move = m_frontVec * static_cast<float>(analogY);//“ü—Í‚ª‘å‚«‚¢‚Ù‚Ç—˜‹³‚ª‘å‚«‚¢,0‚Ì‚Í0
-	move += m_sideVec * static_cast<float>(analogX);
-
-	//ƒAƒiƒƒOƒXƒeƒBƒbƒN–³Œø‚È”ÍˆÍ‚ğœŠO‚·‚é
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-
-	//‘¬“x‚ªŒˆ’è‚Å‚«‚é‚Ì‚ÅˆÚ“®ƒxƒNƒgƒ‹‚É”½‰f
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
-
-	m_moveDir = move;
-	move = move * speed;
+	move = Move();
 
 	m_rigid->SetVelocity(move);
 
@@ -696,7 +699,6 @@ void Player::JumpingSpinUpdate()
 		m_playerUpdate = &Player::JumpingUpdate;
 		m_spinAngle = 0;
 	}
-
 }
 
 void Player::BoostUpdate()
@@ -712,6 +714,53 @@ void Player::BoostUpdate()
 	}
 }
 
+Vec3 Player::Move()
+{
+	int analogX = 0, analogY = 0;
+
+	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+
+	analogY = -analogY;
+
+
+	//ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›10%~80%ã‚’ä½¿ç”¨ã™ã‚‹
+	//ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ãŒæœ€å¤§1000ã«ãªã‚‹
+	//ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’å–å¾—
+	Vec3 move;
+
+	float len = move.Length();
+	//ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’0.0~1.0ã®å‰²åˆã«å¤‰æ›ã™ã‚‹
+	float rate = len / kAnalogInputMax;
+	m_sideVec = GetCameraRightVector();
+	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
+
+	move = m_frontVec * static_cast<float>(analogY);//å…¥åŠ›ãŒå¤§ãã„ã»ã©åˆ©æ•™ãŒå¤§ãã„,0ã®æ™‚ã¯0
+	move += m_sideVec * static_cast<float>(analogX);
+
+	//ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ç„¡åŠ¹ãªç¯„å›²ã‚’é™¤å¤–ã™ã‚‹
+	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
+	rate = min(rate, 1.0f);
+	rate = max(rate, 0.0f);
+
+	//é€Ÿåº¦ãŒæ±ºå®šã§ãã‚‹ã®ã§ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã«åæ˜ 
+	move = move.GetNormalized();
+	float speed = kMaxSpeed;
+
+	//m_angle = fmodf(m_cameraAngle, 360);//mod:ä½™ã‚Šã€€
+	//MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//æœ¬æ¥ã¯ã‚«ãƒ¡ãƒ©ã‚’è¡Œåˆ—ã§åˆ¶å¾¡ã—ã€ãã®è¡Œåˆ—ã§Yè»¸å›è»¢
+	m_moveDir = move;
+	move = move * speed;
+	return move;
+}
+
+void Player::ShotTheStar()
+{
+	Vec3 shotPos = m_rigid->GetPos();
+	shotPos += m_upVec.GetNormalized() * 70;
+	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir,m_sideVec, 1, 0xff0000));
+	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+}
+
 void Player::DamegeUpdate()
 {
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
@@ -723,18 +772,18 @@ void Player::DamegeUpdate()
 		if (m_prevUpdate != m_playerUpdate)
 		{
 			ChangeAnim(kAnimationNumRun);
-			//ƒ_ƒ[ƒWƒAƒjƒ[ƒVƒ‡ƒ“‚Ì‚İ
+			//ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ã¿
 			m_playerUpdate = m_prevUpdate;
 		}
 		else
 		{
 			ChangeAnim(kAnimationNumIdle);
 			m_playerUpdate = &Player::NeutralUpdate;
-			m_prevUpdate = m_playerUpdate;
+			m_prevUpdate 
+				= m_playerUpdate;
 		}
 	}
 }
-
 void Player::AvoidUpdate()
 {
 	actionFrame++;
@@ -750,6 +799,16 @@ void Player::AvoidUpdate()
 
 void Player::Planet1Update()
 {
+}
 
+void Player::SetShotDir()
+{
+	int directX = 0, directY = 0;
+	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
+	directY = -directY;
 
+	m_shotDir = m_sideVec*static_cast<float>(directX) * 0.001f;
+	m_shotDir = m_shotDir+(m_upVec*static_cast<float>(directY) * 0.0005f);
+	m_shotDir = m_shotDir + m_frontVec;
+	m_shotDir = m_shotDir.GetNormalized();
 }

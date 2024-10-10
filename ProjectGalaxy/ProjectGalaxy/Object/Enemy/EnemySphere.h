@@ -1,5 +1,5 @@
-#pragma once
-#include "../MyLib/Physics/Collidable.h"
+ï»¿#pragma once
+#include"SphereBase.h"
 
 class Enemy;
 //
@@ -24,9 +24,9 @@ class Enemy;
 //};
 
 /// <summary>
-/// Enemy‚ªUŒ‚‚ÌÛ‚É¶¬‚·‚é‹…‘ÌƒIƒuƒWƒFƒNƒg
+/// EnemyãŒæ”»æ’ƒã®éš›ã«ç”Ÿæˆã™ã‚‹çƒä½“ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 /// </summary>
-class EnemySphere : public MyEngine::Collidable
+class EnemySphere : public SphereBase
 {
 public:
 	EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag,std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, int moveNum, int color = 0xff0000);
@@ -39,29 +39,16 @@ public:
 	virtual void Hit();
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
-	virtual bool IsDelete() { return false; }
-	void SetCounterFlag() { m_counterFlag = true; }
-	Vec3 GetVelocity() { return m_velocity; }
-	void SetVelocity(Vec3 vel) { m_velocity = vel; }
-	void DeleteFlag() { m_isDeleteFlag = true; }
-	bool GetCounterFlag() { return m_counterFlag; }
-	//ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+
+	//ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 	using MoveState_t = void(EnemySphere::*)();
 	MoveState_t m_moveUpdate;
 
 protected:
-	virtual void  StraightUpdate();//‹…‚ğ’¼üó‚É”ò‚Î‚·
+	virtual void  StraightUpdate();//çƒã‚’ç›´ç·šçŠ¶ã«é£›ã°ã™
 
 protected:
 
-
-	int m_color = 0;
-	bool m_isDeleteFlag = 0;
-	bool m_counterFlag;
-
-	float m_radius = 0;
-
-	Vec3 m_velocity;
 	std::shared_ptr<Enemy>m_enemy;
 
 private:

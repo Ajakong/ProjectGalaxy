@@ -1,4 +1,4 @@
-#include "Camera.h"
+ï»¿#include "Camera.h"
 #include"Pad.h"
 #include <math.h>
 
@@ -29,9 +29,9 @@ Camera::Camera():
 {
 	
 	m_cameraUpdate = &Camera::NeutralUpdate;
-	//‰œs0.1`1000‚Ü‚Å‚ğƒJƒƒ‰‚Ì•`‰æ”ÍˆÍ‚Æ‚·‚é
+	//å¥¥è¡Œ0.1ï½1000ã¾ã§ã‚’ã‚«ãƒ¡ãƒ©ã®æç”»ç¯„å›²ã¨ã™ã‚‹
 	
-	// FOV(‹–ìŠp)‚ğ60“x‚É
+	// FOV(è¦–é‡è§’)ã‚’60åº¦ã«
 	SetupCamera_Perspective(kCameraFOV * (static_cast<float>(DX_PI_F) / 180.0f));
 
 	m_pos = { 0.0f,100.0f, -200.0f };
@@ -49,7 +49,7 @@ Camera::Camera():
 
 Camera::~Camera()
 {
-	// ˆ—‚È‚µ.
+	// å‡¦ç†ãªã—.
 	DeleteLightHandle(m_lightHandle);
 }
 
@@ -57,18 +57,50 @@ void Camera::Update(Vec3 LookPoint)
 {
 	if (m_isBoost)
 	{
-		// FOV(‹–ìŠp)‚ğ60“x‚É
+		// FOV(è¦–é‡è§’)ã‚’60åº¦ã«
 		SetupCamera_Perspective(kCameraFOV * (static_cast<float>(DX_PI_F)*2 / 180.0f));
 
 	}
 	else
 	{
-		// FOV(‹–ìŠp)‚ğ60“x‚É
+		// FOV(è¦–é‡è§’)ã‚’60åº¦ã«
 		SetupCamera_Perspective(kCameraFOV * (static_cast<float>(DX_PI_F) / 180.0f));
 
 	}
 	SetCameraNearFar(kCameraNear, kCameraFar);
 	(this->*m_cameraUpdate)(LookPoint);
+}
+
+void Camera::SetCamera(Vec3 LookPoint)
+{
+	m_lookPoint = LookPoint;
+	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
+	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
+
+	Vec3 velocity;
+	velocity.x = (m_cameraPoint.x - m_pos.x) / 15.f;
+	velocity.y = (m_cameraPoint.y - m_pos.y) / 15.f;
+	velocity.z = (m_cameraPoint.z - m_pos.z) / 15.f;
+	m_pos += velocity;//ã‚¤ãƒ¼ã‚¸ãƒ³ã‚°
+
+	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());
+	m_postLookPointPos = m_lookPoint;
+}
+
+void Camera::SetAimCamera(Vec3 LookPoint)
+{
+	m_lookPoint = LookPoint;
+	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
+	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
+
+	m_pos = m_cameraPoint;
+
+	DrawSphere3D(m_pos.VGet(), 20, 8, 0xffffff, 0xffffff, true);
+
+	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_pos+LookPoint).VGet(), m_upVec.VGet());
+	//SetCameraPositionAndTargetAndUpVec(VGet(0,400,-500), VGet(0,0,0), m_upVec.VGet());
+
+	m_postLookPointPos = m_lookPoint+m_pos;
 }
 
 void Camera::DebagDraw()
@@ -87,23 +119,20 @@ void Camera::SetCameraPos(Vec3 LookPoint)
 
 void Camera::NeutralUpdate(Vec3 LookPoint)
 {
-	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxƒRƒ“ƒgƒ[ƒ‰[‚ÌL
+	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®L
 	{
-		m_cameraUpdate = &Camera::SetCameraFirstPersonPos;
+		m_cameraUpdate = &Camera::AimingUpdate;
 	}
-	m_lookPoint = LookPoint;
-	SetLightPositionHandle(m_lightHandle,Vec3(LookPoint+m_upVec*120).VGet());
-	SetLightDirectionHandle(m_lightHandle,(Vec3(GetCameraUpVector())*-1).VGet());
-	
-	Vec3 velocity;
-	velocity.x = (m_cameraPoint.x - m_pos.x) / 15.f;
-	velocity.y = (m_cameraPoint.y - m_pos.y) / 15.f;
-	velocity.z = (m_cameraPoint.z - m_pos.z) / 15.f;
-	m_pos += velocity;//ƒC[ƒWƒ“ƒO
+	SetCamera(LookPoint);
+}
 
-	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_lookPoint + m_upVec.GetNormalized() * 100.0f).VGet(), m_upVec.VGet());
-	m_postLookPointPos = m_lookPoint;
-	m_frontVec = GetCameraFrontVector();
+void Camera::AimingUpdate(Vec3 LookPoint)
+{
+	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®L
+	{
+		m_cameraUpdate = &Camera::NeutralUpdate;
+	}
+	SetAimCamera(LookPoint);
 }
 
 void Camera::WatchThisUpdate(Vec3 LookPoint)
@@ -116,7 +145,7 @@ void Camera::WatchThisUpdate(Vec3 LookPoint)
 	velocity.x = (m_cameraPoint.x - m_pos.x) / 10.f;
 	velocity.y = (m_cameraPoint.y - m_pos.y) / 10.f;
 	velocity.z = (m_cameraPoint.z - m_pos.z) / 10.f;
-	m_pos += velocity;//ƒC[ƒWƒ“ƒO
+	m_pos += velocity;//ã‚¤ãƒ¼ã‚¸ãƒ³ã‚°
 	
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_lookPoint + m_upVec.GetNormalized() * 100.0f).VGet(), m_upVec.VGet());
 	m_postLookPointPos = m_lookPoint;
@@ -133,7 +162,7 @@ void Camera::SetCameraFirstPersonPos(Vec3 LookPoint)
 	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
 	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
 
-	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxƒRƒ“ƒgƒ[ƒ‰[‚ÌL
+	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®L
 	{
 		m_cameraUpdate = &Camera::NeutralUpdate;
 	}
@@ -147,6 +176,11 @@ void Camera::SetCameraThirdPersonPos(Vec3 LookPoint)
 	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), LookPoint.VGet(), m_upVec.VGet());
+}
+
+void Camera::SetDebugCameraPoint()
+{
+	//SetCameraPositionAndTargetAndUpVec(VGet(0, 400, -500), VGet(0, 0, 0), m_upVec.VGet());
 }
 
 void Camera::WatchThis(Vec3 lookpoint, Vec3 cameraPos, Vec3 upVec)

@@ -1,4 +1,4 @@
-#include"MyLib/Physics/ColliderSphere.h"
+ï»¿#include"MyLib/Physics/ColliderSphere.h"
 #include "SpherePlanet.h"
 #include"ModelManager.h"
 
@@ -32,12 +32,12 @@ SpherePlanet::~SpherePlanet()
 
 void SpherePlanet::Init()
 {
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//‚±‚±‚Å“ü‚ê‚½‚Ì‚Íd—Í‚Ì‰e‹¿”ÍˆÍ
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//ã“ã“ã§å…¥ã‚ŒãŸã®ã¯é‡åŠ›ã®å½±éŸ¿ç¯„å›²
 	m_colliders.back()->isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kGravityRange;
 	AddThroughTag(ObjectTag::Stage);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//ƒ}ƒbƒv‚Ì“–‚½‚è”»’è
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//ãƒãƒƒãƒ—ã®å½“ãŸã‚Šåˆ¤å®š
 	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item2->radius = kGroundRadius;
 }
@@ -61,11 +61,21 @@ void SpherePlanet::Draw()
 	}
 }
 
-Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//¬•ª‚²‚Æ‚ÉŒvZ‚µA•â³Œã‚ÌƒxƒNƒgƒ‹‚ğ•Ô‚·
+Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//æˆåˆ†ã”ã¨ã«è¨ˆç®—ã—ã€è£œæ­£å¾Œã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¿”ã™
 {
 	Vec3 objVelocity = obj->PlanetOnlyGetRigid()->GetVelocity();
+	
+	
+	////æƒ‘æ˜Ÿã®ä¸­å¿ƒã‹ã‚‰yæ–¹å‘ã«ä¼¸ã°ã—ãŸç·šã‚’è»¸ã«ã—ã€ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½ç½®ã‚’è¦‹ã¦è»¸ã¨æƒ‘æ˜Ÿã®ä¸­å¿ƒã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã®è§’åº¦åˆ†ã ã‘ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ™ãƒ­ã‚·ãƒ†ã‚£ã®yæ–¹å‘ã«å½±éŸ¿ã•ã›ã‚‹ã¨ã„ã†è€ƒãˆæ–¹ã€Xã«é€²ã¿ãŸã„å ´åˆè»¸ã®Xã‚’åŸºæº–ã«,Zã«é€²ã¿ãŸã„å ´åˆè»¸ã®Zã‚’åŸºæº–
+	////Yã¯æ³•ç·šã®è§’åº¦ã«å›è»¢ã•ã›ã‚‹
+	Vec3 ansVelocity;
+	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetPos();
+	Vec3 toObj = m_rigid->GetPos() - objPos;
+	toObj = toObj.GetNormalized();
+	obj->SetUpVec(toObj);
 	if (obj->IsAntiGravity())
 	{
+
 		return objVelocity;
 	}
 
@@ -74,18 +84,12 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//¬•ª‚²‚Æ‚ÉŒv
 		return objVelocity;
 	}
 
-	////˜f¯‚Ì’†S‚©‚çy•ûŒü‚ÉL‚Î‚µ‚½ü‚ğ²‚É‚µAƒIƒuƒWƒFƒNƒg‚ÌˆÊ’u‚ğŒ©‚Ä²‚Æ˜f¯‚Ì’†S‚©‚çƒIƒuƒWƒFƒNƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ÌŠp“x•ª‚¾‚¯ƒIƒuƒWƒFƒNƒg‚ÌƒxƒƒVƒeƒB‚Ìy•ûŒü‚É‰e‹¿‚³‚¹‚é‚Æ‚¢‚¤l‚¦•ûAX‚Éi‚İ‚½‚¢ê‡²‚ÌX‚ğŠî€‚É,Z‚Éi‚İ‚½‚¢ê‡²‚ÌZ‚ğŠî€
-	////Y‚Í–@ü‚ÌŠp“x‚É‰ñ“]‚³‚¹‚é
-	Vec3 ansVelocity;
-	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetPos();
-	Vec3 toObj = m_rigid->GetPos() - objPos;
-	toObj = toObj.GetNormalized();
 	if (obj->GetTag() == ObjectTag::Gorori||obj->GetTag()==ObjectTag::KillerTheSeeker)
 	{
 		float angleX = DX_PI_F / 2 + atan2(toObj.y, toObj.x);
 		float angleZ = DX_PI_F / 2 + atan2(toObj.y, toObj.z);
 		ansVelocity = { objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ) };
-		ansVelocity += toObj * objVelocity.y;//ƒvƒŒƒCƒ„[‚ÌƒWƒƒƒ“ƒv•ª‚ÌƒxƒNƒgƒ‹‚Ì‰ÁZ
+		ansVelocity += toObj * objVelocity.y;//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¸ãƒ£ãƒ³ãƒ—åˆ†ã®ãƒ™ã‚¯ãƒˆãƒ«ã®åŠ ç®—
 
 		ansVelocity += toObj * kGravityPower;
 		obj->SetReverceGravityVec(toObj.GetNormalized());
@@ -99,12 +103,12 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//¬•ª‚²‚Æ‚ÉŒv
 
 	if (obj->GetTag() == ObjectTag::Player)
 	{
-		//d—Í‚Ì‚İ
+		//é‡åŠ›ã®ã¿
 		toObj = toObj * gravityPower*0.05f* ((kGravityRange+ (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
 		return toObj;
 	}
 
-	//d—Í‚Ì‚İ
+	//é‡åŠ›ã®ã¿
 	toObj = toObj * gravityPower * ((kGravityRange +(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length()- (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
 	return toObj;
 }

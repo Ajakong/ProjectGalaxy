@@ -1,4 +1,4 @@
-#include "Takobo.h"
+ï»¿#include "Takobo.h"
 #include"ColliderSphere.h"
 #include"Physics.h"
 #include"SoundManager.h"
@@ -8,7 +8,7 @@ namespace
 	constexpr float kCollisionRadius = 50.f;
 
 	/// <summary>
-		/// Å‘åHP
+		/// æœ€å¤§HP
 		/// </summary>
 	constexpr int kHp = 50;
 
@@ -17,25 +17,25 @@ namespace
 	constexpr int kStartPosZ = 0;
 
 	/// <summary>
-	/// ‘«Œ³‚©‚çƒ‚ƒfƒ‹‚Ì’†S‚Ü‚Å‚Ì‹——£
+	/// è¶³å…ƒã‹ã‚‰ãƒ¢ãƒ‡ãƒ«ã®ä¸­å¿ƒã¾ã§ã®è·é›¢
 	/// </summary>
 	constexpr int kFootToCenter = 30;
 
 	/// <summary>
-	/// UŒ‚ƒN[ƒ‹ƒ^ƒCƒ€’†‚ÌÅ’áˆÚ“®‘¬“x
+	/// æ”»æ’ƒã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ ä¸­ã®æœ€ä½ç§»å‹•é€Ÿåº¦
 	/// </summary>
 	constexpr int kIdleSpeed = 20;
 	/// <summary>
-/// ‹…‚Ì¶¬ŠÔŠu
+/// çƒã®ç”Ÿæˆé–“éš”
 /// </summary>
 	constexpr int kSphereCreateFrame = 50;
 	/// <summary>
-	/// ÄUŒ‚‚Ü‚Å‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	/// å†æ”»æ’ƒã¾ã§ã®ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ 
 	/// </summary>
 	constexpr int kAttackCoolDownTime = 300;
 
 	/// <summary>
-	/// ƒXƒe[ƒWƒ‚ƒfƒ‹‚Ìc‰¡ƒTƒCƒY/2
+	/// ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ¢ãƒ‡ãƒ«ã®ç¸¦æ¨ªã‚µã‚¤ã‚º/2
 	/// </summary>
 	constexpr int kStageSizeHalf = 200;
 
@@ -180,7 +180,7 @@ void Takobo::IdleUpdate()
 			if (a < 120)
 			{
 				m_attackCoolDownCount = 0;
-				m_attackDir = GetAttackDir();//ƒIƒuƒWƒFƒNƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µ‚½‚à‚Ì
+				m_attackDir = GetAttackDir();//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ãŸã‚‚ã®
 				m_enemyUpdate = &Takobo::AttackSphereUpdate;
 			}
 			break;
@@ -222,16 +222,16 @@ Vec3 Takobo::GetAttackDir() const
 //
 //VECTOR Takobo::GetMyPos()
 //{
-//	return VGet(m_pos.x, m_pos.y + kFootToCenter, m_pos.z);//ƒ‚ƒfƒ‹‚Ì’†S‚ÌÀ•W
+//	return VGet(m_pos.x, m_pos.y + kFootToCenter, m_pos.z);//ãƒ¢ãƒ‡ãƒ«ã®ä¸­å¿ƒã®åº§æ¨™
 //}
 //
 //void Takobo::StartUpdate()
 //{
 //	m_velocity.y = -1;
 //
-//	//ƒ‚ƒfƒ‹‚ÌƒTƒCƒY’²®S
-//	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZ‚»‚ê‚¼‚ê1/2ƒXƒP[ƒ‹
-//	m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//ƒIƒuƒWƒFƒNƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µ‚½‚à‚Ì
+//	//ãƒ¢ãƒ‡ãƒ«ã®ã‚µã‚¤ã‚ºèª¿æ•´S
+//	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZãã‚Œãã‚Œ1/2ã‚¹ã‚±ãƒ¼ãƒ«
+//	m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ãŸã‚‚ã®
 //
 //	float Angle = -DX_PI_F / 2 - atan2(m_attackDir.z, m_attackDir.x);
 //
@@ -253,8 +253,8 @@ Vec3 Takobo::GetAttackDir() const
 //
 //void Takobo::IdleUpdate()
 //{
-//	//ƒ‚ƒfƒ‹‚ÌƒTƒCƒY’²®S
-//	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZ‚»‚ê‚¼‚ê1/2ƒXƒP[ƒ‹
+//	//ãƒ¢ãƒ‡ãƒ«ã®ã‚µã‚¤ã‚ºèª¿æ•´S
+//	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZãã‚Œãã‚Œ1/2ã‚¹ã‚±ãƒ¼ãƒ«
 //
 //	m_centerToTakoboAngle += m_idleSpeed;
 //	float Angle = -DX_PI_F / 2 - atan2(GetAttackDir().z, GetAttackDir().x);
@@ -304,7 +304,7 @@ Vec3 Takobo::GetAttackDir() const
 //		m_sphereNum++;
 //		if (m_sphereNum <= 5)
 //		{
-//			m_attackDir = GetAttackDir();//ƒIƒuƒWƒFƒNƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µ‚½‚à‚Ì
+//			m_attackDir = GetAttackDir();//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ãŸã‚‚ã®
 //
 //			m_createFrameCount = 0;
 //			m_sphere.push_back(std::make_shared<TakoboAttackSphere>(shared_from_this(), GetMyPos(), m_attackDir, 1));
@@ -314,7 +314,7 @@ Vec3 Takobo::GetAttackDir() const
 //			m_sphereNum = 0;
 //			m_sphere.push_back(std::make_shared<FightBackObj>(shared_from_this(), GetMyPos(), m_attackDir, 1, 0x00ff00));
 //
-//			m_idleSpeed = static_cast<float>(GetRand(kIdleSpeed) + 1);//UŒ‚Œã‚ÌˆÚ“®‘¬“x
+//			m_idleSpeed = static_cast<float>(GetRand(kIdleSpeed) + 1);//æ”»æ’ƒå¾Œã®ç§»å‹•é€Ÿåº¦
 //			m_TakoboUpdate = &Takobo::IdleUpdate;
 //		}
 //	}

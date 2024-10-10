@@ -1,6 +1,6 @@
-#include "SerialPlanetGalaxy.h"
+ï»¿#include "SerialPlanetGalaxy.h"
 #include"DxLib.h"
-// EffekseerForDXLib.h‚ğƒCƒ“ƒNƒ‹[ƒh‚µ‚Ü‚·B
+// EffekseerForDXLib.hã‚’ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ã—ã¾ã™ã€‚
 #include "EffekseerForDXLib.h"
 #include"Camera.h"
 #include"Physics.h"
@@ -26,14 +26,14 @@ using namespace std;
 namespace
 {
 	//UI
-	//ƒ~ƒbƒVƒ‡ƒ“
+	//ãƒŸãƒƒã‚·ãƒ§ãƒ³
 	constexpr int kUiText_SrkX = 150;
 	constexpr int kUiText_SrkY = 170;
 	constexpr int kUiText_Width = 1050;
 	constexpr int kUiText_Height = 450;
 	constexpr float kUiText_Exrate = 0.2f;
 
-	//HPƒo[‚Ì˜g
+	//HPãƒãƒ¼ã®æ 
 	constexpr int kUiHpbarFrame_PosX = 150;
 	constexpr int kUiHpbarFrame_PosY = 35;
 	constexpr int kUiHpbarFrame_SrkX = 2600;
@@ -42,7 +42,7 @@ namespace
 	constexpr int kUiHpbarFrame_Height = 144;
 	constexpr float kUiHpbarFrame_Exrate = 0.3f;
 
-	//ChargeRemainTime‚Ìƒo[
+	//ChargeRemainTimeã®ãƒãƒ¼
 	constexpr int kUiCRT_PosX = 20;
 	constexpr int kUiCRT_PosY = 70;
 	constexpr int kUiCRT_SrkX = 2655;
@@ -52,13 +52,13 @@ namespace
 	constexpr int kUiCRT_Height = 80;
 	constexpr float kUiCRT_Exrate = 0.3f;
 
-	//HPƒo[
+	//HPãƒãƒ¼
 	constexpr int kUiHpbar_PosX = 15;
 	constexpr int kUiHpbar_PosY = 25;
 	constexpr int kUiHpbar_Height = 23;
-	constexpr float kUiHpbar_mag = 5.35f;//HP‚ÉŠ|‚¯‚½‚ç‚¢‚¢Š´‚¶‚É‚È‚é”{—¦
+	constexpr float kUiHpbar_mag = 5.35f;//HPã«æ›ã‘ãŸã‚‰ã„ã„æ„Ÿã˜ã«ãªã‚‹å€ç‡
 
-	//ƒ^ƒCƒ}[‚Ì˜g
+	//ã‚¿ã‚¤ãƒãƒ¼ã®æ 
 	constexpr int kUiTimeCountFrame_PosX = 1400;
 	constexpr int kUiTimeCountFrame_PosY = 100;
 	constexpr int kUiTimeCountFrame_SrkX = 1280;
@@ -67,11 +67,11 @@ namespace
 	constexpr int kUiTimeCountFrame_Height = 410;
 	constexpr float kUiTimeCountFrame_Exrate = 0.3f;
 
-	//ƒ^ƒCƒ}[
+	//ã‚¿ã‚¤ãƒãƒ¼
 	constexpr int kUiTimeCount_PosX = 1350;
 	constexpr int kUiTimeCount_PosY = 90;
 
-	//ƒJƒƒ‰
+	//ã‚«ãƒ¡ãƒ©
 	constexpr float kCameraDistanceFront = 800.f;
 	constexpr float kCameraDistanceAddFrontInJump = 300.f;
 	constexpr float kCameraDistanceUp = 500.f;
@@ -80,38 +80,10 @@ namespace
 	const char* kMiniMapScreenName = "MiniMap";
 }
 
-SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer),
-	// ’Êí‚ÌRT
-	RT(MakeScreen(640, 480, true)),
-	RT2(MakeScreen(640, 480, true)),
-	// ƒAƒEƒgƒ‰ƒCƒ“‚ÌRT
-	outlineRT(MakeScreen(640, 480, true)),
-	// –@üî•ñ‚ÌRT
-	normRT(MakeScreen(640, 480)),
-	// ‚Ú‚©‚µ—pRT
-	blurRT(MakeScreen(640, 480, true)),
-	shrinkRT(MakeScreen(320, 240, true)),
-	depthRT(MakeScreen(640, 480)),
-	itemNum(0)
+SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
-	camera = std::make_shared<Camera>();
+	camera = make_shared<Camera>();
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -500, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
-	planet.push_back(std::make_shared<SpherePlanet>(Vec3(6000, 0, 2000), 0x4444ff, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_ice.mv1")));
-	planet.push_back(std::make_shared<SpherePlanet>(Vec3(-3000, 1000, -3000), 0xff4400, 1.f, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
-	bossPlanet = std::make_shared<BossPlanet>(Vec3(0, -6000, 0), 0x0000ff);
-	takobo = { std::make_shared<Takobo>(Vec3(1000,0,500)),std::make_shared<Takobo>(Vec3(-300,0,500)),std::make_shared<Takobo>(Vec3(0,900,500)) };
-	gorori = { std::make_shared<Gorori>(Vec3(7000,500,2300)),std::make_shared<Gorori>(Vec3(6500,500,1700)),std::make_shared<Gorori>(Vec3(5500,0,2000)) };
-	poworStone.push_back(std::make_shared<Item>(Vec3(0, -800, 0), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(-300, 0, 0), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(300, 0, 0), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(-200, -800, 0), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(0, 0, 500), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(0, 0, -500), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(6000, 600, 2000), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(6000, 500, 2200), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(6000, 100, 1400), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(6000, -500, 2000), true));
-	poworStone.push_back(std::make_shared<Item>(Vec3(-3300, 1000, -3300), true));
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
@@ -135,72 +107,17 @@ void SerialPlanetGalaxy::Init()
 {
 	SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 1.0f, 1.0f));
 
-	player->SetMatrix();//ƒ‚ƒfƒ‹‚És—ñ‚ğ”½‰f
+	player->SetMatrix();//ãƒ¢ãƒ‡ãƒ«ã«è¡Œåˆ—ã‚’åæ˜ 
 
-	// ƒƒbƒVƒ…‚Ì”‚ğæ‚Á‚Ä‚­‚é
-	auto meshNum = MV1GetMeshNum(modelH);
-
-	VECTOR maxPos = { 0, 0, 0 };
-	VECTOR minPos = { 1000, 1000, 1000 };
-	bool hasNormalMap = false;
-	for (int i = 0; i < meshNum; ++i)
-	{
-		// —ÖØ‚è‚Ì‚Í— ‘¤‚à•`‰æ‚µ‚È‚¢‚Æ•Ï‚É‚È‚é
-		MV1SetMeshBackCulling(modelH, i, DX_CULLING_NONE);
-
-		// ƒ‚ƒfƒ‹‚Ì‘å‚«‚³‚ğæ“¾
-		auto modelMaxPos = MV1GetMeshMaxPosition(modelH, i);
-		maxPos.x = max(maxPos.x, modelMaxPos.x);
-		maxPos.y = max(maxPos.y, modelMaxPos.y);
-		maxPos.z = max(maxPos.z, modelMaxPos.z);
-
-		auto modelMinPos = MV1GetMeshMinPosition(modelH, i);
-		minPos.x = min(minPos.x, modelMinPos.x);
-		minPos.y = min(minPos.y, modelMinPos.y);
-		minPos.z = min(minPos.z, modelMinPos.z);
-
-		auto vtype = MV1GetTriangleListVertexType(modelH, i);
-		if (vtype == DX_MV1_VERTEX_TYPE_NMAP_1FRAME)
-		{
-			hasNormalMap = true;
-		}
-	}
-	userData->minY = minPos.y;
-	userData->maxY = maxPos.y;
-	userData->clickedU = 0.0f;
-	userData->clickedV = 0.0f;
-
-	// [“x’l‹L˜^ƒoƒbƒtƒ@—pRT
+	// æ·±åº¦å€¤è¨˜éŒ²ãƒãƒƒãƒ•ã‚¡ç”¨RT
 	DxLib::SetCreateGraphChannelBitDepth(32);
 	DxLib::SetCreateDrawValidGraphChannelNum(1);
 
-	MyEngine::Physics::GetInstance().Entry(player);//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
-	MyEngine::Physics::GetInstance().Entry(bossPlanet);//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
+	MyEngine::Physics::GetInstance().Entry(player);//ç‰©ç†æ¼”ç®—ã‚¯ãƒ©ã‚¹ã«ç™»éŒ²
 	for (auto& item : planet)
 	{
 		item->Init();
-		MyEngine::Physics::GetInstance().Entry(item);//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
-	}
-	for (auto& item : clearObject)
-	{
-		item->Init();
-		MyEngine::Physics::GetInstance().Entry(item);//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
-	}
-	for (auto& item : poworStone)
-	{
-		item->Init();
-		MyEngine::Physics::GetInstance().Entry(item);//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
-	}
-	for (auto& item : takobo)
-	{
-		item->SetTarget(player);
-		MyEngine::Physics::GetInstance().Entry(item);//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
-	}
-
-	for (auto& item : gorori)
-	{
-		MyEngine::Physics::GetInstance().Entry(item);//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
-		item->SetTarget(player);
+		MyEngine::Physics::GetInstance().Entry(item);//ç‰©ç†æ¼”ç®—ã‚¯ãƒ©ã‚¹ã«ç™»éŒ²
 	}
 }
 
@@ -224,19 +141,26 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
-
-	camera->Update(player->GetPos());
+	player->Update();
+	if (player->OnAiming())
+	{
+		camera->Update(player->GetShotDir());
+	}
+	else
+	{
+		camera->Update(player->GetPos());
+	}
+	
 	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
-	Vec3 sideVec = GetCameraRightVector();
-	Vec3 front = Cross(planetToPlayer, sideVec).GetNormalized() * -1;//-1‚ğ‚©‚¯‚Ä‹tƒxƒNƒgƒ‹‚É‚µ‚Ä‚¢‚é
+	Vec3 sideVec = player->GetSideVec();
+	Vec3 front =player->GetFrontVec();//-1ã‚’ã‹ã‘ã¦é€†ãƒ™ã‚¯ãƒˆãƒ«ã«ã—ã¦ã„ã‚‹
 
-	//‘Š‘Î“I‚È²ƒxƒNƒgƒ‹‚Ìİ’è
-	player->SetSideVec(sideVec);
-	player->SetFrontVec(front);
+	//ç›¸å¯¾çš„ãªè»¸ãƒ™ã‚¯ãƒˆãƒ«ã®è¨­å®š
+	
 	player->SetUpVec(planetToPlayer);
 
 	camera->SetBoost(player->GetBoostFlag());
-	//–{“–‚ÍƒJƒƒ‰‚ÆƒvƒŒƒCƒ„[‚ÌŠp“x‚ª90“xˆÈ“à‚É‚È‚Á‚½‚Æ‚«ƒvƒŒƒCƒ„[‚Ì“ªã‚ğŒ©‚½‚è‚Å‚«‚é‚æ‚¤‚É‚µ‚½‚¢B
+	//æœ¬å½“ã¯ã‚«ãƒ¡ãƒ©ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è§’åº¦ãŒ90åº¦ä»¥å†…ã«ãªã£ãŸã¨ããƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®é ­ä¸Šã‚’è¦‹ãŸã‚Šã§ãã‚‹ã‚ˆã†ã«ã—ãŸã„ã€‚
 	camera->SetUpVec(player->GetNormVec());
 
 	if (player->GetBoostFlag())
@@ -245,287 +169,69 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 	else
 	{
-		camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
-
+		if (player->OnAiming())
+		{
+			camera->SetCameraPoint(player->GetPos()+ player->GetShotDir() *- 50+player->GetNormVec()*80+player->GetSideVec()*20);
+		}
+		else
+		{
+			camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
+		}
 	}
 
-	bossPlanet->Update();//ƒ{ƒXƒXƒe[ƒW‚ÌXV
-	for (auto& item : planet)item->Update();//ƒXƒe[ƒW‚ÌXV
+	for (auto& item : planet)item->Update();//ã‚¹ãƒ†ãƒ¼ã‚¸ã®æ›´æ–°
 
-	for (auto& item : poworStone)
-	{
-		item->Update();//•¨‘ÌX‚ÌXV
-	}
-	for (auto& item : clearObject)
-	{
-		item->Update();//ƒOƒ‰ƒ“ƒh•¨‘ÌX‚ÌXV(ŒÄ‚Î‚ê‚é‚Ì‚Íƒ{ƒX‚ğ“|‚µ‚½Œã)
-	}
-	player->Update();
+	userData->dissolveY = player->GetRegenerationRange();//ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ç”¨ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
 
+	MyEngine::Physics::GetInstance().Update();//å½“ãŸã‚Šåˆ¤å®šã®æ›´æ–°
+
+	player->SetMatrix();//è¡Œåˆ—ã‚’åæ˜ 
 	
-	for (auto& item : takobo)
-	{
-		if (Vec3(item->GetMyPos() - player->GetPos()).Length() < 2000)
-		{
-			item->Update();//‰“‹——£UŒ‚‚·‚é“G‚ÌXV
-		}
-		
-	}
-	for (auto& item : killerTheSeeker)
-	{
-		if (Vec3(item->GetMyPos() - player->GetPos()).Length() < 2000)
-		{
-			item->Update();//ƒ{ƒX‚ÌXV
-		}
-	}
-	for (auto& item : gorori)
-	{
-		if (Vec3(item->GetMyPos() - player->GetPos()).Length() < 2000)
-		{
-			item->Update();//˜f¯‚ğ‘–‚è‰ñ‚é“G‚ÌXV
-		}
-	}
-	userData->dissolveY = player->GetRegenerationRange();//ƒVƒF[ƒ_[—pƒvƒƒpƒeƒB
-
-	MyEngine::Physics::GetInstance().Update();//“–‚½‚è”»’è‚ÌXV
-
-	for (auto& item : warpGate)item->SetEffectPos();//ƒGƒtƒFƒNƒg‚ÌXV
-	if (player->GetBoostFlag())
-	{
-		camera->m_cameraUpdate = &Camera::NeutralUpdate;
-	}
-	for (int i = 0; i < takobo.size(); i++)
-	{
-		takobo[i]->DeleteManage();//íœŠÇ—
-		if (takobo[i]->WatchHp() < 0)
-		{
-			MyEngine::Physics::GetInstance().Exit(takobo[i]);//•¨—‰‰ZƒNƒ‰ƒX‚©‚ç“o˜^‰ğœ
-
-			takobo.erase(takobo.begin() + i);//‚³‚Á‚«‚Ì—á‚ğ‚»‚Ì‚Ü‚Üg‚¤‚Æ(1,2,5,3,4)‚Åit‚É‚Í5‚Ü‚Å“ü‚Á‚Ä‚é‚Ì‚Åæ‚èœ‚«‚½‚¢3,4‚Íit‚©‚çend()‚Ü‚Å‚Åw’è‚Å‚«‚é
-			i--;
-		}
-	}
-	for (auto& item : warpGate)
-	{
-		item->Update();//‰Á‘¬‘•’u‚ÌXV
-	}
-
-	for (int i = 0; i < killerTheSeeker.size(); i++)
-	{
-		killerTheSeeker[i]->DeleteManage();//íœŠÇ—
-		if (killerTheSeeker[i]->WatchHp() < 300)
-		{
-			bossPlanet->SetColor(0xff44ff);//ƒ{ƒXƒXƒe[ƒW‚ÌF•ÏX
-			bossPlanet->SetGravityPower(20.f);//d—Í•ÏX
-
-		}
-		if (killerTheSeeker[i]->WatchHp() < 100)
-		{
-			bossPlanet->SetColor(0xffaa00);//F•ÏX
-			bossPlanet->SetGravityPower(1.f);//d—Í•ÏX
-		}
-		if (killerTheSeeker[i]->WatchHp() < 0)
-		{
-			clearObject.push_back(std::make_shared<ClearObject>(killerTheSeeker[i]->GetRigidbody()->GetPos()));//ƒNƒŠƒAƒIƒuƒWƒFƒNƒg‚Ì¶¬
-			clearObject.back()->Init();
-			MyEngine::Physics::GetInstance().Entry(clearObject.back());//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
-
-			camera->WatchThis(clearObject.back()->GetRigidbody()->GetPos(), Vec3(clearObject.back()->GetRigidbody()->GetPos() + (bossPlanet->GetNormVec(clearObject.back()->GetRigidbody()->GetPos()) * 300)), bossPlanet->GetNormVec(clearObject.back()->GetRigidbody()->GetPos()));//ƒJƒƒ‰‚Ì‹“_ŠÇ—
-			MyEngine::Physics::GetInstance().Exit(killerTheSeeker[i]);//“o˜^‰ğœ
-
-			killerTheSeeker.erase(killerTheSeeker.begin() + i);//‚³‚Á‚«‚Ì—á‚ğ‚»‚Ì‚Ü‚Üg‚¤‚Æ(1,2,5,3,4)‚Åit‚É‚Í5‚Ü‚Å“ü‚Á‚Ä‚é‚Ì‚Åæ‚èœ‚«‚½‚¢3,4‚Íit‚©‚çend()‚Ü‚Å‚Åw’è‚Å‚«‚é
-			i--;
-		}
-	}
-
-	for (int i = 0; i < gorori.size(); i++)
-	{
-		if (gorori[i]->WatchHp() < 0)//€‚ñ‚Å‚¢‚é‚©
-		{
-			MyEngine::Physics::GetInstance().Exit(gorori[i]);//“o˜^‰ğœ
-
-			gorori.erase(gorori.begin() + i);//‚³‚Á‚«‚Ì—á‚ğ‚»‚Ì‚Ü‚Üg‚¤‚Æ(1,2,5,3,4)‚Åit‚É‚Í5‚Ü‚Å“ü‚Á‚Ä‚é‚Ì‚Åæ‚èœ‚«‚½‚¢3,4‚Íit‚©‚çend()‚Ü‚Å‚Åw’è‚Å‚«‚é
-			i--;
-		}
-	}
-	for (int i = 0; i < poworStone.size(); i++)
-	{
-		if (poworStone[i]->GetDeleteFlag())
-		{
-			MyEngine::Physics::GetInstance().Exit(poworStone[i]);//“o˜^‰ğœ
-
-			poworStone.erase(poworStone.begin() + i);//‚³‚Á‚«‚Ì—á‚ğ‚»‚Ì‚Ü‚Üg‚¤‚Æ(1,2,5,3,4)‚Åit‚É‚Í5‚Ü‚Å“ü‚Á‚Ä‚é‚Ì‚Åæ‚èœ‚«‚½‚¢3,4‚Íit‚©‚çend()‚Ü‚Å‚Åw’è‚Å‚«‚é
-			i--;
-		}
-	}
-
-
-	player->SetMatrix();//s—ñ‚ğ”½‰f
-	for (auto& item : takobo)item->SetMatrix();//s—ñ‚ğ”½‰f
-	// ƒJƒŠƒ“ƒO•ûŒü‚Ì”½“]
-	for (int i = 0; i < MV1GetMeshNum(modelH); ++i)
-	{
-		MV1SetMeshBackCulling(modelH, i, DX_CULLING_RIGHT);
-	}
-	// ƒJƒŠƒ“ƒO•ûŒü‚ğŒ³‚É–ß‚·
-	for (int i = 0; i < MV1GetMeshNum(modelH); ++i)
-	{
-		MV1SetMeshBackCulling(modelH, i, DX_CULLING_LEFT);
-	}
-
-	if (player->GetHp() <= 0)
-	{
-		m_isGameOverFlag = true;
-	}
-	if (player->IsClear())
-	{
-		m_isClearFlag = true;
-	}
-	if (poworStone.size() <= 5 && warpGate.size() == 0)
-	{
-		warpGate.push_back(std::make_shared<WarpGate>(Vec3(800, 0, 300), m_warpEffectHandle));
-		warpGate.back()->SetWarpPos(Vec3(6000, 0, 2000));
-		MyEngine::Physics::GetInstance().Entry(warpGate.back());
-		camera->WatchThis(warpGate.back()->GetRigidbody()->GetPos(), Vec3(1600, 0, 600), planet[0]->GetNormVec(warpGate.back()->GetRigidbody()->GetPos()));
-	}
-	if (poworStone.size() <= 1 && warpGate.size() == 1)
-	{
-		warpGate.push_back(std::make_shared<WarpGate>(Vec3(5500, 500, 1700), m_warpEffectHandle));
-		warpGate.back()->SetWarpPos(Vec3(-3000, 1000, -3000));
-		MyEngine::Physics::GetInstance().Entry(warpGate.back());
-		camera->WatchThis(warpGate.back()->GetRigidbody()->GetPos(), Vec3(4000, 700, 1000), planet[0]->GetNormVec(warpGate.back()->GetRigidbody()->GetPos()));
-	}
-	if (poworStone.size() == 0 && warpGate.size() == 2)
-	{
-		warpGate.push_back(std::make_shared<WarpGate>(Vec3(-2500, 500, -2800), m_warpEffectHandle));
-		warpGate.back()->SetWarpPos(Vec3(0, -6000, 0));
-		MyEngine::Physics::GetInstance().Entry(warpGate.back());
-		camera->WatchThis(warpGate.back()->GetRigidbody()->GetPos(), Vec3(-2000, 0, -2000), planet[0]->GetNormVec(warpGate.back()->GetRigidbody()->GetPos()));
-		killerTheSeeker.push_back(std::make_shared<KillerTheSeeker>(Vec3(0, -7000, 0)));//ƒ{ƒXoŒ»
-		for (auto& item : killerTheSeeker)
-		{
-			item->Init();//‰Šú‰»ˆ—
-			MyEngine::Physics::GetInstance().Entry(item);//•¨—‰‰ZƒNƒ‰ƒX‚É“o˜^
-			item->SetTarget(player);//ƒ^[ƒQƒbƒg‚ğw’è
-		}
-	}
-	if (player->GetNowPlanetPos() == Vec3(0, -6000, 0) && !m_isBossWatch)
-	{
-		m_isBossWatch = true;
-		camera->WatchThis(killerTheSeeker.back()->GetMyPos(), killerTheSeeker.back()->GetMyPos() + Vec3(0, 0, -1200), bossPlanet->GetNormVec(killerTheSeeker.back()->GetMyPos()));
-	}
-
 }
 
 void SerialPlanetGalaxy::GamePlayingDraw()
 {
-	DxLib::SetDrawScreen(m_miniMapScreenHandle);
-
-	ClearDrawScreen();
-
-	SetCameraPositionAndTargetAndUpVec((player->GetPos() + player->GetNormVec() * 300).VGet(), player->GetPos().VGet(), m_cameraUpVec.VGet());
-	m_cameraUpVec = GetCameraUpVector();
-
+	if (player->OnAiming())camera->SetDebugCameraPoint();
 	Vec3 pos = MV1GetPosition(m_skyDomeH);
 	DxLib::MV1DrawModel(m_skyDomeH);
 
-	bossPlanet->SetIsSearch(player->IsSearch());
-	bossPlanet->Draw();
 	for (auto& item : planet)
 	{
 		item->SetIsSearch(player->IsSearch());
-		item->Draw();
+		
 	}
 
-	player->Draw();
-	for (auto& item : warpGate)
-	{
-		item->Draw();
-	}
+	MyEngine::Physics::GetInstance().Draw();
+	
 	if (player->IsSearch())
 	{
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_MUL, 255);
-		// ‚¿‚å‚Á‚ÆˆÃ‚¢‹éŒ`‚ğ•`‰æ
+		// ã¡ã‚‡ã£ã¨æš—ã„çŸ©å½¢ã‚’æç”»
 		DxLib::DrawBox(0, 0, 1600, 900,
 			0x444488, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	}
-	for (auto& item : poworStone)
-	{
-		item->Draw();
-	}
-	for (auto& item : clearObject)
-	{
-		item->Draw();
-	}
-
-	for (auto& item : takobo)item->Draw();
-	for (auto& item : killerTheSeeker)item->Draw();
-	for (auto& item : gorori)item->Draw();
-
-	camera->DebagDraw();
-	Effekseer_Sync3DSetting();
-	DrawEffekseer3D();
-
-	DxLib::SetRenderTargetToShader(1, -1);		// RT‚Ì‰ğœ
-	DxLib::SetRenderTargetToShader(2, -1);		// RT‚Ì‰ğœ
-
-	DxLib::SetDrawScreen(DX_SCREEN_BACK);
-
-	camera->Update(player->GetPos());
-
-	DxLib::MV1DrawModel(m_skyDomeH);
-
-
-	bossPlanet->SetIsSearch(player->IsSearch());
-	bossPlanet->Draw();
-	for (auto& item : planet)
-	{
-		item->SetIsSearch(player->IsSearch());
-		item->Draw();
-	}
-
-	player->Draw();
-	for (auto& item : warpGate)
-	{
-		item->Draw();
-	}
-	if (player->IsSearch())
-	{
-		DxLib::SetDrawBlendMode(DX_BLENDMODE_MUL, 255);
-		// ‚¿‚å‚Á‚ÆˆÃ‚¢‹éŒ`‚ğ•`‰æ
-		DxLib::DrawBox(0, 0, 1600, 900,
-			0x444488, true);
-		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	}
-	for (auto& item : poworStone)
-	{
-		item->Draw();
-	}
-	for (auto& item : clearObject)
-	{
-		item->Draw();
-	}
-
-	for (auto& item : takobo)item->Draw();
-	for (auto& item : killerTheSeeker)item->Draw();
-	for (auto& item : gorori)item->Draw();
-
-	camera->DebagDraw();
-	Effekseer_Sync3DSetting();
-	DrawEffekseer3D();
-
-	DxLib::SetRenderTargetToShader(1, -1);		// RT‚Ì‰ğœ
-	DxLib::SetRenderTargetToShader(2, -1);		// RT‚Ì‰ğœ
 
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
+#ifdef _DEBUG
+	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
+	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
+	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);
+	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Front() * 20).VGet(), 0x0000ff);
 
+
+
+#endif
+	
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
 	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DxLib::DrawExtendGraph(600, 0, 1000, 250, m_miniMapScreenHandle, false);
-	DxLib::DrawBox(600, 0, 1000, 250, 0x00dddd, false);
+	DrawFormatString(0, 0, 0xffffff, "NormVec(%f,%f,%f)", player->GetNormVec().x, player->GetNormVec().y, player->GetNormVec().z);
+	DrawFormatString(0, 25, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
+	DrawFormatString(0, 50, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
+	DrawFormatString(0, 75, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
+	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
+	
 }
