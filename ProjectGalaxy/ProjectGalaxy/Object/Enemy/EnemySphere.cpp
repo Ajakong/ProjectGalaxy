@@ -54,6 +54,7 @@ void EnemySphere::Hit()
 
 void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {
+
 }
 
 void EnemySphere::StraightUpdate()

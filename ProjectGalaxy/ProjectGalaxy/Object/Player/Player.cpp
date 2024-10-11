@@ -276,8 +276,6 @@ void Player::SetMatrix()
 
 	MATRIX mat;
 
-
-
 	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
 
 	m_sideVec = Cross(m_frontVec, m_upVec);
@@ -287,6 +285,7 @@ void Player::SetMatrix()
 	Quaternion myQ;
 	float angle = atan2(-m_moveDir.x, -m_moveDir.z);
 
+	m_angle += 0.02f;
 	myQ = myQ.CreateRotationQuaternion(angle, Vec3::Up());
 	myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(m_angle,Cross(m_moveDir,m_upVec).GetNormalized()));
 	mat = myQ.ToMat();
@@ -294,9 +293,6 @@ void Player::SetMatrix()
 	MV1SetRotationMatrix(m_modelHandle, mat);
 	//MV1SetRotationXYZ(m_modelHandle, Vec3(0, atan2(m_inputVec.z, -m_inputVec.x) + DX_PI_F / 2, 0).VGet());
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
-
-
-
 }
 
 void Player::Draw()
@@ -317,7 +313,7 @@ void Player::Draw()
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_upVec * 100).VGet(), 0xff0000);
-
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_moveDir * 100).VGet(), 0xffff00);
 	//printfDx("%d", HitCount);
 #endif
 	if(m_isAimFlag)DrawRectRotaGraph(800, 450, kAimGraphSrkX, kAimGraphSrkY, kAimGraphWidth, kAimGraphHeight, 0.3, 0, m_aimGraphHandle, true);
