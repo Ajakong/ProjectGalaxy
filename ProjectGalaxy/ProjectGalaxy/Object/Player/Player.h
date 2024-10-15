@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Collidable.h"
 #include"Vec3.h"
+#include"Quaternion.h"
+
 
 class Camera;
 class PlayerSphere;
@@ -131,7 +133,6 @@ private:
 	int m_getItemHandle;
 	int m_color;
 	int m_spinCount;
-	Vec3 m_postUpVec;
 	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
 
 	bool m_isOnDamageFlag;
@@ -143,6 +144,8 @@ private:
 	float m_radius = 0;
 	float m_attackRadius;
 
+
+	Quaternion m_myQ;
 	Vec3 m_cameraToPlayer;
 	Vec3 m_cameraPos;
 	//std::shared_ptr<Camera> m_camera;
@@ -154,6 +157,8 @@ private:
 	Vec3 m_frontVec;
 	Vec3 m_sideVec;
 	Vec3 m_upVec;
+	Vec3 m_postUpVec;
+
 
 	Vec3 m_shotDir;
 	Vec3 m_modelBodyRotate;

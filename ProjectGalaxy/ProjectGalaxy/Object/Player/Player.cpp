@@ -9,7 +9,7 @@
 #include"KillerTheSeeker.h"
 #include"ModelManager.h"
 #include"GraphManager.h"
-#include"Quaternion.h"
+
 #include"Physics.h"
 
 /// <summary>
@@ -81,14 +81,9 @@ float GetAngle(Vec3 a, Vec3 b)
 	DrawFormatString(0, 175, 0xffffff, "%f", cos);
 #endif
 
-	if (sqrt(1-cos*cos) > 0)//正の数しか返ってこねぇ
-	{
-		return rad;
-	}
-	else
-	{
-		return -rad;
-	}
+	return rad;
+
+	
 }
 
 void MTransCopy(MATRIX& in, const MATRIX& src) {
@@ -130,6 +125,7 @@ m_shotDir(Vec3(0,0,1)),
 m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
 m_inputVec(0,0,-1)
 {
+	m_postUpVec = m_upVec;
 	{
 		m_rigid->SetPos(Vec3(0, 0, 0));
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
@@ -143,7 +139,7 @@ m_inputVec(0,0,-1)
 		item->radius = m_attackRadius;
 	}
 
-	MV1SetScale(m_modelHandle, VGet(0.05f, 0.05f, 0.05f));
+	DxLib::MV1SetScale(m_modelHandle, VGet(0.05f, 0.05f, 0.05f));
 	ChangeAnim(kAnimationNumIdle);	
 }
 
@@ -260,9 +256,9 @@ void Player::Update()
 	}
 	UpdateAnim(m_currentAnimNo);
 	//変更前のアニメーション100%
-	MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
+	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
 	//変更後のアニメーション0%
-	MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
+	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 	m_animBlendRate += 0.05f;
 	if (m_animBlendRate > 1.0f)
 	{
@@ -274,21 +270,28 @@ void Player::SetMatrix()
 {
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 
+	float angle = GetAngle(m_postUpVec, m_upVec);
+	Vec3 axis = Cross(m_postUpVec, m_upVec).GetNormalized();
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
+
 	MATRIX mat;
 
 	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
 
-	m_sideVec = Cross(m_frontVec, m_upVec);
-	m_sideVec.Normalize();
-	//mat = MGetRotVec2(Vec3::Up().VGet(), m_upVec.VGet()); 
+	/*m_sideVec = Cross(m_frontVec, m_upVec);
+	m_sideVec.Normalize();*/
+	
+	m_myQ = m_myQ.QMult(m_myQ,m_myQ.CreateRotationQuaternion(angle, axis));
+	mat = m_myQ.ToMat();
 
-	Quaternion myQ;
+	/*Quaternion myQ;
 	float angle = atan2(-m_moveDir.x, -m_moveDir.z);
-
 	m_angle += 0.02f;
 	myQ = myQ.CreateRotationQuaternion(angle, Vec3::Up());
 	myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(m_angle,Cross(m_moveDir,m_upVec).GetNormalized()));
-	mat = myQ.ToMat();
+	mat = myQ.ToMat();*/
+
+	m_postUpVec = m_upVec;
 
 	MV1SetRotationMatrix(m_modelHandle, mat);
 	//MV1SetRotationXYZ(m_modelHandle, Vec3(0, atan2(m_inputVec.z, -m_inputVec.x) + DX_PI_F / 2, 0).VGet());
@@ -308,7 +311,6 @@ void Player::Draw()
 		DrawSphere3D(m_rigid->GetPos().VGet(), m_attackRadius, 10, 0x00ff00, 0xffffff, false);
 	}
 
-	
 #if _DEBUG
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
@@ -501,9 +503,9 @@ void Player::ChangeAnim(int animIndex)
 	m_animBlendRate = 0.0f;
 
 	//変更前のアニメーション100%
-	MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
+	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
 	//変更後のアニメーション0%
-	MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
+	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 
 }
 
@@ -601,8 +603,7 @@ void Player::JumpingUpdate()
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
 	item->radius = m_attackRadius;
-	m_rigid->SetVelocity(m_rigid->GetPrevVelocity());
-
+	
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin);
@@ -702,7 +703,7 @@ void Player::BoostUpdate()
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
 	item->radius = m_attackRadius;
-	m_rigid->SetVelocity(m_rigid->GetPrevVelocity());
+	
 	if (!m_isBoostFlag)
 	{
 		ChangeAnim(kAnimationNumIdle);

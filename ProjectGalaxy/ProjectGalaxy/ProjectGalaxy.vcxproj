@@ -179,6 +179,7 @@
     <ClCompile Include="Object\Item\Item.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
+    <ClCompile Include="Object\WarpGate\Booster.cpp" />
     <ClCompile Include="Object\WarpGate\WarpGate.cpp" />
     <ClCompile Include="Pad.cpp" />
     <ClCompile Include="Planet\BossPlanet.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="Object\Item\Item.h" />
     <ClInclude Include="Object\ObjectManager.h" />
     <ClInclude Include="Object\Player\Player.h" />
+    <ClInclude Include="Object\WarpGate\Booster.h" />
     <ClInclude Include="Object\WarpGate\WarpGate.h" />
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Planet\BossPlanet.h" />

@@ -70,7 +70,7 @@ public:
 		double norm;
 		double ccc, sss;
 
-		ans.Qu.w = ans.Qu.x = ans.Qu.y = ans.Qu.z = 0.0;
+		//ans.Qu.w = ans.Qu.x = ans.Qu.y = ans.Qu.z = 0.0;
 
 		norm = Axis.x * Axis.x + Axis.y * Axis.y + Axis.z * Axis.z;
 		if (norm <= 0.0) return ans;
@@ -110,7 +110,7 @@ public:
 		ccc = cos(0.5 * radian);
 		sss = sin(0.5 * radian);
 
-		ans.Qu.w =static_cast<float>(ccc);
+		ans.Qu.w = static_cast<float>(ccc);
 		ans.Qu.x = static_cast<float>(sss) * Axis.x;
 		ans.Qu.y = static_cast<float>(sss) * Axis.y;
 		ans.Qu.z = static_cast<float>(sss) * Axis.z;

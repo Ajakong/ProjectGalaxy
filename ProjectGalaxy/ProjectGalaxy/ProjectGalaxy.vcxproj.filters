@@ -285,6 +285,9 @@
     <ClCompile Include="Object\Gimmick\StarCapture.cpp">
       <Filter>ソース ファイル\Object\Gimmick</Filter>
     </ClCompile>
+    <ClCompile Include="Object\WarpGate\Booster.cpp">
+      <Filter>ソース ファイル\Object\WarpGate</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -445,6 +448,9 @@
     </ClInclude>
     <ClInclude Include="LoadManager\SoundManager.h">
       <Filter>ヘッダー ファイル\LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\WarpGate\Booster.h">
+      <Filter>ヘッダー ファイル\Object\WarpGate</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

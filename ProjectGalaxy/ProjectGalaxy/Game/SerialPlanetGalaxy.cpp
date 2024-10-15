@@ -6,6 +6,7 @@
 #include"Physics.h"
 #include"Player.h"
 #include"WarpGate.h"
+#include"Booster.h"
 #include"BossPlanet.h"
 #include"Takobo.h"
 #include"KillerTheSeeker.h"
@@ -82,6 +83,10 @@ namespace
 
 SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
+	booster.push_back(make_shared<Booster>(Vec3(0,150,0),Vec3(0,1,1).GetNormalized(), -1));
+	MyEngine::Physics::GetInstance().Entry(booster.back());
+	booster.push_back(make_shared<Booster>(Vec3(0, -200, 530), Vec3(0,1,0).GetNormalized(), -1));
+	MyEngine::Physics::GetInstance().Entry(booster.back());
 	camera = make_shared<Camera>();
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -500, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
@@ -186,7 +191,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	MyEngine::Physics::GetInstance().Update();//当たり判定の更新
 
 	player->SetMatrix();//行列を反映
-	
+
 }
 
 void SerialPlanetGalaxy::GamePlayingDraw()
@@ -212,7 +217,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	}
-
+	for (auto& item : booster){item->Draw();}
+	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
@@ -234,4 +240,5 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 75, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
 	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
 	
+	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
 }
