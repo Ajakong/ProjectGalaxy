@@ -20,6 +20,7 @@ public:
 	void Draw();
 
 	Vec3 GetPos() const { return  m_rigid->GetPos(); }
+	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
 	float GetHp() { return m_Hp; }
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetMoveDir() const{ return m_moveDir; }
@@ -30,10 +31,12 @@ public:
 	Vec3 GetShotDir() { return m_shotDir; }
 	float GetRegenerationRange() { return m_regeneRange; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
-	bool GetBoostFlag() { return m_isBoostFlag; }
+	bool GetCaptureFlag()const { return m_isCaptureFlag; }
+	bool GetBoostFlag() const{ return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
 
 	void SetBoost() { m_isBoostFlag = true; }
+	void SetIsCapture(bool flag);
 	void SetCameraAngle(float cameraAngle);
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
@@ -60,6 +63,7 @@ public:
 	cameraState_t m_cameraUpdate;
 
 	void BoostUpdate();
+	void CaptureUpdate();
 private:
 	Vec3 Move();
 
@@ -195,6 +199,7 @@ private:
 	bool m_isVisibleFlag = false;
 	bool m_isJumpFlag = false;
 	bool m_isBoostFlag = false;
+	bool m_isCaptureFlag = false;
 	bool m_isSearchFlag = false;
 	bool m_isAimFlag = false;
 	bool m_isClearFlag=false;

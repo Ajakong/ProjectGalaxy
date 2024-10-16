@@ -60,6 +60,6 @@ void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
 
 void PlayerSphere::StraightUpdate()
 {
-	m_velocity = Cross(m_upVec, m_sideVec);
+	//m_velocity = Cross(m_upVec, m_sideVec);//地表に沿う
 	m_rigid->SetVelocity(VGet(m_velocity.x*20, m_velocity.y*20, m_velocity.z*20));
 }

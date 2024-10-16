@@ -285,8 +285,11 @@
     <ClCompile Include="Object\Gimmick\StarCapture.cpp">
       <Filter>ソース ファイル\Object\Gimmick</Filter>
     </ClCompile>
+    <ClCompile Include="MyLib\Easing.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
     <ClCompile Include="Object\WarpGate\Booster.cpp">
-      <Filter>ソース ファイル\Object\WarpGate</Filter>
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -449,8 +452,11 @@
     <ClInclude Include="LoadManager\SoundManager.h">
       <Filter>ヘッダー ファイル\LoadManager</Filter>
     </ClInclude>
+    <ClInclude Include="MyLib\Easing.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
     <ClInclude Include="Object\WarpGate\Booster.h">
-      <Filter>ヘッダー ファイル\Object\WarpGate</Filter>
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -214,6 +214,7 @@ void MyEngine::Physics::CheckCollide()
 				{
 					for (const auto& colB : objB->m_colliders)
 					{
+						
 						if (!IsCollide(objA->m_rigid, objB->m_rigid, colA, colB)) continue;
 
 						bool isTrigger = colA->isTrigger || colB->isTrigger;

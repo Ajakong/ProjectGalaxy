@@ -7,6 +7,7 @@
 #include"Player.h"
 #include"WarpGate.h"
 #include"Booster.h"
+#include"StarCapture.h"
 #include"BossPlanet.h"
 #include"Takobo.h"
 #include"KillerTheSeeker.h"
@@ -83,10 +84,14 @@ namespace
 
 SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
+	//ギミック
 	booster.push_back(make_shared<Booster>(Vec3(0,150,0),Vec3(0,1,1).GetNormalized(), -1));
 	MyEngine::Physics::GetInstance().Entry(booster.back());
 	booster.push_back(make_shared<Booster>(Vec3(0, -200, 530), Vec3(0,1,0).GetNormalized(), -1));
 	MyEngine::Physics::GetInstance().Entry(booster.back());
+
+	starCapture.push_back(make_shared<StarCapture>(Vec3(0, 500, 400)));
+	MyEngine::Physics::GetInstance().Entry(starCapture.back());
 	camera = make_shared<Camera>();
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -500, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
@@ -124,6 +129,8 @@ void SerialPlanetGalaxy::Init()
 		item->Init();
 		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
 	}
+
+	
 }
 
 void SerialPlanetGalaxy::Update()
@@ -217,8 +224,11 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	}
+
+	//位置固定ギミック
 	for (auto& item : booster){item->Draw();}
-	
+	for (auto& item : starCapture) { item->Draw(); }
+
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);

@@ -1,4 +1,4 @@
-#include "Collidable.h"
+ï»¿#include "Collidable.h"
 #include "ColliderSphere.h"
 #include<cassert>
 
@@ -47,15 +47,19 @@ std::shared_ptr<ColliderBase> MyEngine::Collidable::AddCollider(const ColliderBa
 
 	return collider;
 }
+void MyEngine::Collidable::RemoveCollider(std::shared_ptr<ColliderBase> col)
+{
+	m_colliders.remove(col);
+}
 /// <summary>
-/// “–‚½‚è”»’è‚ğ–³‹iƒXƒ‹[j‚·‚éƒ^ƒO‚Ì’Ç‰Á
+/// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ï¼ˆã‚¹ãƒ«ãƒ¼ï¼‰ã™ã‚‹ã‚¿ã‚°ã®è¿½åŠ 
 /// </summary>
 void Collidable::AddThroughTag(ObjectTag tag)
 {
 	bool found = (std::find(throughTags.begin(), throughTags.end(), tag) != throughTags.end());
 	if (found)
 	{
-		assert(0 && L"w’èƒ^ƒO‚ÍŠù‚É’Ç‰Á‚³‚ê‚Ä‚¢‚Ü‚·");
+		assert(0 && L"æŒ‡å®šã‚¿ã‚°ã¯æ—¢ã«è¿½åŠ ã•ã‚Œã¦ã„ã¾ã™");
 	}
 	else
 	{
@@ -64,14 +68,14 @@ void Collidable::AddThroughTag(ObjectTag tag)
 }
 
 /// <summary>
-/// “–‚½‚è”»’è‚ğ–³‹iƒXƒ‹[j‚·‚éƒ^ƒO‚Ìíœ
+/// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ï¼ˆã‚¹ãƒ«ãƒ¼ï¼‰ã™ã‚‹ã‚¿ã‚°ã®å‰Šé™¤
 /// </summary>
 void Collidable::RemoveThroughTag(ObjectTag tag)
 {
 	bool found = (std::find(throughTags.begin(), throughTags.end(), tag) != throughTags.end());
 	if (!found)
 	{
-		assert(0 && L"w’èƒ^ƒO‚Í‘¶İ‚µ‚Ü‚¹‚ñ");
+		assert(0 && L"æŒ‡å®šã‚¿ã‚°ã¯å­˜åœ¨ã—ã¾ã›ã‚“");
 	}
 	else
 	{
@@ -79,7 +83,7 @@ void Collidable::RemoveThroughTag(ObjectTag tag)
 	}
 }
 
-// “–‚½‚è”»’è‚ğ–³‹iƒXƒ‹[j‚·‚é‘ÎÛ‚©‚Ç‚¤‚©
+// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡è¦–ï¼ˆã‚¹ãƒ«ãƒ¼ï¼‰ã™ã‚‹å¯¾è±¡ã‹ã©ã†ã‹
 bool Collidable::IsThroughTarget(const std::shared_ptr<Collidable> target) const
 {
 	bool found = (std::find(throughTags.begin(), throughTags.end(), target->GetTag()) != throughTags.end());

@@ -62,6 +62,12 @@ namespace
 	constexpr int kAnimationNumRun = 3;
 	constexpr int kAnimationNumSpin = 4;
 	constexpr int kAnimationNumIdle = 5;
+	constexpr int kAnimationNumDeath = 6;
+	constexpr int kAnimationNumFall = 7;
+
+
+
+
 
 	//照準
 	const char* kAimGraphFileName = "Elements_pro.png";
@@ -275,26 +281,14 @@ void Player::SetMatrix()
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
 
 	MATRIX mat;
-
-	//mat = MGetRotY(acos(Dot(Vec3::Front(), m_moveDir * -1)));
-
-	/*m_sideVec = Cross(m_frontVec, m_upVec);
-	m_sideVec.Normalize();*/
 	
 	m_myQ = m_myQ.QMult(m_myQ,m_myQ.CreateRotationQuaternion(angle, axis));
 	mat = m_myQ.ToMat();
 
-	/*Quaternion myQ;
-	float angle = atan2(-m_moveDir.x, -m_moveDir.z);
-	m_angle += 0.02f;
-	myQ = myQ.CreateRotationQuaternion(angle, Vec3::Up());
-	myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(m_angle,Cross(m_moveDir,m_upVec).GetNormalized()));
-	mat = myQ.ToMat();*/
-
 	m_postUpVec = m_upVec;
 
 	MV1SetRotationMatrix(m_modelHandle, mat);
-	//MV1SetRotationXYZ(m_modelHandle, Vec3(0, atan2(m_inputVec.z, -m_inputVec.x) + DX_PI_F / 2, 0).VGet());
+
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 }
 
@@ -324,6 +318,21 @@ void Player::Draw()
 void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
 {
 	m_cameraToPlayer = cameraToPlayer;
+}
+
+void Player::SetIsCapture(bool flag)
+{
+	if (flag)
+	{
+		m_playerUpdate = &Player::CaptureUpdate;
+		ChangeAnim(kAnimationNumFall);
+		m_isCaptureFlag = true;
+	}
+	else
+	{
+		m_isCaptureFlag = false;
+	}
+	
 }
 
 void Player::SetCameraAngle(float cameraAngle)
@@ -706,6 +715,17 @@ void Player::BoostUpdate()
 	
 	if (!m_isBoostFlag)
 	{
+		ChangeAnim(kAnimationNumIdle);
+		m_playerUpdate = &Player::NeutralUpdate;
+	}
+}
+
+void Player::CaptureUpdate()
+{
+	SetAntiGravity();
+	if (!m_isCaptureFlag)
+	{
+		SetAntiGravity(false);
 		ChangeAnim(kAnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}

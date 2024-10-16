@@ -20,11 +20,13 @@ public:
 	using MoveState_t = void(PlayerSphere::*)();
 	MoveState_t m_moveUpdate;
 
+	std::shared_ptr<Player>m_player;
+
 protected:
 	virtual void  StraightUpdate();//球を直線状に飛ばす
 
 protected:
-	std::shared_ptr<Player>m_player;
+	
 	Vec3 m_sideVec;
 };
 
