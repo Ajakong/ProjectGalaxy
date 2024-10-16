@@ -28,5 +28,6 @@ protected:
 protected:
 	
 	Vec3 m_sideVec;
+	int m_lifeTime;
 };
 

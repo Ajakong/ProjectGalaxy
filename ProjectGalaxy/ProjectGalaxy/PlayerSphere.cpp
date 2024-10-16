@@ -12,7 +12,10 @@ namespace
 	/// 球の生成間隔
 	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
+	
+	constexpr int kLifeTimeMax = 300;
 	const char* name = "Sphere";
+
 }
 PlayerSphere::PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>player, Vec3 pos, Vec3 velocity,Vec3 sideVec ,int moveNum, int color) : SphereBase(priority, tag, pos, velocity, color, kSphereRadius),
 m_player(std::dynamic_pointer_cast<Player>(player)),
@@ -51,7 +54,7 @@ void PlayerSphere::Draw()
 
 void PlayerSphere::Hit()
 {
-	//m_isDeleteFlag = true;
+	m_isDeleteFlag = true;
 }
 
 void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
@@ -62,4 +65,9 @@ void PlayerSphere::StraightUpdate()
 {
 	//m_velocity = Cross(m_upVec, m_sideVec);//地表に沿う
 	m_rigid->SetVelocity(VGet(m_velocity.x*20, m_velocity.y*20, m_velocity.z*20));
+	m_lifeTime++;
+	if (m_lifeTime > kLifeTimeMax)
+	{
+		m_isDeleteFlag = true;
+	}
 }

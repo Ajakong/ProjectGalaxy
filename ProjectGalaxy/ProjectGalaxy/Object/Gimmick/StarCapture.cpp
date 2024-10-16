@@ -1,10 +1,13 @@
 ﻿#include "StarCapture.h"
-#include"ColliderSphere.h"
+
 #include"PlayerSphere.h"
 #include"Player.h"
 #include"Easing.h"
 
-
+namespace
+{
+	constexpr int kCaptureMaxFrame = 200;
+}
 
 StarCapture::StarCapture(Vec3 pos, int radius, int captureRadius) : Collidable(Priority::Static, ObjectTag::Player)
 {
@@ -43,6 +46,7 @@ void StarCapture::Draw()
 		DrawSphere3D(m_rigid->GetPos().VGet(), item->radius, 20, 0x0000ff, 0xffffff, false);
 		DrawFormatString(0, 200, 0xddaa00, "Velocity(%f,%f,%f)", m_rigid->GetVelocity().x, m_rigid->GetVelocity().y, m_rigid->GetVelocity().z);
 		DrawFormatString(0, 250, 0xddaa00,"Pos(%f,%f,%f)",m_rigid->GetPos().x, m_rigid->GetPos().y, m_rigid->GetPos().z);
+	
 	}
 	
 #endif

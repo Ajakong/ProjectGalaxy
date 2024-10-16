@@ -332,7 +332,6 @@ void Player::SetIsCapture(bool flag)
 	{
 		m_isCaptureFlag = false;
 	}
-	
 }
 
 void Player::SetCameraAngle(float cameraAngle)

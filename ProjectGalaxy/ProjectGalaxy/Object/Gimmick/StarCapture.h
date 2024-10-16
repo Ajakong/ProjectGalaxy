@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include "Collidable.h"
+#include"ColliderSphere.h"
 using namespace MyEngine;
 
 class Player;
-class ColliderSphere;
 
 class StarCapture : public Collidable
 {
@@ -32,7 +32,8 @@ private:
 	int m_modelhandle;
 	int m_radius;
 	int m_captureRadius;
-	std::shared_ptr<MyEngine::ColliderSphere> m_captureCol;
+	int m_captureFrame;
+	std::shared_ptr<ColliderSphere> m_captureCol;
 	std::shared_ptr<Collidable> m_target;
 	std::shared_ptr<Player> m_player;
 	Vec3 m_playerStartPos;
