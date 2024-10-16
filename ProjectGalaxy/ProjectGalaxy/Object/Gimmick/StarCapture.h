@@ -3,6 +3,7 @@
 using namespace MyEngine;
 
 class Player;
+class ColliderSphere;
 
 class StarCapture : public Collidable
 {
