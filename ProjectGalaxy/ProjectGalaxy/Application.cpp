@@ -1,4 +1,4 @@
-#include "Application.h"
+ï»¿#include "Application.h"
 #include "SceneManager.h"
 #include "GamePlayingScene.h"
 #include"TitleScene.h"
@@ -49,7 +49,7 @@ float Application::GetGravity() const
 
 bool Application::Init()
 {
-    ChangeWindowMode(true); // ƒEƒBƒ“ƒhƒEƒ‚[ƒh‚É‚µ‚Ü‚·
+    ChangeWindowMode(true); // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ã«ã—ã¾ã™
     //SetGraphMode(m_windowSize.w, m_windowSize.h, 1);
 
     SetUseDirect3DVersion(DX_DIRECT3D_11);
@@ -79,7 +79,7 @@ bool Application::Init()
     Effekseer_InitDistortion();
     Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
-    SetWindowText("‚È‚ß‚¥‚ğŒˆ‚ß‚Ä‚­‚¾‚³‚¢");
+    SetWindowText("ãªã‚ã‡ã‚’æ±ºã‚ã¦ãã ã•ã„");
     if (DxLib_Init() == -1)
     {
         return false;
@@ -91,7 +91,7 @@ bool Application::Init()
 
 void Application::Run()
 {
-    {// ƒXƒR[ƒv‚ğ‹­§“I‚Éì‚Á‚Ä‚¢‚é
+    {// ã‚¹ã‚³ãƒ¼ãƒ—ã‚’å¼·åˆ¶çš„ã«ä½œã£ã¦ã„ã‚‹
 
         SceneManager sceneManager;
         sceneManager.ChangeScene(std::make_shared<GamePlayingScene>(sceneManager));
@@ -102,7 +102,7 @@ void Application::Run()
 
         while (ProcessMessage() != -1)
         {
-            // FPS‚ÌŒÅ’è‚æ‚¤‚ÉŠJn‚ÌŠÔ‚ğæ“¾
+            // FPSã®å›ºå®šã‚ˆã†ã«é–‹å§‹æ™‚ã®æ™‚é–“ã‚’å–å¾—
             time = GetNowHiPerformanceCount();
 
             ClearDrawScreen();
@@ -119,8 +119,10 @@ void Application::Run()
             DrawEffekseer3D();
 
             ScreenFlip();
+            // escã‚­ãƒ¼ã‚’æŠ¼ã—ãŸã‚‰çµ‚äº†ã™ã‚‹
+            if (CheckHitKey(KEY_INPUT_ESCAPE))	break;
 
-            // 60FPS‚ÉŒÅ’è
+            // 60FPSã«å›ºå®š
             while (16667 > GetNowHiPerformanceCount() - time) {};
         }
     }

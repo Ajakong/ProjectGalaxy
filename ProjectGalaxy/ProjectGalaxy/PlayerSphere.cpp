@@ -13,13 +13,14 @@ namespace
 	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
 	
-	constexpr int kLifeTimeMax = 300;
+	constexpr int kLifeTimeMax = 50;
 	const char* name = "Sphere";
 
 }
 PlayerSphere::PlayerSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>player, Vec3 pos, Vec3 velocity,Vec3 sideVec ,int moveNum, int color) : SphereBase(priority, tag, pos, velocity, color, kSphereRadius),
 m_player(std::dynamic_pointer_cast<Player>(player)),
-m_sideVec(sideVec)
+m_sideVec(sideVec),
+m_lifeTime(0)
 {
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
@@ -54,11 +55,12 @@ void PlayerSphere::Draw()
 
 void PlayerSphere::Hit()
 {
-	m_isDeleteFlag = true;
+	
 }
 
 void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {
+	m_isDeleteFlag = true;
 }
 
 void PlayerSphere::StraightUpdate()

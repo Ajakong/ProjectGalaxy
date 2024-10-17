@@ -75,9 +75,20 @@ namespace MyEngine
 	}
 }
 
+#include "Quaternion.h"
 
 // プログラムは WinMain から始まります
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) 
+{
+	//Quaternion rot;
+	//Quaternion rot1 = AngleAxis(45, Vec3::Up());
+	//Quaternion rot2 = AngleAxis(30, Vec3::Up());
+	//Quaternion rot3 = AngleAxis(0, Vec3::Up());
+
+	//rot = rot1 * rot;
+	//rot = rot2 * rot;
+	//rot = rot3 * rot;
+
 	Application& application = Application::GetInstance();
 
 	if (!application.Init())

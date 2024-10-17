@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Game\Galaxy.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
     <ClCompile Include="Game\SerialPlanetGalaxy.cpp" />

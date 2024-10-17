@@ -1,10 +1,24 @@
-#pragma once
-
-// ƒQ[ƒ€‘S‘Ì‚Åg—p‚·‚é’è”‚ğ’è‹`‚·‚é
+ï»¿#pragma once
+#include<string>
+#include<vector>
+#include"Vec3.h"
+// ã‚²ãƒ¼ãƒ å…¨ä½“ã§ä½¿ç”¨ã™ã‚‹å®šæ•°ã‚’å®šç¾©ã™ã‚‹
 namespace Game
 {
-	constexpr int kScreenWidth = 1600;	// ‰æ–Ê‚Ì‰¡•
-	constexpr int kScreenHeight = 900;	// ‰æ–Ê‚Ìc•
+	struct LocationData
+	{
+		std::string name;
+		std::string tag;
+		Vec3 pos;
+		Vec3 rot;
+		Vec3 scale;
+	};
+	constexpr int kScreenWidth = 1600;	// ç”»é¢ã®æ¨ªå¹…
+	constexpr int kScreenHeight = 900;	// ç”»é¢ã®ç¸¦å¹…
 
 	constexpr int kColorDepth = 32;		// 16 or 32
+
+	void LoadLocations();
+	std::vector<LocationData> m_locationData;
+
 }

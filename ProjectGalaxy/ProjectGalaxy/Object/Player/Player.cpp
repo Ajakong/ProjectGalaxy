@@ -83,13 +83,10 @@ float GetAngle(Vec3 a, Vec3 b)
 	float rad = acos(cos);
 
 #ifdef _DEBUG
-	DrawFormatString(0, 150, 0xffffff, "%f", DX_PI_F / 2);
-	DrawFormatString(0, 175, 0xffffff, "%f", cos);
+	DrawFormatString(0, 125, 0xffffff, "rad(%f),deg(%f)", rad,rad*180/DX_PI_F);
 #endif
 
 	return rad;
-
-	
 }
 
 void MTransCopy(MATRIX& in, const MATRIX& src) {
@@ -99,13 +96,23 @@ void MTransCopy(MATRIX& in, const MATRIX& src) {
 
 Player::Player(int modelhandle) : Collidable(Priority::High, ObjectTag::Player),
 m_modelHandle(MV1DuplicateModel(ModelManager::GetInstance().GetModelData(kFileName))),
+m_parrySEHandle(SoundManager::GetInstance().GetSoundData(kOnParrySEName)),
+m_getItemHandle(SoundManager::GetInstance().GetSoundData(kGetItemSEName)),
+m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
+m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
+m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
+m_upVec(Vec3::Up()),
+m_postUpVec(Vec3::Up()),
+m_nowPlanetPos(Vec3::Up() * 500),
+m_shotDir(Vec3::Front()),
+m_frontVec(Vec3::Front()),
+m_playerUpdate(&Player::StartUpdate),
+m_prevUpdate(&Player::StartUpdate),
+m_cameraUpdate(&Player::Planet1Update),
 m_anim_move(),
 m_radius(kNetralRadius),
 m_Hp(50),
 m_damageFrame(0),
-m_playerUpdate(&Player::StartUpdate),
-m_prevUpdate(&Player::StartUpdate),
-m_cameraUpdate(&Player::Planet1Update),
 m_regeneRange(0),
 m_angle(0),
 m_spinAngle(0),
@@ -114,22 +121,14 @@ m_currentAnimNo(-1),
 m_prevAnimNo(0),
 m_isJumpFlag(false),
 m_isSpinFlag(false),
-m_nowPlanetPos(Vec3(Vec3(0, -500, 0))),
 m_searchRemainTime(0),
 m_chargeRemainTime(0),
-m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
 m_color(0x00ffff),
-m_getItemHandle(SoundManager::GetInstance().GetSoundData(kGetItemSEName)),
-m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
 m_attackRadius(0),
-m_parrySEHandle(SoundManager::GetInstance().GetSoundData(kOnParrySEName)),
 m_damageFrameSpeed(1),
-m_postUpVec(Vec3::Up()),
-m_frontVec(Vec3(0,0,1)),
 m_modelBodyRotate(m_frontVec),
-m_shotDir(Vec3(0,0,1)),
-m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
-m_inputVec(0,0,-1)
+m_inputVec(0,0,-1),
+m_modelDirAngle(0)
 {
 	m_postUpVec = m_upVec;
 	{
@@ -225,6 +224,7 @@ void Player::Update()
 	{
 		item->Update();
 	}
+	DeleteManage();
 	
 	if (m_visibleCount > 200)
 	{
@@ -275,14 +275,21 @@ void Player::Update()
 void Player::SetMatrix()
 {
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
-
+	float angleY = atan2(-m_moveDir.x, -m_moveDir.z);
+	//m_myQ = m_myQ * m_myQ.CreateRotationQuaternion(angleY -m_modelDirAngle, Vec3::Up());//角度の変化量だけ渡す
+	//m_modelDirAngle = angleY;
 	float angle = GetAngle(m_postUpVec, m_upVec);
+
 	Vec3 axis = Cross(m_postUpVec, m_upVec).GetNormalized();
+	if (axis.Length() != 0)
+	{
+		m_myQ = m_myQ * m_myQ.CreateRotationQuaternion(angle, axis);
+	}
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
 
 	MATRIX mat;
 	
-	m_myQ = m_myQ.QMult(m_myQ,m_myQ.CreateRotationQuaternion(angle, axis));
+	
 	mat = m_myQ.ToMat();
 
 	m_postUpVec = m_upVec;
@@ -290,6 +297,7 @@ void Player::SetMatrix()
 	MV1SetRotationMatrix(m_modelHandle, mat);
 
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+	auto modelMat = MV1GetMatrix(m_modelHandle);
 }
 
 void Player::Draw()
@@ -320,10 +328,17 @@ void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
 	m_cameraToPlayer = cameraToPlayer;
 }
 
+void Player::SetBoost()
+{
+	m_isBoostFlag = true; 
+	ChangeAnim(kAnimationNumFall);
+}
+
 void Player::SetIsCapture(bool flag)
 {
 	if (flag)
 	{
+		SetAntiGravity();
 		m_playerUpdate = &Player::CaptureUpdate;
 		ChangeAnim(kAnimationNumFall);
 		m_isCaptureFlag = true;
@@ -514,7 +529,6 @@ void Player::ChangeAnim(int animIndex)
 	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
 	//変更後のアニメーション0%
 	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
-
 }
 
 void Player::StartUpdate()
@@ -721,12 +735,11 @@ void Player::BoostUpdate()
 
 void Player::CaptureUpdate()
 {
-	SetAntiGravity();
 	if (!m_isCaptureFlag)
 	{
 		SetAntiGravity(false);
 		ChangeAnim(kAnimationNumIdle);
-		m_playerUpdate = &Player::NeutralUpdate;
+		m_playerUpdate = &Player::JumpingUpdate;
 	}
 }
 
@@ -828,3 +841,18 @@ void Player::SetShotDir()
 	m_shotDir = m_shotDir + m_frontVec;
 	m_shotDir = m_shotDir.GetNormalized();
 }
+
+void Player::DeleteManage()
+{
+	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
+		{
+			bool isOut = sphere->IsDelete() == true;
+	if (isOut == true)
+	{
+		MyEngine::Physics::GetInstance().Exit(sphere);
+	}
+	return isOut;
+		});
+	m_sphere.erase(result, m_sphere.end());
+}
+

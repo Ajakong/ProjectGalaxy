@@ -7,9 +7,15 @@
 namespace
 {
 	constexpr int kCaptureMaxFrame = 200;
+	constexpr int kRecastTimeMax = 300;
+	constexpr int kCaptureColLifeTime = 500;
+
 }
 
-StarCapture::StarCapture(Vec3 pos, int radius, int captureRadius) : Collidable(Priority::Static, ObjectTag::Player)
+StarCapture::StarCapture(Vec3 pos, int radius, int captureRadius) : Collidable(Priority::Static, ObjectTag::Player),
+m_isCapturePlayer(false),
+m_captureFrame(0),
+m_recastTime(0)
 {
 	m_rigid->SetPos(pos);
 	m_radius = radius;
@@ -33,6 +39,21 @@ void StarCapture::Init()
 
 void StarCapture::Update()
 {
+	if (m_isCapturePlayer)
+	{
+		m_captureFrame++;
+		if (m_captureFrame > kCaptureMaxFrame)
+		{
+			m_isCapturePlayer = false;
+			m_captureFrame = 0;
+			m_recastTime = 0;
+		}
+		m_player->SetVelocity(Vec3::Zero());
+	}
+	else
+	{
+		m_recastTime++;
+	}
 }
 
 void StarCapture::Draw()
@@ -42,8 +63,9 @@ void StarCapture::Draw()
 #ifdef _DEBUG
 	for (auto& col : m_colliders)
 	{
+		int color = 0x0000ff*65000*(m_recastTime/kRecastTimeMax);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(col);
-		DrawSphere3D(m_rigid->GetPos().VGet(), item->radius, 20, 0x0000ff, 0xffffff, false);
+		DrawSphere3D(m_rigid->GetPos().VGet(), item->radius, 20, color, 0xffffff, false);
 		DrawFormatString(0, 200, 0xddaa00, "Velocity(%f,%f,%f)", m_rigid->GetVelocity().x, m_rigid->GetVelocity().y, m_rigid->GetVelocity().z);
 		DrawFormatString(0, 250, 0xddaa00,"Pos(%f,%f,%f)",m_rigid->GetPos().x, m_rigid->GetPos().y, m_rigid->GetPos().z);
 	
@@ -56,6 +78,7 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
+		if (m_recastTime < kRecastTimeMax)return;
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
 		m_captureCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_captureCol->radius = m_captureRadius;
@@ -67,9 +90,10 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
+		m_isCapturePlayer = true;
 		RemoveCollider(m_captureCol);
 		m_player->SetIsCapture(false);
-
+		
 	}
 }
 
@@ -77,6 +101,7 @@ void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
+		m_ratio = 0;
 		m_playerStartPos = colider->GetRigidbody()->GetPos();
 		m_player->SetIsCapture(true);
 	}
@@ -93,7 +118,7 @@ void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider)
 		{
 			m_ratio = 1;
 		}
-		m_player->SetPos(EaseInOut(m_playerStartPos, m_rigid->GetPos(), m_ratio,2));
+		m_player->SetVelocity(EaseInOut(m_playerStartPos, m_rigid->GetPos(), m_ratio,2)-m_player->GetPos());
 	}
 }
 

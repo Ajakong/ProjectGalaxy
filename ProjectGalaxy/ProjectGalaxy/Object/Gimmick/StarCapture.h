@@ -29,6 +29,8 @@ private:
 
 private:
 	float m_ratio;
+	int m_captureColLifeTime;
+	int m_recastTime;
 	int m_modelhandle;
 	int m_radius;
 	int m_captureRadius;
@@ -37,5 +39,7 @@ private:
 	std::shared_ptr<Collidable> m_target;
 	std::shared_ptr<Player> m_player;
 	Vec3 m_playerStartPos;
+	bool m_isCapturePlayer;
+	bool m_isCreateCol;
 };
 

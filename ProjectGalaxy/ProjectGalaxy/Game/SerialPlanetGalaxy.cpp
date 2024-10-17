@@ -192,6 +192,9 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 
 	for (auto& item : planet)item->Update();//ステージの更新
+	//位置固定ギミック
+	for (auto& item : booster) { item->Update(); }
+	for (auto& item : starCapture) { item->Update(); }
 
 	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 

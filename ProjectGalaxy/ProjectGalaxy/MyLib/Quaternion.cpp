@@ -10,7 +10,7 @@ Quaternion AngleAxis(float angle, const Vec3& axis)
 	float cos = std::cos(halfRad);
 	auto normAxis = axis.GetNormalized();
 
-	result = Quaternion(normAxis.x * sin, normAxis.y * sin, normAxis.z * sin, cos);
+	result = Quaternion(cos,normAxis.x * sin, normAxis.y * sin, normAxis.z * sin);
 
 	return result;
 }

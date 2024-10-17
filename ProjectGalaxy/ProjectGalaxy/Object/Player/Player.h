@@ -20,7 +20,7 @@ public:
 	void Draw();
 
 	Vec3 GetPos() const { return  m_rigid->GetPos(); }
-	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
+	void SetVelocity(Vec3 pos) { m_rigid->SetVelocity(pos); }
 	float GetHp() { return m_Hp; }
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetMoveDir() const{ return m_moveDir; }
@@ -35,12 +35,12 @@ public:
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
 
-	void SetBoost() { m_isBoostFlag = true; }
+	void SetBoost();
 	void SetIsCapture(bool flag);
 	void SetCameraAngle(float cameraAngle);
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
-	void SetUpVec(Vec3 up) { m_upVec = up; }
+	void SetUpVec(Vec3 up) { m_upVec = up.GetNormalized(); }
 	void IsWarp() { m_isJumpFlag = true;}
 	int GetPlayerModelhandle() { return m_modelHandle; }
 	bool IsSearch() { return m_isSearchFlag; }
@@ -102,7 +102,7 @@ private:
 	void Planet1Update();
 
 	void SetShotDir();
-
+	void DeleteManage();
 	
 	Vec3 GetCameraToPlayer()const;
 
@@ -144,6 +144,7 @@ private:
 
 	float m_regeneRange;
 	float m_angle;
+	float m_modelDirAngle;
 	float m_spinAngle;
 	float m_radius = 0;
 	float m_attackRadius;
