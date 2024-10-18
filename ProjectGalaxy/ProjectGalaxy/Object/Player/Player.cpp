@@ -260,6 +260,7 @@ void Player::Update()
 	{
 		m_damageFrame = 0;
 	}
+
 	UpdateAnim(m_currentAnimNo);
 	//変更前のアニメーション100%
 	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);

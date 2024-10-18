@@ -100,7 +100,7 @@ void Physics::Update()
 		{
 			int a = 0;
 		}
-		OnCollideInfo(info.own, info.send, info.kind);
+		OnCollideInfo(info.own, info.send, info.index, info.kind);
 	}
 }
 
@@ -140,14 +140,15 @@ void MyEngine::Physics::MoveNextPos() const
 				{
 					if (col->isTrigger == true)
 					{
+						int colIndex=0;
 						for (const auto& objCol : obj->m_colliders)
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol))
 							{
-								planet->OnTriggerEnter(obj);
+								planet->OnTriggerEnter(obj, colIndex);
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
-
+							colIndex++;
 						}
 						
 					}
@@ -352,7 +353,7 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std:
 	}
 }
 
-void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger)
+void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo,int index, bool isTrigger)
 {
 	for (auto& parent : newSendInfo)
 	{
@@ -375,26 +376,26 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 			{
 				if (isTrigger)
 				{
-					AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerEnter);
-					AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerEnter);
+					AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::TriggerEnter);
+					AddOnCollideInfo(child, parent.first, index,OnCollideInfoKind::TriggerEnter);
 				}
 				else
 				{
-					AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideEnter);
-					AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideEnter);
+					AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideEnter);
+					AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideEnter);
 				}
 			}
 
 			// Stayは毎度呼ぶ
 			if (isTrigger)
 			{
-				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerStay);
-				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerStay);
+				AddOnCollideInfo(parent.first, child, index,OnCollideInfoKind::TriggerStay);
+				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::TriggerStay);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideStay);
-				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideStay);
+				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideStay);
+				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideStay);
 			}
 
 			// 登録されていた情報を削除
@@ -423,53 +424,54 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 		{
 			if (isTrigger)
 			{
-				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerExit);
-				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerExit);
+				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::TriggerExit);
+				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::TriggerExit);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideExit);
-				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideExit);
+				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideExit);
+				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideExit);
 			}
 		}
 	}
 }
 
-void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind)
+void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, int index, OnCollideInfoKind kind)
 {
 	OnCollideInfoData info;
 	info.own = own;
 	info.send = send;
+	info.index = index;
 	info.kind = kind;
 	m_onCollideInfo.emplace_back(info);
 }
 
-void MyEngine::Physics::OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind)
+void MyEngine::Physics::OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, int index, OnCollideInfoKind kind)
 {
 	auto item=send;
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
-		own->OnCollideEnter(item);
+		own->OnCollideEnter(item, index);
 	}
 	else if (kind == OnCollideInfoKind::CollideStay)
 	{
-		own->OnCollideStay(item);
+		own->OnCollideStay(item, index);
 	}
 	else if (kind == OnCollideInfoKind::CollideExit)
 	{
-		own->OnCollideExit(item);
+		own->OnCollideExit(item, index);
 	}
 	else if (kind == OnCollideInfoKind::TriggerEnter)
 	{
-		own->OnTriggerEnter(item);
+		own->OnTriggerEnter(item, index);
 	}
 	else if (kind == OnCollideInfoKind::TriggerStay)
 	{
-		own->OnTriggerStay(item);
+		own->OnTriggerStay(item, index);
 	}
 	else if (kind == OnCollideInfoKind::TriggerExit)
 	{
-		own->OnTriggerExit(item);
+		own->OnTriggerExit(item, index);
 	}
 }
 

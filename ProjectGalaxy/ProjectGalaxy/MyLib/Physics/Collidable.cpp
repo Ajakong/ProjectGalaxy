@@ -49,7 +49,9 @@ std::shared_ptr<ColliderBase> MyEngine::Collidable::AddCollider(const ColliderBa
 }
 void MyEngine::Collidable::RemoveCollider(std::shared_ptr<ColliderBase> col)
 {
-	m_colliders.remove(col);
+	auto it = std::find(m_colliders.begin(), m_colliders.end(), col);
+	if (it == m_colliders.end()) return;
+	m_colliders.erase(it);
 }
 /// <summary>
 /// 当たり判定を無視（スルー）するタグの追加

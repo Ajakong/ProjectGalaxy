@@ -13,5 +13,6 @@ enum class ObjectTag
 	WarpGate,
 	Item,
 	ClearObject,
-	StarCapture
+	StarCapture,
+	SeekerLine
 };

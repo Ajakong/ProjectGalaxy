@@ -177,6 +177,7 @@
     <ClCompile Include="Object\Enemy\Killer.cpp" />
     <ClCompile Include="Object\Enemy\KillerTheSeeker.cpp" />
     <ClCompile Include="Object\Enemy\Takobo.cpp" />
+    <ClCompile Include="Object\Gimmick\SeekerLine.cpp" />
     <ClCompile Include="Object\Gimmick\StarCapture.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="Object\Enemy\Killer.h" />
     <ClInclude Include="Object\Enemy\KillerTheSeeker.h" />
     <ClInclude Include="Object\Enemy\Takobo.h" />
+    <ClInclude Include="Object\Gimmick\SeekerLine.h" />
     <ClInclude Include="Object\Gimmick\StarCapture.h" />
     <ClInclude Include="Object\Item\Item.h" />
     <ClInclude Include="Object\ObjectManager.h" />
@@ -246,6 +248,7 @@
     <ClInclude Include="Planet\Planet.h" />
     <ClInclude Include="Planet\SpherePlanet.h" />
     <ClInclude Include="PlayerSphere.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\ClearScene.h" />
     <ClInclude Include="Scene\GameOverScene.h" />
     <ClInclude Include="Scene\GamePlayingScene.h" />
@@ -253,6 +256,9 @@
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ProjectGalaxy.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 #include <vector>
+#include <list>
 #include "../ObjectTag.h"
 #include "Rigidbody.h"
 #include "ColliderBase.h"
@@ -34,15 +35,16 @@ namespace MyEngine
 		virtual void Draw()=0;
 
 		// 衝突したとき
-		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider) {}
-		virtual void OnCollideStay(std::shared_ptr<Collidable> colider) {}
-		virtual void OnCollideExit(std::shared_ptr<Collidable> colider) {}
-		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider) {}
-		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider) {}
-		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider) {}
+		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, int index) {}
+		virtual void OnCollideStay(std::shared_ptr<Collidable> colider, int index) {}
+		virtual void OnCollideExit(std::shared_ptr<Collidable> colider, int index) {}
+		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, int index) {}
+		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, int index) {}
+		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider, int index) {}
 
 		/* Getter */
 		ObjectTag GetTag() const { return m_tag; }
+		std::shared_ptr<ColliderBase> GetColData(int index) const { return m_colliders.at(index); }
 		Priority GetPriority() const { return m_priority; }
 		void SetObjectTag(ObjectTag tag) { m_tag = tag; }
 		bool IsAntiGravity() { return m_isAntiGravity; }
@@ -68,7 +70,7 @@ namespace MyEngine
 		// 物理データ
 		std::shared_ptr<Rigidbody> m_rigid;
 		// 当たり判定データ
-		std::list<std::shared_ptr<ColliderBase>> m_colliders;
+		std::vector<std::shared_ptr<ColliderBase>> m_colliders;
 		Vec3 m_upVec;
 
 		
