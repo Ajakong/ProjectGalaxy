@@ -94,13 +94,10 @@ void Physics::Update()
 
 	for (const auto& info : m_onCollideInfo)
 	{
-		if (static_cast<int>(info.send->m_tag) > 10|| static_cast<int>(info.send->m_tag)<0)continue;//応急処置済み:Exitしても履歴に残っているが参照できずに例外がスローされる
-		if (static_cast<int>(info.own->m_tag) > 10 || static_cast<int>(info.own->m_tag) < 0)continue;//:上に同じ
-		if (info.own->GetTag() == ObjectTag::ClearObject)
 		{
 			int a = 0;
-		}
-		OnCollideInfo(info.own, info.send, info.index, info.kind);
+		if (static_cast<int>(info.own->col->m_tag) > 10 || static_cast<int>(info.own->col->m_tag) < 0)continue;//:上に同じ
+		OnCollideInfo(info.own, info.send, info.kind);
 	}
 }
 
@@ -140,7 +137,7 @@ void MyEngine::Physics::MoveNextPos() const
 				{
 					if (col->isTrigger == true)
 					{
-						int colIndex=0;
+						int colIndex = 0;
 						for (const auto& objCol : obj->m_colliders)
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol))
@@ -150,10 +147,8 @@ void MyEngine::Physics::MoveNextPos() const
 							}
 							colIndex++;
 						}
-						
 					}
 				}
-				
 			}
 
 		}
@@ -196,6 +191,8 @@ void MyEngine::Physics::MoveNextPos() const
 
 void MyEngine::Physics::CheckCollide()
 {
+
+
 	bool isCheck = true;
 	int checkCount = 0;
 	std::unordered_map<std::shared_ptr<Collidable>, std::list<std::shared_ptr<Collidable>>> newCollideInfo;
@@ -211,8 +208,11 @@ void MyEngine::Physics::CheckCollide()
 				if (objA == objB) continue;
 				// どちらかのスルー対象としてタグが入っていたら無視
 				if (objA->IsThroughTarget(objB) || objB->IsThroughTarget(objA))continue;
+
+				int indexColA = 0;
 				for (const auto& colA : objA->m_colliders)
 				{
+					int indexColB=0;
 					for (const auto& colB : objB->m_colliders)
 					{
 						
@@ -222,12 +222,12 @@ void MyEngine::Physics::CheckCollide()
 
 						if (isTrigger)
 						{
-							AddNewCollideInfo(objA, objB, m_newTirrigerInfo);
+							AddNewCollideInfo(objA, objB, indexColA, indexColB, m_newTirrigerInfo);
 						}
 						else
 						{
 							
-							AddNewCollideInfo(objA, objB, m_newCollideInfo);
+							AddNewCollideInfo(objA, objB, indexColA, indexColB, m_newCollideInfo);
 						}
 
 
@@ -254,10 +254,11 @@ void MyEngine::Physics::CheckCollide()
 						isCheck = true;
 						break;
 					}
+					indexColB++;
 
 					if (isCheck) break;
 				}
-
+				indexColA++;
 				if (isCheck) break;
 			}
 
@@ -321,21 +322,27 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 	secondaryRigid->SetNextPos(fixedPos);
 }
 
-void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB, SendCollideInfo& info)
+void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB,int indexA, int indexB, SendCollideInfo& info)
 {
+	std::shared_ptr<CollideData> parent=std::make_shared<CollideData>();
+	parent->Set(objA, indexA);
+
+	std::shared_ptr<CollideData> child = std::make_shared<CollideData>();
+	child->Set(objB, indexB);
+
 	// Aが親として取得しているか
-	bool isParentA = info.find(objA) != info.end();
+	bool isParentA = info.find(parent) != info.end();
 	// Bが親として取得しているか
-	bool isParentB = info.find(objB) != info.end();
+	bool isParentB = info.find(child) != info.end();
+
 	// AがBどちらかが取得している場合
 	if (isParentA || isParentB)
 	{
-		std::shared_ptr<Collidable> parent = objA;
-		std::shared_ptr<Collidable> child = objB;
+	
 		if (isParentB)
 		{
-			parent = objB;
-			child = objA;
+			parent->Set(objB, indexB);
+			child->Set(objA, indexA);
 		}
 		// 親が子を持っているか
 		bool isChild = std::find(info[parent].begin(), info[parent].end(), child) != info[parent].end();
@@ -349,11 +356,11 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std:
 	else
 	{
 		// 普通に追加
-		info[objA].emplace_back(objB);
+		info[child].emplace_back(parent);
 	}
 }
 
-void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo,int index, bool isTrigger)
+void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo,bool isTrigger)
 {
 	for (auto& parent : newSendInfo)
 	{
@@ -376,26 +383,26 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 			{
 				if (isTrigger)
 				{
-					AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::TriggerEnter);
-					AddOnCollideInfo(child, parent.first, index,OnCollideInfoKind::TriggerEnter);
+					AddOnCollideInfo(parent.first, child,OnCollideInfoKind::TriggerEnter);
+					AddOnCollideInfo(child, parent.first,OnCollideInfoKind::TriggerEnter);
 				}
 				else
 				{
-					AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideEnter);
-					AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideEnter);
+					AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideEnter);
+					AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideEnter);
 				}
 			}
 
 			// Stayは毎度呼ぶ
 			if (isTrigger)
 			{
-				AddOnCollideInfo(parent.first, child, index,OnCollideInfoKind::TriggerStay);
-				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::TriggerStay);
+				AddOnCollideInfo(parent.first, child,OnCollideInfoKind::TriggerStay);
+				AddOnCollideInfo(child, parent.first,OnCollideInfoKind::TriggerStay);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideStay);
-				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideStay);
+				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideStay);
+				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideStay);
 			}
 
 			// 登録されていた情報を削除
@@ -424,54 +431,53 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 		{
 			if (isTrigger)
 			{
-				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::TriggerExit);
-				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::TriggerExit);
+				AddOnCollideInfo(parent.first, child,  OnCollideInfoKind::TriggerExit);
+				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerExit);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideExit);
-				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideExit);
+				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideExit);
+				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideExit);
 			}
 		}
 	}
 }
 
-void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, int index, OnCollideInfoKind kind)
+void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<CollideData> own, std::shared_ptr<CollideData> send,OnCollideInfoKind kind)
 {
 	OnCollideInfoData info;
 	info.own = own;
 	info.send = send;
-	info.index = index;
 	info.kind = kind;
 	m_onCollideInfo.emplace_back(info);
 }
 
-void MyEngine::Physics::OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, int index, OnCollideInfoKind kind)
+void MyEngine::Physics::OnCollideInfo(std::shared_ptr<CollideData> own, std::shared_ptr<CollideData> send,OnCollideInfoKind kind)
 {
 	auto item=send;
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
-		own->OnCollideEnter(item, index);
+		own->col->OnCollideEnter(item->col, item->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::CollideStay)
 	{
-		own->OnCollideStay(item, index);
+		own->col->OnCollideStay(item->col, item->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::CollideExit)
 	{
-		own->OnCollideExit(item, index);
+		own->col->OnCollideExit(item->col, item->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::TriggerEnter)
 	{
-		own->OnTriggerEnter(item, index);
+		own->col->OnTriggerEnter(item->col, item->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::TriggerStay)
 	{
-		own->OnTriggerStay(item, index);
+		own->col->OnTriggerStay(item->col, item->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::TriggerExit)
 	{
-		own->OnTriggerExit(item, index);
+		own->col->OnTriggerExit(item->col, item->colideIndex);
 	}
 }
 
