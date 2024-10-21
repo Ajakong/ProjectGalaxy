@@ -94,8 +94,6 @@ void Physics::Update()
 
 	for (const auto& info : m_onCollideInfo)
 	{
-		{
-			int a = 0;
 		if (static_cast<int>(info.own->col->m_tag) > 10 || static_cast<int>(info.own->col->m_tag) < 0)continue;//:上に同じ
 		OnCollideInfo(info.own, info.send, info.kind);
 	}
