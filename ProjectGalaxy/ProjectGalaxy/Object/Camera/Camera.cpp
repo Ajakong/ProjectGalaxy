@@ -95,7 +95,7 @@ void Camera::SetAimCamera(Vec3 LookPoint)
 
 	m_pos = m_cameraPoint;
 
-	//DrawSphere3D(m_pos.VGet(), 20, 8, 0xffffff, 0xffffff, true);
+	DrawSphere3D(m_pos.VGet(), 20, 8, 0xffffff, 0xffffff, true);
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_pos+LookPoint).VGet(), m_upVec.VGet());
 	//SetCameraPositionAndTargetAndUpVec(VGet(0,400,-500), VGet(0,0,0), m_upVec.VGet());
@@ -180,7 +180,7 @@ void Camera::SetCameraThirdPersonPos(Vec3 LookPoint)
 
 void Camera::SetDebugCameraPoint()
 {
-	//SetCameraPositionAndTargetAndUpVec(VGet(0, 400, -500), VGet(0, 0, 0), m_upVec.VGet());
+	SetCameraPositionAndTargetAndUpVec(VGet(0, 400, -500), VGet(0, 0, 0), m_upVec.VGet());
 }
 
 void Camera::WatchThis(Vec3 lookpoint, Vec3 cameraPos, Vec3 upVec)

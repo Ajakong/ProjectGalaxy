@@ -131,6 +131,7 @@ void MyEngine::Physics::MoveNextPos() const
 			if (obj->GetTag() != ObjectTag::Stage)
 			{
 				auto planet = dynamic_cast<Planet*>(item.get());
+				int stageIndex=0;
 				for (const auto& col : item->m_colliders)
 				{
 					if (col->isTrigger == true)
@@ -140,12 +141,13 @@ void MyEngine::Physics::MoveNextPos() const
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol))
 							{
-								planet->OnTriggerEnter(obj, colIndex);
+								planet->OnTriggerEnter(obj, colIndex, stageIndex);
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
 							colIndex++;
 						}
 					}
+					stageIndex++;
 				}
 			}
 
@@ -189,8 +191,6 @@ void MyEngine::Physics::MoveNextPos() const
 
 void MyEngine::Physics::CheckCollide()
 {
-
-
 	bool isCheck = true;
 	int checkCount = 0;
 	std::unordered_map<std::shared_ptr<Collidable>, std::list<std::shared_ptr<Collidable>>> newCollideInfo;
@@ -455,27 +455,27 @@ void MyEngine::Physics::OnCollideInfo(std::shared_ptr<CollideData> own, std::sha
 	auto item=send;
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
-		own->col->OnCollideEnter(item->col, item->colideIndex);
+		own->col->OnCollideEnter(item->col, item->colideIndex,own->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::CollideStay)
 	{
-		own->col->OnCollideStay(item->col, item->colideIndex);
+		own->col->OnCollideStay(item->col, item->colideIndex, own->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::CollideExit)
 	{
-		own->col->OnCollideExit(item->col, item->colideIndex);
+		own->col->OnCollideExit(item->col, item->colideIndex, own->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::TriggerEnter)
 	{
-		own->col->OnTriggerEnter(item->col, item->colideIndex);
+		own->col->OnTriggerEnter(item->col, item->colideIndex, own->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::TriggerStay)
 	{
-		own->col->OnTriggerStay(item->col, item->colideIndex);
+		own->col->OnTriggerStay(item->col, item->colideIndex, own->colideIndex);
 	}
 	else if (kind == OnCollideInfoKind::TriggerExit)
 	{
-		own->col->OnTriggerExit(item->col, item->colideIndex);
+		own->col->OnTriggerExit(item->col, item->colideIndex, own->colideIndex);
 	}
 }
 

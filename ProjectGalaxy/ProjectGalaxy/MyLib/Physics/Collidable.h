@@ -34,13 +34,48 @@ namespace MyEngine
 		virtual void Update() = 0;
 		virtual void Draw()=0;
 
-		// 衝突したとき
-		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnCollideStay(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnCollideExit(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider, int index) {}
+		/// <summary>
+		/// 衝突したとき(補正あり)
+		/// </summary>
+		/// <param name="colider">衝突相手</param>
+		/// <param name="myIndex">自分の当たり判定Index</param>
+		/// <param name="partnerIndex">相手の当たり判定Index</param>
+		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex,int partnerIndex) {}
+		/// <summary>
+		/// 衝突している時(補正あり)
+		/// </summary>
+		/// <param name="colider">衝突相手</param>
+		/// <param name="myIndex">自分の当たり判定Index</param>
+		/// <param name="partnerIndex">相手の当たり判定Index</param>
+		virtual void OnCollideStay(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex) {}
+		/// <summary>
+		/// 衝突状態から抜けるとき(補正あり)
+		/// </summary>
+		/// <param name="colider">衝突相手</param>
+		/// <param name="myIndex">自分の当たり判定Index</param>
+		/// <param name="partnerIndex">相手の当たり判定Index</param>
+		virtual void OnCollideExit(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex) {}
+		/// <summary>
+		/// 衝突したとき(補正なし)
+		/// </summary>
+		/// <param name="colider">衝突相手</param>
+		/// <param name="myIndex">自分の当たり判定Index</param>
+		/// <param name="partnerIndex">相手の当たり判定Index</param>
+		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex) {}
+		/// <summary>
+		/// 衝突している時(補正なし)
+		/// </summary>
+		/// <param name="colider">衝突相手</param>
+		/// <param name="myIndex">自分の当たり判定Index</param>
+		/// <param name="partnerIndex">相手の当たり判定Index</param>
+		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex) {}
+		/// <summary>
+		/// 衝突状態から抜けるとき(補正なし)
+		/// </summary>
+		/// <param name="colider">衝突相手</param>
+		/// <param name="myIndex">自分の当たり判定Index</param>
+		/// <param name="partnerIndex">相手の当たり判定Index</param>
+		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex) {}
 
 		/* Getter */
 		ObjectTag GetTag() const { return m_tag; }

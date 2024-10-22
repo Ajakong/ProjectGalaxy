@@ -25,18 +25,18 @@ public:
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetMoveDir() const{ return m_moveDir; }
 	Vec3 GetNowPlanetPos() { return m_nowPlanetPos; }
-	Vec3 GetNormVec() { return Vec3(m_rigid->GetPos() - m_nowPlanetPos).GetNormalized(); }
+	Vec3 GetNormVec() { return m_upVec.GetNormalized(); }
 	Vec3 GetFrontVec() { return m_frontVec.GetNormalized(); }
 	Vec3 GetSideVec() { return m_sideVec.GetNormalized(); }
 	Vec3 GetShotDir() { return m_shotDir; }
 	float GetRegenerationRange() { return m_regeneRange; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
-	bool GetCaptureFlag()const { return m_isCaptureFlag; }
+	bool GetOperationFlag()const { return m_isOperationFlag; }
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
 
 	void SetBoost();
-	void SetIsCapture(bool flag);
+	void SetIsOperation(bool flag);
 	void SetCameraAngle(float cameraAngle);
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
@@ -63,7 +63,7 @@ public:
 	cameraState_t m_cameraUpdate;
 
 	void BoostUpdate();
-	void CaptureUpdate();
+	void OperationUpdate();
 private:
 	Vec3 Move();
 
@@ -200,7 +200,7 @@ private:
 	bool m_isVisibleFlag = false;
 	bool m_isJumpFlag = false;
 	bool m_isBoostFlag = false;
-	bool m_isCaptureFlag = false;
+	bool m_isOperationFlag = false;
 	bool m_isSearchFlag = false;
 	bool m_isAimFlag = false;
 	bool m_isClearFlag=false;

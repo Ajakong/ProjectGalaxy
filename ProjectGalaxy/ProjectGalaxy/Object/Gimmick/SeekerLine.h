@@ -12,11 +12,16 @@ public:
 	void Update();
 	void Draw();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,int myColIndex,int partnerColIndex);
 
 private:
 	std::vector<Vec3> m_points;
 	std::shared_ptr<Player> m_player;
+	Vec3 m_playerStartPos;
+
 	int m_color;
+	int m_hitPointNum;
+	int m_speed;
+	int m_ratio;
 };
 

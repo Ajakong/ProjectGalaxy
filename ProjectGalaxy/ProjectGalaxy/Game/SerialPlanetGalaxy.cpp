@@ -163,9 +163,9 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		camera->Update(player->GetPos());
 	}
 	
-	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
+	Vec3 planetToPlayer = player->GetNowPlanetPos()- player->GetPos();
 	Vec3 sideVec = player->GetSideVec();
-	Vec3 front =player->GetFrontVec();//-1をかけて逆ベクトルにしている
+	Vec3 front =player->GetFrontVec()*-1;//-1をかけて逆ベクトルにしている
 
 	//相対的な軸ベクトルの設定
 	
@@ -177,7 +177,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 	if (player->GetBoostFlag())
 	{
-		camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * (kCameraDistanceUp - 400) - front * ((kCameraDistanceFront - 700) + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
+		camera->SetCameraPoint(player->GetPos() + (planetToPlayer.GetNormalized() * (kCameraDistanceUp - 400) - front * ((kCameraDistanceFront - 700) + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
 	}
 	else
 	{
@@ -206,7 +206,8 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 void SerialPlanetGalaxy::GamePlayingDraw()
 {
-	if (player->OnAiming())camera->SetDebugCameraPoint();
+	//camera->SetDebugCameraPoint();
+
 	Vec3 pos = MV1GetPosition(m_skyDomeH);
 	DxLib::MV1DrawModel(m_skyDomeH);
 

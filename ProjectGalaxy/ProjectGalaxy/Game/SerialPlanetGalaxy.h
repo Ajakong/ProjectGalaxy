@@ -11,6 +11,7 @@ class WarpGate;
 //ギミック
 class Booster;
 class StarCapture;
+class SeekerLine;
 
 class Takobo;
 class KillerTheSeeker;

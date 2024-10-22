@@ -92,7 +92,7 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	{
 		m_isCapturePlayer = true;
 		RemoveCollider(m_captureCol);
-		m_player->SetIsCapture(false);
+		m_player->SetIsOperation(false);
 		
 	}
 }
@@ -103,7 +103,7 @@ void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 	{
 		m_ratio = 0;
 		m_playerStartPos = colider->GetRigidbody()->GetPos();
-		m_player->SetIsCapture(true);
+		m_player->SetIsOperation(true);
 	}
 }
 
@@ -126,7 +126,7 @@ void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		m_player->SetIsCapture(false);
+		m_player->SetIsOperation(false);
 	}
 }
 
