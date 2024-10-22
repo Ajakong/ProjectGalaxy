@@ -353,7 +353,7 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std:
 	}
 }
 
-void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo,int index, bool isTrigger)
+void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger)
 {
 	for (auto& parent : newSendInfo)
 	{
@@ -376,26 +376,26 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 			{
 				if (isTrigger)
 				{
-					AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::TriggerEnter);
-					AddOnCollideInfo(child, parent.first, index,OnCollideInfoKind::TriggerEnter);
+					AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::TriggerEnter);
+					AddOnCollideInfo(child, parent.first, 0,OnCollideInfoKind::TriggerEnter);
 				}
 				else
 				{
-					AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideEnter);
-					AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideEnter);
+					AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::CollideEnter);
+					AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::CollideEnter);
 				}
 			}
 
 			// Stayは毎度呼ぶ
 			if (isTrigger)
 			{
-				AddOnCollideInfo(parent.first, child, index,OnCollideInfoKind::TriggerStay);
-				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::TriggerStay);
+				AddOnCollideInfo(parent.first, child, 0,OnCollideInfoKind::TriggerStay);
+				AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::TriggerStay);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideStay);
-				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideStay);
+				AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::CollideStay);
+				AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::CollideStay);
 			}
 
 			// 登録されていた情報を削除
@@ -424,13 +424,13 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 		{
 			if (isTrigger)
 			{
-				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::TriggerExit);
-				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::TriggerExit);
+				AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::TriggerExit);
+				AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::TriggerExit);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, index, OnCollideInfoKind::CollideExit);
-				AddOnCollideInfo(child, parent.first, index, OnCollideInfoKind::CollideExit);
+				AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::CollideExit);
+				AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::CollideExit);
 			}
 		}
 	}
