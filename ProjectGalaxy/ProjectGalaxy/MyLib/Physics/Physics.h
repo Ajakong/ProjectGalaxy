@@ -22,7 +22,7 @@ namespace MyEngine
 			TriggerStay,
 			TriggerExit
 		};
-	
+
 		struct CollideData
 		{
 			void Set(std::shared_ptr<Collidable>c, int index) { col = c; colideIndex = index; }
@@ -62,7 +62,7 @@ namespace MyEngine
 		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider);
 		void AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB, int indexA, int indexB, SendCollideInfo& info);
 		void CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger);
-		void AddOnCollideInfo(std::shared_ptr<CollideData> own, std::shared_ptr<CollideData> send,OnCollideInfoKind kind);
+		void AddOnCollideInfo(std::shared_ptr<CollideData> own, std::shared_ptr<CollideData> send, OnCollideInfoKind kind);
 		void OnCollideInfo(std::shared_ptr<CollideData> own, std::shared_ptr<CollideData> send, OnCollideInfoKind kind);
 		void FixPos() const;
 
@@ -77,4 +77,5 @@ namespace MyEngine
 		SendCollideInfo m_preTirrigerInfo;
 	};
 }
+
 
