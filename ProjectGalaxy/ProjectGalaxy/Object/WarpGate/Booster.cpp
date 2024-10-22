@@ -86,7 +86,7 @@ void Booster::Draw()
 	DrawCube3D(Vec3(m_rigid->GetPos() + Vec3(20, 20, 20)).VGet(), Vec3(m_rigid->GetPos() + Vec3(-20, -20, -20)).VGet(), 0xffff00, 0xffff00, false);
 }
 
-void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

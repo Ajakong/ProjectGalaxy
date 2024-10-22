@@ -120,7 +120,7 @@ Vec3 SpherePlanet::GetNormVec(Vec3 pos)
 	return norm;
 }
 
-void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider)
+void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	/*if (colider->GetTag() == ObjectTag::Takobo)
 	{
@@ -128,7 +128,7 @@ void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 	}*/
 }
 
-void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider)
+void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{

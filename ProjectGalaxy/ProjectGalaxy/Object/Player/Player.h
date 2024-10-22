@@ -23,7 +23,7 @@ public:
 	void SetVelocity(Vec3 pos) { m_rigid->SetVelocity(pos); }
 	float GetHp() { return m_Hp; }
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
-	Vec3 GetMoveDir() const{ return m_moveDir; }
+	Vec3 GetMoveDir() const { return m_moveDir; }
 	Vec3 GetNowPlanetPos() { return m_nowPlanetPos; }
 	Vec3 GetNormVec() { return m_upVec.GetNormalized(); }
 	Vec3 GetFrontVec() { return m_frontVec.GetNormalized(); }
@@ -32,7 +32,7 @@ public:
 	float GetRegenerationRange() { return m_regeneRange; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
 	bool GetOperationFlag()const { return m_isOperationFlag; }
-	bool GetBoostFlag() const{ return m_isBoostFlag; }
+	bool GetBoostFlag() const { return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
 
 	void SetBoost();
@@ -41,7 +41,7 @@ public:
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
 	void SetUpVec(Vec3 up) { m_upVec = up.GetNormalized(); }
-	void IsWarp() { m_isJumpFlag = true;}
+	void IsWarp() { m_isJumpFlag = true; }
 	int GetPlayerModelhandle() { return m_modelHandle; }
 	bool IsSearch() { return m_isSearchFlag; }
 	bool OnDamage() { return m_isOnDamageFlag; }
@@ -52,8 +52,20 @@ public:
 	bool GetJumpFlag() { return m_isJumpFlag; }
 
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
-	virtual void OnCollideStay(std::shared_ptr<Collidable> colider);
+	/// <summary>
+		/// 衝突したとき(補正あり)
+		/// </summary>
+		/// <param name="colider">衝突相手</param>
+		/// <param name="myIndex">自分の当たり判定Index</param>
+		/// <param name="partnerIndex">相手の当たり判定Index</param>
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex);
+	/// <summary>
+		/// 衝突している時(補正あり)
+		/// </summary>
+		/// <param name="colider">衝突相手</param>
+		/// <param name="myIndex">自分の当たり判定Index</param>
+		/// <param name="partnerIndex">相手の当たり判定Index</param>
+	virtual void OnCollideStay(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex);
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_playerUpdate;
@@ -103,7 +115,7 @@ private:
 
 	void SetShotDir();
 	void DeleteManage();
-	
+
 	Vec3 GetCameraToPlayer()const;
 
 private:
@@ -124,7 +136,7 @@ private:
 
 	int rotRad = 0;
 
-	int m_itemCount=0;
+	int m_itemCount = 0;
 
 	/// <summary>
 	/// 行動のフレームを管理する
@@ -174,7 +186,7 @@ private:
 	float m_animBlendRate;//アニメーションの合成割合
 	//0.0f:prevが再生
 	//1.0:currentが再生
-	int m_reverseFlag=0;
+	int m_reverseFlag = 0;
 	int m_damageFrame;
 	int m_damageFrameSpeed;
 
@@ -203,7 +215,7 @@ private:
 	bool m_isOperationFlag = false;
 	bool m_isSearchFlag = false;
 	bool m_isAimFlag = false;
-	bool m_isClearFlag=false;
+	bool m_isClearFlag = false;
 
 	int m_visibleCount = 0;
 

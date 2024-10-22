@@ -1,13 +1,13 @@
-#include "Killer.h"
+ï»¿#include "Killer.h"
 #include"Enemy.h"
 namespace
 {
 	/// <summary>
-	/// ‹…‚Ì“–‚½‚è”»’è”¼Œa
+	/// çƒã®å½“ãŸã‚Šåˆ¤å®šåŠå¾„
 	/// </summary>
 	constexpr float kSphereRadius = 10.0f;
 	/// <summary>
-	/// ‹…‚Ì¶¬ŠÔŠu
+	/// çƒã®ç”Ÿæˆé–“éš”
 	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
 	const char* name = "Killer";
@@ -48,7 +48,7 @@ void Killer::Hit()
 {
 }
 
-void Killer::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Killer::OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 }
 

@@ -74,7 +74,7 @@ void StarCapture::Draw()
 #endif
 }
 
-void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
@@ -97,7 +97,7 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider)
+void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -107,7 +107,7 @@ void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider)
+void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -122,7 +122,7 @@ void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider)
+void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

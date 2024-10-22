@@ -122,7 +122,7 @@ void Takobo::Draw()
 	}
 }
 
-void Takobo::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Takobo::OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

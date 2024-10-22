@@ -1,4 +1,4 @@
-#include "ClearObject.h"
+﻿#include "ClearObject.h"
 #include"../MyLib/Physics/ColliderSphere.h"
 #include"../Quaternion.h"
 
@@ -11,7 +11,7 @@ ClearObject::~ClearObject()
 {
 }
 
-void ClearObject::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void ClearObject::OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

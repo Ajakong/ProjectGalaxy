@@ -355,7 +355,7 @@ void Player::SetCameraAngle(float cameraAngle)
 	m_cameraAngle = cameraAngle;
 }
 
-void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -475,7 +475,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void Player::OnCollideStay(std::shared_ptr<Collidable> colider)
+void Player::OnCollideStay(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex)
 {
 	
 }

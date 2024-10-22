@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "EnemySphere.h"
 
 
@@ -15,20 +15,20 @@ public:
 
 	virtual void Hit();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, int myIndex, int partnerIndex);
 	virtual bool IsDelete() { return m_isDeleteFlag; }
 	void SetCounterFlag() { m_counterFlag = true; }
 	Vec3 GetVelocity() { return m_velocity; }
 	void SetVelocity(Vec3 vel) { m_velocity = vel; }
 	bool GetCounterFlag() { return m_counterFlag; }
-	//ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+	//ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 	using MoveState_t = void(Killer::*)();
 	MoveState_t m_moveUpdate;
 
 protected:
 	virtual void SearchUpDate();
 
-	virtual void  StraightUpdate();//‹…‚ğ’¼üó‚É”ò‚Î‚·
+	virtual void  StraightUpdate();//çƒã‚’ç›´ç·šçŠ¶ã«é£›ã°ã™
 
 	virtual void CounterUpdate();
 private:
