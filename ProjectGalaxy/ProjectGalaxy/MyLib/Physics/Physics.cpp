@@ -100,7 +100,7 @@ void Physics::Update()
 		{
 			int a = 0;
 		}
-		OnCollideInfo(info.own, info.send, info.index, info.kind);
+		OnCollideInfo(info.own, info.send,info.kind);
 	}
 }
 
@@ -145,7 +145,7 @@ void MyEngine::Physics::MoveNextPos() const
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol))
 							{
-								planet->OnTriggerEnter(obj, colIndex);
+								planet->OnTriggerEnter(obj);
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
 							colIndex++;
@@ -376,26 +376,26 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 			{
 				if (isTrigger)
 				{
-					AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::TriggerEnter);
-					AddOnCollideInfo(child, parent.first, 0,OnCollideInfoKind::TriggerEnter);
+					AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerEnter);
+					AddOnCollideInfo(child, parent.first,OnCollideInfoKind::TriggerEnter);
 				}
 				else
 				{
-					AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::CollideEnter);
-					AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::CollideEnter);
+					AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideEnter);
+					AddOnCollideInfo(child, parent.first,OnCollideInfoKind::CollideEnter);
 				}
 			}
 
 			// Stayは毎度呼ぶ
 			if (isTrigger)
 			{
-				AddOnCollideInfo(parent.first, child, 0,OnCollideInfoKind::TriggerStay);
-				AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::TriggerStay);
+				AddOnCollideInfo(parent.first, child,OnCollideInfoKind::TriggerStay);
+				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerStay);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::CollideStay);
-				AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::CollideStay);
+				AddOnCollideInfo(parent.first, child,OnCollideInfoKind::CollideStay);
+				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideStay);
 			}
 
 			// 登録されていた情報を削除
@@ -424,54 +424,53 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 		{
 			if (isTrigger)
 			{
-				AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::TriggerExit);
-				AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::TriggerExit);
+				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerExit);
+				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerExit);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, 0, OnCollideInfoKind::CollideExit);
-				AddOnCollideInfo(child, parent.first, 0, OnCollideInfoKind::CollideExit);
+				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideExit);
+				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideExit);
 			}
 		}
 	}
 }
 
-void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, int index, OnCollideInfoKind kind)
+void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind)
 {
 	OnCollideInfoData info;
 	info.own = own;
 	info.send = send;
-	info.index = index;
 	info.kind = kind;
 	m_onCollideInfo.emplace_back(info);
 }
 
-void MyEngine::Physics::OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, int index, OnCollideInfoKind kind)
+void MyEngine::Physics::OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send,OnCollideInfoKind kind)
 {
 	auto item=send;
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
-		own->OnCollideEnter(item, index);
+		own->OnCollideEnter(item);
 	}
 	else if (kind == OnCollideInfoKind::CollideStay)
 	{
-		own->OnCollideStay(item, index);
+		own->OnCollideStay(item);
 	}
 	else if (kind == OnCollideInfoKind::CollideExit)
 	{
-		own->OnCollideExit(item, index);
+		own->OnCollideExit(item);
 	}
 	else if (kind == OnCollideInfoKind::TriggerEnter)
 	{
-		own->OnTriggerEnter(item, index);
+		own->OnTriggerEnter(item);
 	}
 	else if (kind == OnCollideInfoKind::TriggerStay)
 	{
-		own->OnTriggerStay(item, index);
+		own->OnTriggerStay(item);
 	}
 	else if (kind == OnCollideInfoKind::TriggerExit)
 	{
-		own->OnTriggerExit(item, index);
+		own->OnTriggerExit(item);
 	}
 }
 

@@ -26,7 +26,6 @@ namespace MyEngine
 		{
 			std::shared_ptr<Collidable> own;
 			std::shared_ptr<Collidable> send;
-			int index;
 			OnCollideInfoKind kind;
 		};
 		using SendCollideInfo = std::unordered_map<std::shared_ptr<Collidable>, std::list<std::shared_ptr<Collidable>>>;
@@ -55,8 +54,8 @@ namespace MyEngine
 		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider);
 		void AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB, SendCollideInfo& info);
 		void CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger);
-		void AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, int index, OnCollideInfoKind kind);
-		void OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, int index, OnCollideInfoKind kind);
+		void AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind);
+		void OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind);
 		void FixPos() const;
 
 	private:

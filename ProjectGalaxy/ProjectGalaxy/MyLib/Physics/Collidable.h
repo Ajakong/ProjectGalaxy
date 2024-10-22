@@ -35,12 +35,12 @@ namespace MyEngine
 		virtual void Draw()=0;
 
 		// 衝突したとき
-		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnCollideStay(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnCollideExit(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, int index) {}
-		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider, int index) {}
+		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider) {}
+		virtual void OnCollideStay(std::shared_ptr<Collidable> colider) {}
+		virtual void OnCollideExit(std::shared_ptr<Collidable> colider) {}
+		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider) {}
+		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider) {}
+		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider) {}
 
 		/* Getter */
 		ObjectTag GetTag() const { return m_tag; }
