@@ -37,6 +37,12 @@ void SeekerLine::Update()
 	if ((m_player->GetPos()-m_points[m_hitPointNum + 1]).Length()<=20)
 	{
 		m_hitPointNum++;
+		if (m_points[m_hitPointNum] == m_points.back())
+		{
+			//プレイヤーをジャンプさせる
+			m_player->CommandJump();
+			m_hitPointNum = 0;
+		}
 	}
 	float lenge = (m_rigid->GetPos() - m_player->GetPos()).Length();
 	float ratio = (lenge / m_playerStartPos.Length());

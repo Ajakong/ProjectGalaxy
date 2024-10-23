@@ -324,6 +324,14 @@ void Player::Draw()
 	if(m_isAimFlag)DrawRectRotaGraph(800, 450, kAimGraphSrkX, kAimGraphSrkY, kAimGraphWidth, kAimGraphHeight, 0.3, 0, m_aimGraphHandle, true);
 }
 
+void Player::CommandJump()
+{
+	ChangeAnim(kAnimationNumJump);
+	m_isJumpFlag = true;
+	m_rigid->AddVelocity(m_upVec.GetNormalized() * 10);
+	m_playerUpdate = &Player::JumpingUpdate;
+}
+
 void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
 {
 	m_cameraToPlayer = cameraToPlayer;
