@@ -11,7 +11,7 @@ class WarpGate;
 //ギミック
 class Booster;
 class StarCapture;
-
+class SeekerLine;
 class Takobo;
 class KillerTheSeeker;
 class Gorori;
@@ -73,6 +73,8 @@ private:
 	std::vector<std::shared_ptr<WarpGate>> warpGate;
 	std::vector<std::shared_ptr<Booster>> booster;
 	std::vector<std::shared_ptr<StarCapture>> starCapture;
+	std::vector<std::shared_ptr<SeekerLine>> seekerLine;
+
 	std::vector<std::shared_ptr<Takobo>> takobo;
 	std::vector<std::shared_ptr<KillerTheSeeker>> killerTheSeeker;
 	std::vector<std::shared_ptr<Gorori>> gorori;

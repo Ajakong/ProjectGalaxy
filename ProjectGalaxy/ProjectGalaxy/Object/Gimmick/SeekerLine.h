@@ -12,7 +12,7 @@ public:
 	void Update();
 	void Draw();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, int myColIndex, int partnerColIndex);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
 
 private:
 	std::vector<Vec3> m_points;

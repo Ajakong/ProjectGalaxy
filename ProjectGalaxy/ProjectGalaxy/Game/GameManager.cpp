@@ -1,4 +1,4 @@
-#include "GameManager.h"
+ï»¿#include "GameManager.h"
 #include"Physics.h"
 #include"SerialPlanetGalaxy.h"
 #include"Player.h"
@@ -32,7 +32,7 @@ void GameManager::Update()
 	if (galaxy.back()->GetClear())
 	{
 		galaxy.pop_back();
-		//galaxy.push_back();/*‚±‚±‚ÅƒXƒe[ƒW‘I‘ð‚ÌƒtƒB[ƒ‹ƒh‚ð“ü‚ê‚È‚¨‚·*/
+		//galaxy.push_back();/*ã“ã“ã§ã‚¹ãƒ†ãƒ¼ã‚¸é¸æŠžã®ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚’å…¥ã‚ŒãªãŠã™*/
 	}
 	if (galaxy.size() == 0)
 	{

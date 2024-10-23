@@ -335,21 +335,20 @@ void Player::SetBoost()
 	ChangeAnim(kAnimationNumFall);
 }
 
-void Player::SetIsCapture(bool flag)
+void Player::SetIsOperation(bool flag)
 {
 	if (flag)
 	{
 		SetAntiGravity();
-		m_playerUpdate = &Player::CaptureUpdate;
+		m_playerUpdate = &Player::OperationUpdate;
 		ChangeAnim(kAnimationNumFall);
-		m_isCaptureFlag = true;
+		m_isOperationFlag = true;
 	}
 	else
 	{
-		m_isCaptureFlag = false;
+		m_isOperationFlag = false;
 	}
 }
-
 void Player::SetCameraAngle(float cameraAngle)
 {
 	m_cameraAngle = cameraAngle;
@@ -742,9 +741,9 @@ void Player::BoostUpdate()
 	}
 }
 
-void Player::CaptureUpdate()
+void Player::OperationUpdate()
 {
-	if (!m_isCaptureFlag)
+	if (!m_isOperationFlag)
 	{
 		SetAntiGravity(false);
 		ChangeAnim(kAnimationNumIdle);

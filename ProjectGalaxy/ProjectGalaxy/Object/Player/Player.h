@@ -31,12 +31,12 @@ public:
 	Vec3 GetShotDir() { return m_shotDir; }
 	float GetRegenerationRange() { return m_regeneRange; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
-	bool GetCaptureFlag()const { return m_isCaptureFlag; }
+	bool GetOperationFlag()const { return m_isOperationFlag; }
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
 
 	void SetBoost();
-	void SetIsCapture(bool flag);
+	void SetIsOperation(bool flag);
 	void SetCameraAngle(float cameraAngle);
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
@@ -64,7 +64,7 @@ public:
 
 	void CommandJump();
 	void BoostUpdate();
-	void CaptureUpdate();
+	void OperationUpdate();
 private:
 	Vec3 Move();
 
@@ -201,7 +201,7 @@ private:
 	bool m_isVisibleFlag = false;
 	bool m_isJumpFlag = false;
 	bool m_isBoostFlag = false;
-	bool m_isCaptureFlag = false;
+	bool m_isOperationFlag = false;
 	bool m_isSearchFlag = false;
 	bool m_isAimFlag = false;
 	bool m_isClearFlag=false;
