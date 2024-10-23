@@ -721,6 +721,14 @@ void Player::JumpingSpinUpdate()
 	}
 }
 
+void Player::CommandJump()
+{
+	ChangeAnim(kAnimationNumJump);
+	m_isJumpFlag = true;
+	m_rigid->AddVelocity(m_upVec.GetNormalized() * 10);
+	m_playerUpdate = &Player::JumpingUpdate;
+}
+
 void Player::BoostUpdate()
 {
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());

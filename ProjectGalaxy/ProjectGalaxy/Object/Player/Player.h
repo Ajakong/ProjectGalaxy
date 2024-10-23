@@ -62,6 +62,7 @@ public:
 	using cameraState_t = void(Player::*)();
 	cameraState_t m_cameraUpdate;
 
+	void CommandJump();
 	void BoostUpdate();
 	void CaptureUpdate();
 private:

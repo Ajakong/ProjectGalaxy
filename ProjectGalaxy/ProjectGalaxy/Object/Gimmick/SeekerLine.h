@@ -5,18 +5,22 @@ class Player;
 class SeekerLine : public MyEngine::Collidable
 {
 public:
-	SeekerLine(std::vector<Vec3> points,int color);
+	SeekerLine(std::vector<Vec3> points, int color);
 	virtual ~SeekerLine();
 
 	void Init();
 	void Update();
 	void Draw();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, int myColIndex, int partnerColIndex);
 
 private:
 	std::vector<Vec3> m_points;
 	std::shared_ptr<Player> m_player;
-	int m_color;
-};
+	Vec3 m_playerStartPos;
 
+	int m_color;
+	int m_hitPointNum;
+	int m_speed;
+	int m_ratio;
+};
