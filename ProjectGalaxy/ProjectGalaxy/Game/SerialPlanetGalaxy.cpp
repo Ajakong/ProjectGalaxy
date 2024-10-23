@@ -96,7 +96,10 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	MyEngine::Physics::GetInstance().Entry(starCapture.back());
 	//シーカーライン
 	std::vector<Vec3>seekerLine1Points;
-	seekerLine1Points.push_back(Vec3(0, 0, -200));
+	seekerLine1Points.push_back(Vec3(-500, -250,0));
+	seekerLine1Points.push_back(Vec3(-200, 500, 0));
+	seekerLine1Points.push_back(Vec3(-200, 1000, 0));
+	seekerLine1Points.push_back(Vec3(0, 300, 0));
 	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
 
@@ -132,6 +135,7 @@ void SerialPlanetGalaxy::Init()
 	DxLib::SetCreateDrawValidGraphChannelNum(1);
 
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
+
 	for (auto& item : planet)
 	{
 		item->Init();

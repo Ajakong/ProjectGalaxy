@@ -11,6 +11,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	Vec3 GetPos() { return m_rigid->GetPos(); }
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
 

@@ -121,6 +121,7 @@ m_currentAnimNo(-1),
 m_prevAnimNo(0),
 m_isJumpFlag(false),
 m_isSpinFlag(false),
+m_isOperationFlag(false),
 m_searchRemainTime(0),
 m_chargeRemainTime(0),
 m_color(0x00ffff),
@@ -337,8 +338,10 @@ void Player::SetBoost()
 
 void Player::SetIsOperation(bool flag)
 {
+	SetVelocity(Vec3::Zero());
 	if (flag)
 	{
+		
 		SetAntiGravity();
 		m_playerUpdate = &Player::OperationUpdate;
 		ChangeAnim(kAnimationNumFall);

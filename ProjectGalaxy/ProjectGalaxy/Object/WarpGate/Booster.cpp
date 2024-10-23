@@ -20,7 +20,7 @@ namespace
 	const char* effectname = "warpEffect.efk";
 }
 
-Booster::Booster(Vec3 pos, Vec3 Dir, int handle) :Collidable(Priority::Static, ObjectTag::WarpGate),
+Booster::Booster(Vec3 pos, Vec3 Dir, int handle) :Collidable(Priority::StageGimmick, ObjectTag::WarpGate),
 m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname))
 {
 	m_dir = Dir;

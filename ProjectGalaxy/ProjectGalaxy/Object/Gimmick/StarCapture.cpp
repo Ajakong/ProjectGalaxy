@@ -12,7 +12,7 @@ namespace
 
 }
 
-StarCapture::StarCapture(Vec3 pos, int radius, int captureRadius) : Collidable(Priority::Static, ObjectTag::Player),
+StarCapture::StarCapture(Vec3 pos, int radius, int captureRadius) : Collidable(Priority::StageGimmick, ObjectTag::Player),
 m_isCapturePlayer(false),
 m_captureFrame(0),
 m_recastTime(0)
@@ -48,7 +48,7 @@ void StarCapture::Update()
 			m_captureFrame = 0;
 			m_recastTime = 0;
 		}
-		m_player->SetVelocity(Vec3::Zero());
+		
 	}
 	else
 	{
@@ -88,6 +88,8 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
 
 		m_player = sphere->m_player;
 	}
+
+	if (!m_isCapturePlayer)return;
 	if (colider->GetTag() == ObjectTag::Player)
 	{
 		m_isCapturePlayer = true;
@@ -118,7 +120,7 @@ void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider)
 		{
 			m_ratio = 1;
 		}
-		m_player->SetVelocity(EaseInOut(m_playerStartPos, m_rigid->GetPos(), m_ratio,2)-m_player->GetPos());
+		m_player->AddVelocity(EaseInOut(m_playerStartPos, m_rigid->GetPos(), m_ratio,2)-m_player->GetPos());
 	}
 }
 

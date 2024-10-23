@@ -21,6 +21,8 @@ public:
 
 	Vec3 GetPos() const { return  m_rigid->GetPos(); }
 	void SetVelocity(Vec3 pos) { m_rigid->SetVelocity(pos); }
+	void AddVelocity(Vec3 pos) { m_rigid->AddVelocity(pos); }
+	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
 	float GetHp() { return m_Hp; }
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetMoveDir() const{ return m_moveDir; }
