@@ -43,9 +43,11 @@ void SeekerLine::Update()
 	{
 		m_ratio = 1;
 	}
-	m_player->SetPos(EaseInOut(m_points[m_hitPointNum], m_points[m_hitPointNum + 1], 1, 2) - m_player->GetPos());
+	m_player->SetPos(EaseInOut(m_points[m_hitPointNum], m_points[m_hitPointNum + 1], 1, 2));
 
-	if ((m_player->GetPos() - m_points[m_hitPointNum + 1]).Length() <= 20)//次のポイントに到達したら
+	//m_player->SetPos((m_points[m_hitPointNum+1]));
+
+	if ((m_player->GetPos() - m_points[m_hitPointNum + 1]).Length() <= 50)//次のポイントに到達したら
 	{
 		m_hitPointNum++;
 		if (m_points[m_hitPointNum] == m_points.back())//次のポイントが最後だったら
@@ -57,6 +59,7 @@ void SeekerLine::Update()
 			m_player = nullptr;
 		}
 	}
+
 }
 
 void SeekerLine::Draw()

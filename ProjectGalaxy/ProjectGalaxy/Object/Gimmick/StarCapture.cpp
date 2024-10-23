@@ -42,7 +42,7 @@ void StarCapture::Update()
 	if (m_isCapturePlayer)
 	{
 		m_captureFrame++;
-		if (m_captureFrame > kCaptureMaxFrame)
+		//if (m_captureFrame > kCaptureMaxFrame)
 		{
 			m_isCapturePlayer = false;
 			m_captureFrame = 0;
@@ -79,6 +79,7 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
 		if (m_recastTime < kRecastTimeMax)return;
+		if (m_colliders.size() > 1)return;
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
 		m_captureCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_captureCol->radius = m_captureRadius;
@@ -89,7 +90,8 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
 		m_player = sphere->m_player;
 	}
 
-	if (!m_isCapturePlayer)return;
+	if (m_colliders.size() <= 1)return;
+
 	if (colider->GetTag() == ObjectTag::Player)
 	{
 		m_isCapturePlayer = true;

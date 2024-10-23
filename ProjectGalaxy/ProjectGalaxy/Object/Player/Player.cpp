@@ -349,6 +349,8 @@ void Player::SetIsOperation(bool flag)
 	}
 	else
 	{
+		SetAntiGravity(false);
+		ChangeAnim(kAnimationNumIdle);
 		m_isOperationFlag = false;
 	}
 }

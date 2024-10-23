@@ -294,6 +294,9 @@
     <ClCompile Include="Game.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Gimmick\SeekerLine.cpp">
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -461,5 +464,16 @@
     <ClInclude Include="Object\WarpGate\Booster.h">
       <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Gimmick\SeekerLine.h">
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ProjectGalaxy.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

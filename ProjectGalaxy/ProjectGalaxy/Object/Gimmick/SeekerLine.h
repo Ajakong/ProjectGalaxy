@@ -20,6 +20,7 @@ private:
 	std::shared_ptr<Player> m_player;
 	Vec3 m_playerStartPos;
 
+
 	int m_color;
 	int m_hitPointNum;
 	int m_speed;
