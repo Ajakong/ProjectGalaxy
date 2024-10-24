@@ -15,5 +15,6 @@ enum class ObjectTag
 	ClearObject,
 	StarCapture,
 	SeekerLine,
+	Crystal,
 	End//一番最後のタグ
 };

@@ -297,6 +297,9 @@
     <ClCompile Include="Object\Gimmick\SeekerLine.cpp">
       <Filter>ソース ファイル\Object\Gimmick</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Gimmick\Crystal.cpp">
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -469,6 +472,12 @@
     </ClInclude>
     <ClInclude Include="Object\Gimmick\SeekerLine.h">
       <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Gimmick\Crystal.h">
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\CollisionUtil.h">
+      <Filter>ソース ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

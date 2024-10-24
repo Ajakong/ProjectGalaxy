@@ -177,6 +177,7 @@
     <ClCompile Include="Object\Enemy\Killer.cpp" />
     <ClCompile Include="Object\Enemy\KillerTheSeeker.cpp" />
     <ClCompile Include="Object\Enemy\Takobo.cpp" />
+    <ClCompile Include="Object\Gimmick\Crystal.cpp" />
     <ClCompile Include="Object\Gimmick\SeekerLine.cpp" />
     <ClCompile Include="Object\Gimmick\StarCapture.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="MyLib\Physics\ColliderBox.h" />
     <ClInclude Include="MyLib\Physics\ColliderCapsule.h" />
     <ClInclude Include="MyLib\Physics\ColliderSphere.h" />
+    <ClInclude Include="MyLib\Physics\CollisionUtil.h" />
     <ClInclude Include="MyLib\Physics\Physics.h" />
     <ClInclude Include="MyLib\Physics\Rigidbody.h" />
     <ClInclude Include="MyLib\Quaternion.h" />
@@ -235,6 +237,7 @@
     <ClInclude Include="Object\Enemy\Killer.h" />
     <ClInclude Include="Object\Enemy\KillerTheSeeker.h" />
     <ClInclude Include="Object\Enemy\Takobo.h" />
+    <ClInclude Include="Object\Gimmick\Crystal.h" />
     <ClInclude Include="Object\Gimmick\SeekerLine.h" />
     <ClInclude Include="Object\Gimmick\StarCapture.h" />
     <ClInclude Include="Object\Item\Item.h" />

@@ -1,7 +1,9 @@
 ﻿#include "Physics.h"
 #include <cassert>
+#include"CollisionUtil.h"
 #include "Collidable.h"
 #include "ColliderSphere.h"
+#include"ColliderBox.h"
 #include "DebugDraw.h"
 #include"Planet.h"
 
@@ -140,7 +142,7 @@ void MyEngine::Physics::MoveNextPos() const
 						int colIndex=0;
 						for (const auto& objCol : obj->m_colliders)
 						{
-							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol))
+							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
 							{
 								planet->OnTriggerEnter(obj);
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
@@ -187,6 +189,7 @@ void MyEngine::Physics::MoveNextPos() const
 				debug.DrawSphere(newInfo);
 			}
 		}
+
 #endif
 	}
 }
@@ -212,12 +215,8 @@ void MyEngine::Physics::CheckCollide()
 				{
 					for (const auto& colB : objB->m_colliders)
 					{
-						if (objA->GetTag() == ObjectTag::SeekerLine)
-						{
-							int a = 0;
-						}
-						
-						if (!IsCollide(objA->m_rigid, objB->m_rigid, colA, colB)) continue;
+						CollideHitInfo info = IsCollide(objA->m_rigid, objB->m_rigid, colA, colB);
+						if (!info.isHit) continue;
 
 						bool isTrigger = colA->isTrigger || colB->isTrigger;
 
@@ -250,7 +249,7 @@ void MyEngine::Physics::CheckCollide()
 							secondaryCollider = colA;
 						}
 
-						FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider);
+						FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider,info);
 						// 位置補正をしたらもう一度初めから行う
 						isCheck = true;
 						break;
@@ -273,10 +272,10 @@ void MyEngine::Physics::CheckCollide()
 	}
 }
 
-bool Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const
+MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const
 {
 
-	bool isCollide = false;
+	CollideHitInfo info ;
 
 	auto kindA = colliderA->GetKind();
 	auto kindB = colliderB->GetKind();
@@ -288,13 +287,58 @@ bool Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shar
 
 		auto aToB = rigidB->GetNextPos() - rigidA->GetNextPos();
 		float sumRadius = sphereA->radius + sphereB->radius;
-		isCollide = (aToB.SqLength() < sumRadius * sumRadius);
+		info.isHit = (aToB.SqLength() < sumRadius * sumRadius);
 	}
+	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Box)
+	{
+		auto SphereA = dynamic_cast<ColliderSphere*>(colliderA.get());
+		auto BoxB = dynamic_cast<ColliderBox*>(colliderB.get());
 
-	return isCollide;
+		auto spherePos = rigidA->GetPos();
+		auto boxPos = rigidB->GetPos();
+
+		// ボックスの中心から円の中心までのベクトルを作成
+		auto boxToSphere = spherePos - boxPos;
+
+		// 球に近い場所を求める
+		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxB->size, BoxB->rotation);
+
+		// 最近接点と球の中心との長さで判定
+		auto radius = SphereA->radius;
+		auto nearToSphere = spherePos - nearPos;
+		if (nearToSphere.SqLength() < radius * radius)
+		{
+			info.isHit = true;
+			info.hitPos = nearPos;
+		}
+	}
+	if (kindA == ColliderBase::Kind::Box && kindB == ColliderBase::Kind::Sphere)
+	{
+		auto BoxA = dynamic_cast<ColliderBox*>(colliderA.get());
+		auto SphareB = dynamic_cast<ColliderSphere*>(colliderB.get());
+
+		auto spherePos = rigidB->GetPos();
+		auto boxPos = rigidA->GetPos();
+
+		// ボックスの中心から円の中心までのベクトルを作成
+		auto boxToSphere = spherePos - boxPos;
+
+		// 球に近い場所を求める
+		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxA->size, BoxA->rotation);
+
+		// 最近接点と球の中心との長さで判定
+		auto radius = SphareB->radius;
+		auto nearToSphere = spherePos - nearPos;
+		if (nearToSphere.SqLength() < radius * radius)
+		{
+			info.isHit = true;
+			info.hitPos = nearPos;
+		}
+	}
+	return info;
 }
 
-void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider)
+void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider,const CollideHitInfo info)
 {
 	Vec3 fixedPos = secondaryRigid->GetNextPos();
 
@@ -317,8 +361,26 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			// primaryからベクトル方向に押す
 			fixedPos = primaryRigid->GetNextPos() + primaryToSecondary;
 		}
-	}
+		if (secondaryKind == ColliderBase::Kind::Box)
+		{
+			auto dir = (primaryRigid->GetPos()) - info.hitPos;
+			dir.Normalize();
+			auto sphereCol = dynamic_cast<ColliderSphere*>(primaryCollider.get());
 
+			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
+		}
+	}
+	if (primaryKind == ColliderBase::Kind::Box)
+	{
+		if (secondaryKind == ColliderBase::Kind::Sphere)
+		{
+			auto dir = (secondaryRigid->GetPos()) - info.hitPos;
+			dir.Normalize();
+			auto sphereCol = dynamic_cast<ColliderSphere*>(secondaryCollider.get());
+
+			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
+		}
+	}
 	secondaryRigid->SetNextPos(fixedPos);
 }
 

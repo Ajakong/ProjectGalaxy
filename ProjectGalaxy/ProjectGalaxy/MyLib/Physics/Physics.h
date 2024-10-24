@@ -2,7 +2,10 @@
 #include <memory>
 #include <list>
 #include <functional>
-#include "../ObjectTag.h"
+#include"Vec3.h"
+#include "ObjectTag.h"
+
+
 
 namespace MyEngine
 {
@@ -28,6 +31,11 @@ namespace MyEngine
 			std::shared_ptr<Collidable> send;
 			OnCollideInfoKind kind;
 		};
+		struct CollideHitInfo
+		{
+			bool isHit = false;
+			Vec3 hitPos;
+		};
 		using SendCollideInfo = std::unordered_map<std::shared_ptr<Collidable>, std::list<std::shared_ptr<Collidable>>>;
 	private:
 		Physics();
@@ -50,8 +58,8 @@ namespace MyEngine
 
 		void CheckCollide();
 
-		bool IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const;
-		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider);
+		CollideHitInfo IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const;
+		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider,const CollideHitInfo info);
 		void AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB, SendCollideInfo& info);
 		void CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger);
 		void AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind);

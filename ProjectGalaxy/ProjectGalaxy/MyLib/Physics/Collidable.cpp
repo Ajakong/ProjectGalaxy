@@ -1,5 +1,6 @@
 ﻿#include "Collidable.h"
 #include "ColliderSphere.h"
+#include "ColliderBox.h"
 #include<cassert>
 
 using namespace MyEngine;
@@ -38,6 +39,10 @@ std::shared_ptr<ColliderBase> MyEngine::Collidable::AddCollider(const ColliderBa
 	else if (kind == ColliderBase::Kind::Capsule)
 	{
 
+	}
+	else if (kind == ColliderBase::Kind::Box)
+	{
+		collider = std::make_shared<ColliderBox>();
 	}
 
 	if (collider)

@@ -1,4 +1,4 @@
-#include "BoxPlanet.h"
+ï»¿#include "BoxPlanet.h"
 #include"MyLib/Physics/ColliderBox.h"
 
 BoxPlanet::BoxPlanet(Vec3 pos, int color)
@@ -6,19 +6,19 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color)
 	m_color = color;
 	gravityPower = 3;
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Box);//‚±‚±‚Å“ü‚ê‚½‚Ì‚Íd—Í‚Ì‰e‹¿”ÍˆÍ
+		AddCollider(MyEngine::ColliderBase::Kind::Box);//ã“ã“ã§å…¥ã‚ŒãŸã®ã¯é‡åŠ›ã®å½±éŸ¿ç¯„å›²
 		m_colliders.back()->isTrigger = true;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back());
-		item->m_startPos = pos;
+
 	}
 	
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Box);//‚±‚±‚Å“ü‚ê‚½‚Ì‚Íd—Í‚Ì‰e‹¿”ÍˆÍ
+		AddCollider(MyEngine::ColliderBase::Kind::Box);//ã“ã“ã§å…¥ã‚ŒãŸã®ã¯é‡åŠ›ã®å½±éŸ¿ç¯„å›²
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back());
 
 	}
 	AddThroughTag(ObjectTag::Stage);
-	AddCollider(MyEngine::ColliderBase::Kind::Box);//ƒ}ƒbƒv‚Ì“–‚½‚è”»’è
+	AddCollider(MyEngine::ColliderBase::Kind::Box);//ãƒãƒƒãƒ—ã®å½“ãŸã‚Šåˆ¤å®š
 	m_rigid->SetPos(pos);
 
 	m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 5000.0f, 0.0f, 0.002f, 0.0f);
