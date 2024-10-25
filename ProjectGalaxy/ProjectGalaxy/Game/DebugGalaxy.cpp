@@ -1,31 +1,12 @@
-﻿#include "SerialPlanetGalaxy.h"
-#include"DxLib.h"
-// EffekseerForDXLib.hをインクルードします。
-#include "EffekseerForDXLib.h"
-#include"Camera.h"
-#include"Physics.h"
+﻿#include"Game.h"
+#include "DebugGalaxy.h"
 #include"Player.h"
-#include"WarpGate.h"
-#include"Booster.h"
-#include"StarCapture.h"
-#include"SeekerLine.h"
-#include"Crystal.h"
-#include"BossPlanet.h"
-#include"Takobo.h"
-#include"KillerTheSeeker.h"
-#include"Gorori.h"
-#include"Item.h"
-#include"ClearObject.h"
-#include<cassert>
-#include"Pad.h"
-#include"SoundManager.h"
-#include"GraphManager.h"
-#include"FontManager.h"
-#include"ScreenManager.h"
-#include"ModelManager.h"
-#include"Game.h"
+#include"Camera.h"
+#include"BoxPlanet.h"
+#include"Physics.h"
 
 using namespace std;
+
 
 namespace
 {
@@ -84,59 +65,19 @@ namespace
 	const char* kMiniMapScreenName = "MiniMap";
 }
 
-SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
+DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
-	//ギミック
-	//ブースター
-	booster.push_back(make_shared<Booster>(Vec3(0,150,0),Vec3(0,1,1).GetNormalized(), -1));
-	MyEngine::Physics::GetInstance().Entry(booster.back());
-	booster.push_back(make_shared<Booster>(Vec3(0, -200, 530), Vec3(0,1,0).GetNormalized(), -1));
-	MyEngine::Physics::GetInstance().Entry(booster.back());
-	//スターキャプチャー
-	starCapture.push_back(make_shared<StarCapture>(Vec3(0, 500, 400)));
-	MyEngine::Physics::GetInstance().Entry(starCapture.back());
-	//シーカーライン
-	std::vector<Vec3>seekerLine1Points;
-	seekerLine1Points.push_back(Vec3(-500, -250,0));
-	seekerLine1Points.push_back(Vec3(-200, 500, 0));
-	seekerLine1Points.push_back(Vec3(-200, 1000, 0));
-	seekerLine1Points.push_back(Vec3(0, 300, 0));
-	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
-	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
-	//クリスタル
-	crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 200),Vec3(0,1,0) ,Vec3(100, 100, 100)));
-	MyEngine::Physics::GetInstance().Entry(crystal.back());
+	player = playerPointer;
+	planet.push_back(make_shared<BoxPlanet>(Vec3(0, -500, 0), 0xffff00));
 	camera = make_shared<Camera>();
-	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -500, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
-	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
-
-	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
-
-	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
-	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
-
-	m_miniMapScreenHandle = ScreenManager::GetInstance().GetScreenData(kMiniMapScreenName, Game::kScreenWidth, Game::kScreenHeight);
 }
 
-SerialPlanetGalaxy::~SerialPlanetGalaxy()
+DebugGalaxy::~DebugGalaxy()
 {
-	planet.clear();
-	takobo.clear();
-	gorori.clear();
-	poworStone.clear();
-	warpGate.clear();
 }
 
-void SerialPlanetGalaxy::Init()
+void DebugGalaxy::Init()
 {
-	SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 1.0f, 1.0f));
-
-	player->SetMatrix();//モデルに行列を反映
-
-	// 深度値記録バッファ用RT
-	DxLib::SetCreateGraphChannelBitDepth(32);
-	DxLib::SetCreateDrawValidGraphChannelNum(1);
-
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 
 	for (auto& item : planet)
@@ -144,29 +85,9 @@ void SerialPlanetGalaxy::Init()
 		item->Init();
 		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
 	}
-	for (auto& item : seekerLine) { item->Init(); }
-	for (auto& item : crystal) { item->Init(); }
 }
 
-void SerialPlanetGalaxy::Update()
-{
-	(this->*m_managerUpdate)();
-}
-
-void SerialPlanetGalaxy::Draw()
-{
-	(this->*m_managerDraw)();
-}
-
-void SerialPlanetGalaxy::IntroUpdate()
-{
-}
-
-void SerialPlanetGalaxy::IntroDraw()
-{
-}
-
-void SerialPlanetGalaxy::GamePlayingUpdate()
+void DebugGalaxy::Update()
 {
 	player->Update();
 	if (player->OnAiming())
@@ -177,13 +98,13 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	{
 		camera->Update(player->GetPos());
 	}
-	
+
 	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
-	Vec3 front =player->GetFrontVec();//-1をかけて逆ベクトルにしている
+	Vec3 front = player->GetFrontVec();//-1をかけて逆ベクトルにしている
 
 	//相対的な軸ベクトルの設定
-	
+
 	player->SetUpVec(planetToPlayer);
 
 	camera->SetBoost(player->GetBoostFlag());
@@ -198,7 +119,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	{
 		if (player->OnAiming())
 		{
-			camera->SetCameraPoint(player->GetPos()+ player->GetShotDir() *- 50+player->GetNormVec()*80+player->GetSideVec()*20);
+			camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -50 + player->GetNormVec() * 80 + player->GetSideVec() * 20);
 		}
 		else
 		{
@@ -207,43 +128,27 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 
 	for (auto& item : planet)item->Update();//ステージの更新
-	//位置固定ギミック
-	for (auto& item : booster) { item->Update(); }
-	for (auto& item : starCapture) { item->Update(); }
-	for (auto& item : seekerLine) { item->Update(); }
-	for (auto& item : crystal) { item->Update();}
-	auto result = remove_if(crystal.begin(), crystal.end(), [this](const auto& sphere)
-		{
-			bool isOut = sphere->IsDestroy() == true;
-	if (isOut == true)
-	{
-		MyEngine::Physics::GetInstance().Exit(sphere);
-	}
-	return isOut;
-		});
-	crystal.erase(result, crystal.end());
-	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
+	
 
 	MyEngine::Physics::GetInstance().Update();//当たり判定の更新
 
 	player->SetMatrix();//行列を反映
+	for (auto& item : planet)item->Update();
 
 }
 
-void SerialPlanetGalaxy::GamePlayingDraw()
+void DebugGalaxy::Draw()
 {
 	if (player->OnAiming())camera->SetDebugCameraPoint();
-	Vec3 pos = MV1GetPosition(m_skyDomeH);
-	DxLib::MV1DrawModel(m_skyDomeH);
 
 	for (auto& item : planet)
 	{
 		item->SetIsSearch(player->IsSearch());
-		
+
 	}
 
 	MyEngine::Physics::GetInstance().Draw();
-	
+
 	if (player->IsSearch())
 	{
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_MUL, 255);
@@ -254,11 +159,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	}
 
-	//位置固定ギミック
-	for (auto& item : booster){item->Draw();}
-	for (auto& item : starCapture) { item->Draw(); }
-	for (auto& item : seekerLine) { item->Draw(); }
-	for (auto& item : crystal) { item->Draw(); }
+	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
@@ -269,7 +170,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 
 #endif
-	
+
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
 	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -278,7 +179,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
 	DrawFormatString(0, 50, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
 	DrawFormatString(0, 75, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
-	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
-	
+	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)", camera->GetPos().x, camera->GetPos().y, camera->GetPos().z, (camera->GetPos() - player->GetPos()).Length());
+
 	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
 }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Planet.h"
 class BoxPlanet :  public Planet
 {
@@ -10,12 +10,13 @@ public:
 	void Update();
 	void Draw();
 
-	virtual void GravityEffect();
+	virtual Vec3 GravityEffect(std::shared_ptr<Collidable> obj);
 	virtual Vec3 GetNormVec(Vec3 pos);
 	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider);
 	virtual void OnTriggerExit(std::shared_ptr<Collidable> colider);
 private:
-
+	Vec3 norm;
+	Vec3 size;
 	int m_color;
 };
 

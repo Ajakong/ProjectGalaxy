@@ -21,7 +21,7 @@ public:
 	};
 	Quaternion Conjugated() const
 	{
-		return Quaternion(-x, -y, -z, w);
+		return Quaternion(w,-x, -y, -z);
 	}
 
 	Quaternion operator*(const Quaternion& q) const
@@ -47,7 +47,7 @@ public:
 	}
 	Vec3 operator*(const Vec3& vec) const
 	{
-		Quaternion posQ = Quaternion(vec.x, vec.y, vec.z, 1.0f);
+		Quaternion posQ = Quaternion(1.0f,vec.x, vec.y, vec.z);
 
 		Quaternion newPos = *this * posQ * this->Conjugated();
 

@@ -11,7 +11,7 @@ Vec3 GetNearestPtOnBox(const Vec3& pos, const Vec3& boxPos, const Vec3& boxScale
 	auto right = rot * Vec3::Right();
 	auto up = rot * Vec3::Up();
 	auto front = rot * Vec3::Front();
-	auto size = boxScale * 0.5f;
+	auto size = boxScale;
 	auto prRight = Projection(boxToPt, right);
 	auto prUp = Projection(boxToPt, up);
 	auto prFront = Projection(boxToPt, front);

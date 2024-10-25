@@ -300,6 +300,9 @@
     <ClCompile Include="Object\Gimmick\Crystal.cpp">
       <Filter>ソース ファイル\Object\Gimmick</Filter>
     </ClCompile>
+    <ClCompile Include="Game\DebugGalaxy.cpp">
+      <Filter>ソース ファイル\Galaxy\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -478,6 +481,9 @@
     </ClInclude>
     <ClInclude Include="MyLib\Physics\CollisionUtil.h">
       <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\DebugGalaxy.h">
+      <Filter>ヘッダー ファイル\Galaxy\h</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

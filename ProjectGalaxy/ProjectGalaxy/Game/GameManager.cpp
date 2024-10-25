@@ -1,6 +1,7 @@
 ﻿#include "GameManager.h"
 #include"Physics.h"
 #include"SerialPlanetGalaxy.h"
+#include"DebugGalaxy.h"
 #include"Player.h"
 #include"ModelManager.h"
 using namespace MyEngine;
@@ -13,7 +14,7 @@ namespace
 GameManager::GameManager() :
 	player(std::make_shared<Player>(ModelManager::GetInstance().GetModelData(kPlayerFileName)))
 {
-	galaxy.push_back(std::make_shared<SerialPlanetGalaxy>(player));
+	galaxy.push_back(std::make_shared<DebugGalaxy>(player));
 }
 
 GameManager::~GameManager()

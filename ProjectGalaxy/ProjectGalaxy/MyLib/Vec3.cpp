@@ -211,6 +211,7 @@ Vec3 Cross(const Vec3& item1, const Vec3& item2)
 
 Vec3 Projection(const Vec3& projection, const Vec3& base)
 {
-	auto projectionN = projection.GetNormalized();
-	return projectionN * Dot(base, projectionN);
+	auto dirN = base.GetNormalized();
+	auto d = Dot(dirN, projection);
+	return dirN * d;
 }

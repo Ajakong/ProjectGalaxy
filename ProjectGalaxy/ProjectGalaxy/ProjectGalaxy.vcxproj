@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Game\DebugGalaxy.cpp" />
     <ClCompile Include="Game\Galaxy.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
     <ClCompile Include="Game\SerialPlanetGalaxy.cpp" />
@@ -202,6 +203,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Game\DebugGalaxy.h" />
     <ClInclude Include="Game\Galaxy.h" />
     <ClInclude Include="Game\GameManager.h" />
     <ClInclude Include="Game\SerialPlanetGalaxy.h" />

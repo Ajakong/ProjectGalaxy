@@ -1,5 +1,7 @@
 ﻿#include "Physics.h"
 #include <cassert>
+#include <cmath>
+#include <algorithm>
 #include"CollisionUtil.h"
 #include "Collidable.h"
 #include "ColliderSphere.h"
@@ -14,6 +16,8 @@ namespace
 	// 判定最大回数
 	constexpr int CHECK_COUNT_MAX = 500;
 }
+
+Vec3 closestPointOnCubeAndSphere(const Vec3& cubeCenter, Vec3 size, const Vec3& sphereCenter, double sphereRadius);
 
 Physics::Physics()
 {
@@ -266,7 +270,7 @@ void MyEngine::Physics::CheckCollide()
 
 		if (isCheck && checkCount > CHECK_COUNT_MAX)
 		{
-			//printfDx("規定数(%d)を超えました", CHECK_COUNT_MAX);
+			printfDx("規定数(%d)を超えました", CHECK_COUNT_MAX);
 			break;
 		}
 	}
@@ -299,12 +303,10 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 
 		// ボックスの中心から円の中心までのベクトルを作成
 		auto boxToSphere = spherePos - boxPos;
-
+		auto radius = SphereA->radius;
 		// 球に近い場所を求める
 		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxB->size, BoxB->rotation);
-
 		// 最近接点と球の中心との長さで判定
-		auto radius = SphereA->radius;
 		auto nearToSphere = spherePos - nearPos;
 		if (nearToSphere.SqLength() < radius * radius)
 		{
@@ -322,12 +324,10 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 
 		// ボックスの中心から円の中心までのベクトルを作成
 		auto boxToSphere = spherePos - boxPos;
-
+		auto radius = SphareB->radius;
 		// 球に近い場所を求める
 		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxA->size, BoxA->rotation);
-
 		// 最近接点と球の中心との長さで判定
-		auto radius = SphareB->radius;
 		auto nearToSphere = spherePos - nearPos;
 		if (nearToSphere.SqLength() < radius * radius)
 		{
@@ -567,4 +567,34 @@ void Physics::FixPos() const
 #endif
 	}
 
+}
+
+Vec3 closestPointOnCube(const Vec3& cubeCenter,const Vec3& size, const Vec3& point) {
+	Vec3 closest;
+
+	//クランプ...範囲内に収める(a,min,max)
+	closest.x = std::clamp(point.x, cubeCenter.x - size.x, cubeCenter.x + size.x);
+	closest.y = std::clamp(point.y, cubeCenter.y - size.y, cubeCenter.y + size.y);
+	closest.z = std::clamp(point.z, cubeCenter.z - size.z, cubeCenter.z + size.z);
+
+	return closest;
+}
+
+Vec3 closestPointOnCubeAndSphere(const Vec3& cubeCenter, Vec3 size, const Vec3& sphereCenter, double sphereRadius) {
+	// 立方体の最近接点
+	Vec3 closestPoint = closestPointOnCube(cubeCenter, size, sphereCenter);
+
+	// 球の中心から最近接点までのベクトル
+	Vec3 direction = closestPoint - sphereCenter;
+
+	// ベクトルの長さ
+	double length = std::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+
+	// ベクトルを正規化
+	if (length > 0) {
+		direction = direction * (sphereRadius / length);
+	}
+
+	// 最近接点を計算
+	return sphereCenter + direction;
 }
