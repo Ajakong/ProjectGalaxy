@@ -370,6 +370,14 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 		m_isBoostFlag = false;
 		ChangeAnim(kAnimationNumIdle);
 	}
+	if (colider->GetTag() == ObjectTag::Crystal)
+	{
+		m_spinCount = 0;
+		m_playerUpdate = &Player::NeutralUpdate;
+		m_isJumpFlag = false;
+		m_isBoostFlag = false;
+		ChangeAnim(kAnimationNumIdle);
+	}
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{
 		if (m_isSpinFlag)
@@ -496,7 +504,7 @@ bool Player::UpdateAnim(int attachNo)
 
 	//アニメーションを進行させる
 	float now = MV1GetAttachAnimTime(m_modelHandle, attachNo);//現在の再生カウント
-	now += kAnimFrameSpeed / kFrameParSecond;//アニメーションカウントを進める
+	now += kAnimFrameSpeed*m_speed / kFrameParSecond;//アニメーションカウントを進める
 
 
 	//現在再生中のアニメーションの総カウントを取得する
@@ -513,8 +521,9 @@ bool Player::UpdateAnim(int attachNo)
 	return isLoop;
 }
 
-void Player::ChangeAnim(int animIndex)
+void Player::ChangeAnim(int animIndex, int speed)
 {
+	m_speed = speed;
 	//さらに古いアニメーションがアタッチされている場合はこの時点で削除しておく
 	if (m_prevAnimNo != -1)
 	{
@@ -569,7 +578,7 @@ void Player::NeutralUpdate()
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
-		ChangeAnim(kAnimationNumSpin);
+		ChangeAnim(kAnimationNumSpin,5.f);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_attackRadius = kNetralRadius + 10;
 		item->radius = m_attackRadius;
@@ -611,7 +620,7 @@ void Player::WalkingUpdate()
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
-		ChangeAnim(kAnimationNumSpin);
+		ChangeAnim(kAnimationNumSpin,5.f);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_attackRadius = kNetralRadius + 10;
 		item->radius = m_attackRadius;
@@ -633,7 +642,7 @@ void Player::JumpingUpdate()
 	
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
-		ChangeAnim(kAnimationNumSpin);
+		ChangeAnim(kAnimationNumSpin,5.f);
 		if (m_spinCount >= 1)return;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_attackRadius = kNetralRadius + 10;

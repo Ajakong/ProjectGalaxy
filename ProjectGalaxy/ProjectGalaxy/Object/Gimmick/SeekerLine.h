@@ -19,10 +19,11 @@ private:
 	std::vector<Vec3> m_points;
 	std::shared_ptr<Player> m_player;
 	Vec3 m_playerStartPos;
+	Vec3 m_velocity;
 
 
 	int m_color;
 	int m_hitPointNum;
-	int m_speed;
+	float m_speed;
 	int m_ratio;
 };

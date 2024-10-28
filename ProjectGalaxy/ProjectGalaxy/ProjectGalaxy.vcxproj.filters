@@ -127,6 +127,9 @@
     <Filter Include="ヘッダー ファイル\Galaxy\h">
       <UniqueIdentifier>{40def9f4-c252-4e5d-953d-e68bd94a289c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Object\Enemy\Kuribo">
+      <UniqueIdentifier>{bfb8a204-5009-4026-a657-a1f8212bc252}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -302,6 +305,9 @@
     </ClCompile>
     <ClCompile Include="Game\DebugGalaxy.cpp">
       <Filter>ソース ファイル\Galaxy\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\Kuribo.cpp">
+      <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -484,6 +490,9 @@
     </ClInclude>
     <ClInclude Include="Game\DebugGalaxy.h">
       <Filter>ヘッダー ファイル\Galaxy\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Kuribo.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -76,7 +76,7 @@ private:
 	//ループしたかどうかを返す
 	bool UpdateAnim(int attachNo);
 	//アニメーションの変更
-	void ChangeAnim(int animIndex);
+	void ChangeAnim(int animIndex,int speed=1.f);
 
 	//状態別関数(ポインタで呼び出す)
 	/*m_playerUpdateで使う*/
@@ -126,6 +126,8 @@ private:
 	int m_aimGraphHandle = 0;
 
 	int rotRad = 0;
+
+	int m_speed = 1.f;
 
 	int m_itemCount=0;
 

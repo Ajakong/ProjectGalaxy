@@ -35,7 +35,7 @@ void SeekerLine::Update()
 {
 	if (m_player == nullptr)return;
 	//ポイントの更新
-
+	m_speed += 1.5f;
 	float lenge = (m_rigid->GetPos() - m_player->GetPos()).Length();
 	float ratio = (lenge / m_playerStartPos.Length());
 	m_ratio += 0.002f;
@@ -43,8 +43,10 @@ void SeekerLine::Update()
 	{
 		m_ratio = 1;
 	}
-	m_player->SetPos(EaseInOut(m_points[m_hitPointNum], m_points[m_hitPointNum + 1], 1, 2));
-
+	m_velocity = m_points[m_hitPointNum+1] - m_player->GetPos();
+	m_velocity.Normalize();
+	//m_player->SetPos(EaseInOut(m_points[m_hitPointNum], m_points[m_hitPointNum + 1], 1, 2));
+	m_player->SetPos(m_player->GetPos()+m_velocity*m_speed);
 	//m_player->SetPos((m_points[m_hitPointNum+1]));
 
 	if ((m_player->GetPos() - m_points[m_hitPointNum + 1]).Length() <= 50)//次のポイントに到達したら
@@ -55,7 +57,7 @@ void SeekerLine::Update()
 			m_player->SetIsOperation(false);
 			//プレイヤーをジャンプさせる
 			m_player->CommandJump();
-			m_hitPointNum = 1;
+			m_hitPointNum = 0;
 			m_player = nullptr;
 		}
 	}
@@ -77,6 +79,7 @@ void SeekerLine::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
+		m_speed = 0;
 		m_player = std::dynamic_pointer_cast<Player>(colider);
 		m_player->SetIsOperation(true);
 	}

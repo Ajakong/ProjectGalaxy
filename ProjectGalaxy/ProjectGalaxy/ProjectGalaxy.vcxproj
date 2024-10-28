@@ -177,6 +177,7 @@
     <ClCompile Include="Object\Enemy\Gorori.cpp" />
     <ClCompile Include="Object\Enemy\Killer.cpp" />
     <ClCompile Include="Object\Enemy\KillerTheSeeker.cpp" />
+    <ClCompile Include="Object\Enemy\Kuribo.cpp" />
     <ClCompile Include="Object\Enemy\Takobo.cpp" />
     <ClCompile Include="Object\Gimmick\Crystal.cpp" />
     <ClCompile Include="Object\Gimmick\SeekerLine.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Game\GameManager.h" />
     <ClInclude Include="Game\SerialPlanetGalaxy.h" />
     <ClInclude Include="Game\World.h" />
+    <ClInclude Include="Kuribo.h" />
     <ClInclude Include="LoadManager\EffectManager.h" />
     <ClInclude Include="LoadManager\FontManager.h" />
     <ClInclude Include="LoadManager\GraphManager.h" />

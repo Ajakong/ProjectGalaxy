@@ -270,7 +270,7 @@ void MyEngine::Physics::CheckCollide()
 
 		if (isCheck && checkCount > CHECK_COUNT_MAX)
 		{
-			printfDx("規定数(%d)を超えました", CHECK_COUNT_MAX);
+			//printfDx("規定数(%d)を超えました", CHECK_COUNT_MAX);
 			break;
 		}
 	}
