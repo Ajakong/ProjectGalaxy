@@ -101,6 +101,7 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	seekerLine1Points.push_back(Vec3(-200, 500, 0));
 	seekerLine1Points.push_back(Vec3(-200, 1000, 0));
 	seekerLine1Points.push_back(Vec3(0, 300, 0));
+	seekerLine1Points.push_back(Vec3(1000, 2000, 0));
 	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
 	//クリスタル
