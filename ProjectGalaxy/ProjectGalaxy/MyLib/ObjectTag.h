@@ -6,6 +6,7 @@ enum class ObjectTag
 	Player,
 	Enemy,
 	Takobo,
+	Kuribo,
 	Gorori,
 	KillerTheSeeker,
 	EnemyAttack,
@@ -16,5 +17,6 @@ enum class ObjectTag
 	StarCapture,
 	SeekerLine,
 	Crystal,
+	InvisibleObject,
 	End//一番最後のタグ
 };

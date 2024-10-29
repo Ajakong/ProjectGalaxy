@@ -48,7 +48,7 @@ void SeekerLine::Init()
 
 void SeekerLine::Update()
 {
-	if (m_player == nullptr)return;
+	if (!m_player.get())return;
 	//ポイントの更新
 	m_num += m_speed;
 	if (m_num > m_length/2)

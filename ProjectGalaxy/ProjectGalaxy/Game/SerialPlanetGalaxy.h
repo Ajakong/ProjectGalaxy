@@ -16,6 +16,7 @@ class Crystal;
 class Takobo;
 class KillerTheSeeker;
 class Gorori;
+class Kuribo;
 class Item;
 
 class SerialPlanetGalaxy :public Galaxy//GameManagerが管理,惑星やオブジェクトの情報を持っている
@@ -79,6 +80,7 @@ private:
 	std::vector<std::shared_ptr<Takobo>> takobo;
 	std::vector<std::shared_ptr<KillerTheSeeker>> killerTheSeeker;
 	std::vector<std::shared_ptr<Gorori>> gorori;
+	std::vector<std::shared_ptr<Kuribo>> kuribo;
 	std::vector<std::shared_ptr<Item>> poworStone;
 
 	Vec3 m_cameraUpVec;

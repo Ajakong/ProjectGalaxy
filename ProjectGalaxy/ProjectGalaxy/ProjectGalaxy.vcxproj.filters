@@ -309,6 +309,9 @@
     <ClCompile Include="Object\Enemy\Kuribo.cpp">
       <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Gimmick\Invisible.cpp">
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -493,6 +496,9 @@
     </ClInclude>
     <ClInclude Include="Kuribo.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Gimmick\Invisible.h">
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -69,8 +69,9 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	////Yは法線の角度に回転させる
 	Vec3 ansVelocity;
 	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetPos();
-	Vec3 toObj = m_rigid->GetPos() - objPos;
+	Vec3 toObj = objPos-m_rigid->GetPos();
 	toObj = toObj.GetNormalized();
+	Vec3 GravityDir = toObj * -1;
 	obj->SetUpVec(toObj);
 	if (obj->IsAntiGravity())
 	{
@@ -85,31 +86,31 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 
 	if (obj->GetTag() == ObjectTag::Gorori||obj->GetTag()==ObjectTag::KillerTheSeeker)
 	{
-		float angleX = DX_PI_F / 2 + atan2(toObj.y, toObj.x);
-		float angleZ = DX_PI_F / 2 + atan2(toObj.y, toObj.z);
+		float angleX = DX_PI_F / 2 + atan2(GravityDir.y, GravityDir.x);
+		float angleZ = DX_PI_F / 2 + atan2(GravityDir.y, GravityDir.z);
 		ansVelocity = { objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ) };
-		ansVelocity += toObj * objVelocity.y;//プレイヤーのジャンプ分のベクトルの加算
+		ansVelocity += GravityDir * objVelocity.y;//プレイヤーのジャンプ分のベクトルの加算
 
-		ansVelocity += toObj * kGravityPower;
-		obj->SetReverceGravityVec(toObj.GetNormalized());
+		ansVelocity += GravityDir * kGravityPower;
+		obj->SetReverceGravityVec(GravityDir.GetNormalized());
 
 		/*VECTOR ANSVECTOR = VGet(objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ));
 		ANSVECTOR = VAdd(ANSVECTOR, objVelocity.y * toObj);
 		ansVelocity = ANSVECTOR;*/
 		//ansVelocity -= toObj;
-		return ansVelocity+ toObj * gravityPower*40*((kGravityRange+(obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() -(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length())/ kGravityRange);
+		return ansVelocity+ GravityDir * gravityPower*40*((kGravityRange+(obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() -(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length())/ kGravityRange);
 	}
 
 	if (obj->GetTag() == ObjectTag::Player)
 	{
 		//重力のみ
-		toObj = toObj * gravityPower*0.05f* ((kGravityRange+ (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
-		return toObj;
+		GravityDir = GravityDir * gravityPower*0.05f* ((kGravityRange+ (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
+		return GravityDir;
 	}
 
 	//重力のみ
-	toObj = toObj * gravityPower * ((kGravityRange +(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length()- (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
-	return toObj;
+	GravityDir = GravityDir * gravityPower * ((kGravityRange +(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length()- (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
+	return GravityDir;
 }
 
 Vec3 SpherePlanet::GetNormVec(Vec3 pos)

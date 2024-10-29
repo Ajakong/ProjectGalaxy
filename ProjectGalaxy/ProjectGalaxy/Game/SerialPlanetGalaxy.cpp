@@ -14,6 +14,7 @@
 #include"Takobo.h"
 #include"KillerTheSeeker.h"
 #include"Gorori.h"
+#include"Kuribo.h"
 #include"Item.h"
 #include"ClearObject.h"
 #include<cassert>
@@ -110,7 +111,9 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	camera = make_shared<Camera>();
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -500, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
-
+	//エネミー
+	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -300),0));
+	MyEngine::Physics::GetInstance().Entry(kuribo.back());
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
@@ -147,6 +150,8 @@ void SerialPlanetGalaxy::Init()
 	}
 	for (auto& item : seekerLine) { item->Init(); }
 	for (auto& item : crystal) { item->Init(); }
+	//エネミー
+	for (auto& item : kuribo) { item->Init(); }
 }
 
 void SerialPlanetGalaxy::Update()
@@ -170,6 +175,8 @@ void SerialPlanetGalaxy::IntroDraw()
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
 	player->Update();
+
+	
 	if (player->OnAiming())
 	{
 		camera->Update(player->GetShotDir());
@@ -206,6 +213,9 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 			camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
 		}
 	}
+	//エネミー
+	for (auto& item : kuribo) { item->Update(); }
+
 
 	for (auto& item : planet)item->Update();//ステージの更新
 	//位置固定ギミック
@@ -254,7 +264,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	}
-
+	//エネミー
+	for (auto& item : kuribo) { item->Draw(); }
 	//位置固定ギミック
 	for (auto& item : booster){item->Draw();}
 	for (auto& item : starCapture) { item->Draw(); }

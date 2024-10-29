@@ -180,6 +180,7 @@
     <ClCompile Include="Object\Enemy\Kuribo.cpp" />
     <ClCompile Include="Object\Enemy\Takobo.cpp" />
     <ClCompile Include="Object\Gimmick\Crystal.cpp" />
+    <ClCompile Include="Object\Gimmick\Invisible.cpp" />
     <ClCompile Include="Object\Gimmick\SeekerLine.cpp" />
     <ClCompile Include="Object\Gimmick\StarCapture.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="Object\Enemy\KillerTheSeeker.h" />
     <ClInclude Include="Object\Enemy\Takobo.h" />
     <ClInclude Include="Object\Gimmick\Crystal.h" />
+    <ClInclude Include="Object\Gimmick\Invisible.h" />
     <ClInclude Include="Object\Gimmick\SeekerLine.h" />
     <ClInclude Include="Object\Gimmick\StarCapture.h" />
     <ClInclude Include="Object\Item\Item.h" />
