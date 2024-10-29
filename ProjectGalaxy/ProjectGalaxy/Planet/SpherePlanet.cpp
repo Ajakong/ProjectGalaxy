@@ -108,6 +108,10 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 		return GravityDir;
 	}
 
+	if (obj->GetTag() == ObjectTag::Kuribo)
+	{
+		int a = 0;
+	}
 	//重力のみ
 	GravityDir = GravityDir * gravityPower * ((kGravityRange +(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length()- (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
 	return GravityDir;

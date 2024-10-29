@@ -30,5 +30,6 @@ private:
 	std::shared_ptr<Collidable> m_player;
 
 	int m_chaseFrameCount;
+	int m_initTime;
 };
 

@@ -75,6 +75,7 @@ void Kuribo::Draw()
 
 void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {
+	
 }
 
 void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider)
@@ -102,10 +103,12 @@ void Kuribo::SearchUpdate()
 
 void Kuribo::JumpUpdate()
 {
-	
-	if (m_rigid->GetVelocity().Length() == 0)
+	m_initTime++;
+	if (m_initTime >= 60)
 	{
+		m_initTime = 0;
 		m_moveUpdate = &Kuribo::ChaseUpdate;
+
 	}
 }
 
