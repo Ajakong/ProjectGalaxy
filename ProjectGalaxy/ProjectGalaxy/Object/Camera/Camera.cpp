@@ -74,7 +74,7 @@ void Camera::Update(Vec3 LookPoint)
 void Camera::SetCamera(Vec3 LookPoint)
 {
 	m_lookPoint = LookPoint;
-	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
+	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 12).VGet());
 	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
 
 	Vec3 velocity;
@@ -90,7 +90,7 @@ void Camera::SetCamera(Vec3 LookPoint)
 void Camera::SetAimCamera(Vec3 LookPoint)
 {
 	m_lookPoint = LookPoint;
-	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
+	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 12).VGet());
 	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
 
 	m_pos = m_cameraPoint;
@@ -147,7 +147,7 @@ void Camera::WatchThisUpdate(Vec3 LookPoint)
 	velocity.z = (m_cameraPoint.z - m_pos.z) / 10.f;
 	m_pos += velocity;//イージング
 	
-	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_lookPoint + m_upVec.GetNormalized() * 100.0f).VGet(), m_upVec.VGet());
+	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_lookPoint + m_upVec.GetNormalized() * 10.0f).VGet(), m_upVec.VGet());
 	m_postLookPointPos = m_lookPoint;
 	if (m_watchCount > kWatchThisTime)
 	{
@@ -159,7 +159,7 @@ void Camera::WatchThisUpdate(Vec3 LookPoint)
 
 void Camera::SetCameraFirstPersonPos(Vec3 LookPoint)
 {
-	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
+	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 12).VGet());
 	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
 
 	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxコントローラーのL
@@ -167,12 +167,12 @@ void Camera::SetCameraFirstPersonPos(Vec3 LookPoint)
 		m_cameraUpdate = &Camera::NeutralUpdate;
 	}
 	Vec3 target = LookPoint;
-	SetCameraPositionAndTargetAndUpVec((LookPoint+m_upVec*300).VGet(), target.VGet(), GetCameraUpVector());
+	SetCameraPositionAndTargetAndUpVec((LookPoint+m_upVec*30).VGet(), target.VGet(), GetCameraUpVector());
 }
 
 void Camera::SetCameraThirdPersonPos(Vec3 LookPoint)
 {
-	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 120).VGet());
+	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 12).VGet());
 	SetLightDirectionHandle(m_lightHandle, (Vec3(GetCameraUpVector()) * -1).VGet());
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), LookPoint.VGet(), m_upVec.VGet());

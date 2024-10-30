@@ -76,45 +76,14 @@ public:
 
 		return temp;
 	}
-	Quaternion AddRotationQuaternion(double radian, Vec3 Axis)
-	{
-		Quaternion ans;
-		ans.w = w;
-		ans.x = x;
-		ans.y= y;
-		ans.z = z;
-
-		double norm;
-		double ccc, sss;
-
-		//ans.w = ans.x = ans.y = ans.z = 0.0;
-
-		norm = Axis.x * Axis.x + Axis.y * Axis.y + Axis.z * Axis.z;
-		if (norm <= 0.0) return ans;
-
-		norm = 1.0 / sqrt(norm);
-		Axis.x *= static_cast<float> (norm);
-		Axis.y *= static_cast<float> (norm);
-		Axis.z *= static_cast<float> (norm);
-
-		ccc = cos(0.5 * radian);
-		sss = sin(0.5 * radian);
-
-		ans.w += static_cast<float>(ccc);
-		ans.x += static_cast<float>(sss) * Axis.x;
-		ans.y += static_cast<float>(sss) * Axis.y;
-		ans.z += static_cast<float>(sss) * Axis.z;
-
-		return ans;
-	}
+	
 	//回転クォータニオン
 	Quaternion CreateRotationQuaternion(double radian, Vec3 Axis)
 	{
 		Quaternion ans;
 		double norm;
-		double ccc, sss;
-
-		ans.w = ans.x = ans.y = ans.z = 0.0;
+		ans.w = 1.0;
+		ans.x = ans.y = ans.z = 0.0;
 
 		norm = Axis.x * Axis.x + Axis.y * Axis.y + Axis.z * Axis.z;
 		if (norm <= 0.0) return ans;
@@ -124,8 +93,9 @@ public:
 		Axis.y *= static_cast<float> (norm);
 		Axis.z *= static_cast<float> (norm);
 
-		ccc = cos(0.5 * radian);
-		sss = sin(0.5 * radian);
+		float halfRadian = 0.5f * radian;
+		float ccc = cos(halfRadian);
+		float sss = sin(halfRadian);
 
 		ans.w = static_cast<float>(ccc);
 		ans.x = static_cast<float>(sss) * Axis.x;

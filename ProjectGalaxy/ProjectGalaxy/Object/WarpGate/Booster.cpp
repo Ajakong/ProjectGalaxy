@@ -11,7 +11,7 @@ namespace
 	const char* kColorScreenName = "Color";
 	const char* kBrightScreenName = "HighBright";
 
-	constexpr int kRadius = 20;
+	constexpr int kRadius = 2;
 }
 
 namespace
@@ -58,7 +58,7 @@ void Booster::SetEffectPos()
 	Vec3 axis = Cross(Vec3::Up(), m_upVec);
 	mat = MGetRotAxis(axis.VGet(), acos(Dot(Vec3::Up(), m_upVec)));
 
-	mat = MMult(mat, MGetTranslate(Vec3(m_rigid->GetPos() + m_upVec * 200).VGet()));
+	mat = MMult(mat, MGetTranslate(Vec3(m_rigid->GetPos() + m_upVec * 20).VGet()));
 }
 
 void Booster::Draw()
@@ -66,7 +66,7 @@ void Booster::Draw()
 	//m_screenHandle=GetDrawScreen();
 	//SetDrawScreen(m_colorScreenHandle);
 	//ClearDrawScreen();
-	DrawLine3D(m_rigid->GetPos().VGet(),(m_dir*60 + m_rigid->GetPos()).VGet(), 0xff00ff);
+	DrawLine3D(m_rigid->GetPos().VGet(),(m_dir*6 + m_rigid->GetPos()).VGet(), 0xff00ff);
 
 	//GraphFilterBlt(m_colorScreenHandle, m_gaussScreenHandle, DX_GRAPH_FILTER_GAUSS, 16,900);
 	//
@@ -83,7 +83,7 @@ void Booster::Draw()
 	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
 	DrawSphere3D(m_rigid->GetPos().VGet(), kRadius, 7, 0xff00ff, 0x0000ff, false);
-	DrawCube3D(Vec3(m_rigid->GetPos() + Vec3(20, 20, 20)).VGet(), Vec3(m_rigid->GetPos() + Vec3(-20, -20, -20)).VGet(), 0xffff00, 0xffff00, false);
+	DrawCube3D(Vec3(m_rigid->GetPos() + Vec3(2, 2, 2)).VGet(), Vec3(m_rigid->GetPos() + Vec3(-2, -2, -2)).VGet(), 0xffff00, 0xffff00, false);
 }
 
 void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider)
@@ -96,7 +96,7 @@ void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	{
 		PlaySoundMem(SoundManager::GetInstance().GetSoundData("boost.mp3"), DX_PLAYTYPE_BACK);
 		//colider->GetRigidbody()->SetVelocity(Vec3(m_rigid->GetPos()-colider->GetRigidbody()->GetPos()).GetNormalized()*15);
-		colider->GetRigidbody()->SetVelocity(m_dir * 15);
+		colider->GetRigidbody()->SetVelocity(m_dir * 1.5f);
 		auto player = std::dynamic_pointer_cast<Player>(colider);
 		player->m_playerUpdate = &Player::BoostUpdate;
 		player->SetBoost();

@@ -77,9 +77,9 @@ namespace
 	constexpr int kUiTimeCount_PosY = 90;
 
 	//カメラ
-	constexpr float kCameraDistanceFront = 800.f;
-	constexpr float kCameraDistanceAddFrontInJump = 300.f;
-	constexpr float kCameraDistanceUp = 500.f;
+	constexpr float kCameraDistanceFront = 80.f;
+	constexpr float kCameraDistanceAddFrontInJump = 30.f;
+	constexpr float kCameraDistanceUp = 50.f;
 
 
 	const char* kMiniMapScreenName = "MiniMap";
@@ -89,30 +89,30 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 {
 	//ギミック
 	//ブースター
-	booster.push_back(make_shared<Booster>(Vec3(0,150,0),Vec3(0,1,1).GetNormalized(), -1));
+	booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
 	MyEngine::Physics::GetInstance().Entry(booster.back());
-	booster.push_back(make_shared<Booster>(Vec3(0, -200, 530), Vec3(0,1,0).GetNormalized(), -1));
+	booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
 	MyEngine::Physics::GetInstance().Entry(booster.back());
 	//スターキャプチャー
-	starCapture.push_back(make_shared<StarCapture>(Vec3(0, 500, 400)));
+	starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
 	MyEngine::Physics::GetInstance().Entry(starCapture.back());
 	//シーカーライン
 	std::vector<Vec3>seekerLine1Points;
-	seekerLine1Points.push_back(Vec3(-500, -250,0));
-	seekerLine1Points.push_back(Vec3(-200, 500, 0));
-	seekerLine1Points.push_back(Vec3(-200, 1000, 0));
-	seekerLine1Points.push_back(Vec3(0, 300, 0));
-	seekerLine1Points.push_back(Vec3(1000, 2000, 0));
+	seekerLine1Points.push_back(Vec3(-50, -25,0));
+	seekerLine1Points.push_back(Vec3(-20, 50, 0));
+	seekerLine1Points.push_back(Vec3(-20, 100, 0));
+	seekerLine1Points.push_back(Vec3(0, 30, 0));
+	seekerLine1Points.push_back(Vec3(100, 200, 0));
 	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
 	//クリスタル
-	crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 200),Vec3(0,1,0) ,Vec3(100, 100, 100)));
+	crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
 	MyEngine::Physics::GetInstance().Entry(crystal.back());
 	camera = make_shared<Camera>();
-	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -500, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
+	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
-	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -300),0));
+	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
 	MyEngine::Physics::GetInstance().Entry(kuribo.back());
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
@@ -200,13 +200,13 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 	if (player->GetBoostFlag())
 	{
-		camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * (kCameraDistanceUp - 400) - front * ((kCameraDistanceFront - 700) + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
+		camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
 	}
 	else
 	{
 		if (player->OnAiming())
 		{
-			camera->SetCameraPoint(player->GetPos()+ player->GetShotDir() *- 50+player->GetNormVec()*80+player->GetSideVec()*20);
+			camera->SetCameraPoint(player->GetPos()+ player->GetShotDir() *- 5+player->GetNormVec()*8+player->GetSideVec()*2);
 		}
 		else
 		{

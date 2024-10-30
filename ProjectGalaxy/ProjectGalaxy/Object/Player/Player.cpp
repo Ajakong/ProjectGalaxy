@@ -19,7 +19,7 @@
 
 namespace
 {
-	constexpr int kNetralRadius = 20;//通常時の当たり半径
+	constexpr float kNetralRadius = 2;//通常時の当たり半径
 
 	constexpr int kDamageFrameMax = 20;
 	//アニメーション番号
@@ -34,7 +34,7 @@ namespace
 	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
 
 	//アナログスティックによる移動関連
-	constexpr float kMaxSpeed = 5.0f;//プレイヤーの最大速度
+	constexpr float kMaxSpeed = 0.5f;//プレイヤーの最大速度
 	constexpr float kAnalogRangeMin = 0.1f;//アナログスティックの入力判定範囲
 	constexpr float kAnalogRangeMax = 0.8f;
 	constexpr float kAnalogInputMax = 1000.0f;//アナログスティックから入力されるベクトルの最大値
@@ -43,7 +43,7 @@ namespace
 
 	constexpr int kAvoidFrame = 60;
 
-	constexpr int kJumpPower = 50;
+	constexpr int kJumpPower = 1;
 
 	constexpr int kSearchRemainTimeMax = 28;
 	constexpr int kChargeRemainCoolTime = 10;
@@ -65,10 +65,6 @@ namespace
 	constexpr int kAnimationNumDeath = 6;
 	constexpr int kAnimationNumFall = 7;
 
-
-
-
-
 	//照準
 	const char* kAimGraphFileName = "Elements_pro.png";
 	constexpr int kAimGraphSrkX = 3140;
@@ -79,7 +75,13 @@ namespace
 
 float GetAngle(Vec3 a, Vec3 b)
 {
-	float cos = Dot(a.GetNormalized(), b.GetNormalized());//ない席は180度まで
+	a.Normalize();
+	b.Normalize();
+
+	float cos = Dot(a, b);
+	// コサインをクリッピング
+	cos = max(-1.0f, min(1.0f, cos));
+
 	float rad = acos(cos);
 
 #ifdef _DEBUG
@@ -103,8 +105,10 @@ m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
 m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
 m_upVec(Vec3::Up()),
 m_postUpVec(Vec3::Up()),
-m_nowPlanetPos(Vec3::Up() * 500),
+m_nowPlanetPos(Vec3::Up() * 50),
 m_shotDir(Vec3::Front()),
+m_moveDir(Vec3::Front()),
+m_postMoveDir(Vec3::Front()),
 m_frontVec(Vec3::Front()),
 m_playerUpdate(&Player::NeutralUpdate),
 m_prevUpdate(&Player::NeutralUpdate),
@@ -145,9 +149,10 @@ m_modelDirAngle(0)
 		item->radius = m_attackRadius;
 	}
 
-	DxLib::MV1SetScale(m_modelHandle, VGet(0.05f, 0.05f, 0.05f));
+	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
 	ChangeAnim(kAnimationNumIdle);	
 	//m_prevUpdate = &Player::NeutralUpdate;
+	Vec3 test;
 }
 
 Player::~Player()
@@ -278,25 +283,25 @@ void Player::Update()
 void Player::SetMatrix()
 {
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
-	float angleY = atan2(-m_moveDir.x, -m_moveDir.z);
+
+	//float angleY = atan2(-m_inputVec.x, -m_inputVec.z);
 	//m_myQ = m_myQ * m_myQ.CreateRotationQuaternion(angleY -m_modelDirAngle, Vec3::Up());//角度の変化量だけ渡す
 	//m_modelDirAngle = angleY;
+	
 	float angle = GetAngle(m_postUpVec, m_upVec);
 
-	Vec3 axis = Cross(m_postUpVec, m_upVec).GetNormalized();
-	if (axis.Length() != 0)
-	{
-		m_myQ = m_myQ * m_myQ.CreateRotationQuaternion(angle, axis);
-	}
-	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
-
-	MATRIX mat;
+	Vec3 axis = Cross(m_postMoveDir.GetNormalized(), m_upVec.GetNormalized()).GetNormalized();
 	
+	m_myQ =m_myQ*m_myQ.CreateRotationQuaternion(angle, axis);
+#ifdef _DEBUG
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
+#endif 
+	MATRIX mat;
 	
 	mat = m_myQ.ToMat();
 
 	m_postUpVec = m_upVec;
-
+	m_postMoveDir = m_moveDir;
 	MV1SetRotationMatrix(m_modelHandle, mat);
 
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
@@ -392,7 +397,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 			//ノックバック
 			Vec3 enemyAttackDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
 			enemyAttackDir.Normalize();
-			m_rigid->SetVelocity(enemyAttackDir * 20);
+			m_rigid->SetVelocity(enemyAttackDir * 2);
 			m_playerUpdate = &Player::DamegeUpdate;
 		}
 	}
@@ -401,7 +406,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 		if (m_isSpinFlag)
 		{
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
-			colider->GetRigidbody()->SetVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * -30);
+			colider->GetRigidbody()->SetVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * -3);
 		}
 		else
 		{
@@ -410,7 +415,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 			m_Hp -= 10;
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
-			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 30);
+			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 3);
 			m_isOnDamageFlag = true;
 			m_damageFrame = kDamageFrameMax;
 
@@ -433,7 +438,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 			m_Hp -= 10;
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
-			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 40);
+			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 4);
 			m_isOnDamageFlag = true;
 			m_damageFrame = kDamageFrameMax;
 
@@ -459,7 +464,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 			m_Hp -= 10;
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
-			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 40);
+			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 4);
 			m_isOnDamageFlag = true;
 			m_damageFrame = kDamageFrameMax;
 			ChangeAnim(kAnimationNumHit);
@@ -580,7 +585,7 @@ void Player::NeutralUpdate()
 	//アナログスティックを使って移動
 
 	Vec3 move = Move();
-	
+
 	if (std::abs(move.Length()) >= 0.2f*kMaxSpeed)
 	{
 		ChangeAnim(kAnimationNumRun);
@@ -591,7 +596,7 @@ void Player::NeutralUpdate()
 	{
 		ChangeAnim(kAnimationNumJump);
 		m_isJumpFlag = true;
-		move += m_upVec.GetNormalized() * 10;
+		move += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
@@ -617,12 +622,13 @@ void Player::WalkingUpdate()
 	m_attackRadius = 0;
 	item->radius = m_attackRadius;
 	
-	Vec3 move;
+	Vec3 ans;
 
-	move = Move();
-	m_inputVec=move;
+	ans = Move();
 
-	if (std::abs(move.Length()) < 0.2f*kMaxSpeed)
+	m_inputVec= ans;
+
+	if (std::abs(ans.Length()) < 0.2f*kMaxSpeed)
 	{
 		ChangeAnim(kAnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
@@ -633,14 +639,14 @@ void Player::WalkingUpdate()
 	{
 		ChangeAnim(kAnimationNumJump);
 		m_isJumpFlag = true;
-		move += m_upVec.GetNormalized() * 10;
+		ans += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin,5.f);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_attackRadius = kNetralRadius + 10;
+		m_attackRadius = kNetralRadius * 1.5f;
 		item->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
@@ -649,7 +655,7 @@ void Player::WalkingUpdate()
 	{
 		m_playerUpdate = &Player::AimingUpdate;
 	}
-	m_rigid->SetVelocity(move);
+	m_rigid->SetVelocity(ans);
 }
 
 void Player::JumpingUpdate()
@@ -663,7 +669,7 @@ void Player::JumpingUpdate()
 		ChangeAnim(kAnimationNumSpin,5.f);
 		if (m_spinCount >= 1)return;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_attackRadius = kNetralRadius + 10;
+		m_attackRadius = kNetralRadius *1.5f;
 		item->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_spinCount++;
@@ -684,7 +690,7 @@ void Player::AimingUpdate()
 	{
 		ChangeAnim(kAnimationNumJump);
 		m_isJumpFlag = true;
-		move += m_upVec.GetNormalized() * 10;
+		move += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
@@ -756,7 +762,7 @@ void Player::CommandJump()
 {
 	ChangeAnim(kAnimationNumJump);
 	m_isJumpFlag = true;
-	m_rigid->AddVelocity(m_upVec.GetNormalized() * 10);
+	m_rigid->AddVelocity(m_upVec.GetNormalized() * kJumpPower);
 	m_playerUpdate = &Player::JumpingUpdate;
 }
 
@@ -786,46 +792,40 @@ void Player::OperationUpdate()
 Vec3 Player::Move()
 {
 	int analogX = 0, analogY = 0;
-
 	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-
 	analogY = -analogY;
 
+	m_inputVec.x=analogX;
+	m_inputVec.z = analogY;
 
-	//アナログスティックの入力10%~80%を使用する
-	//ベクトルの長さが最大1000になる
-	//ベクトルの長さを取得
-	Vec3 move;
+	Vec3 ans;  // 初期化はそのままに
 
-	float len = move.Length();
-	//ベクトルの長さを0.0~1.0の割合に変換する
-	float rate = len / kAnalogInputMax;
+	// アナログスティックの入力を反映
 	m_sideVec = GetCameraRightVector();
 	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
 
-	move = m_frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
-	move += m_sideVec * static_cast<float>(analogX);
+	ans = m_frontVec * static_cast<float>(analogY);
+	ans += m_sideVec * static_cast<float>(analogX);
 
-	//アナログスティック無効な範囲を除外する
-	rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
+	// 無効範囲の確認
+	float len = ans.Length();
+	if (len < kAnalogRangeMin) {
+		return Vec3(0, 0, 0);  // 無効な場合はゼロベクトルを返す
+	}
 
-	//速度が決定できるので移動ベクトルに反映
-	move = move.GetNormalized();
-	float speed = kMaxSpeed;
+	if (ans.Length() > 0)
+	{
+		m_moveDir = ans.GetNormalized();
+	}
 
-	//m_angle = fmodf(m_cameraAngle, 360);//mod:余り　
-	//MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
-	m_moveDir = move;
-	move = move * speed;
-	return move;
+	ans = ans.GetNormalized() * kMaxSpeed; // 正規化し、速度を掛ける
+	return ans;
 }
 
 void Player::ShotTheStar()
 {
 	Vec3 shotPos = m_rigid->GetPos();
-	shotPos += m_upVec.GetNormalized() * 70;
+	shotPos += m_upVec.GetNormalized() * 7;
 	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir,m_sideVec, 1, 0xff0000));
 	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 }

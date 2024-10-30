@@ -1,9 +1,9 @@
-#pragma once
-#include "../MyLib/Physics/Collidable.h"
+ï»¿#pragma once
+#include "Collidable.h"
 
 class EnemyMover;
 class EnemyAI;
-/*ƒvƒƒgƒ^ƒCƒvéŒ¾*/
+/*ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€*/
 Vec3 ToVec(Vec3 a, Vec3 b);
 Vec3 norm(Vec3 a);
 float lerp(float start, float end, float t);

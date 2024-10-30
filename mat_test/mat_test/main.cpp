@@ -65,6 +65,23 @@ namespace
     constexpr int kAimGraphHeight = 370;
 }
 
+float GetAngle(Vec3 a, Vec3 b)
+{
+    a.Normalize();
+    b.Normalize();
+
+    float cos = Dot(a, b);
+    // コサインをクリッピング
+    cos = max(-1.0f, min(1.0f, cos));
+
+    float rad = acos(cos);
+
+#ifdef _DEBUG
+    DrawFormatString(0, 125, 0xffffff, "rad(%f),deg(%f)", rad, rad * 180 / DX_PI_F);
+#endif
+
+    return rad;
+}
 
 bool UpdateAnim(int attachNo,int modelHandle)
 {
@@ -252,11 +269,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
 
         //モデルの回転
-        angle+=0.02f;
+        //angle+=0.02f;
 
         Quaternion myQ;
         myQ=myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec);
         myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, Vec3::Right()));
+        myQ = myQ.CreateRotationQuaternion(GetAngle(Vec3(0,1,0),Vec3(0,1,0)), upVec);
         auto rotatemat = myQ.ToMat();
       
        

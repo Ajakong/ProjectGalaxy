@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include "Enemy.h"
+#include"ColliderSphere.h"
+
+using namespace MyEngine;
 class Kuribo : public Enemy
 {
 public:
@@ -30,6 +33,7 @@ private:
 	Vec3 m_comebackPoint;
 	Vec3 m_targetPoint;
 	std::shared_ptr<Collidable> m_player;
+	std::shared_ptr<ColliderSphere> m_searchCol;
 
 	int m_chaseFrameCount;
 	int m_initTime;

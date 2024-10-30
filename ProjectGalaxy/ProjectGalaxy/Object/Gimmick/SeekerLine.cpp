@@ -5,8 +5,8 @@
 
 namespace
 {
-	constexpr int kSpeedMax = 20;
-	constexpr int kRadius = 50;
+	constexpr int kSpeedMax = 2;
+	constexpr int kRadius = 5;
 }
 
 
@@ -69,7 +69,7 @@ void SeekerLine::Update()
 	m_player->SetPos(m_player->GetPos()+m_velocity* m_num);
 	//m_player->SetPos((m_points[m_hitPointNum+1]));
 
-	if ((m_player->GetPos() - m_points[m_hitPointNum + 1]).Length() <= 50)//次のポイントに到達したら
+	if ((m_player->GetPos() - m_points[m_hitPointNum + 1]).Length() <= 5)//次のポイントに到達したら
 	{
 		m_hitPointNum++;
 		if (m_points[m_hitPointNum] == m_points.back())//次のポイントが最後だったら
@@ -100,7 +100,7 @@ void SeekerLine::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 	if (colider->GetTag() == ObjectTag::Player)
 	{
 		m_num = 0;
-		m_speed = 1.f;
+		m_speed = 0.1f;
 		m_player = std::dynamic_pointer_cast<Player>(colider);
 		m_player->SetIsOperation(true);
 		m_player->SetPos(m_rigid->GetPos());

@@ -7,7 +7,7 @@ namespace
 	/// <summary>
 	/// 球の当たり判定半径
 	/// </summary>
-	constexpr float kSphereRadius = 10.0f;
+	constexpr float kSphereRadius = 1.0f;
 	/// <summary>
 	/// 球の生成間隔
 	/// </summary>
@@ -66,7 +66,7 @@ void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
 void PlayerSphere::StraightUpdate()
 {
 	//m_velocity = Cross(m_upVec, m_sideVec);//地表に沿う
-	m_rigid->SetVelocity(VGet(m_velocity.x*20, m_velocity.y*20, m_velocity.z*20));
+	m_rigid->SetVelocity(VGet(m_velocity.x*2, m_velocity.y*2, m_velocity.z*2));
 	m_lifeTime++;
 	if (m_lifeTime > kLifeTimeMax)
 	{

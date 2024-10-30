@@ -1,16 +1,16 @@
 ﻿#include "Kuribo.h"
-#include"ColliderSphere.h"
+
 using namespace MyEngine;
 
 namespace
 {
-	constexpr float kRadius = 50.f;
-	constexpr float kSearchRadius = 200.f;
-	constexpr float kChaseSpeed = 0.5f;
+	constexpr float kRadius = 5.f;
+	constexpr float kSearchRadius = 20.f;
+	constexpr float kChaseSpeed = 0.05f;
 
 	constexpr int kChaseMaxFrame = 200;
 
-	constexpr float kAwayStrength = 6.f;
+	constexpr float kAwayStrength = 0.6f;
 
 }
 
@@ -44,6 +44,7 @@ m_chaseFrameCount(0)
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		item->radius = kSearchRadius;
 		item->isTrigger = true;
+		m_searchCol = item;
 	}
 #endif
 	m_moveUpdate = &Kuribo::SearchUpdate;
@@ -64,18 +65,17 @@ void Kuribo::Update()
 
 void Kuribo::Draw()
 {
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 100);
 	DrawSphere3D(m_rigid->GetPos().VGet(), kRadius, 8, 0xffaa00, 0xffffff, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 #ifdef _DEBUG
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 100);
-	DrawSphere3D(m_rigid->GetPos().VGet(), item->radius, 8, 0xffaa00, 0xffffff, false);
+	DrawSphere3D(m_rigid->GetPos().VGet(),m_searchCol->radius, 8, 0xffaa00, 0xffffff, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 #endif
-	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_attackDir * 300).VGet(), 0x00ff00);
-	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_upVec * 300).VGet(), 0xff0000);
+	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_attackDir * 30).VGet(), 0x00ff00);
+	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_upVec * 30).VGet(), 0xff0000);
 }
 
 void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider)
@@ -115,10 +115,9 @@ void Kuribo::SearchUpdate()
 {
 	m_rigid->SetVelocity(Vec3(0, 0, 0));
 	if (!m_player.get())return;
-	m_rigid->SetVelocity(m_upVec * 10);
+	m_rigid->SetVelocity(m_upVec);
 	
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-	item->radius = kSearchRadius * 2;
+	m_searchCol->radius = kSearchRadius * 2;
 	m_comebackPoint = m_rigid->GetPos();
 	m_moveUpdate = &Kuribo::ChaseUpdate;
 
@@ -154,7 +153,7 @@ void Kuribo::ComebackUpdate()
 	Vec3 vec = m_comebackPoint - m_rigid->GetPos();
 	vec.Normalize();
 	m_rigid->SetVelocity(vec*kChaseSpeed);
-	if ((m_comebackPoint - m_rigid->GetPos()).Length() <= 30)
+	if ((m_comebackPoint - m_rigid->GetPos()).Length() <= 3)
 	{
 		m_moveUpdate = &Kuribo::SearchUpdate;
 	}
@@ -163,9 +162,8 @@ void Kuribo::ComebackUpdate()
 		m_attackDir = vec;
 		return;
 	}
-	m_rigid->SetVelocity(m_upVec * 10);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-	item->radius = kSearchRadius;
+	m_rigid->SetVelocity(m_upVec );
+	m_searchCol->radius = kSearchRadius;
 	m_comebackPoint = m_rigid->GetPos();
 	m_moveUpdate = &Kuribo::ChaseUpdate;
 }

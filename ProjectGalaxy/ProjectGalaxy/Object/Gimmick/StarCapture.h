@@ -8,7 +8,7 @@ class Player;
 class StarCapture : public Collidable
 {
 public:
-	StarCapture(Vec3 pos,int radius=30,int captureRadius=500);
+	StarCapture(Vec3 pos,int radius=3,int captureRadius=50);
 	virtual ~StarCapture();
 
 	void Init();

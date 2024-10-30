@@ -4,9 +4,9 @@
 
 namespace
 {
-	constexpr float kGroundRadius = 500;
-	constexpr float  kGravityRange = 1500;
-	constexpr float  kGravityPower = 30;
+	constexpr float kGroundRadius = 50;
+	constexpr float  kGravityRange = 150;
+	constexpr float  kGravityPower = 0.98f;
 
 	const char* name = "planet";
 	const char* atom = "atomosphere";
@@ -20,8 +20,8 @@ m_modelHandle(modelHandle)
 	m_color = color;
 	m_rigid->SetPos(pos);
 	gravityPower = gravity;
-	m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 5000.0f, 0.0f, 0.002f, 0.0f);
-	MV1SetScale(m_modelHandle, VGet(5, 5, 5));
+	m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 50.0f, 0.0f, 0.0002f, 0.0f);
+	MV1SetScale(m_modelHandle, VGet(0.5f, 0.5f, 0.5f));
 	MV1SetPosition(m_modelHandle,m_rigid->GetPos().VGet());
 }
 
@@ -52,7 +52,6 @@ void SpherePlanet::Draw()
 	if (m_isSearch)
 	{
 		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius, 50, m_color, 0x0000ff, false);
-
 	}
 	else
 	{
@@ -104,7 +103,7 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	if (obj->GetTag() == ObjectTag::Player)
 	{
 		//重力のみ
-		GravityDir = GravityDir * gravityPower*0.05f* ((kGravityRange+ (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
+		GravityDir = GravityDir * gravityPower*0.005f* ((kGravityRange+ (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
 		return GravityDir;
 	}
 

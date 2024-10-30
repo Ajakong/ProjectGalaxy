@@ -160,6 +160,7 @@ private:
 	Vec3 m_cameraPos;
 	//std::shared_ptr<Camera> m_camera;
 	Vec3 m_moveDir;
+	Vec3 m_postMoveDir;
 	Vec3 m_nowPlanetPos;
 	Vec3 nowVec;
 	Vec3 m_inputVec;
