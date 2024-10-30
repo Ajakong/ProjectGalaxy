@@ -30,6 +30,7 @@ m_num(0)
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kRadius;
+	item->isTrigger = true;
 	SetAntiGravity();
 	for (int i = 1; i < m_points.size(); i++)
 	{
@@ -94,7 +95,7 @@ void SeekerLine::Draw()
 	}
 }
 
-void SeekerLine::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void SeekerLine::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -102,6 +103,7 @@ void SeekerLine::OnCollideEnter(std::shared_ptr<Collidable> colider)
 		m_speed = 1.f;
 		m_player = std::dynamic_pointer_cast<Player>(colider);
 		m_player->SetIsOperation(true);
+		m_player->SetPos(m_rigid->GetPos());
 	}
 }
 

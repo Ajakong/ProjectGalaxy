@@ -106,8 +106,8 @@ m_postUpVec(Vec3::Up()),
 m_nowPlanetPos(Vec3::Up() * 500),
 m_shotDir(Vec3::Front()),
 m_frontVec(Vec3::Front()),
-m_playerUpdate(&Player::StartUpdate),
-m_prevUpdate(&Player::StartUpdate),
+m_playerUpdate(&Player::NeutralUpdate),
+m_prevUpdate(&Player::NeutralUpdate),
 m_cameraUpdate(&Player::Planet1Update),
 m_anim_move(),
 m_radius(kNetralRadius),
@@ -147,6 +147,7 @@ m_modelDirAngle(0)
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.05f, 0.05f, 0.05f));
 	ChangeAnim(kAnimationNumIdle);	
+	//m_prevUpdate = &Player::NeutralUpdate;
 }
 
 Player::~Player()
@@ -377,6 +378,23 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 		m_isJumpFlag = false;
 		m_isBoostFlag = false;
 		ChangeAnim(kAnimationNumIdle);
+	}
+	if (colider->GetTag() == ObjectTag::Kuribo)
+	{
+		if (m_isSpinFlag)
+		{
+			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
+		}
+		else
+		{
+			//HPを減らす
+
+			//ノックバック
+			Vec3 enemyAttackDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
+			enemyAttackDir.Normalize();
+			m_rigid->SetVelocity(enemyAttackDir * 20);
+			m_playerUpdate = &Player::DamegeUpdate;
+		}
 	}
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{
@@ -817,7 +835,7 @@ void Player::DamegeUpdate()
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
 	item->radius = m_attackRadius;
-	m_rigid->SetVelocity(m_rigid->GetPrevVelocity() * 0.8f);
+	m_rigid->SetVelocity(m_rigid->GetVelocity() * 0.8f);
 	if (m_rigid->GetVelocity().Length() < 7.0f)
 	{
 		if (m_prevUpdate != m_playerUpdate)

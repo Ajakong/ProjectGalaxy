@@ -20,13 +20,15 @@ private:
 	void SearchUpdate();
 	void JumpUpdate();
 	void ChaseUpdate();
-
+	void ComebackUpdate();
+	void DeathUpdate();
 	Vec3 m_vec;
 	Vec3 m_attackDir;
 	Vec3 m_moveShaftPos;
 	Vec3 m_normVec;
 	Vec3 m_nowPlanetPos;
-
+	Vec3 m_comebackPoint;
+	Vec3 m_targetPoint;
 	std::shared_ptr<Collidable> m_player;
 
 	int m_chaseFrameCount;

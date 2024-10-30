@@ -58,6 +58,7 @@ namespace MyEngine
 
 		// 当たり判定を無視（スルー）する対象かどうか
 		bool IsThroughTarget(std::shared_ptr<Collidable>) const;
+		bool IsDestroy() { return m_isDestroyFlag; }
 
 		Vec3 GetKnockBackVelocity() { return (m_rigid->GetVelocity())*-1; }
 
@@ -74,7 +75,7 @@ namespace MyEngine
 		std::vector<std::shared_ptr<ColliderBase>> m_colliders;
 		Vec3 m_upVec;
 
-		
+		bool m_isDestroyFlag;
 	
 	private:
 		std::list<ObjectTag>	throughTags;
@@ -82,6 +83,7 @@ namespace MyEngine
 		ObjectTag m_tag;
 		Priority m_priority;
 		bool m_isAntiGravity;
+		
 	};
 }
 
