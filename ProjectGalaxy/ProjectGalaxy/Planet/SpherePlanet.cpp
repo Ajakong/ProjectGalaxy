@@ -83,38 +83,25 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 		return objVelocity;
 	}
 
-	if (obj->GetTag() == ObjectTag::Gorori||obj->GetTag()==ObjectTag::KillerTheSeeker)
-	{
-		float angleX = DX_PI_F / 2 + atan2(GravityDir.y, GravityDir.x);
-		float angleZ = DX_PI_F / 2 + atan2(GravityDir.y, GravityDir.z);
-		ansVelocity = { objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ) };
-		ansVelocity += GravityDir * objVelocity.y;//プレイヤーのジャンプ分のベクトルの加算
+	//if (obj->GetTag() == ObjectTag::Gorori||obj->GetTag()==ObjectTag::KillerTheSeeker)
+	//{
+	//	float angleX = DX_PI_F / 2 + atan2(GravityDir.y, GravityDir.x);
+	//	float angleZ = DX_PI_F / 2 + atan2(GravityDir.y, GravityDir.z);
+	//	ansVelocity = { objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ) };
+	//	ansVelocity += GravityDir * objVelocity.y;//プレイヤーのジャンプ分のベクトルの加算
 
-		ansVelocity += GravityDir * kGravityPower;
-		obj->SetReverceGravityVec(GravityDir.GetNormalized());
+	//	ansVelocity += GravityDir * kGravityPower;
+	//	obj->SetReverceGravityVec(GravityDir.GetNormalized());
 
-		/*VECTOR ANSVECTOR = VGet(objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ));
-		ANSVECTOR = VAdd(ANSVECTOR, objVelocity.y * toObj);
-		ansVelocity = ANSVECTOR;*/
-		//ansVelocity -= toObj;
-		return ansVelocity+ GravityDir * gravityPower*40*((kGravityRange+(obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() -(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length())/ kGravityRange);
-	}
+	//	/*VECTOR ANSVECTOR = VGet(objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ));
+	//	ANSVECTOR = VAdd(ANSVECTOR, objVelocity.y * toObj);
+	//	ansVelocity = ANSVECTOR;*/
+	//	//ansVelocity -= toObj;
+	//	return ansVelocity+ GravityDir * gravityPower*40*((kGravityRange+(obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() -(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length())/ kGravityRange);
+	//}
 
-	if (obj->GetTag() == ObjectTag::Player)
-	{
-		//重力のみ
-		GravityDir = GravityDir * gravityPower*0.005f* ((kGravityRange+ (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
-		return GravityDir;
-	}
-
-	if (obj->GetTag() == ObjectTag::Kuribo)
-	{
-		//重力のみ
-		GravityDir = GravityDir * gravityPower * 0.05f * ((kGravityRange + (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
-		return GravityDir;
-	}
 	//重力のみ
-	GravityDir = GravityDir * gravityPower * ((kGravityRange +(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length()- (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
+	GravityDir = GravityDir * gravityPower * 0.005f * ((kGravityRange + (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
 	return GravityDir;
 }
 

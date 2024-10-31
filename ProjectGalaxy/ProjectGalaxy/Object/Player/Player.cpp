@@ -167,6 +167,8 @@ void Player::Init()
 void Player::Update()
 {
 	m_isSearchFlag = false;
+	m_sideVec = GetCameraRightVector();
+	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
 	(this->*m_playerUpdate)();
 	m_chargeRemainTime++;
 	if (Pad::IsTrigger(PAD_INPUT_Y))
@@ -284,25 +286,34 @@ void Player::SetMatrix()
 {
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 
-	//float angleY = atan2(-m_inputVec.x, -m_inputVec.z);
+	//float angleY = atan2(-m_moveDir.x, -m_moveDir.z);
 	//m_myQ = m_myQ * m_myQ.CreateRotationQuaternion(angleY -m_modelDirAngle, Vec3::Up());//角度の変化量だけ渡す
 	//m_modelDirAngle = angleY;
 	
 	float angle = GetAngle(m_postUpVec, m_upVec);
 
-	Vec3 axis = Cross(m_postMoveDir.GetNormalized(), m_upVec.GetNormalized()).GetNormalized();
-	
+	Vec3 axis = Cross(m_upVec, m_moveDir);
+	axis.Normalize();
+	m_angle +=angle;
 	m_myQ =m_myQ*m_myQ.CreateRotationQuaternion(angle, axis);
+	//m_myQ =m_myQ* m_myQ.CreateRotationQuaternion(atan2(-m_moveDir.x, -m_moveDir.z), m_upVec);
+	auto rotatemat = m_myQ.ToMat();
+
 #ifdef _DEBUG
+
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_postUpVec * 100).VGet(), 0xaa0000);
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_moveDir * 100).VGet(), 0x00aa00);
+
 #endif 
+
 	MATRIX mat;
 	
 	mat = m_myQ.ToMat();
 
 	m_postUpVec = m_upVec;
-	m_postMoveDir = m_moveDir;
-	MV1SetRotationMatrix(m_modelHandle, mat);
+	
+	MV1SetRotationMatrix(m_modelHandle, rotatemat);
 
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 	auto modelMat = MV1GetMatrix(m_modelHandle);
@@ -626,7 +637,7 @@ void Player::WalkingUpdate()
 
 	ans = Move();
 
-	m_inputVec= ans;
+	
 
 	if (std::abs(ans.Length()) < 0.2f*kMaxSpeed)
 	{
@@ -798,15 +809,24 @@ Vec3 Player::Move()
 	m_inputVec.x=analogX;
 	m_inputVec.z = analogY;
 
-	Vec3 ans;  // 初期化はそのままに
+	
 
+	Vec3 ans;  // 初期化はそのままに
+	Vec3 modelDir;
 	// アナログスティックの入力を反映
 	m_sideVec = GetCameraRightVector();
 	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
 
 	ans = m_frontVec * static_cast<float>(analogY);
 	ans += m_sideVec * static_cast<float>(analogX);
-
+	modelDir = m_frontVec * static_cast<float>(analogY);
+	modelDir -= m_sideVec * static_cast<float>(analogX);
+	
+	if (ans.Length() > 0)
+	{
+		m_moveDir = ans.GetNormalized();
+		m_inputVec = modelDir.GetNormalized();
+	}
 	// 無効範囲の確認
 	float len = ans.Length();
 	if (len < kAnalogRangeMin) {
@@ -816,6 +836,7 @@ Vec3 Player::Move()
 	if (ans.Length() > 0)
 	{
 		m_moveDir = ans.GetNormalized();
+		m_inputVec = modelDir.GetNormalized();
 	}
 
 	ans = ans.GetNormalized() * kMaxSpeed; // 正規化し、速度を掛ける

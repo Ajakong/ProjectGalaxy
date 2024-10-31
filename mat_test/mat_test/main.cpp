@@ -205,7 +205,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         //ベクトルの長さを0.0~1.0の割合に変換する
         float rate = len / kAnalogInputMax;
         sideVec = GetCameraRightVector();
-        frontVec = Cross(sideVec, upVec).GetNormalized();
+        frontVec = (Vec3::Front()*-1).GetNormalized();
 
         move = frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
         move += sideVec * static_cast<float>(analogX);
@@ -218,10 +218,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         //速度が決定できるので移動ベクトルに反映
         move = move.GetNormalized();
         float speed = kMaxSpeed;
+        
 
         //m_angle = fmodf(m_cameraAngle, 360);//mod:余り　
         //MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
         moveDir = move;
+        if (moveDir.Length() == 0)
+        {
+            moveDir = Vec3(0, 0, 1);
+        }
         move = move * speed;
         return move;
     };
@@ -236,6 +241,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
     ChangeAnim(kAnimationNumIdle);
    
+    upVec = Vec3(1, 0, 0);
     while (ProcessMessage() != -1)
     {
         // FPSの固定ように開始時の時間を取得
@@ -272,9 +278,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         //angle+=0.02f;
 
         Quaternion myQ;
-        myQ=myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec);
-        myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, Vec3::Right()));
-        myQ = myQ.CreateRotationQuaternion(GetAngle(Vec3(0,1,0),Vec3(0,1,0)), upVec);
+        
+        angle += 0.02f;
+        Vec3 axis = Cross(upVec,moveDir);
+        axis.Normalize();
+        DrawLine3D(playerPos.VGet(), (playerPos + axis * 60).VGet(), 0xff00ff);
+        myQ =myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, axis));
+        myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec));
         auto rotatemat = myQ.ToMat();
       
        

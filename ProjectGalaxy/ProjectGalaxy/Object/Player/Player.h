@@ -142,6 +142,7 @@ private:
 	int m_getItemHandle;
 	int m_color;
 	int m_spinCount;
+
 	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
 
 	bool m_isOnDamageFlag;

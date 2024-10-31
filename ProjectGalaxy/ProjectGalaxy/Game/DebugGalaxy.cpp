@@ -57,9 +57,9 @@ namespace
 	constexpr int kUiTimeCount_PosY = 90;
 
 	//カメラ
-	constexpr float kCameraDistanceFront = 800.f;
-	constexpr float kCameraDistanceAddFrontInJump = 300.f;
-	constexpr float kCameraDistanceUp = 500.f;
+	constexpr float kCameraDistanceFront = 80.f;
+	constexpr float kCameraDistanceAddFrontInJump = 3.f;
+	constexpr float kCameraDistanceUp = 50.f;
 
 
 	const char* kMiniMapScreenName = "MiniMap";
@@ -113,17 +113,17 @@ void DebugGalaxy::Update()
 
 	if (player->GetBoostFlag())
 	{
-		camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * (kCameraDistanceUp - 400) - front * ((kCameraDistanceFront - 700) + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
+		camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * (kCameraDistanceUp - 4) - front * ((kCameraDistanceFront - 7) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 	}
 	else
 	{
 		if (player->OnAiming())
 		{
-			camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -50 + player->GetNormVec() * 80 + player->GetSideVec() * 20);
+			camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -5 + player->GetNormVec() * 8 + player->GetSideVec() * 2);
 		}
 		else
 		{
-			camera->SetCameraPoint(player->GetPos() + (Vec3(GetCameraUpVector()).GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
+			camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 		}
 	}
 
