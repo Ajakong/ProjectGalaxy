@@ -13,6 +13,7 @@ enum class ObjectTag
 	PlayerBullet,
 	WarpGate,
 	Item,
+	Coin,
 	ClearObject,
 	StarCapture,
 	SeekerLine,

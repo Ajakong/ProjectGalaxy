@@ -16,6 +16,7 @@
 #include"Gorori.h"
 #include"Kuribo.h"
 #include"Item.h"
+#include"Coin.h"
 #include"ClearObject.h"
 #include<cassert>
 #include"Pad.h"
@@ -116,6 +117,10 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	MyEngine::Physics::GetInstance().Entry(kuribo.back());
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
+	//アイテム
+	coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
+	MyEngine::Physics::GetInstance().Entry(coin.back());
+
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
@@ -152,6 +157,8 @@ void SerialPlanetGalaxy::Init()
 	for (auto& item : crystal) { item->Init(); }
 	//エネミー
 	for (auto& item : kuribo) { item->Init(); }
+
+	for (auto& item : coin)item->Init();
 }
 
 void SerialPlanetGalaxy::Update()
@@ -174,9 +181,8 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
-	player->Update();
+	MyEngine::Physics::GetInstance().Update();//登録されているオブジェクトと当たり判定の更新
 
-	
 	if (player->OnAiming())
 	{
 		camera->Update(player->GetShotDir());
@@ -185,18 +191,34 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	{
 		camera->Update(player->GetPos());
 	}
-	
+
 	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
-	Vec3 front =player->GetFrontVec();//-1をかけて逆ベクトルにしている
+	Vec3 front = player->GetFrontVec();//-1をかけて逆ベクトルにしている
 
 	//相対的な軸ベクトルの設定
-	
+
 	player->SetUpVec(planetToPlayer);
 
 	camera->SetBoost(player->GetBoostFlag());
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
 	camera->SetUpVec(player->GetNormVec());
+
+	////エネミー
+	//for (auto& item : kuribo) { item->Update(); }
+
+
+	//for (auto& item : planet)item->Update();//ステージの更新
+	////位置固定ギミック
+	//for (auto& item : booster) { item->Update(); }
+	//for (auto& item : starCapture) { item->Update(); }
+	//for (auto& item : seekerLine) { item->Update(); }
+	//for (auto& item : crystal) { item->Update();}
+	//for (auto& item : coin)item->Update();
+
+	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
+
+	
 
 	if (player->GetBoostFlag())
 	{
@@ -206,37 +228,13 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	{
 		if (player->OnAiming())
 		{
-			camera->SetCameraPoint(player->GetPos()+ player->GetShotDir() *- 5+player->GetNormVec()*8+player->GetSideVec()*2);
+			camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -5 + player->GetNormVec() * 8 + player->GetSideVec() * 2);
 		}
 		else
 		{
 			camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 		}
 	}
-	//エネミー
-	for (auto& item : kuribo) { item->Update(); }
-
-
-	for (auto& item : planet)item->Update();//ステージの更新
-	//位置固定ギミック
-	for (auto& item : booster) { item->Update(); }
-	for (auto& item : starCapture) { item->Update(); }
-	for (auto& item : seekerLine) { item->Update(); }
-	for (auto& item : crystal) { item->Update();}
-	auto result = remove_if(crystal.begin(), crystal.end(), [this](const auto& sphere)
-		{
-			bool isOut = sphere->IsDestroy() == true;
-	if (isOut == true)
-	{
-		MyEngine::Physics::GetInstance().Exit(sphere);
-	}
-	return isOut;
-		});
-	crystal.erase(result, crystal.end());
-	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
-
-	MyEngine::Physics::GetInstance().Update();//当たり判定の更新
-
 	player->SetMatrix();//行列を反映
 
 }
@@ -250,7 +248,6 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	for (auto& item : planet)
 	{
 		item->SetIsSearch(player->IsSearch());
-		
 	}
 
 	MyEngine::Physics::GetInstance().Draw();
@@ -262,15 +259,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 		DxLib::DrawBox(0, 0, 1600, 900,
 			0x444488, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	}
-	//エネミー
-	for (auto& item : kuribo) { item->Draw(); }
-	//位置固定ギミック
-	for (auto& item : booster){item->Draw();}
-	for (auto& item : starCapture) { item->Draw(); }
-	for (auto& item : seekerLine) { item->Draw(); }
-	for (auto& item : crystal) { item->Draw(); }
+	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);

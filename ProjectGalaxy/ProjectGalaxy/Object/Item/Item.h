@@ -1,5 +1,9 @@
-#pragma once
-#include "../MyLib/Physics/Collidable.h"
+﻿#pragma once
+#include "Collidable.h"
+#include"ColliderSphere.h"
+
+using namespace MyEngine;
+
 class Item : public MyEngine::Collidable
 {
 public:
@@ -15,6 +19,8 @@ public:
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
 	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider);
 protected:
+
+	std::shared_ptr<ColliderSphere> m_col;
 	float angle=0;
 	bool m_deleteFlag = false;
 	Vec3 m_nowPlanetPos;

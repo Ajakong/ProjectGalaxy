@@ -378,6 +378,11 @@ void Player::SetCameraAngle(float cameraAngle)
 
 void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {
+	if (colider->GetTag() == ObjectTag::Coin)
+	{
+		m_Hp += 10;
+	}
+
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
 		m_spinCount = 0;

@@ -183,6 +183,7 @@
     <ClCompile Include="Object\Gimmick\Invisible.cpp" />
     <ClCompile Include="Object\Gimmick\SeekerLine.cpp" />
     <ClCompile Include="Object\Gimmick\StarCapture.cpp" />
+    <ClCompile Include="Object\Item\Coin.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="Object\Gimmick\Invisible.h" />
     <ClInclude Include="Object\Gimmick\SeekerLine.h" />
     <ClInclude Include="Object\Gimmick\StarCapture.h" />
+    <ClInclude Include="Object\Item\Coin.h" />
     <ClInclude Include="Object\Item\Item.h" />
     <ClInclude Include="Object\ObjectManager.h" />
     <ClInclude Include="Object\Player\Player.h" />

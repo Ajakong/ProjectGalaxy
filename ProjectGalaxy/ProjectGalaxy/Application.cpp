@@ -65,7 +65,11 @@ bool Application::Init()
     void* CallBack();
 
 
-    DxLib_Init();
+    SetWindowText("なめぇを決めてください");
+    if (DxLib_Init() == -1)
+    {
+        return false;
+    }
 
     SetWindowIconID(kIconID);
 
@@ -79,11 +83,7 @@ bool Application::Init()
     Effekseer_InitDistortion();
     Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
-    SetWindowText("なめぇを決めてください");
-    if (DxLib_Init() == -1)
-    {
-        return false;
-    }
+   
 
     SetDrawScreen(DX_SCREEN_BACK);
     return true;

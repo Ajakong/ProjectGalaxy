@@ -10,12 +10,10 @@ public:
 	void Update();
 	void Draw();
 
-	bool IsDestroy();
-
+	
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
 private:
 	int m_Hp;
-	bool m_destroyFlag;
 	Vec3 m_size;
 
 };

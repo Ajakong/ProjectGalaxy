@@ -5,8 +5,7 @@ using namespace std;
 
 
 Crystal::Crystal(Vec3 pos,Vec3 norm,Vec3 size) : Collidable(Priority::StageGimmick,ObjectTag::Crystal),
-m_Hp(30),
-m_destroyFlag(false)
+m_Hp(30)
 {
 	SetAntiGravity();
 	m_size = size;
@@ -31,7 +30,7 @@ void Crystal::Update()
 {
 	if (m_Hp < 0)
 	{
-		m_destroyFlag = true;
+		m_isDestroyFlag = true;
 	}
 }
 
@@ -41,10 +40,6 @@ void Crystal::Draw()
 	DrawCube3D((m_rigid->GetPos() - m_size).VGet(), (m_rigid->GetPos() + m_size).VGet(), 0xffffff, 0xffffff, false);
 }
 
-bool Crystal::IsDestroy()
-{
-	return m_destroyFlag;
-}
 
 void Crystal::OnCollideEnter(std::shared_ptr<Collidable> colider)
 {

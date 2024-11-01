@@ -2,10 +2,12 @@
 #include"Galaxy.h"
 
 class Camera;
+class Collidable;
 class Player;
 class Planet;
 class BossPlanet;
 class ClearObject;
+class Coin;
 class WarpGate;
 
 //ギミック
@@ -69,14 +71,19 @@ private:
 	UserData* userData = static_cast<UserData*>(GetBufferShaderConstantBuffer(cbuffH));
 
 	std::shared_ptr<Camera> camera;
+	//ステージ
 	std::vector<std::shared_ptr<Planet>> planet;
 	std::shared_ptr<BossPlanet> bossPlanet;
+	//アイテム
 	std::vector<std::shared_ptr<ClearObject>> clearObject;
+	std::vector<std::shared_ptr<Coin>> coin;
+	//ギミック
 	std::vector<std::shared_ptr<WarpGate>> warpGate;
 	std::vector<std::shared_ptr<Booster>> booster;
 	std::vector<std::shared_ptr<StarCapture>> starCapture;
 	std::vector<std::shared_ptr<SeekerLine>> seekerLine;
 	std::vector<std::shared_ptr<Crystal>> crystal;
+	//エネミー
 	std::vector<std::shared_ptr<Takobo>> takobo;
 	std::vector<std::shared_ptr<KillerTheSeeker>> killerTheSeeker;
 	std::vector<std::shared_ptr<Gorori>> gorori;

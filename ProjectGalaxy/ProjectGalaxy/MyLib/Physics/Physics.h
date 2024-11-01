@@ -4,11 +4,13 @@
 #include <functional>
 #include"Vec3.h"
 #include "ObjectTag.h"
+#include <DxLib.h>
 
 
 
 namespace MyEngine
 {
+	class Galaxy;
 	class Rigidbody;
 	class Collidable;
 	class ColliderBase;
@@ -16,6 +18,8 @@ namespace MyEngine
 	class Physics final
 	{
 	private:
+		friend Galaxy;
+
 		enum class OnCollideInfoKind
 		{
 			CollideEnter,
@@ -37,12 +41,16 @@ namespace MyEngine
 			Vec3 hitPos;
 		};
 		using SendCollideInfo = std::unordered_map<std::shared_ptr<Collidable>, std::list<std::shared_ptr<Collidable>>>;
+	
 	private:
+
 		Physics();
 
 		Physics(const Physics&) = delete;
 		void operator= (const Physics&) = delete;
+
 	public:
+
 		static Physics& GetInstance();
 
 		void Entry(const std::shared_ptr<Collidable>& collidable);
@@ -54,6 +62,8 @@ namespace MyEngine
 		void Clear();
 
 	private:
+
+
 		void MoveNextPos() const;
 
 		void CheckCollide();

@@ -312,6 +312,9 @@
     <ClCompile Include="Object\Gimmick\Invisible.cpp">
       <Filter>ソース ファイル\Object\Gimmick</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Item\Coin.cpp">
+      <Filter>ソース ファイル\Object\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -499,6 +502,9 @@
     </ClInclude>
     <ClInclude Include="Object\Gimmick\Invisible.h">
       <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item\Coin.h">
+      <Filter>ヘッダー ファイル\Object\Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

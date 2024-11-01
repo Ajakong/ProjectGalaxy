@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 #include <list>
-#include "../ObjectTag.h"
+#include "ObjectTag.h"
 #include "Rigidbody.h"
 #include "ColliderBase.h"
 
@@ -58,7 +58,7 @@ namespace MyEngine
 
 		// 当たり判定を無視（スルー）する対象かどうか
 		bool IsThroughTarget(std::shared_ptr<Collidable>) const;
-		bool IsDestroy() { return m_isDestroyFlag; }
+		virtual bool IsDestroy() { return m_isDestroyFlag; }
 
 		Vec3 GetKnockBackVelocity() { return (m_rigid->GetVelocity())*-1; }
 

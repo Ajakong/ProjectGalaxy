@@ -83,6 +83,10 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 
 void Physics::Update()
 {
+	for (auto& item : m_collidables)
+	{
+		item->Update();
+	}
 	m_preCollideInfo = m_newCollideInfo;
 	m_newCollideInfo.clear();
 	m_preTirrigerInfo = m_newTirrigerInfo;
@@ -105,6 +109,13 @@ void Physics::Update()
 		
 		OnCollideInfo(info.own, info.send,info.kind);
 	}
+
+	auto result = remove_if(m_collidables.begin(), m_collidables.end(), [this](const auto& collision)
+		{
+			bool isOut = collision->IsDestroy() == true;
+	return isOut;
+		});
+	m_collidables.erase(result, m_collidables.end());
 }
 
 void MyEngine::Physics::Draw()

@@ -1,11 +1,10 @@
 ﻿#pragma once
 #include "Collidable.h"
 #include"ColliderSphere.h"
-using namespace MyEngine;
 
 class Player;
 
-class StarCapture : public Collidable
+class StarCapture : public MyEngine::Collidable
 {
 public:
 	StarCapture(Vec3 pos,int radius=3,int captureRadius=50);
@@ -15,10 +14,10 @@ public:
 	void Update();
 	void Draw();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
-	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider);
-	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider);
-	virtual void OnTriggerExit(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider);
+	virtual void OnTriggerEnter(std::shared_ptr<MyEngine::Collidable> colider);
+	virtual void OnTriggerStay(std::shared_ptr<MyEngine::Collidable> colider);
+	virtual void OnTriggerExit(std::shared_ptr<MyEngine::Collidable> colider);
 private:
 	using StarCaptureState_t = void(StarCapture::*)();
 	StarCaptureState_t m_stateUpdate;
@@ -35,8 +34,8 @@ private:
 	int m_radius;
 	int m_captureRadius;
 	int m_captureFrame;
-	std::shared_ptr<ColliderSphere> m_captureCol;
-	std::shared_ptr<Collidable> m_target;
+	std::shared_ptr<MyEngine::ColliderSphere> m_captureCol;
+	std::shared_ptr<MyEngine::Collidable> m_target;
 	std::shared_ptr<Player> m_player;
 	Vec3 m_playerStartPos;
 	bool m_isCapturePlayer;
