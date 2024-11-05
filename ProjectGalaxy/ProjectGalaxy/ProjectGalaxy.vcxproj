@@ -178,6 +178,7 @@
     <ClCompile Include="Object\Enemy\Killer.cpp" />
     <ClCompile Include="Object\Enemy\KillerTheSeeker.cpp" />
     <ClCompile Include="Object\Enemy\Kuribo.cpp" />
+    <ClCompile Include="Object\Enemy\SpaceEmperor.cpp" />
     <ClCompile Include="Object\Enemy\Takobo.cpp" />
     <ClCompile Include="Object\Gimmick\Crystal.cpp" />
     <ClCompile Include="Object\Gimmick\Invisible.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="Object\Enemy\Gorori.h" />
     <ClInclude Include="Object\Enemy\Killer.h" />
     <ClInclude Include="Object\Enemy\KillerTheSeeker.h" />
+    <ClInclude Include="Object\Enemy\SpaceEmperor.h" />
     <ClInclude Include="Object\Enemy\Takobo.h" />
     <ClInclude Include="Object\Gimmick\Crystal.h" />
     <ClInclude Include="Object\Gimmick\Invisible.h" />

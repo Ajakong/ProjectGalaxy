@@ -1,6 +1,6 @@
 ﻿#include "EnemySphere.h"
 #include "Enemy.h"
-#include "../MyLib/Physics/ColliderSphere.h"
+#include "ColliderSphere.h"
 namespace
 {
 	/// <summary>

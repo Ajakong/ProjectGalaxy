@@ -1,4 +1,4 @@
-#include "WarpGate.h"
+ï»¿#include "WarpGate.h"
 #include"ColliderSphere.h"
 #include"Player.h"
 #include<EffekseerForDXLib.h>
@@ -32,12 +32,14 @@ namespace
 	const char* effectname = "warpEffect.efk";
 }
 
-WarpGate::WarpGate(Vec3 pos,int handle):Collidable(Priority::Static, ObjectTag::WarpGate),
+WarpGate::WarpGate(Vec3 pos,Vec3 warpPos,int handle):Collidable(Priority::Static, ObjectTag::WarpGate),
 m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname))
 {
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//‚±‚±‚Å“ü‚ê‚½‚Ì‚Íd—Í‚Ì‰e‹¿”ÍˆÍ
+	SetAntiGravity(true);
+	m_warpPos = warpPos;
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//ã“ã“ã§å…¥ã‚ŒãŸã®ã¯é‡åŠ›ã®å½±éŸ¿ç¯„å›²
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-	item->radius = 60;
+	item->radius = 6;
 	m_rigid->SetPos(pos);
 
 	m_effectPlayHandle=PlayEffekseer3DEffect(m_emitterHandle);
@@ -70,7 +72,7 @@ void WarpGate::SetEffectPos()
 	Vec3 axis=Cross(Vec3::Up(), m_upVec);
 	mat = MGetRotAxis(axis.VGet(), acos(Dot(Vec3::Up(), m_upVec)));
 
-	mat = MMult(mat,MGetTranslate(Vec3(m_rigid->GetPos()+m_upVec*200).VGet()));
+	mat = MMult(mat,MGetTranslate(Vec3(m_rigid->GetPos()+m_upVec*20).VGet()));
 	auto effect = GetEffekseer3DManager();
 	effect->SetBaseMatrix(m_effectPlayHandle,GetEffMatrix(mat));
 }
@@ -86,18 +88,18 @@ void WarpGate::Draw()
 	//
 	//SetDrawScreen(m_screenHandle);
 
-	//// •`‰æƒuƒŒƒ“ƒhƒ‚[ƒh‚ğ‰ÁZ‚É‚·‚é
+	//// æç”»ãƒ–ãƒ¬ãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã‚’åŠ ç®—ã«ã™ã‚‹
 	//SetDrawBlendMode(DX_BLENDMODE_ADD, 255);
 
 	//
 	//DrawExtendGraph(0, 0, 1600, 900, m_gaussScreenHandle,true);
 	//DrawExtendGraph(0, 0, 1600, 900, m_gaussScreenHandle, true);
 
-	//// •`‰æƒuƒŒƒ“ƒhƒ‚[ƒh‚ğƒuƒŒƒ“ƒh–³‚µ‚É–ß‚·
+	//// æç”»ãƒ–ãƒ¬ãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã‚’ãƒ–ãƒ¬ãƒ³ãƒ‰ç„¡ã—ã«æˆ»ã™
 	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-	DrawSphere3D(m_rigid->GetPos().VGet(), 60, 7, 0xff00ff, 0xff00ff, false);
-	DrawCube3D(Vec3(m_rigid->GetPos() + Vec3(60, 60, 60)).VGet(), Vec3(m_rigid->GetPos() + Vec3(-60, -60, -60)).VGet(), 0xffff00, 0xffff00, false);
+	DrawSphere3D(m_rigid->GetPos().VGet(), 6, 7, 0xff00ff, 0xff00ff, false);
+	DrawCube3D(Vec3(m_rigid->GetPos() + Vec3(6, 6, 6)).VGet(), Vec3(m_rigid->GetPos() + Vec3(-6, -6, -6)).VGet(), 0xffff00, 0xffff00, false);
 }
 
 void WarpGate::OnCollideEnter(std::shared_ptr<Collidable> colider)
@@ -109,7 +111,7 @@ void WarpGate::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	if (colider->GetTag() == ObjectTag::Player)
 	{
 		PlaySoundMem(SoundManager::GetInstance().GetSoundData("boost.mp3"), DX_PLAYTYPE_BACK);
-		colider->GetRigidbody()->SetVelocity(Vec3(m_warpPos - colider->GetRigidbody()->GetPos()).GetNormalized() * 100);
+		colider->GetRigidbody()->SetVelocity(Vec3(m_warpPos - colider->GetRigidbody()->GetPos()).GetNormalized() * 5);
 		auto player = std::dynamic_pointer_cast<Player>(colider);
 		player->m_playerUpdate = &Player::BoostUpdate;
 		player->SetBoost();

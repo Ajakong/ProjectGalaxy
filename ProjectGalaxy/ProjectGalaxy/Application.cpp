@@ -64,6 +64,7 @@ bool Application::Init()
 
     void* CallBack();
 
+    
 
     SetWindowText("なめぇを決めてください");
     if (DxLib_Init() == -1)
@@ -91,6 +92,11 @@ bool Application::Init()
 
 void Application::Run()
 {
+    //printfがcmdに表示される
+    AllocConsole();                                      // コンソール
+    FILE* out = 0; freopen_s(&out, "CON", "w", stdout); // stdout
+    FILE* in = 0; freopen_s(&in, "CON", "r", stdin);   // stdin
+
     {// スコープを強制的に作っている
 
         SceneManager sceneManager;
@@ -126,6 +132,8 @@ void Application::Run()
             while (16667 > GetNowHiPerformanceCount() - time) {};
         }
     }
+    // コンソール解放
+    fclose(out); fclose(in); FreeConsole();
     Terminate();
 }
 

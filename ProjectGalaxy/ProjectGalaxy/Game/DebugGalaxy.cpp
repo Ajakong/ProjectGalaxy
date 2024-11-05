@@ -68,7 +68,7 @@ namespace
 DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
 	player = playerPointer;
-	planet.push_back(make_shared<BoxPlanet>(Vec3(0, -500, 0), 0xffff00));
+	planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00));
 	camera = make_shared<Camera>();
 }
 
@@ -180,6 +180,8 @@ void DebugGalaxy::Draw()
 	DrawFormatString(0, 50, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
 	DrawFormatString(0, 75, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
 	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)", camera->GetPos().x, camera->GetPos().y, camera->GetPos().z, (camera->GetPos() - player->GetPos()).Length());
-
+	
 	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
+	Vec3 playerToPlanet = planet.back()->GetRigidbody()->GetPos() - player->GetRigidbody()->GetPos();
+	DrawFormatString(0, 175, 0xffffff, "PlayerToPlanet(%f,%f,%f)", playerToPlanet.x, playerToPlanet.y, playerToPlanet.z);
 }

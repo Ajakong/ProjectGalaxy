@@ -9,6 +9,7 @@ enum class ObjectTag
 	Kuribo,
 	Gorori,
 	KillerTheSeeker,
+	SpaceEmperor,
 	EnemyAttack,
 	PlayerBullet,
 	WarpGate,

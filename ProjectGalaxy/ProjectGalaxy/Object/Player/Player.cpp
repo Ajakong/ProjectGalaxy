@@ -299,6 +299,9 @@ void Player::SetMatrix()
 	//m_myQ =m_myQ* m_myQ.CreateRotationQuaternion(atan2(-m_moveDir.x, -m_moveDir.z), m_upVec);
 	auto rotatemat = m_myQ.ToMat();
 
+	printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
+
+	
 #ifdef _DEBUG
 
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
@@ -641,8 +644,6 @@ void Player::WalkingUpdate()
 	Vec3 ans;
 
 	ans = Move();
-
-	
 
 	if (std::abs(ans.Length()) < 0.2f*kMaxSpeed)
 	{

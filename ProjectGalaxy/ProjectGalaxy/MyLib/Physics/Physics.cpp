@@ -377,7 +377,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			auto dir = (primaryRigid->GetPos()) - info.hitPos;
 			dir.Normalize();
 			auto sphereCol = dynamic_cast<ColliderSphere*>(primaryCollider.get());
-
+			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
 			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
 		}
 	}
@@ -388,7 +388,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			auto dir = (secondaryRigid->GetPos()) - info.hitPos;
 			dir.Normalize();
 			auto sphereCol = dynamic_cast<ColliderSphere*>(secondaryCollider.get());
-
+			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
 			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
 		}
 	}

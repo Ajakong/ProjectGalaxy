@@ -13,6 +13,7 @@
 #include"BossPlanet.h"
 #include"Takobo.h"
 #include"KillerTheSeeker.h"
+#include"SpaceEmperor.h"
 #include"Gorori.h"
 #include"Kuribo.h"
 #include"Item.h"
@@ -104,17 +105,25 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	seekerLine1Points.push_back(Vec3(-20, 100, 0));
 	seekerLine1Points.push_back(Vec3(0, 30, 0));
 	seekerLine1Points.push_back(Vec3(100, 200, 0));
+	seekerLine1Points.push_back(Vec3(230, 200, 0));
 	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
 	//クリスタル
 	crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
 	MyEngine::Physics::GetInstance().Entry(crystal.back());
+
+
 	camera = make_shared<Camera>();
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
+	planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
+	warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
+	MyEngine::Physics::GetInstance().Entry(warpGate.back());
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
 	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
 	MyEngine::Physics::GetInstance().Entry(kuribo.back());
+	spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
+	MyEngine::Physics::GetInstance().Entry(spaceEmperor.back());
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
 	//アイテム
@@ -153,6 +162,7 @@ void SerialPlanetGalaxy::Init()
 		item->Init();
 		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
 	}
+	for (auto& item : warpGate)item->Init();
 	for (auto& item : seekerLine) { item->Init(); }
 	for (auto& item : crystal) { item->Init(); }
 	//エネミー
@@ -181,8 +191,6 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
-	MyEngine::Physics::GetInstance().Update();//登録されているオブジェクトと当たり判定の更新
-
 	if (player->OnAiming())
 	{
 		camera->Update(player->GetShotDir());
@@ -235,8 +243,10 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 			camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 		}
 	}
-	player->SetMatrix();//行列を反映
 
+	
+	player->SetMatrix();//行列を反映
+	for (auto& item : spaceEmperor) { item->SetMatrix(); }
 }
 
 void SerialPlanetGalaxy::GamePlayingDraw()
@@ -281,4 +291,5 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
 	
 	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
+	DrawFormatString(0, 175, 0xffffff, "%d", player->OnAiming());
 }

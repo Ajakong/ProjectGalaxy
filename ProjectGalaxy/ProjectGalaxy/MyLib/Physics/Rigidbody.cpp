@@ -1,4 +1,4 @@
-#include "Rigidbody.h"
+ï»¿#include "Rigidbody.h"
 
 using namespace MyEngine;
 
@@ -32,7 +32,7 @@ void MyEngine::Rigidbody::SetPos(Vec3 pos)
 void Rigidbody::SetVelocity(const Vec3& velocity)
 {
 	m_velocity = velocity;
-	// ˆÚ“®‚µ‚Ä‚¢‚éê‡‚Ì‚İ•ûŒü‚ğ•ÏX
+	// ç§»å‹•ã—ã¦ã„ã‚‹å ´åˆã®ã¿æ–¹å‘ã‚’å¤‰æ›´
 	if (velocity.SqLength())
 	{
 		m_dir = velocity.GetNormalized();

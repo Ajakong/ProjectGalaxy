@@ -15,11 +15,13 @@ class Booster;
 class StarCapture;
 class SeekerLine;
 class Crystal;
+class Item;
+
 class Takobo;
 class KillerTheSeeker;
 class Gorori;
 class Kuribo;
-class Item;
+class SpaceEmperor;
 
 class SerialPlanetGalaxy :public Galaxy//GameManagerが管理,惑星やオブジェクトの情報を持っている
 {
@@ -83,18 +85,19 @@ private:
 	std::vector<std::shared_ptr<StarCapture>> starCapture;
 	std::vector<std::shared_ptr<SeekerLine>> seekerLine;
 	std::vector<std::shared_ptr<Crystal>> crystal;
+	std::vector<std::shared_ptr<Item>> poworStone;
 	//エネミー
 	std::vector<std::shared_ptr<Takobo>> takobo;
 	std::vector<std::shared_ptr<KillerTheSeeker>> killerTheSeeker;
 	std::vector<std::shared_ptr<Gorori>> gorori;
 	std::vector<std::shared_ptr<Kuribo>> kuribo;
-	std::vector<std::shared_ptr<Item>> poworStone;
+	std::vector<std::shared_ptr<SpaceEmperor>> spaceEmperor;
 
 	Vec3 m_cameraUpVec;
 
 	//ボスが出現したか
 	bool m_isBossWatch = false;
-
+	
 	//ハンドル集
 	int m_skyDomeH;
 	int modelH;

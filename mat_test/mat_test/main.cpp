@@ -240,8 +240,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
     };
 
     ChangeAnim(kAnimationNumIdle);
+    int speed = 1;
+    int num=0;
    
-    upVec = Vec3(1, 0, 0);
     while (ProcessMessage() != -1)
     {
         // FPSの固定ように開始時の時間を取得
@@ -283,7 +284,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         Vec3 axis = Cross(upVec,moveDir);
         axis.Normalize();
         DrawLine3D(playerPos.VGet(), (playerPos + axis * 60).VGet(), 0xff00ff);
-        myQ =myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, axis));
+        //myQ =myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, axis));
         myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec));
         auto rotatemat = myQ.ToMat();
       
@@ -305,26 +306,49 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         Physics::GetInstance().Update();
 
         //rotate += 0.1f;
-        int index = MV1SearchFrame(modelHandle, "mixamorig:Spine");
-        MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), dir.VGet());
-        nowVec = dir;
-        MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
-        MATRIX mat = MMult(shotDirMat, localMat);
-        MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
-        for (int i = 0; i < 4; i++)
         {
-            for (int j = 0;j < 4; j++)
+            int index = MV1SearchFrame(modelHandle, "mixamorig:Spine");
+            MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), dir.VGet());
+            nowVec = dir;
+            MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
+            MATRIX mat = MMult(shotDirMat, localMat);
+            MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
+            for (int i = 0; i < 4; i++)
             {
-                DrawFormatString(i * 80, j * 16, GetColor(255, 255, 255),"%f", mat.m[i][j]);
+                for (int j = 0; j < 4; j++)
+                {
+                    DrawFormatString(i * 80, j * 16, GetColor(255, 255, 255), "%f", mat.m[i][j]);
+                }
+            }
+
+            if (Pad::IsTrigger(PAD_INPUT_3))
+            {
+                ShotTheStar();
+                nowVec = VGet(0, 0, -1);
+                MV1SetFrameUserLocalMatrix(modelHandle, index, MGetIdent());
             }
         }
-
-        if (Pad::IsTrigger(PAD_INPUT_3))
+        
         {
-            ShotTheStar();
-            nowVec = VGet(0, 0, -1);
-            MV1SetFrameUserLocalMatrix(modelHandle, index, MGetIdent());
+            num += speed;
+            int index = MV1SearchFrame(modelHandle, "mixamorig:LeftArm");
+            MATRIX shotDirMat = MGetTranslate(Vec3(0, speed*5, 0).VGet());
+
+            MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
+            MATRIX mat = MMult(shotDirMat, localMat);
+            MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
+
+            if (Pad::IsTrigger(PAD_INPUT_3))
+            {
+                ShotTheStar();
+                nowVec = VGet(0, 0, -1);
+                MV1SetFrameUserLocalMatrix(modelHandle, index, MGetIdent());
+            }
+            if (num > 200)speed *= -1;
+            if (num < 0)speed *= -1;
         }
+        
+
 
         UpdateAnim(currentAnimNo,modelHandle);
         //変更前のアニメーション100%

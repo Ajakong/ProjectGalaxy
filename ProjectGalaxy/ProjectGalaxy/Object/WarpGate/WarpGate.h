@@ -1,12 +1,10 @@
-#pragma once
+﻿#pragma once
 #include "../MyLib/Physics/Collidable.h"
 class WarpGate : public MyEngine::Collidable
 {
 public:
-	WarpGate(Vec3 pos, int handle);
+	WarpGate(Vec3 pos, Vec3 warpPos, int handle);
 	~WarpGate();
-
-	void SetWarpPos(Vec3 warpPos) { m_warpPos = warpPos; }
 
 	void Init();
 	void Update();

@@ -7,7 +7,7 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color)
 	gravityPower = 0.3f;
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Box);//ここで入れたのは重力の影響範囲
-		m_colliders.back()->isTrigger = true;
+		
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back());
 		item->norm = Vec3(0, 1, 0);
 		item->size = Vec3(30, 50, 50);
@@ -18,9 +18,10 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color)
 	
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Box);//ここで入れたのは重力の影響範囲
+		m_colliders.back()->isTrigger = true;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back());
 		item->norm = Vec3(0, 1, 0);
-		item->size = Vec3(300, 1000, 500);
+		item->size = Vec3(60, 100, 100);
 		item->rotation = Quaternion();
 		item->isTrigger = true;
 	}
@@ -45,8 +46,16 @@ void BoxPlanet::Update()
 
 void BoxPlanet::Draw()
 {
-	DrawCube3D((m_rigid->GetPos() - size).VGet(), (m_rigid->GetPos() + size).VGet(), 0x00ffff, 0xffffff, true);
-	DrawCube3D((m_rigid->GetPos() - size).VGet(), (m_rigid->GetPos() + size).VGet(), 0xffffff, 0xffffff, false);
+	if (m_isSearch)
+	{
+		DrawCube3D((m_rigid->GetPos() - size).VGet(), (m_rigid->GetPos() + size).VGet(), 0xffffff, 0xffffff, false);
+
+	}
+	else
+	{
+		DrawCube3D((m_rigid->GetPos() - size).VGet(), (m_rigid->GetPos() + size).VGet(), 0x00ffff, 0xffffff, true);
+	}
+	
 }
 
 Vec3 BoxPlanet::GravityEffect(std::shared_ptr<Collidable> obj)

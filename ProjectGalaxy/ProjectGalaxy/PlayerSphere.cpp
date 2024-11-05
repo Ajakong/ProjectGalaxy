@@ -13,7 +13,7 @@ namespace
 	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
 	
-	constexpr int kLifeTimeMax = 50;
+	constexpr int kLifeTimeMax = 100;
 	const char* name = "Sphere";
 
 }
