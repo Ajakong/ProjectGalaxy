@@ -9,7 +9,7 @@ namespace
 	constexpr float kScaleMag = 0.3f;
 
 	//アニメーション番号
-	constexpr int kAnimIndexDynamiPose = 0;
+	constexpr int kAnimIndexDynamicPose = 0;
 	constexpr int kAnimIndexIdle = 1;
 	constexpr int kAnimIndexAttack = 2;
 
@@ -51,7 +51,7 @@ m_isFindTarget(false)
 		m_armCol = item;
 	}
 	MV1SetScale(m_modelHandle,Vec3(kScaleMag, kScaleMag, kScaleMag).VGet());
-	ChangeAnim(kAnimIndexDynamiPose);
+	ChangeAnim(kAnimIndexDynamicPose);
 
 	m_frontVec = Vec3::Front();
 

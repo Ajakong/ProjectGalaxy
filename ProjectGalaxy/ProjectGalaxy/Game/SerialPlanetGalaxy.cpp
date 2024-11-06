@@ -246,6 +246,8 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 			camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 		}
 	}
+
+	//ボス登場時演出
 	bool onBoss = (spaceEmperor.back()->GetRigidbody()->GetPos() - player->GetPos()).Length() < kGravityRange;
 	if (onBoss)
 	{
@@ -253,7 +255,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		if (boss->GetIsFind())return;
 		boss->OnBossPlanet();
 
-		//camera->WatchThis(boss->GetRigidbody()->GetPos()+boss->GetUpVec()*50, boss->GetRigidbody()->GetPos(),boss->GetUpVec());
+		camera->WatchThis(boss->GetRigidbody()->GetPos()+boss->GetUpVec()*50, boss->GetRigidbody()->GetPos()+boss->GetFrontVec()*-50, boss->GetUpVec());
 	}
 	
 	player->SetMatrix();//行列を反映
