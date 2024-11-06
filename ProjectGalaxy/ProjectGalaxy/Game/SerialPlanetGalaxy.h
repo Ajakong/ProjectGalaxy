@@ -52,10 +52,21 @@ private:
 	/// ゲームプレイ時の更新処理
 	/// </summary>
 	void GamePlayingUpdate();
+
+	/// <summary>
+	/// ボスバトル時の更新処理
+	/// </summary>
+	void BossBattleUpdate();
+
 	/// <summary>
 	/// ゲームプレイ時の描画処理
 	/// </summary>
 	void GamePlayingDraw();
+
+	/// <summary>
+	/// ボスバトル時の描画処理
+	/// </summary>
+	void BossBattleDraw();
 
 private:
 

@@ -19,7 +19,7 @@ public:
 	//virtual int GetHP() { return m_Hp; }
 protected:
 	//int m_Hp;
-	int m_handle;
+	int m_modelHandle;
 
 };
 

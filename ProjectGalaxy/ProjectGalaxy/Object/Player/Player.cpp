@@ -152,7 +152,6 @@ m_modelDirAngle(0)
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
 	ChangeAnim(kAnimationNumIdle);	
 	//m_prevUpdate = &Player::NeutralUpdate;
-	Vec3 test;
 }
 
 Player::~Player()

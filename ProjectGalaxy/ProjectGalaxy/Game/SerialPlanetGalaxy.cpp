@@ -85,6 +85,8 @@ namespace
 
 
 	const char* kMiniMapScreenName = "MiniMap";
+
+	constexpr float kGravityRange = 150.f;
 }
 
 SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
@@ -123,6 +125,7 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
 	MyEngine::Physics::GetInstance().Entry(kuribo.back());
 	spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
+	spaceEmperor.back()->SetTarget(player);
 	MyEngine::Physics::GetInstance().Entry(spaceEmperor.back());
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
@@ -243,10 +246,23 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 			camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 		}
 	}
+	bool onBoss = (spaceEmperor.back()->GetRigidbody()->GetPos() - player->GetPos()).Length() < kGravityRange;
+	if (onBoss)
+	{
+		auto boss = spaceEmperor.back();
+		if (boss->GetIsFind())return;
+		boss->OnBossPlanet();
 
+		//camera->WatchThis(boss->GetRigidbody()->GetPos()+boss->GetUpVec()*50, boss->GetRigidbody()->GetPos(),boss->GetUpVec());
+	}
 	
 	player->SetMatrix();//行列を反映
 	for (auto& item : spaceEmperor) { item->SetMatrix(); }
+}
+
+void SerialPlanetGalaxy::BossBattleUpdate()
+{
+
 }
 
 void SerialPlanetGalaxy::GamePlayingDraw()
@@ -292,4 +308,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	
 	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
 	DrawFormatString(0, 175, 0xffffff, "%d", player->OnAiming());
+}
+
+void SerialPlanetGalaxy::BossBattleDraw()
+{
 }

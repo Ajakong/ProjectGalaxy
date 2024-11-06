@@ -50,6 +50,7 @@ namespace MyEngine
 		void SetObjectTag(ObjectTag tag) { m_tag = tag; }
 		bool IsAntiGravity() { return m_isAntiGravity; }
 		void SetUpVec(Vec3 vel) { m_upVec = vel; }
+		Vec3 GetUpVec() { return m_upVec; }
 		// 当たり判定を無視（スルー）するタグの追加/削除
 		void AddThroughTag(ObjectTag tag);
 		void RemoveThroughTag(ObjectTag tag);
@@ -74,6 +75,7 @@ namespace MyEngine
 		// 当たり判定データ
 		std::vector<std::shared_ptr<ColliderBase>> m_colliders;
 		Vec3 m_upVec;
+		Vec3 m_frontVec;
 
 		bool m_isDestroyFlag;
 	

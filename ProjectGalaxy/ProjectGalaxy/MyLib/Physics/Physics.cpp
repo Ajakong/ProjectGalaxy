@@ -300,7 +300,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		auto sphereA = dynamic_cast<ColliderSphere*>(colliderA.get());
 		auto sphereB = dynamic_cast<ColliderSphere*>(colliderB.get());
 
-		auto aToB = rigidB->GetNextPos() - rigidA->GetNextPos();
+		auto aToB = (rigidB->GetNextPos()+colliderB->GetShift()) - (rigidA->GetNextPos()+colliderA->GetShift());
 		float sumRadius = sphereA->radius + sphereB->radius;
 		info.isHit = (aToB.SqLength() < sumRadius * sumRadius);
 	}
@@ -309,8 +309,8 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		auto SphereA = dynamic_cast<ColliderSphere*>(colliderA.get());
 		auto BoxB = dynamic_cast<ColliderBox*>(colliderB.get());
 
-		auto spherePos = rigidA->GetPos();
-		auto boxPos = rigidB->GetPos();
+		auto spherePos = rigidA->GetPos()+colliderA->GetShift();
+		auto boxPos = rigidB->GetPos()+colliderB->GetShift();
 
 		// ボックスの中心から円の中心までのベクトルを作成
 		auto boxToSphere = spherePos - boxPos;
@@ -330,8 +330,8 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		auto BoxA = dynamic_cast<ColliderBox*>(colliderA.get());
 		auto SphareB = dynamic_cast<ColliderSphere*>(colliderB.get());
 
-		auto spherePos = rigidB->GetPos();
-		auto boxPos = rigidA->GetPos();
+		auto spherePos = rigidB->GetPos() + colliderB->GetShift();
+		auto boxPos = rigidA->GetPos()+colliderA->GetShift();
 
 		// ボックスの中心から円の中心までのベクトルを作成
 		auto boxToSphere = spherePos - boxPos;
@@ -364,17 +364,18 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			auto secondarySphere = dynamic_cast<ColliderSphere*>(secondaryCollider.get());
 
 			// primaryからsecondaryへのベクトルを作成
-			auto primaryToSecondary = secondaryRigid->GetNextPos() - primaryRigid->GetNextPos();
+			auto primaryToSecondary = (secondaryRigid->GetNextPos()+secondaryCollider->GetShift()) -
+				(primaryRigid->GetNextPos()+primaryCollider->GetShift());
 			// そのままだとちょうど当たる位置になるので少し余分に離す
 			float  awayDist = primarySphere->radius + secondarySphere->radius + 0.0001f;
 			// 長さを調整
 			primaryToSecondary = primaryToSecondary.GetNormalized() * awayDist;
 			// primaryからベクトル方向に押す
-			fixedPos = primaryRigid->GetNextPos() + primaryToSecondary;
+			fixedPos = (primaryRigid->GetNextPos() + primaryCollider->GetShift()) + primaryToSecondary;
 		}
 		if (secondaryKind == ColliderBase::Kind::Box)
 		{
-			auto dir = (primaryRigid->GetPos()) - info.hitPos;
+			auto dir = (primaryRigid->GetPos()+primaryCollider->GetShift()) - info.hitPos;
 			dir.Normalize();
 			auto sphereCol = dynamic_cast<ColliderSphere*>(primaryCollider.get());
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
@@ -385,7 +386,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 	{
 		if (secondaryKind == ColliderBase::Kind::Sphere)
 		{
-			auto dir = (secondaryRigid->GetPos()) - info.hitPos;
+			auto dir = (secondaryRigid->GetPos()+secondaryCollider->GetShift()) - info.hitPos;
 			dir.Normalize();
 			auto sphereCol = dynamic_cast<ColliderSphere*>(secondaryCollider.get());
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);

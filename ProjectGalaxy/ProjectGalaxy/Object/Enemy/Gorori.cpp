@@ -1,4 +1,4 @@
-#include "Gorori.h"
+ï»¿#include "Gorori.h"
 #include"ColliderSphere.h"
 #include"Physics.h"
 #include"SoundManager.h"
@@ -8,7 +8,7 @@ namespace
 	constexpr float kCollisionRadius = 50.f;
 
 	/// <summary>
-		/// Å‘åHP
+		/// æœ€å¤§HP
 		/// </summary>
 	constexpr int kHp = 20;
 
@@ -17,32 +17,32 @@ namespace
 	constexpr int kStartPosZ = 0;
 
 	/// <summary>
-	/// ‘«Œ³‚©‚çƒ‚ƒfƒ‹‚Ì’†S‚Ü‚Å‚Ì‹——£
+	/// è¶³å…ƒã‹ã‚‰ãƒ¢ãƒ‡ãƒ«ã®ä¸­å¿ƒã¾ã§ã®è·é›¢
 	/// </summary>
 	constexpr int kFootToCenter = 30;
 
 	/// <summary>
-	/// UŒ‚ƒN[ƒ‹ƒ^ƒCƒ€’†‚ÌÅ’áˆÚ“®‘¬“x
+	/// æ”»æ’ƒã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ ä¸­ã®æœ€ä½ç§»å‹•é€Ÿåº¦
 	/// </summary>
 	constexpr int kIdleSpeed = 20;
 	/// <summary>
-/// ‹…‚Ì¶¬ŠÔŠu
+/// çƒã®ç”Ÿæˆé–“éš”
 /// </summary>
 	constexpr int kSphereCreateFrame = 50;
 	/// <summary>
-	/// ÄUŒ‚‚Ü‚Å‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	/// å†æ”»æ’ƒã¾ã§ã®ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ 
 	/// </summary>
 	constexpr int kAttackCoolDownTime = 300;
 
 	/// <summary>
-	/// ƒXƒe[ƒWƒ‚ƒfƒ‹‚Ìc‰¡ƒTƒCƒY/2
+	/// ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ¢ãƒ‡ãƒ«ã®ç¸¦æ¨ªã‚µã‚¤ã‚º/2
 	/// </summary>
 	constexpr int kStageSizeHalf = 200;
 
 	const char* name = "gorori";
 }
 
-/*ƒvƒƒgƒ^ƒCƒvéŒ¾*/
+/*ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€*/
 Vec3 ToVec(Vec3 a, Vec3 b);
 Vec3 norm(Vec3 a);
 float lerp(float start, float end, float t);
@@ -84,13 +84,13 @@ void Gorori::SetMatrix()
 {
 	MATRIX moving = MGetTranslate(m_rigid->GetPos().VGet());
 
-	MV1SetMatrix(m_handle, moving);
+	MV1SetMatrix(m_modelHandle, moving);
 }
 
 void Gorori::Draw()
 {
 	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10,m_color, 0xff0000, true);
-	MV1DrawModel(m_handle);
+	MV1DrawModel(m_modelHandle);
 }
 
 void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider)
@@ -132,7 +132,7 @@ void Gorori::IdleUpdate()
 			{
 			case 0:
 				m_attackCoolDownCount = 0;
-				m_attackDir = GetAttackDir().GetNormalized();//ƒIƒuƒWƒFƒNƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µ‚½‚à‚Ì
+				m_attackDir = GetAttackDir().GetNormalized();//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ãŸã‚‚ã®
 				m_enemyUpdate = &Gorori::AttackUpdate;
 				m_color = 0xff0000;
 				break;

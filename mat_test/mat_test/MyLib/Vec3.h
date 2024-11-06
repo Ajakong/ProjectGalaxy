@@ -19,6 +19,7 @@ public:
 	static Vec3 Right();
 	static Vec3 Left();
 	static Vec3 Front();
+	static Vec3 Back();
 	static Vec3 Zero();
 
 	/* ‰‰ŽZ */

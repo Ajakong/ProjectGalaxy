@@ -1,8 +1,9 @@
-#include "ColliderBase.h"
+﻿#include "ColliderBase.h"
 
 MyEngine::ColliderBase::ColliderBase(Kind kind) :
 	isTrigger(false),
-	m_kind(kind)
+	m_kind(kind),
+	m_posShift(Vec3::Zero())
 {
 	m_isPreHit.clear();
 	m_isHit.clear();

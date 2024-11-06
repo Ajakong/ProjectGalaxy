@@ -1,12 +1,13 @@
-#pragma once
+ï»¿#pragma once
 #include <unordered_map>
+#include"Vec3.h"
 
 namespace MyEngine
 {
 	class ColliderBase abstract
 	{
 	public:
-		// “–‚½‚è”»’èí•Ê
+		// å½“ãŸã‚Šåˆ¤å®šç¨®åˆ¥
 		enum class Kind
 		{
 			Sphere,
@@ -14,25 +15,30 @@ namespace MyEngine
 			Box,
 		};
 
-		// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 		ColliderBase(Kind kind);
 		virtual ~ColliderBase() {}
 
-		// “–‚½‚è”»’èí•Êæ“¾
+		// å½“ãŸã‚Šåˆ¤å®šç¨®åˆ¥å–å¾—
 		Kind GetKind() const { return m_kind; }
-		// “–‚½‚Á‚½î•ñXV
+		// å½“ãŸã£ãŸæƒ…å ±æ›´æ–°
 		void UpdateHit(const ColliderBase* collider, bool isHit);
 		bool IsHit(const ColliderBase* collider) const { return m_isHit.at(collider); }
 		bool IsPreHit(const ColliderBase* collider) const { return m_isPreHit.at(collider); }
-
-
+		Vec3 GetShift() const{ return m_posShift; }
+		/// <summary>
+		/// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åº§æ¨™ã‹ã‚‰å½“ãŸã‚Šåˆ¤å®šã®ç›¸å¯¾ä½ç½®ã‚’ã‚»ãƒƒãƒˆ
+		/// </summary>
+		/// <param name="shift"></param>
+		void SetShiftPosNum(Vec3 shift) { m_posShift = shift; }
 	public:
-		// MEMO: FX‚È‚Æ‚±‚ë‚Åg‚¤‚½‚ßColliderBaseŠÖŒW‚Ìpublic•Ï”‚Í
-		// ƒƒ“ƒo•Ï”‚ÌƒR[ƒfƒBƒ“ƒO‹K–ñ–³‹‚µ‚Ä‚¢‚é
+		// MEMO: è‰²ã€…ãªã¨ã“ã‚ã§ä½¿ã†ãŸã‚ColliderBaseé–¢ä¿‚ã®publicå¤‰æ•°ã¯
+		// ãƒ¡ãƒ³ãƒå¤‰æ•°ã®ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°è¦ç´„ç„¡è¦–ã—ã¦ã„ã‚‹
 		bool isTrigger;
 
 	private:
-
+		//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½ç½®ã‹ã‚‰ã®å½“ãŸã‚Šåˆ¤å®šã®ç›¸å¯¾é‡
+		Vec3 m_posShift;
 		Kind m_kind;
 		std::unordered_map<const ColliderBase*, bool> m_isHit;
 		std::unordered_map<const ColliderBase*, bool> m_isPreHit;

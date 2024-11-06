@@ -1,11 +1,11 @@
-#include "Enemy.h"
+ï»¿#include "Enemy.h"
 
 namespace
 {
 	constexpr int kMaxHp = 50;
 }
-/*•Ö—˜ŠÖ”*/
-//a‚©‚çb‚ÖŒü‚©‚¤ƒxƒNƒgƒ‹
+/*ä¾¿åˆ©é–¢æ•°*/
+//aã‹ã‚‰bã¸å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«
 Vec3 ToVec(Vec3 a, Vec3 b)
 {
 	float x = (b.x - a.x);
@@ -28,7 +28,7 @@ float lerp(float start, float end, float t)
 
 Enemy::Enemy(int handle, Priority priority, ObjectTag tag):Collidable(priority,tag),
 	//m_Hp(50),
-	m_handle(handle)
+	m_modelHandle(handle)
 {
 }
 

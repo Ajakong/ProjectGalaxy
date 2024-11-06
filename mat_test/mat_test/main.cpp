@@ -243,6 +243,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
     int speed = 1;
     int num=0;
    
+    Vec3 front = Vec3::Back();
+    Vec3 nowNeckDir= front;
+
+    int index = MV1SearchFrame(modelHandle, "mixamorig:Neck");
+    MATRIX ident = MV1GetFrameLocalMatrix(modelHandle, index);
+    MV1SetFrameUserLocalMatrix(modelHandle, index, ident);
     while (ProcessMessage() != -1)
     {
         // FPSの固定ように開始時の時間を取得
@@ -268,7 +274,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
 
         playerPos += Move();
-        camera->SetCameraPoint(playerPos-Vec3(0,-200,-200));
+        camera->SetCameraPoint(playerPos-Vec3(0,-200,200));
         camera->Update(playerPos);
 
         MV1SetScale(stageHandle, VGet(0.05f, 0.05f, 0.05f));
@@ -278,23 +284,23 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         //モデルの回転
         //angle+=0.02f;
 
-        Quaternion myQ;
-        
-        angle += 0.02f;
-        Vec3 axis = Cross(upVec,moveDir);
-        axis.Normalize();
-        DrawLine3D(playerPos.VGet(), (playerPos + axis * 60).VGet(), 0xff00ff);
-        //myQ =myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, axis));
-        myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec));
-        auto rotatemat = myQ.ToMat();
+        //Quaternion myQ;
+        //
+        //angle += 0.02f;
+        //Vec3 axis = Cross(upVec,moveDir);
+        //axis.Normalize();
+        //DrawLine3D(playerPos.VGet(), (playerPos + axis * 60).VGet(), 0xff00ff);
+        ////myQ =myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, axis));
+        //myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec));
+        //auto rotatemat = myQ.ToMat();
       
        
-        MV1SetRotationMatrix(modelHandle, rotatemat /*Vec3(0, atan2(moveDir.z, -moveDir.x) + DX_PI_F / 2, 0).VGet()*/);
-        
+        //MV1SetRotationMatrix(modelHandle, rotatemat /*Vec3(0, atan2(moveDir.z, -moveDir.x) + DX_PI_F / 2, 0).VGet()*/);
+        //
 
         //位置の設定
         MV1SetPosition(stageHandle, Vec3(0, -50, 0).VGet());
-        MV1SetPosition(modelHandle, playerPos.VGet());
+        //MV1SetPosition(modelHandle, playerPos.VGet());
 
         for (auto& item : star)
         {
@@ -348,6 +354,29 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
             if (num < 0)speed *= -1;
         }
         
+        {
+            int index = MV1SearchFrame(modelHandle, "mixamorig:Neck");
+            Vec3 neckPos = MV1GetFramePosition(modelHandle, index);
+            MATRIX ident = MV1GetFrameLocalMatrix(modelHandle, index);
+            Vec3 toTarget = playerPos - neckPos;
+            toTarget.Normalize();
+
+            DrawLine3D(neckPos.VGet(), (neckPos + toTarget * 30).VGet(), 0xff0000);
+            DrawLine3D(neckPos.VGet(), (neckPos + nowNeckDir * 30).VGet(), 0x0000ff);
+            if (GetAngle(front, toTarget) <= DX_PI_F / 2)
+            {
+                MATRIX DirMat = MGetRotVec2(nowNeckDir.VGet(), toTarget.VGet());
+                nowNeckDir = toTarget;
+                MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
+                MATRIX mat = MMult(DirMat, localMat);
+                MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
+            }
+            else
+            {
+                nowNeckDir = front;
+                MV1SetFrameUserLocalMatrix(modelHandle, index, ident);
+            }
+        }
 
 
         UpdateAnim(currentAnimNo,modelHandle);
@@ -364,6 +393,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
         MV1DrawModel(stageHandle);
         MV1DrawModel(modelHandle);
+
+        DrawSphere3D(playerPos.VGet(), 5, 8, 0xff0000, 0xffffff, true);
 
         for (auto& item : star)
         {
