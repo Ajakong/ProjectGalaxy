@@ -102,7 +102,7 @@ void WarpGate::Draw()
 	DrawCube3D(Vec3(m_rigid->GetPos() + Vec3(6, 6, 6)).VGet(), Vec3(m_rigid->GetPos() + Vec3(-6, -6, -6)).VGet(), 0xffff00, 0xffff00, false);
 }
 
-void WarpGate::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void WarpGate::OnCollideEnter(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

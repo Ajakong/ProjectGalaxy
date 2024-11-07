@@ -16,7 +16,7 @@ public:
 	void OnBossPlanet();
 	bool GetIsFind() { return m_isFindTarget; }
 	Vec3 GetNeckPos() const{ return m_neckPos; }
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag);
 
 	//メンバ関数ポインタ
 	using emperorState_t = void(SpaceEmperor::*)();

@@ -36,12 +36,12 @@ namespace MyEngine
 		virtual void Draw()=0;
 
 		// 衝突したとき
-		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag) {}
-		virtual void OnCollideStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
-		virtual void OnCollideExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
-		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
-		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
-		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
+		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag) {}
+		virtual void OnCollideStay(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag) {}
+		virtual void OnCollideExit(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag) {}
+		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag) {}
+		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag) {}
+		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag) {}
 
 		/* Getter */
 		ObjectTag GetTag() const { return m_tag; }

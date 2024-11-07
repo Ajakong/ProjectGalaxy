@@ -244,13 +244,10 @@ void MyEngine::Physics::CheckCollide()
 
 						if (isTrigger)
 						{
-							
-
 							AddNewCollideInfo(infoA, infoB, m_newTirrigerInfo);
 						}
 						else
 						{
-							
 							AddNewCollideInfo(infoA, infoB, m_newCollideInfo);
 						}
 
@@ -442,8 +439,8 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 	for (auto& parent : newSendInfo)
 	{
 		// 以前の情報に親として登録されているか
-		
 		bool isPreParent = preSendInfo.find(parent.first) != preSendInfo.end();
+		
 		bool isAllEnter = true;
 
 		for (auto& child : parent.second)
@@ -451,13 +448,10 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 			bool isPreChild = false;
 			if (isPreParent)
 			{
+
 				// 以前の情報に子として登録されているか
 				auto& preParent = preSendInfo[parent.first];
 				isPreChild = std::find(preParent.begin(), preParent.end(), child) != preParent.end();
-				if (isPreChild)
-				{
-					int a = 0;
-				}
 			}
 
 			// 今回入ってきた場合はEnterを呼ぶ(子として登録されていない)

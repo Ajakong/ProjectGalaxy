@@ -90,7 +90,7 @@ void Kuribo::Draw()
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_upVec * 30).VGet(), 0xff0000);
 }
 
-void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

@@ -20,8 +20,7 @@ SeekerLine::SeekerLine(std::vector<Vec3> points, int color) : Collidable(Priorit
 m_hitPointNum(0),
 m_length(0),
 m_speed(0),
-m_num(0),
-m_useFlag(false)
+m_num(0)
 {
 	for (auto& point : points)
 	{

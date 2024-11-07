@@ -32,7 +32,7 @@ namespace MyEngine
 		struct ColideInfo
 		{
 			std::shared_ptr<Collidable> col;
-			ColliderBase::ColideTag tag;
+			std::shared_ptr<ColliderBase::ColideTag> tag;
 		};
 		struct OnCollideInfoData
 		{

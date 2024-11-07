@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <unordered_map>
+#include<memory>
 #include"Vec3.h"
 
 namespace MyEngine
@@ -34,7 +35,7 @@ namespace MyEngine
 		bool IsHit(const ColliderBase* collider) const { return m_isHit.at(collider); }
 		bool IsPreHit(const ColliderBase* collider) const { return m_isPreHit.at(collider); }
 		Vec3 GetShift() const{ return m_posShift; }
-		ColideTag GetTag()const { return m_tag; }
+		std::shared_ptr<ColideTag> GetTag()const { return m_tag; }
 		/// <summary>
 		/// オブジェクトの座標から当たり判定の相対位置をセット
 		/// </summary>
@@ -49,7 +50,7 @@ namespace MyEngine
 		//オブジェクトの位置からの当たり判定の相対量
 		Vec3 m_posShift;
 		Kind m_kind;
-		ColideTag m_tag;
+		std::shared_ptr<ColideTag> m_tag;
 		std::unordered_map<const ColliderBase*, bool> m_isHit;
 		std::unordered_map<const ColliderBase*, bool> m_isPreHit;
 	};

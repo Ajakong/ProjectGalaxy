@@ -58,7 +58,7 @@ void Item::Draw()
 	DrawSphere3D(m_rigid->GetPos().VGet(), m_col->radius, 8, 0x00ff00, 0x00ff00, false);
 }
 
-void Item::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Item::OnCollideEnter(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
 {
 	
 	if (colider->GetTag() == ObjectTag::Player)
