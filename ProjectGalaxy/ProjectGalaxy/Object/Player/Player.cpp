@@ -300,8 +300,6 @@ void Player::SetMatrix()
 	//m_myQ =m_myQ* m_myQ.CreateRotationQuaternion(atan2(-m_moveDir.x, -m_moveDir.z), m_upVec);
 	auto rotatemat = m_myQ.ToMat();
 
-
-	
 	printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 	
 	
