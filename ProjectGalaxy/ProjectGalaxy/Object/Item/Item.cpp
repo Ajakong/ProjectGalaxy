@@ -22,7 +22,7 @@ Item::~Item()
 
 void Item::Init()
 {
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	m_col = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_col->radius = 2.5f;
 	
@@ -58,7 +58,7 @@ void Item::Draw()
 	DrawSphere3D(m_rigid->GetPos().VGet(), m_col->radius, 8, 0x00ff00, 0x00ff00, false);
 }
 
-void Item::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Item::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	
 	if (colider->GetTag() == ObjectTag::Player)
@@ -67,7 +67,7 @@ void Item::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void Item::OnTriggerEnter(std::shared_ptr<Collidable> colider)
+void Item::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)	m_nowPlanetPos = colider->GetRigidbody()->GetPos();
 }

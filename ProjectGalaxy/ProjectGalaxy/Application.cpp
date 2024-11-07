@@ -112,7 +112,16 @@ void Application::Run()
         {
             // FPSの固定ように開始時の時間を取得
             time = GetNowHiPerformanceCount();
+            // 現在時刻をsystem_clockを用いて取得
+            auto now = std::chrono::system_clock::now();
 
+            // 現在時刻をtime_t形式に変換
+            std::time_t t = std::chrono::system_clock::to_time_t(now);
+            printf("----------------\n");
+            //現在時刻を表示
+            printf("%d", (t / 3600 + 9) % 24);//時
+            printf(":%d", t / 60 % 60);//分
+            printf(":%d\n", t % 60);//秒
             ClearDrawScreen();
             if (CheckHitKey(KEY_INPUT_ESCAPE))
             {

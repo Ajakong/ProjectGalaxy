@@ -56,7 +56,7 @@ m_color(0xaaaa11)
 {
 	m_enemyUpdate = &Gorori::IdleUpdate;
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kCollisionRadius;
 	m_moveShaftPos = m_rigid->GetPos();
@@ -93,7 +93,7 @@ void Gorori::Draw()
 	MV1DrawModel(m_modelHandle);
 }
 
-void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

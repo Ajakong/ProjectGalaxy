@@ -1,5 +1,5 @@
 ﻿#include "ColliderBox.h"
 
-MyEngine::ColliderBox::ColliderBox() : ColliderBase(Kind::Box)
+MyEngine::ColliderBox::ColliderBox(ColideTag tag) : ColliderBase(Kind::Box,tag)
 {
 }

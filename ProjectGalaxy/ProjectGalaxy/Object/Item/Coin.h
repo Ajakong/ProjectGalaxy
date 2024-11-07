@@ -14,7 +14,7 @@ public:
 
     void Init();
 
-    virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
+    virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 
 };
 

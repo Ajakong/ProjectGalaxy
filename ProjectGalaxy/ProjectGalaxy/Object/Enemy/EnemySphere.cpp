@@ -17,7 +17,7 @@ EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag,
 m_enemy(std::dynamic_pointer_cast<Enemy>(enemy))
 {
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = m_radius;
 	m_color = color;
@@ -52,7 +52,7 @@ void EnemySphere::Hit()
 	//m_isDeleteFlag = true;
 }
 
-void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 
 }

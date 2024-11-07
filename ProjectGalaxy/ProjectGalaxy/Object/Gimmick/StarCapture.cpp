@@ -22,7 +22,7 @@ m_recastTime(0)
 	m_captureRadius = captureRadius;
 	SetAntiGravity();
 	
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = m_radius;
 	m_rigid->SetVelocity(Vec3(0, 0, 0));
@@ -74,13 +74,13 @@ void StarCapture::Draw()
 #endif
 }
 
-void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
 		if (m_recastTime < kRecastTimeMax)return;
 		if (m_colliders.size() > 1)return;
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		m_captureCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_captureCol->radius = m_captureRadius;
 		m_captureCol->isTrigger = true;
@@ -101,7 +101,7 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider)
+void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -111,7 +111,7 @@ void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider)
+void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -126,7 +126,7 @@ void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider)
+void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

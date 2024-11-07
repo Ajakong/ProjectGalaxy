@@ -36,12 +36,12 @@ namespace MyEngine
 		virtual void Draw()=0;
 
 		// 衝突したとき
-		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider) {}
-		virtual void OnCollideStay(std::shared_ptr<Collidable> colider) {}
-		virtual void OnCollideExit(std::shared_ptr<Collidable> colider) {}
-		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider) {}
-		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider) {}
-		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider) {}
+		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag) {}
+		virtual void OnCollideStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
+		virtual void OnCollideExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
+		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
+		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
+		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag) {}
 
 		/* Getter */
 		ObjectTag GetTag() const { return m_tag; }
@@ -66,7 +66,7 @@ namespace MyEngine
 
 		std::shared_ptr<Rigidbody> GetRigidbody() const { return m_rigid; }
 	protected:
-		std::shared_ptr<ColliderBase> AddCollider(const ColliderBase::Kind& kind);
+		std::shared_ptr<ColliderBase> AddCollider(const ColliderBase::Kind& kind,const ColliderBase::ColideTag& tag);
 		void RemoveCollider(std::shared_ptr<ColliderBase> col);
 
 		void SetAntiGravity(bool flag = true) { m_isAntiGravity=flag; }

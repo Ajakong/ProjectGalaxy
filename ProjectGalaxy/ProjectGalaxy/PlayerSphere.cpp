@@ -23,7 +23,7 @@ m_sideVec(sideVec),
 m_lifeTime(0)
 {
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = m_radius;
 	m_color = color;
@@ -58,7 +58,7 @@ void PlayerSphere::Hit()
 	
 }
 
-void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	m_isDeleteFlag = true;
 }

@@ -25,7 +25,7 @@ m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname))
 {
 	m_dir = Dir;
 	SetAntiGravity();
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//ここで入れたのは重力の影響範囲
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kRadius;
 	m_rigid->SetPos(pos);
@@ -86,7 +86,7 @@ void Booster::Draw()
 	DrawCube3D(Vec3(m_rigid->GetPos() + Vec3(2, 2, 2)).VGet(), Vec3(m_rigid->GetPos() + Vec3(-2, -2, -2)).VGet(), 0xffff00, 0xffff00, false);
 }
 
-void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

@@ -31,6 +31,7 @@ public:
 	Vec3 GetFrontVec() { return m_frontVec.GetNormalized(); }
 	Vec3 GetSideVec() { return m_sideVec.GetNormalized(); }
 	Vec3 GetShotDir() { return m_shotDir; }
+	Vec3 GetLookPoint() { return m_lookPoint; }
 	float GetRegenerationRange() { return m_regeneRange; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
 	bool GetOperationFlag()const { return m_isOperationFlag; }
@@ -54,8 +55,8 @@ public:
 	bool GetJumpFlag() { return m_isJumpFlag; }
 
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
-	virtual void OnCollideStay(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_playerUpdate;
@@ -155,10 +156,10 @@ private:
 	float m_radius = 0;
 	float m_attackRadius;
 
-
 	Quaternion m_myQ;
 	Vec3 m_cameraToPlayer;
 	Vec3 m_cameraPos;
+	Vec3 m_lookPoint;
 	//std::shared_ptr<Camera> m_camera;
 	Vec3 m_moveDir;
 	Vec3 m_postMoveDir;
@@ -171,10 +172,8 @@ private:
 	Vec3 m_upVec;
 	Vec3 m_postUpVec;
 
-
 	Vec3 m_shotDir;
 	Vec3 m_modelBodyRotate;
-
 
 	int m_currentAnimNo;//現在のアニメーション
 	int m_prevAnimNo;//変更前のアニメーション

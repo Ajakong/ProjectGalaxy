@@ -104,8 +104,8 @@ void Physics::Update()
 
 	for (const auto& info : m_onCollideInfo)
 	{
-		if (static_cast<int>(info.send->m_tag) > static_cast<int>(ObjectTag::End)|| static_cast<int>(info.send->m_tag)<0)continue;//応急処置済み:Exitしても履歴に残っているが参照できずに例外がスローされる
-		if (static_cast<int>(info.own->m_tag) > static_cast<int>(ObjectTag::End) || static_cast<int>(info.own->m_tag) < 0)continue;//:上に同じ
+		if (static_cast<int>(info.send->col->m_tag) > static_cast<int>(ObjectTag::End)|| static_cast<int>(info.send->col->m_tag)<0)continue;//応急処置済み:Exitしても履歴に残っているが参照できずに例外がスローされる
+		if (static_cast<int>(info.own->col->m_tag) > static_cast<int>(ObjectTag::End) || static_cast<int>(info.own->col->m_tag) < 0)continue;//:上に同じ
 		
 		OnCollideInfo(info.own, info.send,info.kind);
 	}
@@ -159,7 +159,7 @@ void MyEngine::Physics::MoveNextPos() const
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
 							{
-								planet->OnTriggerEnter(obj);
+								planet->OnTriggerEnter(obj,objCol->GetTag());
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
 							colIndex++;
@@ -233,16 +233,25 @@ void MyEngine::Physics::CheckCollide()
 						CollideHitInfo info = IsCollide(objA->m_rigid, objB->m_rigid, colA, colB);
 						if (!info.isHit) continue;
 
+						std::shared_ptr<ColideInfo> infoA;
+						infoA = std::make_shared<ColideInfo>();
+						infoA->col = objA; infoA->tag = colA->GetTag();
+
+						std::shared_ptr<ColideInfo> infoB;
+						infoB = std::make_shared<ColideInfo>();
+						infoB->col = objB; infoB->tag = colB->GetTag();
 						bool isTrigger = colA->isTrigger || colB->isTrigger;
 
 						if (isTrigger)
 						{
-							AddNewCollideInfo(objA, objB, m_newTirrigerInfo);
+							
+
+							AddNewCollideInfo(infoA, infoB, m_newTirrigerInfo);
 						}
 						else
 						{
 							
-							AddNewCollideInfo(objA, objB, m_newCollideInfo);
+							AddNewCollideInfo(infoA, infoB, m_newCollideInfo);
 						}
 
 
@@ -396,7 +405,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 	secondaryRigid->SetNextPos(fixedPos);
 }
 
-void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std::shared_ptr<Collidable> objB, SendCollideInfo& info)
+void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std::shared_ptr<ColideInfo> objB, SendCollideInfo& info)
 {
 	// Aが親として取得しているか
 	bool isParentA = info.find(objA) != info.end();
@@ -405,8 +414,8 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<Collidable> objA, std:
 	// AがBどちらかが取得している場合
 	if (isParentA || isParentB)
 	{
-		std::shared_ptr<Collidable> parent = objA;
-		std::shared_ptr<Collidable> child = objB;
+		std::shared_ptr<ColideInfo> parent = objA;
+		std::shared_ptr<ColideInfo> child = objB;
 		if (isParentB)
 		{
 			parent = objB;
@@ -511,7 +520,7 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 	}
 }
 
-void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send, OnCollideInfoKind kind)
+void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<ColideInfo> own, std::shared_ptr<ColideInfo> send, OnCollideInfoKind kind)
 {
 	OnCollideInfoData info;
 	info.own = own;
@@ -520,33 +529,36 @@ void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<Collidable> own, std::s
 	m_onCollideInfo.emplace_back(info);
 }
 
-void MyEngine::Physics::OnCollideInfo(std::shared_ptr<Collidable> own, std::shared_ptr<Collidable> send,OnCollideInfoKind kind)
+void MyEngine::Physics::OnCollideInfo(std::shared_ptr<ColideInfo> own, std::shared_ptr<ColideInfo> send,OnCollideInfoKind kind)
 {
 	auto item=send;
+	auto ownCol = own->col;
+	auto itemCol = item->col;
+	auto itemTag = item->tag;
 	
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
-		own->OnCollideEnter(item);
+		ownCol->OnCollideEnter(itemCol, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::CollideStay)
 	{
-		own->OnCollideStay(item);
+		ownCol->OnCollideStay(itemCol, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::CollideExit)
 	{
-		own->OnCollideExit(item);
+		ownCol->OnCollideExit(itemCol, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerEnter)
 	{
-		own->OnTriggerEnter(item);
+		ownCol->OnTriggerEnter(itemCol, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerStay)
 	{
-		own->OnTriggerStay(item);
+		ownCol->OnTriggerStay(itemCol, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerExit)
 	{
-		own->OnTriggerExit(item);
+		ownCol->OnTriggerExit(itemCol, itemTag);
 	}
 }
 

@@ -16,8 +16,8 @@ public:
 
 	bool GetDeleteFlag() { return m_deleteFlag; }
 	Vec3 GetUpVec() { return m_upVec; }
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
-	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 protected:
 
 	std::shared_ptr<ColliderSphere> m_col;

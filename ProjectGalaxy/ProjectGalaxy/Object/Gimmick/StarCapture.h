@@ -14,10 +14,10 @@ public:
 	void Update();
 	void Draw();
 
-	virtual void OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider);
-	virtual void OnTriggerEnter(std::shared_ptr<MyEngine::Collidable> colider);
-	virtual void OnTriggerStay(std::shared_ptr<MyEngine::Collidable> colider);
-	virtual void OnTriggerExit(std::shared_ptr<MyEngine::Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag);
 private:
 	using StarCaptureState_t = void(StarCapture::*)();
 	StarCaptureState_t m_stateUpdate;

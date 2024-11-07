@@ -10,7 +10,7 @@ namespace
 Invisible::Invisible(Vec3 pos) : Collidable(Priority::Low,ObjectTag::InvisibleObject)
 {
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kRadius;
 }

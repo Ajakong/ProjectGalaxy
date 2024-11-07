@@ -10,9 +10,6 @@
 #include"ModelManager.h"
 #include"GraphManager.h"
 
-#include<chrono>
-#include<ctime>
-
 #include"Physics.h"
 
 /// <summary>
@@ -141,13 +138,13 @@ m_modelDirAngle(0)
 	m_postUpVec = m_upVec;
 	{
 		m_rigid->SetPos(Vec3(0, 0, 0));
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		item->radius = m_radius;
 	}
 
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		item->radius = m_attackRadius;
 	}
@@ -282,6 +279,8 @@ void Player::Update()
 	{
 		m_animBlendRate = 1.0f;
 	}
+
+	m_lookPoint = m_rigid->GetPos();
 }
 
 void Player::SetMatrix()
@@ -302,21 +301,9 @@ void Player::SetMatrix()
 	auto rotatemat = m_myQ.ToMat();
 
 
-	printf("----------------\n");
+	
 	printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 	
-	{
-		// 現在時刻をsystem_clockを用いて取得
-		auto now = std::chrono::system_clock::now();
-
-		// 現在時刻をtime_t形式に変換
-		std::time_t t = std::chrono::system_clock::to_time_t(now);
-
-		//現在時刻を表示
-		printf("%d", (t / 3600 + 9) % 24);//時
-		printf(":%d", t / 60 % 60);//分
-		printf(":%d\n", t % 60);//秒
-	}
 	
 #ifdef _DEBUG
 
@@ -395,7 +382,7 @@ void Player::SetCameraAngle(float cameraAngle)
 	m_cameraAngle = cameraAngle;
 }
 
-void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Coin)
 	{
@@ -545,7 +532,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void Player::OnCollideStay(std::shared_ptr<Collidable> colider)
+void Player::OnCollideStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	
 }

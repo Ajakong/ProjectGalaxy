@@ -194,14 +194,9 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
-	if (player->OnAiming())
-	{
-		camera->Update(player->GetShotDir());
-	}
-	else
-	{
-		camera->Update(player->GetPos());
-	}
+	if (player->OnAiming())camera->Update(player->GetShotDir());
+	else if (spaceEmperor.back()->GetIsFind())camera->Update(spaceEmperor.back()->GetNeckPos());
+	else camera->Update(player->GetLookPoint());
 
 	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
@@ -259,6 +254,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 	
 	player->SetMatrix();//行列を反映
+	for (auto& item : kuribo) { item->SetMatrix(); }
 	for (auto& item : spaceEmperor) { item->SetMatrix(); }
 }
 

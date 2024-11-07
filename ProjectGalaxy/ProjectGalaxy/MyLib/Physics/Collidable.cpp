@@ -29,13 +29,13 @@ Collidable::~Collidable()
 {
 }
 
-std::shared_ptr<ColliderBase> MyEngine::Collidable::AddCollider(const ColliderBase::Kind& kind)
+std::shared_ptr<ColliderBase> MyEngine::Collidable::AddCollider(const ColliderBase::Kind& kind, const ColliderBase::ColideTag& tag)
 {
 	std::shared_ptr<ColliderBase> collider;
 
 	if (kind == ColliderBase::Kind::Sphere)
 	{
-		collider = std::make_shared<ColliderSphere>();
+		collider = std::make_shared<ColliderSphere>(tag);
 	}
 	else if (kind == ColliderBase::Kind::Capsule)
 	{
@@ -43,7 +43,7 @@ std::shared_ptr<ColliderBase> MyEngine::Collidable::AddCollider(const ColliderBa
 	}
 	else if (kind == ColliderBase::Kind::Box)
 	{
-		collider = std::make_shared<ColliderBox>();
+		collider = std::make_shared<ColliderBox>(tag);
 	}
 
 	if (collider)

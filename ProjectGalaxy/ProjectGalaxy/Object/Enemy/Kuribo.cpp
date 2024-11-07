@@ -1,4 +1,5 @@
 ﻿#include "Kuribo.h"
+#include"ModelManager.h"
 
 using namespace MyEngine;
 
@@ -11,6 +12,9 @@ namespace
 	constexpr int kChaseMaxFrame = 200;
 
 	constexpr float kAwayStrength = 0.6f;
+	const char* kModelFileName = "Kuribo.mv1";
+
+	constexpr float kScaleMag = 0.1f;
 
 }
 
@@ -33,14 +37,14 @@ m_chaseFrameCount(0)
 	m_comebackPoint = pos;
 	m_rigid->SetPos(pos);
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		item->radius = kRadius;
 	}
 	
 #ifdef _DEBUG
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		item->radius = kSearchRadius;
 		item->isTrigger = true;
@@ -48,6 +52,9 @@ m_chaseFrameCount(0)
 	}
 #endif
 	m_moveUpdate = &Kuribo::SearchUpdate;
+
+	m_modelHandle = ModelManager::GetInstance().GetModelData(kModelFileName);
+	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
 }
 
 Kuribo::~Kuribo()
@@ -63,9 +70,14 @@ void Kuribo::Update()
 	(this->*m_moveUpdate)();
 }
 
+void Kuribo::SetMatrix()
+{
+	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+}
+
 void Kuribo::Draw()
 {
-
+	MV1DrawModel(m_modelHandle);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 100);
 	DrawSphere3D(m_rigid->GetPos().VGet(), kRadius, 8, 0xffaa00, 0xffffff, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -78,7 +90,7 @@ void Kuribo::Draw()
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_upVec * 30).VGet(), 0xff0000);
 }
 
-void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -94,7 +106,7 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider)
 	}
 }
 
-void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider)
+void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

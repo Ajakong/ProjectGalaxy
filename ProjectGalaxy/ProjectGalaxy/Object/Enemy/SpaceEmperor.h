@@ -15,7 +15,8 @@ public:
 	void SetTarget(std::shared_ptr<Collidable> target) { m_target = target; }
 	void OnBossPlanet();
 	bool GetIsFind() { return m_isFindTarget; }
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
+	Vec3 GetNeckPos() const{ return m_neckPos; }
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 
 	//メンバ関数ポインタ
 	using emperorState_t = void(SpaceEmperor::*)();
@@ -42,12 +43,14 @@ private:
 	int m_prevAnimNo;//変更前のアニメーション
 	float m_animBlendRate;//アニメーションの合成割合
 
+	int m_neckFrameIndex;//モデルの首のフレームのインデックス
 	int m_armExtensionSpeed;
 	int m_armExtensionDistance;
 
 	float m_animSpeed;
 	Vec3 m_hitDir;
 	Vec3 m_neckNowDir;
+	Vec3 m_neckPos;
 	std::shared_ptr<Collidable> m_target;
 };
 

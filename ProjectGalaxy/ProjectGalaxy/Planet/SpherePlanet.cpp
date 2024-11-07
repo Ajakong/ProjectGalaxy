@@ -31,12 +31,12 @@ SpherePlanet::~SpherePlanet()
 
 void SpherePlanet::Init()
 {
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//ここで入れたのは重力の影響範囲
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
 	m_colliders.back()->isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kGravityRange;
 	AddThroughTag(ObjectTag::Stage);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//マップの当たり判定
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//マップの当たり判定
 	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item2->radius = kGroundRadius;
 }
@@ -112,7 +112,7 @@ Vec3 SpherePlanet::GetNormVec(Vec3 pos)
 	return norm;
 }
 
-void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider)
+void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	/*if (colider->GetTag() == ObjectTag::Takobo)
 	{
@@ -120,7 +120,7 @@ void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 	}*/
 }
 
-void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider)
+void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Planet.h"
 class SpherePlanet : public Planet
 {
@@ -12,8 +12,8 @@ public:
 
 	virtual Vec3 GravityEffect(std::shared_ptr<Collidable> obj);
 	virtual Vec3 GetNormVec(Vec3 pos);
-	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider);
-	virtual void OnTriggerExit(std::shared_ptr<Collidable> colider);
+	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnTriggerExit(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 	
 protected:
 	int m_enemyCount;

@@ -1,8 +1,9 @@
 ﻿#include "ColliderBase.h"
 
-MyEngine::ColliderBase::ColliderBase(Kind kind) :
+MyEngine::ColliderBase::ColliderBase(Kind kind,ColideTag tag) :
 	isTrigger(false),
 	m_kind(kind),
+	m_tag(tag),
 	m_posShift(Vec3::Zero())
 {
 	m_isPreHit.clear();

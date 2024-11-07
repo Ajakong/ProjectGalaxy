@@ -17,7 +17,7 @@ public:
 	void SetMatrix();
 	void Draw();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 
 	Vec3 GetMyPos();
 	int WatchHp() const { return m_Hp; }

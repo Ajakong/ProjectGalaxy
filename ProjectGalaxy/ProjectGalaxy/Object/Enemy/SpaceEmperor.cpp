@@ -39,13 +39,13 @@ m_isFindTarget(false)
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kSpaceEmperorFileName);
 	m_update = &SpaceEmperor::IntroUpdate;
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		item->radius = 6;
 
 	}
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine:: ColliderBase::ColideTag::Body);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		item->radius = 6;
 		m_armCol = item;
@@ -54,6 +54,7 @@ m_isFindTarget(false)
 	ChangeAnim(kAnimIndexDynamicPose);
 
 	m_frontVec = Vec3::Front();
+	m_neckFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:Neck");
 
 }
 
@@ -79,6 +80,8 @@ void SpaceEmperor::Update()
 	{
 		m_animBlendRate = 1.0f;
 	}
+
+	m_neckPos = MV1GetFramePosition(m_modelHandle, m_neckFrameIndex);
 }
 
 void SpaceEmperor::SetMatrix()
@@ -99,10 +102,12 @@ void SpaceEmperor::Draw()
 
 void SpaceEmperor::OnBossPlanet()
 {
-	m_update = &SpaceEmperor::IntroUpdate; m_isFindTarget = true; ChangeAnim(kAnimIndexIdle);
+	m_update = &SpaceEmperor::IntroUpdate; 
+	m_isFindTarget = true; 
+	ChangeAnim(kAnimIndexIdle);
 }
 
-void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (m_update == &SpaceEmperor::HitUpdate)return;
 	if (colider->GetTag() == ObjectTag::Player)

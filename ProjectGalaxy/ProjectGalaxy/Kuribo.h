@@ -11,9 +11,10 @@ public:
 
 	void Init();
 	void Update();
+	void SetMatrix();
 	void Draw();
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
-	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 
 	//メンバ関数ポインタ
 	using MoveState_t = void(Kuribo::*)();
