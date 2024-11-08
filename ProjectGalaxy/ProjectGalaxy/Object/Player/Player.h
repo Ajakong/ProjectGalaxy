@@ -2,6 +2,7 @@
 #include "Collidable.h"
 #include"Vec3.h"
 #include"Quaternion.h"
+#include"ColliderSphere.h"
 
 
 class Camera;
@@ -122,6 +123,9 @@ private:
 		float dummy2[2];
 	};
 
+	std::shared_ptr<MyEngine::ColliderSphere> m_spinCol;
+	std::shared_ptr<MyEngine::ColliderSphere> m_footCol;
+	
 	float m_Hp;
 	int m_modelHandle = 0;
 	int m_aimGraphHandle = 0;
@@ -145,6 +149,7 @@ private:
 	int m_spinCount;
 
 	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
+	
 
 	bool m_isOnDamageFlag;
 	bool m_isSpinFlag;

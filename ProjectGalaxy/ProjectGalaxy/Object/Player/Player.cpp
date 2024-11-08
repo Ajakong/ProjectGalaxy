@@ -1,6 +1,6 @@
 ﻿#include "Player.h"
 #include"Pad.h"
-#include"ColliderSphere.h"
+
 #include"Camera.h"
 #include"SoundManager.h"
 #include"Gorori.h"
@@ -145,8 +145,14 @@ m_modelDirAngle(0)
 
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		item->radius = m_attackRadius;
+		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_spinCol->radius = m_attackRadius;
+	}
+
+	{
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
+		m_footCol= dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_footCol->radius = m_attackRadius;
 	}
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
@@ -245,8 +251,8 @@ void Player::Update()
 	}
 	else
 	{
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		item->radius = m_radius;	
+		
+		m_spinCol->radius = m_radius;	
 	}
 	if (m_isOnDamageFlag)
 	{
@@ -599,9 +605,9 @@ void Player::StartUpdate()
 
 void Player::NeutralUpdate()
 {
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+
 	m_attackRadius = 0;
-	item->radius = m_attackRadius;
+	m_spinCol->radius = m_attackRadius;
 	//アナログスティックを使って移動
 
 	Vec3 move = Move();
@@ -622,9 +628,8 @@ void Player::NeutralUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin,5.f);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_attackRadius = kNetralRadius + 10;
-		item->radius = m_attackRadius;
+		m_attackRadius = kNetralRadius + 1;
+		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -638,9 +643,8 @@ void Player::NeutralUpdate()
 
 void Player::WalkingUpdate()
 {
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
-	item->radius = m_attackRadius;
+	m_spinCol->radius = m_attackRadius;
 	
 	Vec3 ans;
 
@@ -663,9 +667,8 @@ void Player::WalkingUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin,5.f);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_attackRadius = kNetralRadius * 1.5f;
-		item->radius = m_attackRadius;
+		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -678,17 +681,15 @@ void Player::WalkingUpdate()
 
 void Player::JumpingUpdate()
 {
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
-	item->radius = m_attackRadius;
+	m_spinCol->radius = m_attackRadius;
 	
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin,5.f);
 		if (m_spinCount >= 1)return;
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_attackRadius = kNetralRadius *1.5f;
-		item->radius = m_attackRadius;
+		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_spinCount++;
 		m_playerUpdate = &Player::JumpingSpinUpdate;
@@ -697,9 +698,8 @@ void Player::JumpingUpdate()
 
 void Player::AimingUpdate()
 {
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
-	item->radius = m_attackRadius;
+	m_spinCol->radius = m_attackRadius;
 	
 	Vec3 move;
 	move = Move();
@@ -714,9 +714,8 @@ void Player::AimingUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_attackRadius = kNetralRadius + 10;
-		item->radius = m_attackRadius;
+		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -742,9 +741,8 @@ void Player::SpiningUpdate()
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		ChangeAnim(kAnimationNumIdle);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_attackRadius = 0;
-		item->radius = m_attackRadius;
+		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = false;
 		m_playerUpdate = &Player::NeutralUpdate;
 		m_spinAngle = 0;
@@ -767,9 +765,8 @@ void Player::JumpingSpinUpdate()
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		ChangeAnim(kAnimationNumJump);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_attackRadius = 0;
-		item->radius = m_attackRadius;
+		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = false;
 		m_playerUpdate = &Player::JumpingUpdate;
 		m_spinAngle = 0;
@@ -786,9 +783,8 @@ void Player::CommandJump()
 
 void Player::BoostUpdate()
 {
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
-	item->radius = m_attackRadius;
+	m_spinCol->radius = m_attackRadius;
 	
 	if (!m_isBoostFlag)
 	{
@@ -860,9 +856,8 @@ void Player::ShotTheStar()
 
 void Player::DamegeUpdate()
 {
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	m_attackRadius = 0;
-	item->radius = m_attackRadius;
+	m_spinCol->radius = m_attackRadius;
 	m_rigid->SetVelocity(m_rigid->GetVelocity() * 0.8f);
 	if (m_rigid->GetVelocity().Length() < 7.0f)
 	{

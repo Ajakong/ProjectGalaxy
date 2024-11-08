@@ -20,7 +20,8 @@ namespace MyEngine
 		enum class ColideTag
 		{
 			Body,
-			Fist
+			Fist,
+			Foot
 		};
 
 
