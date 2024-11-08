@@ -128,10 +128,10 @@ void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider, std::shared
 
 void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
 {
-	if (colider->GetTag() == ObjectTag::Player)
+	/*if (colider->GetTag() == ObjectTag::Player)
 	{
 		m_player->SetIsOperation(false);
-	}
+	}*/
 }
 
 void StarCapture::WaitingUpdate()

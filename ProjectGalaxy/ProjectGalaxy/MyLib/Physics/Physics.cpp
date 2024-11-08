@@ -418,21 +418,23 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 
 void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std::shared_ptr<ColideInfo> objB, SendCollideInfo& info)
 {
+	std::shared_ptr<ColideInfo> parent = objA;
+	std::shared_ptr<ColideInfo> child = objB;
 	// Aが親として取得しているか
 	bool isParentA = false;
-	for (auto& item : info)if (item.first->col == objA->col)isParentA = true;
+	for (auto& item : info)if (item.first->col == objA->col)parent = item.first; isParentA = true;
 	// Bが親として取得しているか
 	bool isParentB = false;
-	for (auto& item : info)if (item.first->col == objB->col)isParentB = true;
+	for (auto& item : info)if (item.first->col == objB->col)child = item.first; isParentB = true;
 	// AがBどちらかが取得している場合
 	if (isParentA || isParentB)
 	{
-		std::shared_ptr<ColideInfo> parent = objA;
-		std::shared_ptr<ColideInfo> child = objB;
+		
 		if (isParentB)
 		{
-			parent = objB;
-			child = objA;
+			auto temp = parent;
+			parent = child;
+			child = temp;
 		}
 		std::list<std::shared_ptr<ColideInfo>> colideInfo;
 		for (auto& item : info)if (item.first->col == parent->col)colideInfo = item.second;
@@ -449,7 +451,7 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std:
 	else
 	{
 		// 普通に追加
-		info[objA].emplace_back(objB);
+		info[parent].emplace_back(child);
 	}
 }
 
