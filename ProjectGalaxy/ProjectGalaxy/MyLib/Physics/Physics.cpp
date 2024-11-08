@@ -106,7 +106,13 @@ void Physics::Update()
 	{
 		if (static_cast<int>(info.send->col->m_tag) > static_cast<int>(ObjectTag::End)|| static_cast<int>(info.send->col->m_tag)<0)continue;//応急処置済み:Exitしても履歴に残っているが参照できずに例外がスローされる
 		if (static_cast<int>(info.own->col->m_tag) > static_cast<int>(ObjectTag::End) || static_cast<int>(info.own->col->m_tag) < 0)continue;//:上に同じ
-		
+		if (info.own->col->GetTag() == ObjectTag::SeekerLine)
+		{
+			if (info.send->col->GetTag() == ObjectTag::Player)
+			{
+				int a = 0;
+			}
+		}
 		OnCollideInfo(info.own, info.send,info.kind);
 	}
 
@@ -230,9 +236,17 @@ void MyEngine::Physics::CheckCollide()
 				{
 					for (const auto& colB : objB->m_colliders)
 					{
+						if (objA->GetTag() == ObjectTag::SeekerLine)
+						{
+							if (objB->GetTag() == ObjectTag::Player)
+							{
+								int a = 0;
+							}
+						}
 						CollideHitInfo info = IsCollide(objA->m_rigid, objB->m_rigid, colA, colB);
+						
 						if (!info.isHit) continue;
-
+						
 						std::shared_ptr<ColideInfo> infoA;
 						infoA = std::make_shared<ColideInfo>();
 						infoA->col = objA; infoA->tag = colA->GetTag();
@@ -405,9 +419,11 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std::shared_ptr<ColideInfo> objB, SendCollideInfo& info)
 {
 	// Aが親として取得しているか
-	bool isParentA = info.find(objA) != info.end();
+	bool isParentA=false;
+	for (auto& item : info)if (item.first->col == objA->col)isParentA = true;
 	// Bが親として取得しているか
-	bool isParentB = info.find(objB) != info.end();
+	bool isParentB=false;
+	for (auto& item : info)if (item.first->col == objB->col)isParentB = true;
 	// AがBどちらかが取得している場合
 	if (isParentA || isParentB)
 	{
@@ -418,8 +434,11 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std:
 			parent = objB;
 			child = objA;
 		}
+		std::list<std::shared_ptr<ColideInfo>> colideInfo;
+		for (auto& item : info)if (item.first->col == parent->col)colideInfo = item.second;
 		// 親が子を持っているか
-		bool isChild = std::find(info[parent].begin(), info[parent].end(), child) != info[parent].end();
+		bool isChild =false;
+		for (auto& item : colideInfo)if (item->col == child->col)isChild = true;
 		// 子として持っていなければ追加
 		if (!isChild)
 		{
@@ -439,19 +458,21 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 	for (auto& parent : newSendInfo)
 	{
 		// 以前の情報に親として登録されているか
-		bool isPreParent = preSendInfo.find(parent.first) != preSendInfo.end();
-		
+		bool isPreParent=false;// = preSendInfo.find(parent.first) != preSendInfo.end();
+		std::list<std::shared_ptr<MyEngine::Physics::ColideInfo>> preSecond;
+		//std::pair<const std::shared_ptr<MyEngine::Physics::ColideInfo>, std::list<std::shared_ptr<MyEngine::Physics::ColideInfo>>> info;
+		for (auto& item : preSendInfo)if (item.first->col == parent.first->col)
+		{
+			preSecond = item.second; isPreParent = true;
+		}
 		bool isAllEnter = true;
 
 		for (auto& child : parent.second)
 		{
 			bool isPreChild = false;
 			if (isPreParent)
-			{
-
-				// 以前の情報に子として登録されているか
-				auto& preParent = preSendInfo[parent.first];
-				isPreChild = std::find(preParent.begin(), preParent.end(), child) != preParent.end();
+			{	
+				for (auto& item : preSecond)if (item->col == child->col)isPreChild = true;
 			}
 
 			// 今回入ってきた場合はEnterを呼ぶ(子として登録されていない)
@@ -534,7 +555,7 @@ void MyEngine::Physics::OnCollideInfo(std::shared_ptr<ColideInfo> own, std::shar
 	auto ownCol = own->col;
 	auto itemCol = item->col;
 	auto itemTag = item->tag;
-	
+
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
 		ownCol->OnCollideEnter(itemCol, itemTag);
