@@ -106,13 +106,7 @@ void Physics::Update()
 	{
 		if (static_cast<int>(info.send->col->m_tag) > static_cast<int>(ObjectTag::End) || static_cast<int>(info.send->col->m_tag) < 0)continue;//応急処置済み:Exitしても履歴に残っているが参照できずに例外がスローされる
 		if (static_cast<int>(info.own->col->m_tag) > static_cast<int>(ObjectTag::End) || static_cast<int>(info.own->col->m_tag) < 0)continue;//:上に同じ
-		if (info.own->col->GetTag() == ObjectTag::SeekerLine)
-		{
-			if (info.send->col->GetTag() == ObjectTag::Player)
-			{
-				int a = 0;
-			}
-		}
+
 		OnCollideInfo(info.own, info.send, info.kind);
 	}
 
@@ -236,13 +230,6 @@ void MyEngine::Physics::CheckCollide()
 				{
 					for (const auto& colB : objB->m_colliders)
 					{
-						if (objA->GetTag() == ObjectTag::SeekerLine)
-						{
-							if (objB->GetTag() == ObjectTag::Player)
-							{
-								int a = 0;
-							}
-						}
 						CollideHitInfo info = IsCollide(objA->m_rigid, objB->m_rigid, colA, colB);
 
 						if (!info.isHit) continue;
@@ -422,10 +409,10 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std:
 	std::shared_ptr<ColideInfo> child = objB;
 	// Aが親として取得しているか
 	bool isParentA = false;
-	for (auto& item : info)if (item.first->col == objA->col)parent = item.first; isParentA = true;
+	for (auto& item : info)if (item.first->col == objA->col) { parent = item.first; isParentA = true; }
 	// Bが親として取得しているか
 	bool isParentB = false;
-	for (auto& item : info)if (item.first->col == objB->col)child = item.first; isParentB = true;
+	for (auto& item : info)if (item.first->col == objB->col){child = item.first; isParentB = true;}
 	// AがBどちらかが取得している場合
 	if (isParentA || isParentB)
 	{
@@ -464,10 +451,7 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 		std::list<std::shared_ptr<MyEngine::Physics::ColideInfo>> preSecond;
 		std::shared_ptr<MyEngine::Physics::ColideInfo> preFirst;
 		//std::pair<const std::shared_ptr<MyEngine::Physics::ColideInfo>, std::list<std::shared_ptr<MyEngine::Physics::ColideInfo>>> info;
-		for (auto& item : preSendInfo)if (item.first->col == parent.first->col)
-		{
-			preFirst = item.first; preSecond = item.second; isPreParent = true;
-		}
+		for (auto& item : preSendInfo)if (item.first->col == parent.first->col){preFirst = item.first; preSecond = item.second; isPreParent = true;}
 		bool isAllEnter = true;
 
 		for (auto& child : parent.second)
@@ -476,7 +460,7 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 			bool isPreChild = false;
 			if (isPreParent)
 			{
-				for (auto& item : preSecond)if (item->col == child->col)childFirst = item; isPreChild = true;
+				for (auto& item : preSecond)if (item->col == child->col) { childFirst = item; isPreChild = true; }
 			}
 
 			// 今回入ってきた場合はEnterを呼ぶ(子として登録されていない)
