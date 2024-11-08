@@ -6,7 +6,7 @@ public:
 	ClearObject(Vec3 pos,bool antigravity=false);
 	virtual ~ClearObject();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 
 	void Init();
 	void Draw();

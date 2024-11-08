@@ -74,7 +74,7 @@ void StarCapture::Draw()
 #endif
 }
 
-void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
+void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
@@ -101,7 +101,7 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider, std::share
 	}
 }
 
-void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
+void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -111,7 +111,7 @@ void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider, std::share
 	}
 }
 
-void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
+void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -126,7 +126,7 @@ void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider, std::shared
 	}
 }
 
-void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
+void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	/*if (colider->GetTag() == ObjectTag::Player)
 	{

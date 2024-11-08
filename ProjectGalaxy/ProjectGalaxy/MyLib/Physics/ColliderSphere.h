@@ -8,6 +8,8 @@ namespace MyEngine
 	public:
 		ColliderSphere(ColideTag tag);
 
+		float GetRadius()const { return radius; }
+
 	public:
 		float radius;
 	};

@@ -107,7 +107,7 @@ void SpaceEmperor::OnBossPlanet()
 	ChangeAnim(kAnimIndexIdle);
 }
 
-void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
+void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (m_update == &SpaceEmperor::HitUpdate)return;
 	if (colider->GetTag() == ObjectTag::Player)

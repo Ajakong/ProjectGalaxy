@@ -56,7 +56,7 @@ public:
 	bool GetJumpFlag() { return m_isJumpFlag; }
 
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
@@ -125,7 +125,7 @@ private:
 
 	std::shared_ptr<MyEngine::ColliderSphere> m_spinCol;
 	std::shared_ptr<MyEngine::ColliderSphere> m_footCol;
-	
+	std::shared_ptr<MyEngine::ColliderSphere> m_bodyCol;
 	float m_Hp;
 	int m_modelHandle = 0;
 	int m_aimGraphHandle = 0;
@@ -179,12 +179,12 @@ private:
 
 	Vec3 m_shotDir;
 	Vec3 m_modelBodyRotate;
-
+	//0.0f:prevが再生
+	//1.0:currentが再生
 	int m_currentAnimNo;//現在のアニメーション
 	int m_prevAnimNo;//変更前のアニメーション
 	float m_animBlendRate;//アニメーションの合成割合
-	//0.0f:prevが再生
-	//1.0:currentが再生
+	
 	int m_reverseFlag=0;
 	int m_damageFrame;
 	int m_damageFrameSpeed;

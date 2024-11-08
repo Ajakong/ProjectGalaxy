@@ -13,7 +13,9 @@ public:
 	void Update();
 	void SetMatrix();
 	void Draw();
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag);
+
+
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 
 	//メンバ関数ポインタ
@@ -21,11 +23,34 @@ public:
 	MoveState_t m_moveUpdate;
 
 private:
+	/// <summary>
+	/// アイドル時
+	/// </summary>
 	void SearchUpdate();
+	/// <summary>
+	/// ジャンプ時
+	/// </summary>
 	void JumpUpdate();
+	/// <summary>
+	/// 敵発見時
+	/// </summary>
 	void ChaseUpdate();
+	/// <summary>
+	/// 初期位置に戻る時
+	/// </summary>
 	void ComebackUpdate();
+	/// <summary>
+	/// 死亡時
+	/// </summary>
 	void DeathUpdate();
+
+	//アニメーションの進行
+	//ループしたかどうかを返す
+	bool UpdateAnim(int attachNo);
+	//アニメーションの変更
+	void ChangeAnim(int animIndex, int speed = 1.f);
+
+private:
 	Vec3 m_vec;
 	Vec3 m_attackDir;
 	Vec3 m_moveShaftPos;
@@ -38,5 +63,14 @@ private:
 
 	int m_chaseFrameCount;
 	int m_initTime;
+
+	int m_animationSpeed;
+
+	//0.0f:prevが再生
+	//1.0:currentが再生
+	int m_currentAnimNo;//現在のアニメーション
+	int m_prevAnimNo;//変更前のアニメーション
+	float m_animBlendRate;//アニメーションの合成割合
+	
 };
 

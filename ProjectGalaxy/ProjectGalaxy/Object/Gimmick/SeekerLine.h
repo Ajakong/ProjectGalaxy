@@ -13,7 +13,7 @@ public:
 	void Draw();
 	Vec3 GetPos() { return m_rigid->GetPos(); }
 
-	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag);
+	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag);
 
 private:
 	std::vector<Vec3> m_points;

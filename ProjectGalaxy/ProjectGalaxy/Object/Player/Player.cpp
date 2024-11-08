@@ -21,6 +21,7 @@ namespace
 {
 	constexpr float kNetralRadius = 2;//通常時の当たり半径
 
+
 	constexpr int kDamageFrameMax = 20;
 	//アニメーション番号
 	constexpr int kIdleAnimIndex = 1;
@@ -138,9 +139,9 @@ m_modelDirAngle(0)
 	m_postUpVec = m_upVec;
 	{
 		m_rigid->SetPos(Vec3(0, 0, 0));
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		item->radius = m_radius;
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
+		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_footCol->radius = m_radius;
 	}
 
 	{
@@ -150,10 +151,11 @@ m_modelDirAngle(0)
 	}
 
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
-		m_footCol= dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_footCol->radius = m_attackRadius;
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+		m_bodyCol= dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_bodyCol->radius = m_radius;
 	}
+	AddThroughTag(ObjectTag::PlayerBullet);
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
 	ChangeAnim(kAnimationNumIdle);	
@@ -286,6 +288,9 @@ void Player::Update()
 		m_animBlendRate = 1.0f;
 	}
 
+	//当たり判定の更新
+	m_bodyCol->SetShiftPosNum(m_upVec * 5);
+
 	m_lookPoint = m_rigid->GetPos();
 }
 
@@ -336,10 +341,11 @@ void Player::Draw()
 		//MV1DrawModel(m_modelHandle);
 	}
 	MV1DrawModel(m_modelHandle);
-	DrawSphere3D(m_rigid->GetPos().VGet(), m_radius, 10, m_color, 0xffffff, true);
+	DrawSphere3D((m_rigid->GetPos()+m_footCol->GetShift()).VGet(), m_footCol->GetRadius(), 10, m_color, 0xffffff, true);
+	DrawSphere3D((m_rigid->GetPos() + m_bodyCol->GetShift()).VGet(), m_bodyCol->GetRadius(), 10, m_color, 0xffffff, true);
 	if (m_isSpinFlag)
 	{
-		DrawSphere3D(m_rigid->GetPos().VGet(), m_attackRadius, 10, 0x00ff00, 0xffffff, false);
+		DrawSphere3D((m_rigid->GetPos()+m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);
 	}
 
 #if _DEBUG
@@ -386,7 +392,7 @@ void Player::SetCameraAngle(float cameraAngle)
 	m_cameraAngle = cameraAngle;
 }
 
-void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag)
+void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
 {
 	if (colider->GetTag() == ObjectTag::Coin)
 	{

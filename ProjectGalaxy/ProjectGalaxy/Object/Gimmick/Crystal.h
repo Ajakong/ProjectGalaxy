@@ -11,7 +11,7 @@ public:
 	void Draw();
 
 	
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,std::shared_ptr<MyEngine::ColliderBase::ColideTag> tag);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
 private:
 	int m_Hp;
 	Vec3 m_size;
