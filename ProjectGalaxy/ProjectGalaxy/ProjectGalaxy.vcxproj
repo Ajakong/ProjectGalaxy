@@ -186,6 +186,7 @@
     <ClCompile Include="Object\Gimmick\StarCapture.cpp" />
     <ClCompile Include="Object\Item\Coin.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
+    <ClCompile Include="Object\LocationsManager.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
     <ClCompile Include="Object\WarpGate\Booster.cpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="Object\Gimmick\StarCapture.h" />
     <ClInclude Include="Object\Item\Coin.h" />
     <ClInclude Include="Object\Item\Item.h" />
+    <ClInclude Include="Object\LocationsManager.h" />
     <ClInclude Include="Object\ObjectManager.h" />
     <ClInclude Include="Object\Player\Player.h" />
     <ClInclude Include="Object\WarpGate\Booster.h" />

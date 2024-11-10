@@ -78,9 +78,9 @@ void Camera::SetCamera(Vec3 LookPoint)
 	SetLightDirectionHandle(m_lightHandle, (m_upVec * -1).VGet());
 
 	Vec3 velocity;
-	velocity.x = (m_cameraPoint.x - m_pos.x) / 15.f;
-	velocity.y = (m_cameraPoint.y - m_pos.y) / 15.f;
-	velocity.z = (m_cameraPoint.z - m_pos.z) / 15.f;
+	velocity.x = (m_cameraPoint.x - m_pos.x) / m_easingSpeed;
+	velocity.y = (m_cameraPoint.y - m_pos.y) / m_easingSpeed;
+	velocity.z = (m_cameraPoint.z - m_pos.z) / m_easingSpeed;
 	m_pos += velocity;//イージング
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());

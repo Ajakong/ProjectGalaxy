@@ -26,6 +26,7 @@
 #include"FontManager.h"
 #include"ScreenManager.h"
 #include"ModelManager.h"
+#include"LocationsManager.h"
 #include"Game.h"
 
 using namespace std;
@@ -91,6 +92,7 @@ namespace
 
 SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
+	LocationsManager::GetInstance().LoadLocations();
 	//ギミック
 	//ブースター
 	booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
@@ -194,6 +196,7 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
+	camera->SetEasingSpeed(player->GetCameraEasingSpeed());
 	if (player->OnAiming())camera->Update(player->GetShotDir());
 	else if (spaceEmperor.back()->GetIsFind())camera->Update(spaceEmperor.back()->GetNeckPos());
 	else camera->Update(player->GetLookPoint());
@@ -222,7 +225,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	//for (auto& item : crystal) { item->Update();}
 	//for (auto& item : coin)item->Update();
 
-	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
+	//userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 
 	
 
@@ -305,7 +308,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
 	
 	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
-	DrawFormatString(0, 175, 0xffffff, "%d", player->OnAiming());
+	DrawFormatString(0, 175, 0xffffff, player->GetState().c_str());
+	DrawFormatString(0, 200, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
 }
 
 void SerialPlanetGalaxy::BossBattleDraw()

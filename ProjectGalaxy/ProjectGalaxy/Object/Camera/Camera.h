@@ -31,10 +31,12 @@ public:
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
 	void SetBoost(bool boost) { m_isBoost = boost; }
 	void SetCameraPoint(Vec3 pos) { if (m_watchCount == 0)m_cameraPoint = pos; }
-	
+	void SetEasingSpeed(float speed) { m_easingSpeed = speed; }
+
 	void WatchThis(Vec3 lookpoint,Vec3 cameraPos,Vec3 upVec);
 	void NeutralUpdate(Vec3 LookPoint);
 	void AimingUpdate(Vec3 LookPoint);
+
 	//メンバ関数ポインタ
 	using cameraState_t = void(Camera::*)(Vec3 lookpoint);
 	cameraState_t m_cameraUpdate;
@@ -45,6 +47,7 @@ private:
 private:
 	int m_lightHandle = -1;
 	int m_watchCount;
+	float m_easingSpeed;
 	bool m_isFirstPerson;
 	bool m_isBoost;
 

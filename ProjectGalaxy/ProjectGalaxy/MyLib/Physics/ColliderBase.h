@@ -19,6 +19,7 @@ namespace MyEngine
 
 		enum class ColideTag
 		{
+			Head,
 			Body,
 			Fist,
 			Foot

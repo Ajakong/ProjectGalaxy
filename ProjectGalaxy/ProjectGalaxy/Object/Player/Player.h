@@ -3,7 +3,7 @@
 #include"Vec3.h"
 #include"Quaternion.h"
 #include"ColliderSphere.h"
-
+#include<string>
 
 class Camera;
 class PlayerSphere;
@@ -34,6 +34,7 @@ public:
 	Vec3 GetShotDir() { return m_shotDir; }
 	Vec3 GetLookPoint() { return m_lookPoint; }
 	float GetRegenerationRange() { return m_regeneRange; }
+	float GetCameraEasingSpeed() { return m_cameraEasingSpeed; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
 	bool GetOperationFlag()const { return m_isOperationFlag; }
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
@@ -52,8 +53,9 @@ public:
 	bool IsClear() { return m_isClearFlag; }
 	int GetDamageFrame() { return m_damageFrame; }
 	int& SetReverse() { return m_reverseFlag; }
-	int GetSearchRemainTime() { return m_searchRemainTime; }
+	//int GetSearchRemainTime() { return m_searchRemainTime; }
 	bool GetJumpFlag() { return m_isJumpFlag; }
+	std::string GetState() { return m_state; }
 
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
@@ -91,6 +93,7 @@ private:
 	/// </summary>
 	void NeutralUpdate();
 	void WalkingUpdate();
+	void DashUpdate();
 	void SpiningUpdate();
 	void JumpingSpinUpdate();
 	void JumpingUpdate();
@@ -122,11 +125,12 @@ private:
 		float clickedV;
 		float dummy2[2];
 	};
-
+	std::shared_ptr<MyEngine::ColliderSphere> m_headCol;
 	std::shared_ptr<MyEngine::ColliderSphere> m_spinCol;
 	std::shared_ptr<MyEngine::ColliderSphere> m_footCol;
 	std::shared_ptr<MyEngine::ColliderSphere> m_bodyCol;
 	float m_Hp;
+	float m_cameraEasingSpeed;
 	int m_modelHandle = 0;
 	int m_aimGraphHandle = 0;
 
@@ -150,6 +154,7 @@ private:
 
 	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
 	
+	std::string m_state;
 
 	bool m_isOnDamageFlag;
 	bool m_isSpinFlag;
@@ -199,8 +204,8 @@ private:
 	int m_attach_jump = 0;
 	int m_attach_nutral = 0;
 
-	int m_searchRemainTime;
-	int m_chargeRemainTime;
+	/*int m_searchRemainTime;
+	int m_chargeRemainTime;*/
 
 	float m_playAnimTime = 0.0f;
 	float m_animTime_move = 0.0f;

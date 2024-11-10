@@ -41,10 +41,13 @@ namespace
 	constexpr float kAnalogInputMax = 1000.0f;//アナログスティックから入力されるベクトルの最大値
 
 	constexpr float kFrameParSecond = 60.0f;
+	constexpr int kDashMag = 2;
+
 
 	constexpr int kAvoidFrame = 60;
 
 	constexpr int kJumpPower = 1;
+
 
 	constexpr int kSearchRemainTimeMax = 28;
 	constexpr int kChargeRemainCoolTime = 10;
@@ -127,8 +130,6 @@ m_prevAnimNo(0),
 m_isJumpFlag(false),
 m_isSpinFlag(false),
 m_isOperationFlag(false),
-m_searchRemainTime(0),
-m_chargeRemainTime(0),
 m_color(0x00ffff),
 m_attackRadius(0),
 m_damageFrameSpeed(1),
@@ -137,11 +138,21 @@ m_inputVec(0,0,-1),
 m_modelDirAngle(0)
 {
 	m_postUpVec = m_upVec;
+	m_rigid->SetPos(Vec3(0, 0, 0));
 	{
-		m_rigid->SetPos(Vec3(0, 0, 0));
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Head);
+		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_headCol->radius = 1;
+	}
+	{
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_bodyCol->radius = 2;
+	}
+	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
 		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_footCol->radius = m_radius;
+		m_footCol->radius = 1;
 	}
 
 	{
@@ -149,12 +160,8 @@ m_modelDirAngle(0)
 		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_spinCol->radius = m_attackRadius;
 	}
-
-	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		m_bodyCol= dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_bodyCol->radius = m_radius;
-	}
+	m_cameraEasingSpeed = 15.f;
+	
 	AddThroughTag(ObjectTag::PlayerBullet);
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
@@ -177,7 +184,7 @@ void Player::Update()
 	m_sideVec = GetCameraRightVector();
 	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
 	(this->*m_playerUpdate)();
-	m_chargeRemainTime++;
+
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
 		if (m_isAimFlag)
@@ -189,29 +196,10 @@ void Player::Update()
 			m_isAimFlag = true;
 		}
 	}
-	if ((Pad::IsTrigger(PAD_INPUT_Z)) && m_searchRemainTime >= 2)PlaySoundMem(m_searchSEHandle, DX_PLAYTYPE_BACK);
-	if ((Pad::IsPress(PAD_INPUT_Z)))
+	if ((Pad::IsTrigger(PAD_INPUT_4)))PlaySoundMem(m_searchSEHandle, DX_PLAYTYPE_BACK);
+	if ((Pad::IsPress(PAD_INPUT_4)))
 	{
 		m_isSearchFlag = true;
-		m_searchRemainTime--;
-		if (m_searchRemainTime < 0)m_searchRemainTime = 0;
-		if (m_searchRemainTime <= 1)m_Hp -= 0.05f;
-		if (m_Hp <= 0)m_Hp = 0.05f;
-	}
-	else
-	{
-		if (m_chargeRemainTime < kChargeRemainCoolTime)return;
-		if (m_searchRemainTime <= kSearchRemainTimeMax)
-		{
-			m_chargeRemainTime = 0;
-			m_searchRemainTime++;
-		}
-	}
-	if (m_isAimFlag)
-	{
-
-		
-
 	}
 
 	SetShotDir();
@@ -266,16 +254,6 @@ void Player::Update()
 		}
 
 	}
-	if (m_searchRemainTime <= 0)
-	{
-		m_damageFrame += m_damageFrameSpeed;
-		if (m_damageFrame > 60)m_damageFrameSpeed *= -1;
-		if (m_damageFrame < 0)m_damageFrameSpeed *= -1;
-	}
-	else
-	{
-		m_damageFrame = 0;
-	}
 
 	UpdateAnim(m_currentAnimNo);
 	//変更前のアニメーション100%
@@ -289,7 +267,9 @@ void Player::Update()
 	}
 
 	//当たり判定の更新
-	m_bodyCol->SetShiftPosNum(m_upVec * 5);
+	m_headCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 2 + m_bodyCol->GetRadius() * 2+m_headCol->GetRadius()));
+	m_bodyCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
+	m_footCol->SetShiftPosNum(m_upVec * m_footCol->GetRadius());
 
 	m_lookPoint = m_rigid->GetPos();
 }
@@ -341,8 +321,10 @@ void Player::Draw()
 		//MV1DrawModel(m_modelHandle);
 	}
 	MV1DrawModel(m_modelHandle);
-	DrawSphere3D((m_rigid->GetPos()+m_footCol->GetShift()).VGet(), m_footCol->GetRadius(), 10, m_color, 0xffffff, true);
-	DrawSphere3D((m_rigid->GetPos() + m_bodyCol->GetShift()).VGet(), m_bodyCol->GetRadius(), 10, m_color, 0xffffff, true);
+	DrawSphere3D((m_rigid->GetPos() + m_headCol->GetShift()).VGet(), m_headCol->GetRadius(), 10, m_color, 0xff4444, true);
+	DrawSphere3D((m_rigid->GetPos()+m_footCol->GetShift()).VGet(), m_footCol->GetRadius(), 10, m_color, 0x4444ff, true);
+
+	DrawSphere3D((m_rigid->GetPos() + m_bodyCol->GetShift()).VGet(), m_bodyCol->GetRadius(), 10, m_color, 0xffff44, true);
 	if (m_isSpinFlag)
 	{
 		DrawSphere3D((m_rigid->GetPos()+m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);
@@ -602,15 +584,19 @@ void Player::ChangeAnim(int animIndex, int speed)
 
 void Player::StartUpdate()
 {
+	m_state = "Start";
+
+	m_playerUpdate = &Player::NeutralUpdate;
 	m_regeneRange += 0.01f;
 	if (m_regeneRange > 2)
 	{
-		m_playerUpdate = &Player::NeutralUpdate;
+		
 	}
 }
 
 void Player::NeutralUpdate()
 {
+	m_state = "Neutral";
 
 	m_attackRadius = 0;
 	m_spinCol->radius = m_attackRadius;
@@ -649,6 +635,8 @@ void Player::NeutralUpdate()
 
 void Player::WalkingUpdate()
 {
+	m_state = "Walking";
+
 	m_attackRadius = 0;
 	m_spinCol->radius = m_attackRadius;
 	
@@ -661,7 +649,11 @@ void Player::WalkingUpdate()
 		ChangeAnim(kAnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
-
+	
+	if ((Pad::IsPress(PAD_INPUT_Z)))
+	{
+		m_playerUpdate = &Player::DashUpdate;
+	}
 
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
@@ -685,8 +677,62 @@ void Player::WalkingUpdate()
 	m_rigid->SetVelocity(ans);
 }
 
+void Player::DashUpdate()
+{
+	m_cameraEasingSpeed =30.f;
+	m_state = "Dash";
+
+	m_attackRadius = 0;
+	m_spinCol->radius = m_attackRadius;
+
+	Vec3 ans;
+
+
+	ans = Move();
+	if ((Pad::IsRelase(PAD_INPUT_Z)))
+	{
+		m_cameraEasingSpeed = 15.f;
+		m_playerUpdate = &Player::WalkingUpdate;
+	}
+
+
+	if (std::abs(ans.Length()) < 0.2f * kMaxSpeed)
+	{
+		m_cameraEasingSpeed = 15.f;
+		ChangeAnim(kAnimationNumIdle);
+		m_playerUpdate = &Player::NeutralUpdate;
+	}
+
+
+	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
+	{
+		m_cameraEasingSpeed = 15.f;
+		ChangeAnim(kAnimationNumJump);
+		m_isJumpFlag = true;
+		ans += m_upVec.GetNormalized() * kJumpPower;
+		m_playerUpdate = &Player::JumpingUpdate;
+	}
+	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
+	{
+		m_cameraEasingSpeed = 15.f;
+		ChangeAnim(kAnimationNumSpin, 5.f);
+		m_attackRadius = kNetralRadius * 1.5f;
+		m_spinCol->radius = m_attackRadius;
+		m_isSpinFlag = true;
+		m_playerUpdate = &Player::SpiningUpdate;
+	}
+	if (Pad::IsTrigger(PAD_INPUT_Y))
+	{
+		m_cameraEasingSpeed = 15.f;
+		m_playerUpdate = &Player::AimingUpdate;
+	}
+	m_rigid->SetVelocity(ans*kDashMag);
+}
+
 void Player::JumpingUpdate()
 {
+	m_state = "Jumping";
+
 	m_attackRadius = 0;
 	m_spinCol->radius = m_attackRadius;
 	
@@ -704,6 +750,8 @@ void Player::JumpingUpdate()
 
 void Player::AimingUpdate()
 {
+	m_state = "Aiming";
+
 	m_attackRadius = 0;
 	m_spinCol->radius = m_attackRadius;
 	
@@ -736,6 +784,8 @@ void Player::AimingUpdate()
 
 void Player::SpiningUpdate()
 {
+	m_state = "Spining";
+
 	Vec3 move;
 
 	move = Move();
@@ -757,6 +807,8 @@ void Player::SpiningUpdate()
 
 void Player::JumpingSpinUpdate()
 {
+	m_state = "JumpSpin";
+
 	//アナログスティックを使って移動
 
 	Vec3 move;
@@ -789,6 +841,8 @@ void Player::CommandJump()
 
 void Player::BoostUpdate()
 {
+	m_state = "BppstingGolira";
+
 	m_attackRadius = 0;
 	m_spinCol->radius = m_attackRadius;
 	
@@ -801,6 +855,8 @@ void Player::BoostUpdate()
 
 void Player::OperationUpdate()
 {
+	m_state = "NowControl";
+
 	if (!m_isOperationFlag)
 	{
 		SetAntiGravity(false);

@@ -96,7 +96,7 @@ void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::Coll
 	{
 		PlaySoundMem(SoundManager::GetInstance().GetSoundData("boost.mp3"), DX_PLAYTYPE_BACK);
 		//colider->GetRigidbody()->SetVelocity(Vec3(m_rigid->GetPos()-colider->GetRigidbody()->GetPos()).GetNormalized()*15);
-		colider->GetRigidbody()->SetVelocity(m_dir * 1.5f);
+		colider->GetRigidbody()->SetVelocity(m_dir *2.f);
 		auto player = std::dynamic_pointer_cast<Player>(colider);
 		player->m_playerUpdate = &Player::BoostUpdate;
 		player->SetBoost();
