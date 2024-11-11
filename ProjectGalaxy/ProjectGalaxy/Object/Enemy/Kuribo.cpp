@@ -7,7 +7,7 @@ namespace
 {
 	constexpr float kRadius = 5.f;
 	constexpr float kSearchRadius = 20.f;
-	constexpr float kChaseSpeed = 0.05f;
+	constexpr float kChaseSpeed = 0.1f;
 
 	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
 
@@ -30,7 +30,7 @@ namespace
 	constexpr int kAnimationNumSleep = 5;
 	constexpr int kAnimationNumWalk = 6;
 
-	constexpr float kScaleMag = 0.1f;
+	constexpr float kScaleMag = 0.03f;
 
 }
 
@@ -130,12 +130,21 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::Colli
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		m_rigid->SetVelocity(m_attackDir * -kAwayStrength + m_upVec * kAwayStrength*1.5f);
-		m_moveUpdate = &Kuribo::JumpUpdate;
 		if (tag == ColliderBase::ColideTag::Foot)
 		{
 			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
+			m_moveUpdate = &Kuribo::DeathUpdate;
 		}
+		else if(tag == ColliderBase::ColideTag::Spin)
+		{
+			m_rigid->SetVelocity(m_attackDir * -kAwayStrength + m_upVec * kAwayStrength * 1.5f);
+			m_moveUpdate = &Kuribo::JumpUpdate;
+		}
+		else
+		{
+
+		}
+		
 	}
 }
 
@@ -180,7 +189,6 @@ void Kuribo::JumpUpdate()
 
 void Kuribo::ChaseUpdate()
 {
-	
 	if (!m_player.get())m_chaseFrameCount++;
 	//ターゲット位置が正反対の時動かなくなるバグ
 	m_attackDir = m_targetPoint - m_rigid->GetPos();

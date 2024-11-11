@@ -19,8 +19,11 @@
 
 namespace
 {
-	constexpr float kNetralRadius = 2;//通常時の当たり半径
-
+	constexpr float kNeutralRadius = 2.f;
+	constexpr float kNeutralHeadRadius = 1.f;//通常時の当たり半径
+	constexpr float kNeutralBodyRadius = 2.f;//通常時の当たり半径
+	constexpr float kNeutralFootRadius = 1.f;//通常時の当たり半径
+	constexpr float kNeutralSpinRadius = 3.f;//通常時の当たり半径
 
 	constexpr int kDamageFrameMax = 20;
 	//アニメーション番号
@@ -41,12 +44,12 @@ namespace
 	constexpr float kAnalogInputMax = 1000.0f;//アナログスティックから入力されるベクトルの最大値
 
 	constexpr float kFrameParSecond = 60.0f;
-	constexpr int kDashMag = 2;
+	constexpr float kDashMag = 1.5f;
 
 
 	constexpr int kAvoidFrame = 60;
 
-	constexpr int kJumpPower = 1;
+	constexpr float kJumpPower = 1.5f;
 
 
 	constexpr int kSearchRemainTimeMax = 28;
@@ -109,7 +112,7 @@ m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
 m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
 m_upVec(Vec3::Up()),
 m_postUpVec(Vec3::Up()),
-m_nowPlanetPos(Vec3::Up() * 50),
+m_nowPlanetPos(Vec3::Up() * -50),
 m_shotDir(Vec3::Front()),
 m_moveDir(Vec3::Front()),
 m_postMoveDir(Vec3::Front()),
@@ -118,8 +121,8 @@ m_playerUpdate(&Player::NeutralUpdate),
 m_prevUpdate(&Player::NeutralUpdate),
 m_cameraUpdate(&Player::Planet1Update),
 m_anim_move(),
-m_radius(kNetralRadius),
 m_Hp(50),
+m_radius(kNeutralRadius),
 m_damageFrame(0),
 m_regeneRange(0),
 m_angle(0),
@@ -142,23 +145,23 @@ m_modelDirAngle(0)
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Head);
 		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_headCol->radius = 1;
+		m_headCol->radius = kNeutralHeadRadius;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_bodyCol->radius = 2;
+		m_bodyCol->radius = kNeutralBodyRadius;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
 		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_footCol->radius = 1;
+		m_footCol->radius = kNeutralFootRadius;
 	}
 
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Spin);
 		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_spinCol->radius = m_attackRadius;
+		m_spinCol->radius = 0;
 	}
 	m_cameraEasingSpeed = 15.f;
 	
@@ -183,6 +186,7 @@ void Player::Update()
 	m_isSearchFlag = false;
 	m_sideVec = GetCameraRightVector();
 	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
+	m_radius = 0;
 	(this->*m_playerUpdate)();
 
 	if (Pad::IsTrigger(PAD_INPUT_Y))
@@ -239,11 +243,8 @@ void Player::Update()
 	{
 		m_visibleCount++;
 	}
-	else
-	{
-		
-		m_spinCol->radius = m_radius;	
-	}
+	m_spinCol->radius = m_radius;
+	
 	if (m_isOnDamageFlag)
 	{
 		m_damageFrame--;
@@ -270,26 +271,23 @@ void Player::Update()
 	m_headCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 2 + m_bodyCol->GetRadius() * 2+m_headCol->GetRadius()));
 	m_bodyCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
 	m_footCol->SetShiftPosNum(m_upVec * m_footCol->GetRadius());
-
+	m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
 	m_lookPoint = m_rigid->GetPos();
 }
 
 void Player::SetMatrix()
 {
+	//オーディオリスナーの位置の更新
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
-
-	//float angleY = atan2(-m_moveDir.x, -m_moveDir.z);
-	//m_myQ = m_myQ * m_myQ.CreateRotationQuaternion(angleY -m_modelDirAngle, Vec3::Up());//角度の変化量だけ渡す
-	//m_modelDirAngle = angleY;
 	
-	float angle = GetAngle(m_postUpVec, m_upVec);
+	float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
 
-	Vec3 axis = Cross(m_upVec, m_moveDir);
-	axis.Normalize();
-	m_angle +=angle;
-	m_myQ =m_myQ*m_myQ.CreateRotationQuaternion(angle, axis);
-	//m_myQ =m_myQ* m_myQ.CreateRotationQuaternion(atan2(-m_moveDir.x, -m_moveDir.z), m_upVec);
-	auto rotatemat = m_myQ.ToMat();
+	Vec3 axis = Cross(m_upVec, m_moveDir);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
+	axis.Normalize();//単位ベクトル化
+
+	m_myQ =m_myQ*m_myQ.CreateRotationQuaternion(angle, axis);//回転の掛け算
+	
+	auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
 
 	printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 	
@@ -302,11 +300,7 @@ void Player::SetMatrix()
 
 #endif 
 
-	MATRIX mat;
-	
-	mat = m_myQ.ToMat();
-
-	m_postUpVec = m_upVec;
+	m_postUpVec = m_upVec;//上方向ベクトルを前のフレームの上方向ベクトルにする
 	
 	MV1SetRotationMatrix(m_modelHandle, rotatemat);
 
@@ -325,10 +319,8 @@ void Player::Draw()
 	DrawSphere3D((m_rigid->GetPos()+m_footCol->GetShift()).VGet(), m_footCol->GetRadius(), 10, m_color, 0x4444ff, true);
 
 	DrawSphere3D((m_rigid->GetPos() + m_bodyCol->GetShift()).VGet(), m_bodyCol->GetRadius(), 10, m_color, 0xffff44, true);
-	if (m_isSpinFlag)
-	{
-		DrawSphere3D((m_rigid->GetPos()+m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);
-	}
+	DrawSphere3D((m_rigid->GetPos()+m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);
+	
 
 #if _DEBUG
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
@@ -411,7 +403,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::Colli
 			//ノックバック
 			Vec3 enemyAttackDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
 			enemyAttackDir.Normalize();
-			m_rigid->SetVelocity(enemyAttackDir * 2);
+			m_rigid->SetVelocity(enemyAttackDir * 5);
 			m_playerUpdate = &Player::DamegeUpdate;
 		}
 	}
@@ -598,8 +590,6 @@ void Player::NeutralUpdate()
 {
 	m_state = "Neutral";
 
-	m_attackRadius = 0;
-	m_spinCol->radius = m_attackRadius;
 	//アナログスティックを使って移動
 
 	Vec3 move = Move();
@@ -620,8 +610,7 @@ void Player::NeutralUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin,5.f);
-		m_attackRadius = kNetralRadius + 1;
-		m_spinCol->radius = m_attackRadius;
+		m_attackRadius = kNeutralSpinRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -637,9 +626,6 @@ void Player::WalkingUpdate()
 {
 	m_state = "Walking";
 
-	m_attackRadius = 0;
-	m_spinCol->radius = m_attackRadius;
-	
 	Vec3 ans;
 
 	ans = Move();
@@ -665,8 +651,6 @@ void Player::WalkingUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin,5.f);
-		m_attackRadius = kNetralRadius * 1.5f;
-		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -681,9 +665,6 @@ void Player::DashUpdate()
 {
 	m_cameraEasingSpeed =30.f;
 	m_state = "Dash";
-
-	m_attackRadius = 0;
-	m_spinCol->radius = m_attackRadius;
 
 	Vec3 ans;
 
@@ -716,8 +697,7 @@ void Player::DashUpdate()
 	{
 		m_cameraEasingSpeed = 15.f;
 		ChangeAnim(kAnimationNumSpin, 5.f);
-		m_attackRadius = kNetralRadius * 1.5f;
-		m_spinCol->radius = m_attackRadius;
+		m_attackRadius =kNeutralSpinRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -732,29 +712,32 @@ void Player::DashUpdate()
 void Player::JumpingUpdate()
 {
 	m_state = "Jumping";
-
-	m_attackRadius = 0;
-	m_spinCol->radius = m_attackRadius;
-	
+	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
+	{
+		m_rigid->SetVelocity(Vec3::Zero());
+		m_playerUpdate = &Player::DropAttackUpdate;
+	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin,5.f);
 		if (m_spinCount >= 1)return;
-		m_attackRadius = kNetralRadius *1.5f;
-		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_spinCount++;
 		m_playerUpdate = &Player::JumpingSpinUpdate;
 	}
 }
 
+
+void Player::DropAttackUpdate()
+{
+	m_rigid->AddVelocity(m_upVec * -1.5f);
+}
+
+
 void Player::AimingUpdate()
 {
 	m_state = "Aiming";
 
-	m_attackRadius = 0;
-	m_spinCol->radius = m_attackRadius;
-	
 	Vec3 move;
 	move = Move();
 	//プレイヤーの最大移動速度は0.01f/frame
@@ -768,8 +751,6 @@ void Player::AimingUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(kAnimationNumSpin);
-		m_attackRadius = kNetralRadius + 10;
-		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -784,6 +765,7 @@ void Player::AimingUpdate()
 
 void Player::SpiningUpdate()
 {
+	m_radius = kNeutralSpinRadius;
 	m_state = "Spining";
 
 	Vec3 move;
@@ -797,8 +779,6 @@ void Player::SpiningUpdate()
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		ChangeAnim(kAnimationNumIdle);
-		m_attackRadius = 0;
-		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = false;
 		m_playerUpdate = &Player::NeutralUpdate;
 		m_spinAngle = 0;
@@ -807,6 +787,7 @@ void Player::SpiningUpdate()
 
 void Player::JumpingSpinUpdate()
 {
+	m_radius = kNeutralSpinRadius;
 	m_state = "JumpSpin";
 
 	//アナログスティックを使って移動
@@ -823,8 +804,6 @@ void Player::JumpingSpinUpdate()
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		ChangeAnim(kAnimationNumJump);
-		m_attackRadius = 0;
-		m_spinCol->radius = m_attackRadius;
 		m_isSpinFlag = false;
 		m_playerUpdate = &Player::JumpingUpdate;
 		m_spinAngle = 0;
@@ -841,11 +820,9 @@ void Player::CommandJump()
 
 void Player::BoostUpdate()
 {
-	m_state = "BppstingGolira";
+	m_state = "BoostingGolira";
 
-	m_attackRadius = 0;
-	m_spinCol->radius = m_attackRadius;
-	
+
 	if (!m_isBoostFlag)
 	{
 		ChangeAnim(kAnimationNumIdle);
@@ -917,9 +894,7 @@ void Player::ShotTheStar()
 }
 
 void Player::DamegeUpdate()
-{
-	m_attackRadius = 0;
-	m_spinCol->radius = m_attackRadius;
+{	
 	m_rigid->SetVelocity(m_rigid->GetVelocity() * 0.8f);
 	if (m_rigid->GetVelocity().Length() < 7.0f)
 	{
@@ -945,7 +920,7 @@ void Player::AvoidUpdate()
 	if (actionFrame > kAvoidFrame)
 	{
 		actionFrame = 0;
-		m_radius = kNetralRadius;
+		m_radius = kNeutralRadius;
 		ChangeAnim(kAnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}

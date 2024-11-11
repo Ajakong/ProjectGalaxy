@@ -157,7 +157,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
     SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 1.0f, 1.0f));
     MV1AttachAnim(modelHandle, 0);
     float rotate = 0;
-    Vec3 playerPos(0,-30,0);
+    Vec3 playerPos(0,-0,0);
     Vec3 nowVec= VGet(0, 0, -1);
     Vec3 dir;
     Vec3 shotDir;
@@ -274,7 +274,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
 
         playerPos += Move();
-        camera->SetCameraPoint(playerPos-Vec3(0,-200,200));
+        camera->SetCameraPoint(playerPos-Vec3(0,-200,-200));
         camera->Update(playerPos);
 
         MV1SetScale(stageHandle, VGet(0.05f, 0.05f, 0.05f));
@@ -282,25 +282,25 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
 
         //ÉÇÉfÉãÇÃâÒì]
-        //angle+=0.02f;
+        angle+=0.02f;
 
-        //Quaternion myQ;
-        //
-        //angle += 0.02f;
-        //Vec3 axis = Cross(upVec,moveDir);
-        //axis.Normalize();
-        //DrawLine3D(playerPos.VGet(), (playerPos + axis * 60).VGet(), 0xff00ff);
-        ////myQ =myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, axis));
-        //myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec));
-        //auto rotatemat = myQ.ToMat();
+        Quaternion myQ;
+        
+        angle += 0.02f;
+        Vec3 axis = Cross(upVec,moveDir);
+        axis.Normalize();
+        DrawLine3D(playerPos.VGet(), (playerPos + axis * 60).VGet(), 0xff00ff);
+        //myQ =myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, axis));
+        myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec));
+        auto rotatemat = myQ.ToMat();
       
        
-        //MV1SetRotationMatrix(modelHandle, rotatemat /*Vec3(0, atan2(moveDir.z, -moveDir.x) + DX_PI_F / 2, 0).VGet()*/);
-        //
+        MV1SetRotationMatrix(modelHandle, rotatemat /*Vec3(0, atan2(moveDir.z, -moveDir.x) + DX_PI_F / 2, 0).VGet()*/);
+        
 
         //à íuÇÃê›íË
-        MV1SetPosition(stageHandle, Vec3(0, -50, 0).VGet());
-        //MV1SetPosition(modelHandle, playerPos.VGet());
+        //MV1SetPosition(stageHandle, Vec3(0, -50, 0).VGet());
+        MV1SetPosition(modelHandle, playerPos.VGet());
 
         for (auto& item : star)
         {
@@ -354,7 +354,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
             if (num < 0)speed *= -1;
         }
         
-        {
+       /* {
             int index = MV1SearchFrame(modelHandle, "mixamorig:Neck");
             Vec3 neckPos = MV1GetFramePosition(modelHandle, index);
             MATRIX ident = MV1GetFrameLocalMatrix(modelHandle, index);
@@ -376,7 +376,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
                 nowNeckDir = front;
                 MV1SetFrameUserLocalMatrix(modelHandle, index, ident);
             }
-        }
+        }*/
 
 
         UpdateAnim(currentAnimNo,modelHandle);

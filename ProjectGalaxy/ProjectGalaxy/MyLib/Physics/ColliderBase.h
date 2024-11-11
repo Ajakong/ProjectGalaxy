@@ -22,7 +22,8 @@ namespace MyEngine
 			Head,
 			Body,
 			Fist,
-			Foot
+			Foot,
+			Spin
 		};
 
 

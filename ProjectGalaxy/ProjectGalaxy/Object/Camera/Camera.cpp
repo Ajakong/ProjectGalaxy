@@ -25,7 +25,8 @@ Camera::Camera():
 	m_pitchAngle(0),
 	m_watchCount(0),
 	m_isFirstPerson(0),
-	m_isBoost(false)
+	m_isBoost(false),
+	m_upVec(Vec3(0,1,0))
 {
 	
 	m_cameraUpdate = &Camera::NeutralUpdate;

@@ -93,28 +93,28 @@ namespace
 SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
 	LocationsManager::GetInstance().LoadLocations();
-	//ギミック
-	//ブースター
-	booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
-	MyEngine::Physics::GetInstance().Entry(booster.back());
-	booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
-	MyEngine::Physics::GetInstance().Entry(booster.back());
-	//スターキャプチャー
-	starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
-	MyEngine::Physics::GetInstance().Entry(starCapture.back());
-	//シーカーライン
-	std::vector<Vec3>seekerLine1Points;
-	seekerLine1Points.push_back(Vec3(-50, -25,0));
-	seekerLine1Points.push_back(Vec3(-20, 50, 0));
-	seekerLine1Points.push_back(Vec3(-20, 100, 0));
-	seekerLine1Points.push_back(Vec3(0, 30, 0));
-	seekerLine1Points.push_back(Vec3(100, 200, 0));
-	seekerLine1Points.push_back(Vec3(230, 200, 0));
-	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
-	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
-	//クリスタル
-	crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
-	MyEngine::Physics::GetInstance().Entry(crystal.back());
+	////ギミック
+	////ブースター
+	//booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
+	//MyEngine::Physics::GetInstance().Entry(booster.back());
+	//booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
+	//MyEngine::Physics::GetInstance().Entry(booster.back());
+	////スターキャプチャー
+	//starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
+	//MyEngine::Physics::GetInstance().Entry(starCapture.back());
+	////シーカーライン
+	//std::vector<Vec3>seekerLine1Points;
+	//seekerLine1Points.push_back(Vec3(-50, -25,0));
+	//seekerLine1Points.push_back(Vec3(-20, 50, 0));
+	//seekerLine1Points.push_back(Vec3(-20, 100, 0));
+	//seekerLine1Points.push_back(Vec3(0, 30, 0));
+	//seekerLine1Points.push_back(Vec3(100, 200, 0));
+	//seekerLine1Points.push_back(Vec3(230, 200, 0));
+	//seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
+	//MyEngine::Physics::GetInstance().Entry(seekerLine.back());
+	////クリスタル
+	//crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
+	//MyEngine::Physics::GetInstance().Entry(crystal.back());
 
 
 	camera = make_shared<Camera>();
@@ -123,7 +123,7 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
 	MyEngine::Physics::GetInstance().Entry(warpGate.back());
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
-	//エネミー
+	////エネミー
 	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
 	MyEngine::Physics::GetInstance().Entry(kuribo.back());
 	spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
@@ -131,9 +131,9 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	MyEngine::Physics::GetInstance().Entry(spaceEmperor.back());
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
-	//アイテム
-	coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
-	MyEngine::Physics::GetInstance().Entry(coin.back());
+	////アイテム
+	//coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
+	//MyEngine::Physics::GetInstance().Entry(coin.back());
 
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;

@@ -94,9 +94,11 @@ private:
 	void NeutralUpdate();
 	void WalkingUpdate();
 	void DashUpdate();
+
 	void SpiningUpdate();
 	void JumpingSpinUpdate();
 	void JumpingUpdate();
+	void DropAttackUpdate();
 	void AimingUpdate();
 	/// <summary>
 	/// ダメージ時
