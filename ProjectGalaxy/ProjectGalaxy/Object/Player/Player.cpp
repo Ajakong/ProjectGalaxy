@@ -127,17 +127,17 @@ m_modelDirAngle(0)
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Head);
 		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_headCol->radius = kNeutralHeadRadius;
+		m_headCol->radius = 1;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_bodyCol->radius = kNeutralBodyRadius;
+		m_bodyCol->radius = 2;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
 		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_footCol->radius = kNeutralFootRadius;
+		m_footCol->radius = 1;
 	}
 
 	{
@@ -151,7 +151,6 @@ m_modelDirAngle(0)
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
 	ChangeAnim(kAnimationNumIdle);	
-	//m_prevUpdate = &Player::NeutralUpdate;
 }
 
 Player::~Player()
@@ -225,7 +224,10 @@ void Player::Update()
 	{
 		m_visibleCount++;
 	}
-	m_spinCol->radius = m_radius;
+	else
+	{
+		m_spinCol->radius = m_radius;
+	}
 	
 	if (m_isOnDamageFlag)
 	{
@@ -250,8 +252,8 @@ void Player::Update()
 	}
 
 	//当たり判定の更新
-	m_headCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 2 + m_bodyCol->GetRadius() * 2+m_headCol->GetRadius()));
-	m_bodyCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
+	m_headCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 3 + m_bodyCol->GetRadius() * 2+m_headCol->GetRadius()));
+	m_bodyCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*3+m_bodyCol->GetRadius()));
 	m_footCol->SetShiftPosNum(m_upVec * m_footCol->GetRadius());
 	m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
 	m_lookPoint = m_rigid->GetPos();
@@ -265,6 +267,7 @@ void Player::SetMatrix()
 	Vec3 RotateYAxis = Cross(m_inputVec, m_postMoveDir);
 	RotateYAxis.Normalize();
  	float angleY = GetAngle(m_inputVec,m_postMoveDir);
+
 	m_myQ =m_myQ*m_myQ.CreateRotationQuaternion(angleY, RotateYAxis);//角度の変化量だけ渡す
 	m_postMoveDir = m_inputVec;
 	float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
