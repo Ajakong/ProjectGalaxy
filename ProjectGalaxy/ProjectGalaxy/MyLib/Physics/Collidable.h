@@ -28,6 +28,31 @@ namespace MyEngine
 			Static,		// 動かない（最高）
 		};
 	public:
+
+		float GetAngle(Vec3 a, Vec3 b)
+		{
+			a.Normalize();
+			b.Normalize();
+
+			float cos = Dot(a, b);
+			// コサインをクリッピング
+			cos = max(-1.0f, min(1.0f, cos));
+
+			float rad = acos(cos);
+
+#ifdef _DEBUG
+			DrawFormatString(0, 125, 0xffffff, "rad(%f),deg(%f)", rad, rad * 180 / DX_PI_F);
+#endif
+
+			float epsilon = 1e-6f;
+			if (cos > 1.0f - epsilon) {
+				return 0;  // ほぼ同じベクトルなら角度0
+			}
+			return rad;
+		}
+
+
+
 		Collidable(Priority priority, ObjectTag tag);
 		Collidable(std::shared_ptr<Collidable> col);
 		virtual ~Collidable();
@@ -76,7 +101,9 @@ namespace MyEngine
 		// 当たり判定データ
 		std::vector<std::shared_ptr<ColliderBase>> m_colliders;
 		Vec3 m_upVec;
+		Vec3 m_postUpVec;
 		Vec3 m_frontVec;
+		Vec3 m_sideVec;
 
 		bool m_isDestroyFlag;
 	

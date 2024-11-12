@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Collidable.h"
+#include"Quaternion.h"
 
 class EnemyMover;
 class EnemyAI;
@@ -20,6 +21,6 @@ public:
 protected:
 	//int m_Hp;
 	int m_modelHandle;
-
+	Quaternion m_myQ;
 };
 

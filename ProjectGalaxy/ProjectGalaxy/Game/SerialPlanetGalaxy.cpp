@@ -102,16 +102,16 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	////スターキャプチャー
 	//starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
 	//MyEngine::Physics::GetInstance().Entry(starCapture.back());
-	////シーカーライン
-	//std::vector<Vec3>seekerLine1Points;
-	//seekerLine1Points.push_back(Vec3(-50, -25,0));
-	//seekerLine1Points.push_back(Vec3(-20, 50, 0));
-	//seekerLine1Points.push_back(Vec3(-20, 100, 0));
-	//seekerLine1Points.push_back(Vec3(0, 30, 0));
-	//seekerLine1Points.push_back(Vec3(100, 200, 0));
-	//seekerLine1Points.push_back(Vec3(230, 200, 0));
-	//seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
-	//MyEngine::Physics::GetInstance().Entry(seekerLine.back());
+	//シーカーライン
+	std::vector<Vec3>seekerLine1Points;
+	seekerLine1Points.push_back(Vec3(-50, -25,0));
+	seekerLine1Points.push_back(Vec3(-20, 50, 0));
+	seekerLine1Points.push_back(Vec3(-20, 100, 0));
+	seekerLine1Points.push_back(Vec3(0, 30, 0));
+	seekerLine1Points.push_back(Vec3(100, 200, 0));
+	seekerLine1Points.push_back(Vec3(230, 200, 0));
+	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
+	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
 	////クリスタル
 	//crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
 	//MyEngine::Physics::GetInstance().Entry(crystal.back());
@@ -294,6 +294,11 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Front() * 20).VGet(), 0x0000ff);
+
+	DrawCircle(200, 500, 100, 0xffff00,0);
+	DrawLine(200, 500, 200 + player->GetInputVec().x * 70, 500 + player->GetInputVec().z * 70, 0xff0000);
+	DrawLine(200, 500, 200 + player->GetPostMoveDir().x * 70, 500 + player->GetPostMoveDir().z * 70, 0x0000ff);
+	DrawCircle(200 + player->GetInputVec().x *((player->GetInputVec().Length()*70.f)), 500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f)), 30, 0xffff00, 0);
 
 #endif
 	

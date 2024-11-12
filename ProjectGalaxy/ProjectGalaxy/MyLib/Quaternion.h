@@ -30,17 +30,7 @@ public:
 
 		res.x = x * q.w + w * q.x - z * q.y + y * q.z;
 		res.y = y * q.w + z * q.x + w * q.y - x * q.z;
-#if false
 		res.z = z * q.w - y * q.x + x * q.y + w * q.z;
-#endif
-		auto l1 = z * q.w;
-		auto l2 = y * q.x;
-		auto l3 = x * q.y;
-		auto l4 = w * q.z;
-		auto aa = l1 - l2;
-		auto bb = l3 + l4;
-		auto l = aa + bb;
-		res.z = l;
 		res.w = w * q.w - x * q.x - y * q.y - z * q.z;
 
 		return res;

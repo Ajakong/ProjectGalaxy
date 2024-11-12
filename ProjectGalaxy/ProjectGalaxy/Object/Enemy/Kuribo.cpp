@@ -95,12 +95,49 @@ void Kuribo::Update()
 	{
 		m_animBlendRate = 1.0f;
 	}
-
+	m_sideVec = Cross(m_upVec, m_frontVec);
 }
 
 void Kuribo::SetMatrix()
 {
+	float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
+
+	printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
+
+	Vec3 axis = Cross(m_upVec, m_frontVec);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
+	axis.Normalize();//単位ベクトル化
+
+	m_myQ = m_myQ.CreateRotationQuaternion(angle, axis) * m_myQ;//回転の掛け算
+
+	auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
+
+	printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
+
+
+#ifdef _DEBUG
+	//回転軸のデバッグ表示(紫)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
+
+	//上方向ベクトルのデバッグ表示(赤)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_upVec * 100).VGet(), 0xff0000);
+
+	//1フレーム前の上ベクトルの表示(暗赤)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_postUpVec * 100).VGet(), 0xaa0000);
+
+	//進行方向ベクトルのデバッグ表示(黄色)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_frontVec * 100).VGet(), 0xffff00);
+
+	//右側ベクトルのデバッグ表示(緑)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
+
+#endif 
+
+	m_postUpVec = m_upVec;//上方向ベクトルを前のフレームの上方向ベクトルにする
+
+	MV1SetRotationMatrix(m_modelHandle, rotatemat);//回転行列を反映
+
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+	auto modelMat = MV1GetMatrix(m_modelHandle);
 }
 
 void Kuribo::Draw()
@@ -173,7 +210,7 @@ void Kuribo::SearchUpdate()
 	
 	m_searchCol->radius = kSearchRadius * 2;
 	m_comebackPoint = m_rigid->GetPos();
-	ChangeAnim(kAnimationNumWalk);
+	ChangeAnim(kAnimationNumRun);
 	m_moveUpdate = &Kuribo::ChaseUpdate;
 
 }
@@ -193,11 +230,12 @@ void Kuribo::ChaseUpdate()
 	//ターゲット位置が正反対の時動かなくなるバグ
 	m_attackDir = m_targetPoint - m_rigid->GetPos();
 	m_attackDir.Normalize();
+	m_frontVec = m_attackDir;
 	m_rigid->SetVelocity(m_attackDir * kChaseSpeed);
 	if (m_chaseFrameCount > kChaseMaxFrame)
 	{
 		m_chaseFrameCount = 0;
-		
+		ChangeAnim(kAnimationNumWalk);
 		m_moveUpdate = &Kuribo::ComebackUpdate;
 		m_player = nullptr;
 	}
@@ -207,6 +245,7 @@ void Kuribo::ComebackUpdate()
 {
 	Vec3 vec = m_comebackPoint - m_rigid->GetPos();
 	vec.Normalize();
+	m_frontVec = vec;
 	m_rigid->SetVelocity(vec*kChaseSpeed);
 	if ((m_comebackPoint - m_rigid->GetPos()).Length() <= 3)
 	{
@@ -242,12 +281,23 @@ bool Kuribo::UpdateAnim(int attachNo)
 	//現在再生中のアニメーションの総カウントを取得する
 	float total = MV1GetAttachAnimTotalTime(m_modelHandle, attachNo);
 	bool isLoop = false;
-	while (now >= total)
+	if (attachNo == 1)
 	{
-		now -= total;
-		isLoop = true;
+		while (now >= 24)
+		{
+			now -= 24;
+			isLoop = true;
+		}
 	}
-
+	else
+	{
+		while (now >= total)
+		{
+			now -= total;
+			isLoop = true;
+		}
+	}
+	
 	MV1SetAttachAnimTime(m_modelHandle, attachNo, now);
 
 	return isLoop;

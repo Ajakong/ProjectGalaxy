@@ -31,6 +31,8 @@ public:
 	Vec3 GetNormVec() { return Vec3(m_rigid->GetPos() - m_nowPlanetPos).GetNormalized(); }
 	Vec3 GetFrontVec() { return m_frontVec.GetNormalized(); }
 	Vec3 GetSideVec() { return m_sideVec.GetNormalized(); }
+	Vec3 GetPostMoveDir(){ return m_postMoveDir; }
+	Vec3 GetInputVec() { return m_inputVec; }
 	Vec3 GetShotDir() { return m_shotDir; }
 	Vec3 GetLookPoint() { return m_lookPoint; }
 	float GetRegenerationRange() { return m_regeneRange; }
@@ -169,6 +171,7 @@ private:
 	float m_attackRadius;
 
 	Quaternion m_myQ;
+	Quaternion m_rotateYQ;
 	Vec3 m_cameraToPlayer;
 	Vec3 m_cameraPos;
 	Vec3 m_lookPoint;
