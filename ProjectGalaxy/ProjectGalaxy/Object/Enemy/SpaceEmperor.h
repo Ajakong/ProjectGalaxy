@@ -51,6 +51,7 @@ private:
 	Vec3 m_hitDir;
 	Vec3 m_neckNowDir;
 	Vec3 m_neckPos;
+	Vec3 m_armMoveDir;
 	std::shared_ptr<Collidable> m_target;
 };
 

@@ -32,7 +32,8 @@ m_animBlendRate(0),
 m_currentAnimNo(-1),
 m_prevAnimNo(0),
 m_neckNowDir(Vec3(0,0,-1)),
-m_isFindTarget(false)
+m_isFindTarget(false),
+m_armMoveDir(Vec3::Zero())
 {
 
 	m_rigid->SetPos(pos);
