@@ -97,7 +97,6 @@ m_postUpVec(Vec3::Up()),
 m_nowPlanetPos(Vec3::Up() * -50),
 m_shotDir(Vec3::Front()),
 m_moveDir(Vec3::Front()),
-m_postMoveDir(Vec3::Front()),
 m_frontVec(Vec3::Front()),
 m_playerUpdate(&Player::NeutralUpdate),
 m_prevUpdate(&Player::NeutralUpdate),
@@ -119,7 +118,8 @@ m_color(0x00ffff),
 m_attackRadius(0),
 m_damageFrameSpeed(1),
 m_modelBodyRotate(m_frontVec),
-m_inputVec(Vec3::Front()),
+m_inputVec(Vec3::Front()*-1),
+m_postMoveDir(Vec3::Front()),
 m_modelDirAngle(0)
 {
 	m_postUpVec = m_upVec;
@@ -127,23 +127,23 @@ m_modelDirAngle(0)
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Head);
 		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_headCol->radius = 1;
+		m_headCol->radius = kNeutralHeadRadius - 0.2f;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_bodyCol->radius = 2;
+		m_bodyCol->radius = kNeutralBodyRadius - 0.2f;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
 		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_footCol->radius = 1;
+		m_footCol->radius = kNeutralFootRadius - 0.2f;
 	}
 
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Spin);
 		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_spinCol->radius = kNeutralSpinRadius;
+		m_spinCol->radius = m_attackRadius;
 	}
 	m_cameraEasingSpeed = 15.f;
 	
@@ -151,6 +151,8 @@ m_modelDirAngle(0)
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
 	ChangeAnim(kAnimationNumIdle);	
+
+	SetMatrix();
 }
 
 Player::~Player()
@@ -165,8 +167,6 @@ void Player::Init()
 void Player::Update()
 {
 	m_isSearchFlag = false;
-	m_sideVec = GetCameraRightVector();
-	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
 	m_radius = 0;
 	(this->*m_playerUpdate)();
 
@@ -252,24 +252,25 @@ void Player::Update()
 	}
 
 	//当たり判定の更新
-	m_headCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 3 + m_bodyCol->GetRadius() * 2+m_headCol->GetRadius()));
-	m_bodyCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*3+m_bodyCol->GetRadius()));
-	m_footCol->SetShiftPosNum(m_upVec * m_footCol->GetRadius());
-	m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
+	m_headCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius * 2 + kNeutralHeadRadius));
+	m_bodyCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius));
+	m_footCol->SetShiftPosNum(m_upVec * kNeutralFootRadius);
+	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
 	m_lookPoint = m_rigid->GetPos();
 
 	//オーディオリスナーの位置の更新
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
+
+	m_postPos = m_rigid->GetPos();
 }
 
 void Player::SetMatrix()
 {
-	Vec3 RotateYAxis = Cross(m_inputVec, m_postMoveDir);
-	RotateYAxis.Normalize();
- 	float angleY = GetAngle(m_inputVec,m_postMoveDir);
-
-	m_myQ =m_myQ*m_myQ.CreateRotationQuaternion(angleY, RotateYAxis);//角度の変化量だけ渡す
-	m_postMoveDir = m_inputVec;
+	
+	//if (m_inputVec.Length() != 0)
+	{
+		m_postMoveDir = m_inputVec;
+	}
 	float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
 
 	printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
@@ -278,6 +279,11 @@ void Player::SetMatrix()
 	axis.Normalize();//単位ベクトル化
 
 	m_myQ =m_myQ.CreateRotationQuaternion(angle, axis)* m_myQ;//回転の掛け算
+	Vec3 RotateYAxis = Cross(m_inputVec, m_postMoveDir);
+	RotateYAxis.Normalize();
+	float angleY = GetAngle(m_inputVec, m_postMoveDir);
+
+	m_myQ = m_myQ.CreateRotationQuaternion(angleY, RotateYAxis) * m_myQ;//角度の変化量だけ渡す
 	//m_myQ = m_myQ.QMult(m_myQ, m_myQ.CreateRotationQuaternion(atan2(-m_moveDir.x, -m_moveDir.z), m_upVec));
 	auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
 
@@ -338,8 +344,9 @@ void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
 	m_cameraToPlayer = cameraToPlayer;
 }
 
-void Player::SetBoost()
+void Player::SetBoost(Vec3 sideVec)
 {
+	m_sideVec = sideVec;
 	m_isBoostFlag = true; 
 	ChangeAnim(kAnimationNumFall);
 }
@@ -367,7 +374,7 @@ void Player::SetCameraAngle(float cameraAngle)
 	m_cameraAngle = cameraAngle;
 }
 
-void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Coin)
 	{
@@ -517,7 +524,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::Colli
 	}
 }
 
-void Player::OnCollideStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Player::OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 }
 
@@ -822,7 +829,8 @@ void Player::BoostUpdate()
 {
 	m_state = "BoostingGolira";
 
-
+	m_frontVec = Cross(m_upVec, m_sideVec);
+	m_moveDir = m_frontVec;
 	if (!m_isBoostFlag)
 	{
 		ChangeAnim(kAnimationNumIdle);
@@ -833,7 +841,9 @@ void Player::BoostUpdate()
 void Player::OperationUpdate()
 {
 	m_state = "NowControl";
-
+	m_moveDir = m_rigid->GetPos() - m_postPos;
+	m_moveDir.Normalize();
+	m_sideVec = Cross(m_upVec, m_moveDir);
 	if (!m_isOperationFlag)
 	{
 		SetAntiGravity(false);

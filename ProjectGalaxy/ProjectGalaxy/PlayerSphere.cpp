@@ -58,7 +58,7 @@ void PlayerSphere::Hit()
 	
 }
 
-void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	m_isDeleteFlag = true;
 }

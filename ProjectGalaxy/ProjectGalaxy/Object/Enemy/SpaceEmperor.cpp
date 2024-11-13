@@ -35,7 +35,6 @@ m_neckNowDir(Vec3(0,0,-1)),
 m_isFindTarget(false),
 m_armMoveDir(Vec3::Zero())
 {
-
 	m_rigid->SetPos(pos);
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kSpaceEmperorFileName);
 	m_update = &SpaceEmperor::IntroUpdate;
@@ -46,10 +45,9 @@ m_armMoveDir(Vec3::Zero())
 
 	}
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine:: ColliderBase::ColideTag::Body);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		item->radius = 6;
-		m_armCol = item;
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine:: ColliderBase::ColideTag::Fist);
+		m_armCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_armCol->radius = 6;
 	}
 	MV1SetScale(m_modelHandle,Vec3(kScaleMag, kScaleMag, kScaleMag).VGet());
 	ChangeAnim(kAnimIndexDynamicPose);
@@ -108,7 +106,7 @@ void SpaceEmperor::OnBossPlanet()
 	ChangeAnim(kAnimIndexIdle);
 }
 
-void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (m_update == &SpaceEmperor::HitUpdate)return;
 	if (colider->GetTag() == ObjectTag::Player)
@@ -119,13 +117,17 @@ void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine:
 		m_update = &SpaceEmperor::HitUpdate;
 		
 	}
-	if (colider->GetTag() == ObjectTag::PlayerBullet)
+	if (ownTag == MyEngine::ColliderBase::ColideTag::Fist)
 	{
-		m_hitDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
-		m_hitDir.Normalize();
-		ChangeAnim(kAnimIndexIdle);
-		m_update = &SpaceEmperor::HitUpdate;
+		if (colider->GetTag() == ObjectTag::PlayerBullet)
+		{
+			m_hitDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
+			m_hitDir.Normalize();
+			ChangeAnim(kAnimIndexIdle);
+			m_update = &SpaceEmperor::HitUpdate;
+		}
 	}
+	
 }
 
 void SpaceEmperor::DoNothingUpdate()

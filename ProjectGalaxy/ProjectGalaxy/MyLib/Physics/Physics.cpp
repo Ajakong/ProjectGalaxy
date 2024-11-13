@@ -159,7 +159,7 @@ void MyEngine::Physics::MoveNextPos() const
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
 							{
-								planet->OnTriggerEnter(obj, objCol->GetTag());
+								planet->OnTriggerEnter(obj,col->GetTag(), objCol->GetTag());
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
 							colIndex++;
@@ -409,14 +409,13 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std:
 	std::shared_ptr<ColideInfo> child = objB;
 	// Aが親として取得しているか
 	bool isParentA = false;
-	for (auto& item : info)if (item.first->col == objA->col) { parent = item.first; isParentA = true; }
+	for (auto& item : info)if (item.first->col == objA->col&&item.first->tag==objA->tag) { parent = item.first; isParentA = true; }
 	// Bが親として取得しているか
 	bool isParentB = false;
-	for (auto& item : info)if (item.first->col == objB->col){child = item.first; isParentB = true;}
+	for (auto& item : info)if (item.first->col == objB->col && item.first->tag == objB->tag){child = item.first; isParentB = true;}
 	// AがBどちらかが取得している場合
 	if (isParentA || isParentB)
 	{
-		
 		if (isParentB)
 		{
 			auto temp = parent;
@@ -424,15 +423,16 @@ void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std:
 			child = temp;
 		}
 		std::list<std::shared_ptr<ColideInfo>> colideInfo;
-		for (auto& item : info)if (item.first->col == parent->col)colideInfo = item.second;
+		for (auto& item : info)if (item.first->col == parent->col&& item.first->tag == parent->tag)colideInfo = item.second;
 		// 親が子を持っているか
 		bool isChild = false;
-		for (auto& item : colideInfo)if (item->col == child->col)isChild = true;
+		for (auto& item : colideInfo)if (item->col == child->col&& item->tag == child->tag)isChild = true;
 		// 子として持っていなければ追加
 		if (!isChild)
 		{
 			info[parent].emplace_back(child);
 		}
+
 	}
 	// どちらも取得していない場合
 	else
@@ -507,6 +507,8 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 		{
 			preSendInfo.erase(preFirst);
 		}
+
+		
 	}
 
 	// 残っている前情報からExistを呼ぶ(登録が残っている＝今回抜けた)
@@ -525,7 +527,10 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideExit);
 			}
 		}
+
 	}
+
+	
 }
 
 void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<ColideInfo> own, std::shared_ptr<ColideInfo> send, OnCollideInfoKind kind)
@@ -541,32 +546,34 @@ void MyEngine::Physics::OnCollideInfo(std::shared_ptr<ColideInfo> own, std::shar
 {
 	auto item = send;
 	auto ownCol = own->col;
+	auto ownTag = own->tag;
+
 	auto itemCol = item->col;
 	auto itemTag = item->tag;
 
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
-		ownCol->OnCollideEnter(itemCol, itemTag);
+		ownCol->OnCollideEnter(itemCol,ownTag, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::CollideStay)
 	{
-		ownCol->OnCollideStay(itemCol, itemTag);
+		ownCol->OnCollideStay(itemCol, ownTag, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::CollideExit)
 	{
-		ownCol->OnCollideExit(itemCol, itemTag);
+		ownCol->OnCollideExit(itemCol, ownTag, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerEnter)
 	{
-		ownCol->OnTriggerEnter(itemCol, itemTag);
+		ownCol->OnTriggerEnter(itemCol, ownTag, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerStay)
 	{
-		ownCol->OnTriggerStay(itemCol, itemTag);
+		ownCol->OnTriggerStay(itemCol, ownTag, itemTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerExit)
 	{
-		ownCol->OnTriggerExit(itemCol, itemTag);
+		ownCol->OnTriggerExit(itemCol, ownTag, itemTag);
 	}
 }
 

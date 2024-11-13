@@ -157,7 +157,7 @@ void Kuribo::Draw()
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_upVec * 30).VGet(), 0xff0000);
 }
 
-void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -169,12 +169,12 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::Colli
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		if (tag == ColliderBase::ColideTag::Foot)
+		if (targetTag == ColliderBase::ColideTag::Foot)
 		{
 			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
 			m_moveUpdate = &Kuribo::DeathUpdate;
 		}
-		else if(tag == ColliderBase::ColideTag::Spin)
+		else if(targetTag == ColliderBase::ColideTag::Spin)
 		{
 			m_rigid->SetVelocity(m_attackDir * -kAwayStrength + m_upVec * kAwayStrength * 1.5f);
 			m_moveUpdate = &Kuribo::JumpUpdate;
@@ -187,7 +187,7 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::Colli
 	}
 }
 
-void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -212,7 +212,7 @@ void Kuribo::SearchUpdate()
 	
 	m_searchCol->radius = kSearchRadius * 2;
 	m_comebackPoint = m_rigid->GetPos();
-	ChangeAnim(kAnimationNumRun);
+	ChangeAnim(kAnimationNumWalk);
 	m_moveUpdate = &Kuribo::ChaseUpdate;
 
 }

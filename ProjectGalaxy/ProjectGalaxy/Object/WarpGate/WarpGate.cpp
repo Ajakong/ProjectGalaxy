@@ -45,6 +45,8 @@ m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname))
 	m_effectPlayHandle=PlayEffekseer3DEffect(m_emitterHandle);
 	m_gaussScreenHandle = ScreenManager::GetInstance().GetScreenData(kGaussScreenName, 1600, 900);
 	m_colorScreenHandle = ScreenManager::GetInstance().GetScreenData(kColorScreenName, 1600, 900);
+
+	m_sideVec == Cross(m_upVec, (warpPos - m_rigid->GetPos()).GetNormalized());
 }
 
 WarpGate::~WarpGate()
@@ -102,7 +104,7 @@ void WarpGate::Draw()
 	DrawCube3D(Vec3(m_rigid->GetPos() + Vec3(6, 6, 6)).VGet(), Vec3(m_rigid->GetPos() + Vec3(-6, -6, -6)).VGet(), 0xffff00, 0xffff00, false);
 }
 
-void WarpGate::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void WarpGate::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -114,6 +116,6 @@ void WarpGate::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::Col
 		colider->GetRigidbody()->SetVelocity(Vec3(m_warpPos - colider->GetRigidbody()->GetPos()).GetNormalized() * 5);
 		auto player = std::dynamic_pointer_cast<Player>(colider);
 		player->m_playerUpdate = &Player::BoostUpdate;
-		player->SetBoost();
+		player->SetBoost(m_sideVec);
 	}
 }

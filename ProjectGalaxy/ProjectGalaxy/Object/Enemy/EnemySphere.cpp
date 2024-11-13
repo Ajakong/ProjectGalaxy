@@ -52,7 +52,7 @@ void EnemySphere::Hit()
 	//m_isDeleteFlag = true;
 }
 
-void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 
 }

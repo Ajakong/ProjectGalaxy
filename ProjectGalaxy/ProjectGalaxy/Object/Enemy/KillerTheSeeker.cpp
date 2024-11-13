@@ -133,7 +133,7 @@ void KillerTheSeeker::Draw()
 	//DrawBox(200, 700, 500 + m_Hp*3, 750, 0x00ff00, true);
 }
 
-void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

@@ -69,10 +69,10 @@ Vec3 BoxPlanet::GetNormVec(Vec3 pos)
 	return norm;
 }
 
-void BoxPlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void BoxPlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 }
 
-void BoxPlanet::OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void BoxPlanet::OnTriggerExit(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 }

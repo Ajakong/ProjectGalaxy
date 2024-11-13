@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Enemy.h"
 #include"ColliderSphere.h"
+using namespace MyEngine;
+
 class SpaceEmperor : public Enemy
 {
 public:
@@ -16,7 +18,7 @@ public:
 	void OnBossPlanet();
 	bool GetIsFind() { return m_isFindTarget; }
 	Vec3 GetNeckPos() const{ return m_neckPos; }
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 
 	//メンバ関数ポインタ
 	using emperorState_t = void(SpaceEmperor::*)();

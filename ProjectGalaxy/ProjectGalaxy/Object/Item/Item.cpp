@@ -58,7 +58,7 @@ void Item::Draw()
 	DrawSphere3D(m_rigid->GetPos().VGet(), m_col->radius, 8, 0x00ff00, 0x00ff00, false);
 }
 
-void Item::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Item::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	
 	if (colider->GetTag() == ObjectTag::Player)
@@ -67,7 +67,7 @@ void Item::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::Collide
 	}
 }
 
-void Item::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Item::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)	m_nowPlanetPos = colider->GetRigidbody()->GetPos();
 }

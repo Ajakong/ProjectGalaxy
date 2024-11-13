@@ -95,12 +95,12 @@ void SeekerLine::Draw()
 	}
 }
 
-void SeekerLine::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void SeekerLine::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
 		m_num = 0;
-		m_speed = 0.1f;
+		m_speed = 0.02f;
 		m_player = std::dynamic_pointer_cast<Player>(colider);
 		m_player->SetIsOperation(true);
 		m_player->SetPos(m_rigid->GetPos());

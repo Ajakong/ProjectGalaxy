@@ -41,8 +41,11 @@ public:
 	bool GetOperationFlag()const { return m_isOperationFlag; }
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
-
-	void SetBoost();
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="sideVec">加速させる方向の横ベクトル</param>
+	void SetBoost(Vec3 sideVec);
 	void SetIsOperation(bool flag);
 	void SetCameraAngle(float cameraAngle);
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
@@ -60,8 +63,8 @@ public:
 	std::string GetState() { return m_state; }
 
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
-	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag tag);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
+	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_playerUpdate;
@@ -175,6 +178,7 @@ private:
 	Vec3 m_cameraToPlayer;
 	Vec3 m_cameraPos;
 	Vec3 m_lookPoint;
+	Vec3 m_postPos;
 	//std::shared_ptr<Camera> m_camera;
 	Vec3 m_moveDir;
 	Vec3 m_postMoveDir;

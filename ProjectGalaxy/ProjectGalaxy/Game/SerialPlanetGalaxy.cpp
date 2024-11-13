@@ -93,15 +93,15 @@ namespace
 SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
 	LocationsManager::GetInstance().LoadLocations();
-	////ギミック
-	////ブースター
-	//booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
-	//MyEngine::Physics::GetInstance().Entry(booster.back());
-	//booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
-	//MyEngine::Physics::GetInstance().Entry(booster.back());
-	////スターキャプチャー
-	//starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
-	//MyEngine::Physics::GetInstance().Entry(starCapture.back());
+	//ギミック
+	//ブースター
+	booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
+	MyEngine::Physics::GetInstance().Entry(booster.back());
+	booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
+	MyEngine::Physics::GetInstance().Entry(booster.back());
+	//スターキャプチャー
+	starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
+	MyEngine::Physics::GetInstance().Entry(starCapture.back());
 	//シーカーライン
 	std::vector<Vec3>seekerLine1Points;
 	seekerLine1Points.push_back(Vec3(-50, -25,0));
@@ -112,9 +112,9 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	seekerLine1Points.push_back(Vec3(230, 200, 0));
 	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
-	////クリスタル
-	//crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
-	//MyEngine::Physics::GetInstance().Entry(crystal.back());
+	//クリスタル
+	crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
+	MyEngine::Physics::GetInstance().Entry(crystal.back());
 
 
 	camera = make_shared<Camera>();
@@ -131,9 +131,9 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	MyEngine::Physics::GetInstance().Entry(spaceEmperor.back());
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
-	////アイテム
-	//coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
-	//MyEngine::Physics::GetInstance().Entry(coin.back());
+	//アイテム
+	coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
+	MyEngine::Physics::GetInstance().Entry(coin.back());
 
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
@@ -213,19 +213,19 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
 	camera->SetUpVec(player->GetNormVec());
 
-	////エネミー
-	//for (auto& item : kuribo) { item->Update(); }
+	//エネミー
+	for (auto& item : kuribo) { item->Update(); }
 
 
-	//for (auto& item : planet)item->Update();//ステージの更新
-	////位置固定ギミック
-	//for (auto& item : booster) { item->Update(); }
-	//for (auto& item : starCapture) { item->Update(); }
-	//for (auto& item : seekerLine) { item->Update(); }
-	//for (auto& item : crystal) { item->Update();}
-	//for (auto& item : coin)item->Update();
+	for (auto& item : planet)item->Update();//ステージの更新
+	//位置固定ギミック
+	for (auto& item : booster) { item->Update(); }
+	for (auto& item : starCapture) { item->Update(); }
+	for (auto& item : seekerLine) { item->Update(); }
+	for (auto& item : crystal) { item->Update();}
+	for (auto& item : coin)item->Update();
 
-	//userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
+	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 
 	
 
@@ -250,10 +250,12 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	if (onBoss)
 	{
 		auto boss = spaceEmperor.back();
-		if (boss->GetIsFind())return;
-		boss->OnBossPlanet();
+		if (!boss->GetIsFind())
+		{
+			boss->OnBossPlanet();
 
-		camera->WatchThis(boss->GetRigidbody()->GetPos()+boss->GetUpVec()*50, boss->GetRigidbody()->GetPos()+boss->GetFrontVec()*-50, boss->GetUpVec());
+			camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());
+		}
 	}
 	
 	player->SetMatrix();//行列を反映

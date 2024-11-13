@@ -93,7 +93,7 @@ void Gorori::Draw()
 	MV1DrawModel(m_modelHandle);
 }
 
-void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

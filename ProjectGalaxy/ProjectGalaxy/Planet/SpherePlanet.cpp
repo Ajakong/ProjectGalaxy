@@ -6,7 +6,7 @@ namespace
 {
 	constexpr float kGroundRadius = 50;
 	constexpr float  kGravityRange = 150;
-	constexpr float  kGravityPower = 0.98f;
+	constexpr float  kGravityPower = 0.098f;
 
 	const char* name = "planet";
 	const char* atom = "atomosphere";
@@ -64,8 +64,6 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	Vec3 objVelocity = obj->PlanetOnlyGetRigid()->GetVelocity();
 	
 	
-	////惑星の中心からy方向に伸ばした線を軸にし、オブジェクトの位置を見て軸と惑星の中心からオブジェクトに向かうベクトルの角度分だけオブジェクトのベロシティのy方向に影響させるという考え方、Xに進みたい場合軸のXを基準に,Zに進みたい場合軸のZを基準
-	////Yは法線の角度に回転させる
 	Vec3 ansVelocity;
 	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetPos();
 	Vec3 toObj = objPos-m_rigid->GetPos();
@@ -83,25 +81,8 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 		return objVelocity;
 	}
 
-	//if (obj->GetTag() == ObjectTag::Gorori||obj->GetTag()==ObjectTag::KillerTheSeeker)
-	//{
-	//	float angleX = DX_PI_F / 2 + atan2(GravityDir.y, GravityDir.x);
-	//	float angleZ = DX_PI_F / 2 + atan2(GravityDir.y, GravityDir.z);
-	//	ansVelocity = { objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ) };
-	//	ansVelocity += GravityDir * objVelocity.y;//プレイヤーのジャンプ分のベクトルの加算
-
-	//	ansVelocity += GravityDir * kGravityPower;
-	//	obj->SetReverceGravityVec(GravityDir.GetNormalized());
-
-	//	/*VECTOR ANSVECTOR = VGet(objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ));
-	//	ANSVECTOR = VAdd(ANSVECTOR, objVelocity.y * toObj);
-	//	ansVelocity = ANSVECTOR;*/
-	//	//ansVelocity -= toObj;
-	//	return ansVelocity+ GravityDir * gravityPower*40*((kGravityRange+(obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() -(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length())/ kGravityRange);
-	//}
-
 	//重力のみ
-	GravityDir = GravityDir * gravityPower * 0.005f * ((kGravityRange + (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
+	GravityDir = GravityDir * gravityPower*0.005f  * ((kGravityRange + (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
 	return GravityDir;
 }
 
@@ -112,7 +93,7 @@ Vec3 SpherePlanet::GetNormVec(Vec3 pos)
 	return norm;
 }
 
-void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	/*if (colider->GetTag() == ObjectTag::Takobo)
 	{
@@ -120,7 +101,7 @@ void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine:
 	}*/
 }
 
-void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag tag)
+void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{
