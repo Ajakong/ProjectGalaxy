@@ -92,7 +92,6 @@ m_getItemHandle(SoundManager::GetInstance().GetSoundData(kGetItemSEName)),
 m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
 m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
 m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
-m_upVec(Vec3::Up()),
 m_postUpVec(Vec3::Up()),
 m_nowPlanetPos(Vec3::Up() * -50),
 m_shotDir(Vec3::Front()),
@@ -258,15 +257,17 @@ void Player::Update()
 	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
 	m_lookPoint = m_rigid->GetPos();
 
-	//オーディオリスナーの位置の更新
-	Set3DSoundListenerPosAndFrontPosAndUpVec(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + GetCameraFrontVector()).VGet(), m_upVec.VGet());
-
 	m_postPos = m_rigid->GetPos();
 }
 
 void Player::SetMatrix()
 {
-	
+	//Vec3 RotateYAxis = Cross(m_sideVec, m_moveDir);
+	//RotateYAxis.Normalize();
+	//float angleY = GetAngle(m_inputVec, m_postMoveDir);
+
+	//m_myQ = m_myQ.CreateRotationQuaternion(angleY, RotateYAxis) * m_myQ;//角度の変化量だけ渡す
+
 	//if (m_inputVec.Length() != 0)
 	{
 		m_postMoveDir = m_inputVec;
@@ -279,18 +280,16 @@ void Player::SetMatrix()
 	axis.Normalize();//単位ベクトル化
 
 	m_myQ =m_myQ.CreateRotationQuaternion(angle, axis)* m_myQ;//回転の掛け算
-	Vec3 RotateYAxis = Cross(m_inputVec, m_postMoveDir);
-	RotateYAxis.Normalize();
-	float angleY = GetAngle(m_inputVec, m_postMoveDir);
-
-	m_myQ = m_myQ.CreateRotationQuaternion(angleY, RotateYAxis) * m_myQ;//角度の変化量だけ渡す
-	//m_myQ = m_myQ.QMult(m_myQ, m_myQ.CreateRotationQuaternion(atan2(-m_moveDir.x, -m_moveDir.z), m_upVec));
+	
 	auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
 
 	printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 	
 	
 #ifdef _DEBUG
+	////回転軸のデバッグ表示(紫)
+	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + RotateYAxis * 100).VGet(), 0xff0000);
+
 	//回転軸のデバッグ表示(紫)
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
 
@@ -313,6 +312,8 @@ void Player::SetMatrix()
 	MV1SetRotationMatrix(m_modelHandle, rotatemat);//回転行列を反映
 
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+	auto pos = MV1GetPosition(m_modelHandle);
+	printf("ModelPos:%f,%f,%f\n", pos.x, pos.y, pos.z);
 	auto modelMat = MV1GetMatrix(m_modelHandle);
 }
 
@@ -333,8 +334,7 @@ void Player::Draw()
 #if _DEBUG
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
 	
-
-	//printfDx("%d", HitCount);
+	
 #endif
 	if(m_isAimFlag)DrawRectRotaGraph(800, 450, kAimGraphSrkX, kAimGraphSrkY, kAimGraphWidth, kAimGraphHeight, 0.3, 0, m_aimGraphHandle, true);
 }
@@ -359,7 +359,7 @@ void Player::SetIsOperation(bool flag)
 		
 		SetAntiGravity();
 		m_playerUpdate = &Player::OperationUpdate;
-		ChangeAnim(kAnimationNumFall);
+		//ChangeAnim(kAnimationNumFall);
 		m_isOperationFlag = true;
 	}
 	else
@@ -645,6 +645,7 @@ void Player::WalkingUpdate()
 	
 	if ((Pad::IsPress(PAD_INPUT_Z)))
 	{
+		ChangeAnim(kAnimationNumRun, kDashMag);
 		m_playerUpdate = &Player::DashUpdate;
 	}
 
@@ -680,6 +681,7 @@ void Player::DashUpdate()
 	if ((Pad::IsRelase(PAD_INPUT_Z)))
 	{
 		m_cameraEasingSpeed = 15.f;
+		ChangeAnim(kAnimationNumRun);
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
 
@@ -737,7 +739,7 @@ void Player::JumpingUpdate()
 
 void Player::DropAttackUpdate()
 {
-	m_rigid->AddVelocity(m_upVec * -1.5f);
+	m_rigid->AddVelocity(m_upVec * -1.1f);
 }
 
 

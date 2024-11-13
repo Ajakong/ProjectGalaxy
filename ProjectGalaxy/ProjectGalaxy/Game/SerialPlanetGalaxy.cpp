@@ -85,13 +85,16 @@ namespace
 	constexpr float kCameraDistanceUp = 50.f;
 
 
-	const char* kMiniMapScreenName = "MiniMap";
+	const char* kModelScreenName = "ModelScreen";
 
 	constexpr float kGravityRange = 150.f;
 }
 
-SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
+SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer),
+m_bgmHandle(SoundManager::GetInstance().GetSoundData("WarOfAstron_Intro.mp3")),
+m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_battle.mp3"))
 {
+	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 	LocationsManager::GetInstance().LoadLocations();
 	//ギミック
 	//ブースター
@@ -138,7 +141,7 @@ SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : 
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
-	m_miniMapScreenHandle = ScreenManager::GetInstance().GetScreenData(kMiniMapScreenName, Game::kScreenWidth, Game::kScreenHeight);
+	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
 }
 
 SerialPlanetGalaxy::~SerialPlanetGalaxy()
@@ -201,13 +204,13 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	else if (spaceEmperor.back()->GetIsFind())camera->Update(spaceEmperor.back()->GetNeckPos());
 	else camera->Update(player->GetLookPoint());
 
-	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
+	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
 	Vec3 front = player->GetFrontVec();//-1をかけて逆ベクトルにしている
 
 	//相対的な軸ベクトルの設定
 
-	player->SetUpVec(planetToPlayer);
+	//player->SetUpVec(planetToPlayer);
 
 	camera->SetBoost(player->GetBoostFlag());
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
@@ -249,9 +252,12 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	bool onBoss = (spaceEmperor.back()->GetRigidbody()->GetPos() - player->GetPos()).Length() < kGravityRange;
 	if (onBoss)
 	{
+		
 		auto boss = spaceEmperor.back();
 		if (!boss->GetIsFind())
 		{
+			StopSoundMem(m_bgmHandle);
+			PlaySoundMem(m_bossBattleBgmHandle, DX_PLAYTYPE_BACK);
 			boss->OnBossPlanet();
 
 			camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());
@@ -308,15 +314,27 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatString(0, 0, 0xffffff, "NormVec(%f,%f,%f)", player->GetNormVec().x, player->GetNormVec().y, player->GetNormVec().z);
-	DrawFormatString(0, 25, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
-	DrawFormatString(0, 50, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
-	DrawFormatString(0, 75, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
-	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
+	DrawFormatString(0, 25*0, 0xffffff, "UpVec(%f,%f,%f)", player->GetUpVec().x, player->GetUpVec().y, player->GetUpVec().z);
+	DrawFormatString(0, 25 * 1, 0xffffff, "PostUpVec(%f,%f,%f)", player->GetPostUpVec().x, player->GetPostUpVec().y, player->GetPostUpVec().z);
+	DrawFormatString(0, 25*2, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
+	DrawFormatString(0, 25*3, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
+	DrawFormatString(0, 25*4, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
+	DrawFormatString(0, 25*5, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
 	
-	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
-	DrawFormatString(0, 175, 0xffffff, player->GetState().c_str());
-	DrawFormatString(0, 200, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
+	DrawFormatString(0, 25*6, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
+	DrawFormatString(0, 25*7, 0xffffff, player->GetState().c_str());
+	DrawFormatString(0, 25*8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
+
+	SetDrawScreen(m_modelScreenHandle);
+
+	SetCameraNearFar(1.f, 10000.f);
+	SetCameraPositionAndTarget_UpVecY((player->GetPos() + Vec3::Front() * -20).VGet(), (player->GetPos()).VGet());
+	ClearDrawScreen();
+	player->Draw();
+	SetDrawScreen(DX_SCREEN_BACK);
+	camera->Set();
+
+	DrawRotaGraph(300, 500,0.2f,0, m_modelScreenHandle, false);
 }
 
 void SerialPlanetGalaxy::BossBattleDraw()

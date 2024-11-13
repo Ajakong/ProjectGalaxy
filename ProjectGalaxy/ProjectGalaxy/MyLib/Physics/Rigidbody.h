@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include "../Vec3.h"
 
-struct Transform//ƒ}ƒŠƒIƒMƒƒƒ‰ƒNƒV[‚Å‚Í‚±‚ê‚ğg—p‚·‚é
+struct Transform//ãƒãƒªã‚ªã‚®ãƒ£ãƒ©ã‚¯ã‚·ãƒ¼ã§ã¯ã“ã‚Œã‚’ä½¿ç”¨ã™ã‚‹
 {
 	Vec3 Translate;
 	Vec3 Rotate;
-	Vec3 Scale;//“–‚½‚è”»’è‚Æ‚Í•Ê‚ÌƒXƒP[ƒ‹
+	Vec3 Scale;//å½“ãŸã‚Šåˆ¤å®šã¨ã¯åˆ¥ã®ã‚¹ã‚±ãƒ¼ãƒ«
 };
 
 namespace MyEngine
@@ -13,10 +13,10 @@ namespace MyEngine
 	class Rigidbody final
 	{
 	public:
-		Rigidbody();
+		Rigidbody(const Vec3& pos = Vec3());
 		~Rigidbody();
 
-		void Init(const Vec3& pos = Vec3());
+		void Init();
 
 		/* Getter/Setter */
 		const Vec3& GetPos() const { return m_pos; }
@@ -39,7 +39,7 @@ namespace MyEngine
 		Vec3 m_velocity;
 		Vec3 m_prevVelocity;
 		Vec3 m_dir;
-		//float m_gravityPower;//–œ—Lˆø—Í
+		//float m_gravityPower;//ä¸‡æœ‰å¼•åŠ›
 		
 	};
 }

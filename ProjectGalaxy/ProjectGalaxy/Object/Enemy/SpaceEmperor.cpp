@@ -25,7 +25,7 @@ namespace
 
 }
 
-SpaceEmperor::SpaceEmperor(Vec3 pos) : Enemy(-1,Priority::High,ObjectTag::SpaceEmperor),
+SpaceEmperor::SpaceEmperor(Vec3 pos) : Enemy(-1,Priority::Boss,ObjectTag::SpaceEmperor),
 m_armExtensionDistance(0),
 m_armExtensionSpeed(kArmExtensionSpeedMax),
 m_animBlendRate(0),
@@ -109,16 +109,17 @@ void SpaceEmperor::OnBossPlanet()
 void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (m_update == &SpaceEmperor::HitUpdate)return;
-	if (colider->GetTag() == ObjectTag::Player)
-	{
-		m_hitDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
-		m_hitDir.Normalize();
-		ChangeAnim(kAnimIndexIdle);
-		m_update = &SpaceEmperor::HitUpdate;
-		
-	}
+	
 	if (ownTag == MyEngine::ColliderBase::ColideTag::Fist)
 	{
+		if (colider->GetTag() == ObjectTag::Player)
+		{
+			m_hitDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
+			m_hitDir.Normalize();
+			ChangeAnim(kAnimIndexIdle);
+			m_update = &SpaceEmperor::HitUpdate;
+
+		}
 		if (colider->GetTag() == ObjectTag::PlayerBullet)
 		{
 			m_hitDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();

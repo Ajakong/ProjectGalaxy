@@ -113,7 +113,9 @@ private:
 	int m_skyDomeH;
 	int modelH;
 	int m_warpEffectHandle;
-	int m_miniMapScreenHandle;
+	int m_modelScreenHandle;
+	int m_bgmHandle;
+	int m_bossBattleBgmHandle;
 
 	//物体Xの数
 	int itemNum;

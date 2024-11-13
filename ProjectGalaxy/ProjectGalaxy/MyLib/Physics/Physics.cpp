@@ -159,6 +159,10 @@ void MyEngine::Physics::MoveNextPos() const
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
 							{
+								if (obj->GetTag() == ObjectTag::Player)
+								{
+									int a = 0;
+								}
 								planet->OnTriggerEnter(obj,col->GetTag(), objCol->GetTag());
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}

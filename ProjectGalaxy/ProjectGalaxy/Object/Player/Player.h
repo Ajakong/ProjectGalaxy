@@ -31,6 +31,7 @@ public:
 	Vec3 GetNormVec() { return Vec3(m_rigid->GetPos() - m_nowPlanetPos).GetNormalized(); }
 	Vec3 GetFrontVec() { return m_frontVec.GetNormalized(); }
 	Vec3 GetSideVec() { return m_sideVec.GetNormalized(); }
+	Vec3 GetPostUpVec() { return m_postUpVec; }
 	Vec3 GetPostMoveDir(){ return m_postMoveDir; }
 	Vec3 GetInputVec() { return m_inputVec; }
 	Vec3 GetShotDir() { return m_shotDir; }
@@ -50,7 +51,6 @@ public:
 	void SetCameraAngle(float cameraAngle);
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
-	void SetUpVec(Vec3 up) { m_upVec = up.GetNormalized(); }
 	void IsWarp() { m_isJumpFlag = true;}
 	int GetPlayerModelhandle() { return m_modelHandle; }
 	bool IsSearch() { return m_isSearchFlag; }
@@ -188,7 +188,9 @@ private:
 
 	Vec3 m_frontVec;
 	Vec3 m_sideVec;
-	Vec3 m_upVec;
+		
+		
+		;
 	Vec3 m_postUpVec;
 
 	Vec3 m_shotDir;

@@ -70,6 +70,9 @@ void Camera::Update(Vec3 LookPoint)
 	}
 	SetCameraNearFar(kCameraNear, kCameraFar);
 	(this->*m_cameraUpdate)(LookPoint);
+
+	//オーディオリスナーの位置の更新
+	Set3DSoundListenerPosAndFrontPosAndUpVec(m_pos.VGet(), Vec3(m_pos + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 }
 
 void Camera::SetCamera(Vec3 LookPoint)
@@ -86,6 +89,11 @@ void Camera::SetCamera(Vec3 LookPoint)
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());
 	m_postLookPointPos = m_lookPoint;
+}
+
+void Camera::Set()
+{
+	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());
 }
 
 void Camera::SetAimCamera(Vec3 LookPoint)

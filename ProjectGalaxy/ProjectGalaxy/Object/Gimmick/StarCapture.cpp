@@ -12,7 +12,7 @@ namespace
 
 }
 
-StarCapture::StarCapture(Vec3 pos, int radius, int captureRadius) : Collidable(Priority::StageGimmick, ObjectTag::Player),
+StarCapture::StarCapture(Vec3 pos, int radius, int captureRadius) : Collidable(Priority::StageGimmick, ObjectTag::StarCapture),
 m_isCapturePlayer(false),
 m_captureFrame(0),
 m_recastTime(0)

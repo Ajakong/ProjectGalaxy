@@ -9,7 +9,8 @@ Collidable::Collidable(Priority priority, ObjectTag tag) :
 	m_priority(priority),
 	m_tag(tag),
 	m_isAntiGravity(false),
-	m_isDestroyFlag(false)
+	m_isDestroyFlag(false),
+	m_upVec(Vec3::Up())
 {
 	m_rigid = std::make_shared<Rigidbody>();
 }

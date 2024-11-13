@@ -25,6 +25,7 @@ namespace MyEngine
 			Middle,		// 中
 			High,		// 高
 			StageGimmick,//ステージギミック
+			Boss,//ボス
 			Static,		// 動かない（最高）
 		};
 	public:

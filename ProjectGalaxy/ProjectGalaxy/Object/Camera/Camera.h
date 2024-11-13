@@ -14,6 +14,7 @@ public:
 
 	void Update(Vec3 LookPoint);	// 更新.
 	void SetCamera(Vec3 LookPoint);
+	void Set();
 	void SetAimCamera(Vec3 LookPoint);
 	void SetDebugCameraPoint();
 	void DebagDraw();

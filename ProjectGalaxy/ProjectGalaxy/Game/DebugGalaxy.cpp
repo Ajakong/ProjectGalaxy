@@ -105,7 +105,7 @@ void DebugGalaxy::Update()
 
 	//相対的な軸ベクトルの設定
 
-	player->SetUpVec(planetToPlayer);
+	//player->SetUpVec(planetToPlayer);
 
 	camera->SetBoost(player->GetBoostFlag());
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
