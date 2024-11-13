@@ -54,8 +54,8 @@ m_chaseFrameCount(0)
 	m_rigid->SetPos(pos);
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		item->radius = kRadius;
+		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_bodyCol->radius = kRadius;
 	}
 	
 #ifdef _DEBUG
@@ -96,6 +96,8 @@ void Kuribo::Update()
 		m_animBlendRate = 1.0f;
 	}
 	m_sideVec = Cross(m_upVec, m_frontVec);
+
+	m_bodyCol->SetShiftPosNum(m_upVec * 3);
 }
 
 void Kuribo::SetMatrix()
