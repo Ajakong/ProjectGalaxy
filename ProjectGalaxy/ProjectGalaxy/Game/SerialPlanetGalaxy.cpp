@@ -142,6 +142,13 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
 	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
+	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
+	for (auto& item : planet)
+	{
+		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
+	}
+	//それぞれのオブジェクトの上方向ベクトルなどの更新
+	MyEngine::Physics::GetInstance().Update();
 }
 
 SerialPlanetGalaxy::~SerialPlanetGalaxy()
@@ -162,14 +169,13 @@ void SerialPlanetGalaxy::Init()
 	// 深度値記録バッファ用RT
 	DxLib::SetCreateGraphChannelBitDepth(32);
 	DxLib::SetCreateDrawValidGraphChannelNum(1);
-
-	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
-
 	for (auto& item : planet)
 	{
 		item->Init();
-		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
 	}
+	
+	for (auto& item : booster)item->Init();
+	
 	for (auto& item : warpGate)item->Init();
 	for (auto& item : seekerLine) { item->Init(); }
 	for (auto& item : crystal) { item->Init(); }
@@ -216,17 +222,17 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
 	camera->SetUpVec(player->GetNormVec());
 
-	//エネミー
-	for (auto& item : kuribo) { item->Update(); }
+	////エネミー
+	//for (auto& item : kuribo) { item->Update(); }
 
 
-	for (auto& item : planet)item->Update();//ステージの更新
-	//位置固定ギミック
-	for (auto& item : booster) { item->Update(); }
-	for (auto& item : starCapture) { item->Update(); }
-	for (auto& item : seekerLine) { item->Update(); }
-	for (auto& item : crystal) { item->Update();}
-	for (auto& item : coin)item->Update();
+	//for (auto& item : planet)item->Update();//ステージの更新
+	////位置固定ギミック
+	//for (auto& item : booster) { item->Update(); }
+	//for (auto& item : starCapture) { item->Update(); }
+	//for (auto& item : seekerLine) { item->Update(); }
+	//for (auto& item : crystal) { item->Update();}
+	//for (auto& item : coin)item->Update();
 
 	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 
@@ -258,11 +264,13 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		{
 			StopSoundMem(m_bgmHandle);
 			PlaySoundMem(m_bossBattleBgmHandle, DX_PLAYTYPE_BACK);
-			boss->OnBossPlanet();
+			//boss->OnBossPlanet();
 
-			camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());
+			/*camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());*/
 		}
 	}
+
+	MyEngine::Physics::GetInstance().Update();
 	
 	player->SetMatrix();//行列を反映
 	for (auto& item : kuribo) { item->SetMatrix(); }
@@ -314,8 +322,10 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatString(0, 25*0, 0xffffff, "UpVec(%f,%f,%f)", player->GetUpVec().x, player->GetUpVec().y, player->GetUpVec().z);
-	DrawFormatString(0, 25 * 1, 0xffffff, "PostUpVec(%f,%f,%f)", player->GetPostUpVec().x, player->GetPostUpVec().y, player->GetPostUpVec().z);
+	DrawFormatString(0, 25 * 0, 0xffffff, "HP:%f", player->GetHp());
+
+	DrawFormatString(0, 25*1, 0xffffff, "UpVec(%f,%f,%f)", player->GetUpVec().x, player->GetUpVec().y, player->GetUpVec().z);
+	
 	DrawFormatString(0, 25*2, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
 	DrawFormatString(0, 25*3, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
 	DrawFormatString(0, 25*4, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
@@ -332,9 +342,21 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	ClearDrawScreen();
 	player->Draw();
 	SetDrawScreen(DX_SCREEN_BACK);
-	camera->Set();
+	
+	
 
-	DrawRotaGraph(300, 500,0.2f,0, m_modelScreenHandle, false);
+	SetScreenFlipTargetWindow(NULL);
+
+	camera->Set();
+	ScreenFlip();
+
+	// 少し時間の経過を待つ
+	WaitTimer(2);
+
+	ClearDrawScreen();
+	
+	DrawRotaGraph(800,450,1.0f,0, m_modelScreenHandle, true);
+	
 }
 
 void SerialPlanetGalaxy::BossBattleDraw()

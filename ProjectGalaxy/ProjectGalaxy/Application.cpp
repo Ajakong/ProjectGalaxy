@@ -10,6 +10,7 @@
 #include <EffekseerForDXLib.h>
 #include <cassert>
 
+
 namespace
 {
     constexpr int kScreenWidth = 1600;
@@ -25,6 +26,8 @@ int MyLoadGraph(const TCHAR* path)
     assert(handle != -1);
     return handle;
 }
+
+
 
 Application::Application()
 {
@@ -49,9 +52,12 @@ float Application::GetGravity() const
 
 bool Application::Init()
 {
-    ChangeWindowMode(true); // ウィンドウモードにします
-    //SetGraphMode(m_windowSize.w, m_windowSize.h, 1);
+    
 
+
+    ChangeWindowMode(true); // ウィンドウモードにします
+    // VSYNC待ちをしない設定に変更
+    SetWaitVSyncFlag(FALSE);
     SetUseDirect3DVersion(DX_DIRECT3D_11);
 
 
@@ -90,7 +96,7 @@ bool Application::Init()
     return true;
 }
 
-void Application::Run()
+void Application::Run(HWND windowHandle)
 {
     //printfがcmdに表示される
     AllocConsole();                                      // コンソール
@@ -135,7 +141,9 @@ void Application::Run()
             sceneManager.Draw();
             DrawEffekseer3D();
 
+            SetScreenFlipTargetWindow(windowHandle);
             ScreenFlip();
+
             // escキーを押したら終了する
             if (CheckHitKey(KEY_INPUT_ESCAPE))	break;
 

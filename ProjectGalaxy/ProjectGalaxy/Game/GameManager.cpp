@@ -29,7 +29,6 @@ void GameManager::Init()
 void GameManager::Update()
 {
 	galaxy.back()->Update();
-	Physics::GetInstance().Update();
 	if (galaxy.back()->GetClear())
 	{
 		galaxy.pop_back();

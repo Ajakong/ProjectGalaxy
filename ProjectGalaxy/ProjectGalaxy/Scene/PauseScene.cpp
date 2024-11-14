@@ -10,7 +10,7 @@
 #include"GraphManager.h"
 #include"FontManager.h"
 #include"Physics.h"
-
+#include"GamePlayingScene.h"
 
 namespace
 {
@@ -127,7 +127,7 @@ void PauseScene::NormalUpdate()
 		}
 		if (m_select % 3 == 2 || m_select % 3 == -1)
 		{
-			m_manager.ResetScene(std::make_shared<TitleScene>(m_manager));
+			m_manager.ResetScene(std::make_shared<GamePlayingScene>(m_manager));
 			MyEngine::Physics::GetInstance().Clear();
 		}
 	}

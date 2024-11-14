@@ -33,7 +33,7 @@ m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname))
 	m_gaussScreenHandle = ScreenManager::GetInstance().GetScreenData(kGaussScreenName, 1600, 900);
 	m_colorScreenHandle = ScreenManager::GetInstance().GetScreenData(kColorScreenName, 1600, 900);
 
-	m_sideVec = Cross(m_upVec, Dir);
+	
 }
 
 Booster::~Booster()
@@ -43,6 +43,8 @@ Booster::~Booster()
 
 void Booster::Init()
 {
+	m_sideVec = Cross(m_upVec, m_dir);
+	m_sideVec.Normalize();
 }
 
 void Booster::Update()
@@ -100,7 +102,9 @@ void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Colli
 		//colider->GetRigidbody()->SetVelocity(Vec3(m_rigid->GetPos()-colider->GetRigidbody()->GetPos()).GetNormalized()*15);
 		colider->GetRigidbody()->SetVelocity(m_dir *2.f);
 		auto player = std::dynamic_pointer_cast<Player>(colider);
+		player->SetPos(m_rigid->GetPos());
 		player->m_playerUpdate = &Player::BoostUpdate;
 		player->SetBoost(m_sideVec);
 	}
 }
+

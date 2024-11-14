@@ -279,7 +279,7 @@ void Player::SetMatrix()
 	Vec3 axis = Cross(m_upVec, m_moveDir);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
 	axis.Normalize();//単位ベクトル化
 
-	m_myQ =m_myQ.CreateRotationQuaternion(angle, axis)* m_myQ;//回転の掛け算
+	m_myQ =m_myQ.CreateRotationQuaternion(angle, axis) * m_myQ;//回転の掛け算
 	
 	auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
 
@@ -313,8 +313,8 @@ void Player::SetMatrix()
 
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 	auto pos = MV1GetPosition(m_modelHandle);
+	printf("PostUpVec(%f,%f,%f)\n", m_postUpVec.x, m_postUpVec.y, m_postUpVec.z);
 	printf("ModelPos:%f,%f,%f\n", pos.x, pos.y, pos.z);
-	auto modelMat = MV1GetMatrix(m_modelHandle);
 }
 
 void Player::Draw()
@@ -325,15 +325,37 @@ void Player::Draw()
 	}
 	MV1DrawModel(m_modelHandle);
 	DrawSphere3D((m_rigid->GetPos() + m_headCol->GetShift()).VGet(), m_headCol->GetRadius(), 10, m_color, 0xff4444, true);
-	DrawSphere3D((m_rigid->GetPos()+m_footCol->GetShift()).VGet(), m_footCol->GetRadius(), 10, m_color, 0x4444ff, true);
+	DrawSphere3D((m_rigid->GetPos() + m_footCol->GetShift()).VGet(), m_footCol->GetRadius(), 10, m_color, 0x4444ff, true);
 
 	DrawSphere3D((m_rigid->GetPos() + m_bodyCol->GetShift()).VGet(), m_bodyCol->GetRadius(), 10, m_color, 0xffff44, true);
-	DrawSphere3D((m_rigid->GetPos()+m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);
+	DrawSphere3D((m_rigid->GetPos() + m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);
 	
 
 #if _DEBUG
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
+	Vec3 axis = Cross(m_upVec, m_moveDir);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
+	axis.Normalize();//単位ベクトル化
 	
+#ifdef _DEBUG
+	//回転軸のデバッグ表示(紫)
+	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + RotateYAxis * 100).VGet(), 0xff0000);
+
+	//回転軸のデバッグ表示(紫)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
+
+	//上方向ベクトルのデバッグ表示(赤)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_upVec * 100).VGet(), 0xff0000);
+
+	//1フレーム前の上ベクトルの表示(暗赤)
+	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_postUpVec * 100).VGet(), 0xaa0000);
+
+	//進行方向ベクトルのデバッグ表示(黄色)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_moveDir * 100).VGet(), 0xffff00);
+
+	//右側ベクトルのデバッグ表示(緑)
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
+
+#endif 
 	
 #endif
 	if(m_isAimFlag)DrawRectRotaGraph(800, 450, kAimGraphSrkX, kAimGraphSrkY, kAimGraphWidth, kAimGraphHeight, 0.3, 0, m_aimGraphHandle, true);
@@ -346,7 +368,7 @@ void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
 
 void Player::SetBoost(Vec3 sideVec)
 {
-	m_sideVec = sideVec;
+	m_sideVec = sideVec*-1;
 	m_isBoostFlag = true; 
 	ChangeAnim(kAnimationNumFall);
 }
@@ -528,6 +550,11 @@ void Player::OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::Collide
 {
 }
 
+void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+{
+	
+}
+
 Vec3 Player::GetCameraToPlayer() const
 {
 	return m_cameraToPlayer;
@@ -675,7 +702,6 @@ void Player::DashUpdate()
 	m_state = "Dash";
 
 	Vec3 ans;
-
 
 	ans = Move();
 	if ((Pad::IsRelase(PAD_INPUT_Z)))

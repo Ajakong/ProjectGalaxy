@@ -23,14 +23,8 @@ m_modelHandle(modelHandle)
 	m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 50.0f, 0.0f, 0.0002f, 0.0f);
 	MV1SetScale(m_modelHandle, VGet(0.5f, 0.5f, 0.5f));
 	MV1SetPosition(m_modelHandle,m_rigid->GetPos().VGet());
-}
 
-SpherePlanet::~SpherePlanet()
-{
-}
-
-void SpherePlanet::Init()
-{
+	//当たり判定の追加
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
 	m_colliders.back()->isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
@@ -39,6 +33,15 @@ void SpherePlanet::Init()
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//マップの当たり判定
 	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item2->radius = kGroundRadius;
+}
+
+SpherePlanet::~SpherePlanet()
+{
+}
+
+void SpherePlanet::Init()
+{
+	
 }
 
 void SpherePlanet::Update()

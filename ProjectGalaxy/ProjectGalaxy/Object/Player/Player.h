@@ -42,9 +42,7 @@ public:
 	bool GetOperationFlag()const { return m_isOperationFlag; }
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
-	/// <summary>
-	/// 
-	/// </summary>
+
 	/// <param name="sideVec">加速させる方向の横ベクトル</param>
 	void SetBoost(Vec3 sideVec);
 	void SetIsOperation(bool flag);
@@ -65,6 +63,8 @@ public:
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
+
+	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag);
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_playerUpdate;
