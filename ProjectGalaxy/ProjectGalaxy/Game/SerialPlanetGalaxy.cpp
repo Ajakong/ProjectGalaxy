@@ -112,7 +112,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	seekerLine1Points.push_back(Vec3(-20, 100, 0));
 	seekerLine1Points.push_back(Vec3(0, 30, 0));
 	seekerLine1Points.push_back(Vec3(100, 200, 0));
-	seekerLine1Points.push_back(Vec3(230, 200, 0));
+	seekerLine1Points.push_back(Vec3(300, 350, 100));
 	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
 	//クリスタル
@@ -338,7 +338,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	SetDrawScreen(m_modelScreenHandle);
 
 	SetCameraNearFar(1.f, 10000.f);
-	SetCameraPositionAndTarget_UpVecY((player->GetPos() + Vec3::Front() * -20).VGet(), (player->GetPos()).VGet());
+	SetCameraPositionAndTarget_UpVecY((player->GetPos() + Vec3::Left() * -10+Vec3::Front()*-10+Vec3::Up()*10).VGet(), (player->GetPos()).VGet());
 	ClearDrawScreen();
 	player->Draw();
 	SetDrawScreen(DX_SCREEN_BACK);

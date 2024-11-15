@@ -61,7 +61,7 @@ namespace
 
 	const char* kGetSearchSEName = "Search.mp3";
 	const char* name = "Player";
-	const char* kFileName = "SpaceHarrier.mv1";
+	const char* kFileName = "SpaceHarrier2.mv1";
 	
 	constexpr int kAnimationNumTpose = 0;
 	constexpr int kAnimationNumHit = 1;
@@ -71,6 +71,7 @@ namespace
 	constexpr int kAnimationNumIdle = 5;
 	constexpr int kAnimationNumDeath = 6;
 	constexpr int kAnimationNumFall = 7;
+	constexpr int kOperationRolling = 8;
 
 	//照準
 	const char* kAimGraphFileName = "Elements_pro.png";
@@ -152,6 +153,7 @@ m_modelDirAngle(0)
 	ChangeAnim(kAnimationNumIdle);	
 
 	SetMatrix();
+	m_initMat = MV1GetLocalWorldMatrix(m_modelHandle);
 }
 
 Player::~Player()
@@ -249,15 +251,6 @@ void Player::Update()
 	{
 		m_animBlendRate = 1.0f;
 	}
-
-	//当たり判定の更新
-	m_headCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius * 2 + kNeutralHeadRadius));
-	m_bodyCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius));
-	m_footCol->SetShiftPosNum(m_upVec * kNeutralFootRadius);
-	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
-	m_lookPoint = m_rigid->GetPos();
-
-	m_postPos = m_rigid->GetPos();
 }
 
 void Player::SetMatrix()
@@ -272,18 +265,24 @@ void Player::SetMatrix()
 	{
 		m_postMoveDir = m_inputVec;
 	}
+	Vec3 modelUp = GetUpDirection(m_modelHandle);
 	float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
 
-	printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
+	//printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
 
-	Vec3 axis = Cross(m_upVec, m_moveDir);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
+	if (angle * 180.0f / 3.141592f > 10)
+	{
+		int a = 0;
+	}
+
+	Vec3 axis = Cross(modelUp, m_rigid->GetVelocity());//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
 	axis.Normalize();//単位ベクトル化
 
 	m_myQ =m_myQ.CreateRotationQuaternion(angle, axis) * m_myQ;//回転の掛け算
 	
 	auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
 
-	printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
+	//printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 	
 	
 #ifdef _DEBUG
@@ -306,15 +305,20 @@ void Player::SetMatrix()
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
 	
 #endif 
-
 	m_postUpVec = m_upVec;//上方向ベクトルを前のフレームの上方向ベクトルにする
 	
 	MV1SetRotationMatrix(m_modelHandle, rotatemat);//回転行列を反映
 
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 	auto pos = MV1GetPosition(m_modelHandle);
-	printf("PostUpVec(%f,%f,%f)\n", m_postUpVec.x, m_postUpVec.y, m_postUpVec.z);
-	printf("ModelPos:%f,%f,%f\n", pos.x, pos.y, pos.z);
+	//当たり判定の更新
+	m_headCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius * 2 + kNeutralHeadRadius));
+	m_bodyCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius));
+	m_footCol->SetShiftPosNum(m_upVec * kNeutralFootRadius);
+	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
+	m_lookPoint = m_rigid->GetPos();
+
+	m_postPos = m_rigid->GetPos();
 }
 
 void Player::Draw()
@@ -324,11 +328,11 @@ void Player::Draw()
 		//MV1DrawModel(m_modelHandle);
 	}
 	MV1DrawModel(m_modelHandle);
-	DrawSphere3D((m_rigid->GetPos() + m_headCol->GetShift()).VGet(), m_headCol->GetRadius(), 10, m_color, 0xff4444, true);
+	/*DrawSphere3D((m_rigid->GetPos() + m_headCol->GetShift()).VGet(), m_headCol->GetRadius(), 10, m_color, 0xff4444, true);
 	DrawSphere3D((m_rigid->GetPos() + m_footCol->GetShift()).VGet(), m_footCol->GetRadius(), 10, m_color, 0x4444ff, true);
 
 	DrawSphere3D((m_rigid->GetPos() + m_bodyCol->GetShift()).VGet(), m_bodyCol->GetRadius(), 10, m_color, 0xffff44, true);
-	DrawSphere3D((m_rigid->GetPos() + m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);
+	DrawSphere3D((m_rigid->GetPos() + m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);*/
 	
 
 #if _DEBUG
@@ -347,13 +351,13 @@ void Player::Draw()
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_upVec * 100).VGet(), 0xff0000);
 
 	//1フレーム前の上ベクトルの表示(暗赤)
-	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_postUpVec * 100).VGet(), 0xaa0000);
+	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_postUpVec * 100).VGet(), 0xaa0000);
 
 	//進行方向ベクトルのデバッグ表示(黄色)
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_moveDir * 100).VGet(), 0xffff00);
 
 	//右側ベクトルのデバッグ表示(緑)
-	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
+	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_sideVec * 100).VGet(), 0x00ff00);
 
 #endif 
 	
@@ -378,7 +382,7 @@ void Player::SetIsOperation(bool flag)
 	SetVelocity(Vec3::Zero());
 	if (flag)
 	{
-		
+		ChangeAnim(kOperationRolling);
 		SetAntiGravity();
 		m_playerUpdate = &Player::OperationUpdate;
 		//ChangeAnim(kAnimationNumFall);
@@ -398,13 +402,16 @@ void Player::SetCameraAngle(float cameraAngle)
 
 void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
+	printf("CollideEnter");
 	if (colider->GetTag() == ObjectTag::Coin)
 	{
+		printf("Coin\n");
 		m_Hp += 10;
 	}
 
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
+		printf("Stage\n");
 		m_spinCount = 0;
 		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
 		m_playerUpdate = &Player::NeutralUpdate;
@@ -414,6 +421,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::Crystal)
 	{
+		printf("Crystal\n");
 		m_spinCount = 0;
 		m_playerUpdate = &Player::NeutralUpdate;
 		m_isJumpFlag = false;
@@ -422,6 +430,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::Kuribo)
 	{
+		printf("Kuribo\n");
 		if (m_isSpinFlag)
 		{
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
@@ -439,6 +448,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{
+		printf("Takobo\n");
 		if (m_isSpinFlag)
 		{
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
@@ -460,6 +470,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::Gorori)
 	{
+		printf("Gorori\n");
 		if (m_isSpinFlag)
 		{
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
@@ -483,6 +494,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::KillerTheSeeker)
 	{
+		printf("KillerTheSeeker\n");
 		if (m_isSpinFlag)
 		{
 			m_prevUpdate = m_playerUpdate;
@@ -508,11 +520,13 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::Item)
 	{
+		printf("Item\n");
 		PlaySoundMem(m_getItemHandle, DX_PLAYTYPE_BACK);
 		m_itemCount++;
 	}
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
 	{
+		printf("EnemyAttack\n");
 		if (m_isSpinFlag)
 		{
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
@@ -537,6 +551,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::ClearObject)
 	{
+		printf("ClearObject\n");
 		m_isClearFlag = true;
 	}
 	if (m_Hp <= 0)
@@ -552,7 +567,7 @@ void Player::OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::Collide
 
 void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
 {
-	
+	printf("TriggerEnter\n");
 }
 
 Vec3 Player::GetCameraToPlayer() const
@@ -810,7 +825,7 @@ void Player::SpiningUpdate()
 	m_rigid->SetVelocity(move);
 
 	m_spinAngle += DX_PI_F / 15;
-	m_angle += DX_PI_F / 15;
+
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		ChangeAnim(kAnimationNumIdle);

@@ -175,6 +175,7 @@ private:
 
 	Quaternion m_myQ;
 	Quaternion m_rotateYQ;
+	MATRIX m_initMat;
 	Vec3 m_cameraToPlayer;
 	Vec3 m_cameraPos;
 	Vec3 m_lookPoint;

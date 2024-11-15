@@ -69,7 +69,7 @@ namespace MyEngine
 
 	private:
 
-
+		void Gravity();
 		void MoveNextPos() const;
 
 		void CheckCollide();

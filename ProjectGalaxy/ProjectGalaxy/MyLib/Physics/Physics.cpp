@@ -83,6 +83,8 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 
 void Physics::Update()
 {
+	Gravity();
+
 	for (auto& item : m_collidables)
 	{
 		item->Update();
@@ -138,10 +140,7 @@ void MyEngine::Physics::Clear()
 	m_preTirrigerInfo.clear();
 }
 
-/// <summary>
-/// 物理からの移動を未来の座標に適用
-/// </summary>
-void MyEngine::Physics::MoveNextPos() const
+void MyEngine::Physics::Gravity()
 {
 	for (const auto& item : m_stageCollidables)
 	{
@@ -163,7 +162,7 @@ void MyEngine::Physics::MoveNextPos() const
 								{
 									int a = 0;
 								}
-								planet->OnTriggerEnter(obj,col->GetTag(), objCol->GetTag());
+								planet->OnTriggerEnter(obj, col->GetTag(), objCol->GetTag());
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
 							colIndex++;
@@ -177,6 +176,13 @@ void MyEngine::Physics::MoveNextPos() const
 		}
 
 	}
+}
+
+/// <summary>
+/// 物理からの移動を未来の座標に適用
+/// </summary>
+void MyEngine::Physics::MoveNextPos() const
+{
 
 	for (const auto& item : m_collidables)
 	{

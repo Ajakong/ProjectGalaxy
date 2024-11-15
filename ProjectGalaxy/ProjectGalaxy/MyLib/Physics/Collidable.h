@@ -52,6 +52,19 @@ namespace MyEngine
 			return rad;
 		}
 
+		// 3Dモデルの上方向ベクトルを取得する関数
+		Vec3 GetUpDirection(int modelHandle)
+		{
+			// モデルのワールド行列を取得
+			MATRIX matrix;
+			matrix=MV1GetMatrix(modelHandle);
+
+			// ワールド行列の第2列が上方向ベクトル
+			Vec3 upVector = { matrix.m[1][0], matrix.m[1][1], matrix.m[1][2] };
+
+			return upVector;
+		}
+
 
 
 		Collidable(Priority priority, ObjectTag tag);

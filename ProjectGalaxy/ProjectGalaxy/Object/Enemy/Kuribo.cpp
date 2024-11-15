@@ -104,7 +104,7 @@ void Kuribo::SetMatrix()
 {
 	float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
 
-	printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
+	//printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
 
 	Vec3 axis = Cross(m_upVec, m_frontVec);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
 	axis.Normalize();//単位ベクトル化
@@ -113,7 +113,7 @@ void Kuribo::SetMatrix()
 
 	auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
 
-	printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
+	//printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 
 
 #ifdef _DEBUG

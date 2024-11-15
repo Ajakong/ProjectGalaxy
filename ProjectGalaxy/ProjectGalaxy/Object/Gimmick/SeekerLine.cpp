@@ -67,6 +67,9 @@ void SeekerLine::Update()
 	m_velocity.Normalize();
 	//m_player->SetPos(EaseInOut(m_points[m_hitPointNum], m_points[m_hitPointNum + 1], 1, 2));
 	m_player->SetPos(m_player->GetPos()+m_velocity* m_num);
+	m_player->SetVelocity(m_velocity * m_num);
+	//m_player->SetUpVec(Cross(m_velocity,Vec3::Front()*-1));
+
 	//m_player->SetPos((m_points[m_hitPointNum+1]));
 
 	if ((m_player->GetPos() - m_points[m_hitPointNum + 1]).Length() <= 5)//次のポイントに到達したら
@@ -76,7 +79,7 @@ void SeekerLine::Update()
 		{
 			m_player->SetIsOperation(false);
 			//プレイヤーをジャンプさせる
-			m_player->CommandJump();
+			//m_player->CommandJump();
 			m_hitPointNum = 0;
 			m_player = nullptr;
 		}
