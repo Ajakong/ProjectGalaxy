@@ -87,6 +87,10 @@ void Physics::Update()
 
 	for (auto& item : m_collidables)
 	{
+		for (auto& col : item->m_colliders)
+		{
+			col->SetNowOnHit(false);
+		}
 		item->Update();
 	}
 	m_preCollideInfo = m_newCollideInfo;
@@ -158,10 +162,6 @@ void MyEngine::Physics::Gravity()
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
 							{
-								if (obj->GetTag() == ObjectTag::Player)
-								{
-									int a = 0;
-								}
 								planet->OnTriggerEnter(obj, col->GetTag(), objCol->GetTag());
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
@@ -281,6 +281,8 @@ void MyEngine::Physics::CheckCollide()
 							secondaryCollider = colA;
 						}
 
+						colA->SetNowOnHit(true);
+						colB->SetNowOnHit(true);
 						FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider, info);
 						// 位置補正をしたらもう一度初めから行う
 						isCheck = true;

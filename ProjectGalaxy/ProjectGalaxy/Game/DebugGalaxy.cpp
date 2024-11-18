@@ -167,8 +167,6 @@ void DebugGalaxy::Draw()
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Front() * 20).VGet(), 0x0000ff);
 
-
-
 #endif
 
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);

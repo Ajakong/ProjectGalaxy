@@ -1,6 +1,9 @@
 ﻿#include "BoxPlanet.h"
 #include"ColliderBox.h"
-
+namespace
+{
+	const Vec3 kBoxPlanetSize = Vec3(30, 50, 50);
+}
 BoxPlanet::BoxPlanet(Vec3 pos, int color)
 {
 	m_color = color;
@@ -10,7 +13,7 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color)
 		
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back());
 		item->norm = Vec3(0, 1, 0);
-		item->size = Vec3(30, 50, 50);
+		item->size = kBoxPlanetSize;
 		item->rotation = Quaternion();
 		norm = item->norm;
 		size = item->size;

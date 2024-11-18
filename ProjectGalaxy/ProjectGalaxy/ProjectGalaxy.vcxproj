@@ -147,6 +147,7 @@
     <ClCompile Include="Game\Galaxy.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
     <ClCompile Include="Game\SerialPlanetGalaxy.cpp" />
+    <ClCompile Include="Game\WatchGalaxy.cpp" />
     <ClCompile Include="Game\World.cpp" />
     <ClCompile Include="LoadManager\EffectManager.cpp" />
     <ClCompile Include="LoadManager\FontManager.cpp" />
@@ -194,6 +195,7 @@
     <ClCompile Include="Pad.cpp" />
     <ClCompile Include="Planet\BossPlanet.cpp" />
     <ClCompile Include="Planet\BoxPlanet.cpp" />
+    <ClCompile Include="Planet\DumbbellPlanet.cpp" />
     <ClCompile Include="Planet\Planet.cpp" />
     <ClCompile Include="Planet\SpherePlanet.cpp" />
     <ClCompile Include="PlayerSphere.cpp" />
@@ -212,6 +214,7 @@
     <ClInclude Include="Game\Galaxy.h" />
     <ClInclude Include="Game\GameManager.h" />
     <ClInclude Include="Game\SerialPlanetGalaxy.h" />
+    <ClInclude Include="Game\WatchGalaxy.h" />
     <ClInclude Include="Game\World.h" />
     <ClInclude Include="Kuribo.h" />
     <ClInclude Include="LoadManager\EffectManager.h" />
@@ -260,6 +263,7 @@
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Planet\BossPlanet.h" />
     <ClInclude Include="Planet\BoxPlanet.h" />
+    <ClInclude Include="Planet\DumbbellPlanet.h" />
     <ClInclude Include="Planet\Planet.h" />
     <ClInclude Include="Planet\SpherePlanet.h" />
     <ClInclude Include="PlayerSphere.h" />

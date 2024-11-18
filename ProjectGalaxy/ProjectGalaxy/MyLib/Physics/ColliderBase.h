@@ -23,7 +23,10 @@ namespace MyEngine
 			Body,
 			Fist,
 			Foot,
-			Spin
+			Spin,
+			one,//汎用的なタグ1
+			two,//汎用的なタグ2
+			three//汎用的なタグ3
 		};
 
 
@@ -37,6 +40,8 @@ namespace MyEngine
 		void UpdateHit(const ColliderBase* collider, bool isHit);
 		bool IsHit(const ColliderBase* collider) const { return m_isHit.at(collider); }
 		bool IsPreHit(const ColliderBase* collider) const { return m_isPreHit.at(collider); }
+		bool NowOnHit() { return m_isNowOnHit; }
+		void SetNowOnHit(bool flag) { m_isNowOnHit = flag; }
 		Vec3 GetShift() const{ return m_posShift; }
 		ColideTag GetTag()const { return m_tag; }
 		/// <summary>
@@ -56,5 +61,6 @@ namespace MyEngine
 		ColideTag m_tag;
 		std::unordered_map<const ColliderBase*, bool> m_isHit;
 		std::unordered_map<const ColliderBase*, bool> m_isPreHit;
+		bool m_isNowOnHit;
 	};
 }

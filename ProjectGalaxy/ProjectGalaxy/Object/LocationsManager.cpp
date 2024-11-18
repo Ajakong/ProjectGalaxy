@@ -1,17 +1,20 @@
 ﻿#include "LocationsManager.h"
 #include"DxLib.h"
+
 LocationsManager& LocationsManager::GetInstance()
 {
 	static LocationsManager info;
 	return info;
 }
-void LocationsManager::LoadLocations()
+std::vector<LocationsManager::LocationData> LocationsManager::LoadLocations(const char* filename)
 {
-	int handle = FileRead_open("Data/Info/data.loc");
+	std::string filePath = "Data/Info/";
+	int handle = FileRead_open((filePath + (std::string)filename).c_str());
 	int dataCnt = 0;
 	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
-	m_locationData.resize(dataCnt);
-	for (auto& loc : m_locationData)
+	
+	data[filename].resize(dataCnt);
+	for (auto& loc : data[filename])
 	{
 		//オブジェクト名ロード
 		byte nameCnt = 0;
@@ -31,4 +34,6 @@ void LocationsManager::LoadLocations()
 
 	}
 	FileRead_close(handle);
+
+	return data[filename];
 }

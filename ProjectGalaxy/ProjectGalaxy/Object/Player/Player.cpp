@@ -251,6 +251,11 @@ void Player::Update()
 	{
 		m_animBlendRate = 1.0f;
 	}
+
+	if (m_playerUpdate!=&Player::BoostUpdate&&m_footCol->NowOnHit())
+	{
+		m_playerUpdate = &Player::JumpingUpdate;
+	}
 }
 
 void Player::SetMatrix()

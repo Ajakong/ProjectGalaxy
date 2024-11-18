@@ -27,17 +27,17 @@ public:
 	float GetHp() { return m_Hp; }
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetMoveDir() const{ return m_moveDir; }
-	Vec3 GetNowPlanetPos() { return m_nowPlanetPos; }
-	Vec3 GetNormVec() { return Vec3(m_rigid->GetPos() - m_nowPlanetPos).GetNormalized(); }
-	Vec3 GetFrontVec() { return m_frontVec.GetNormalized(); }
-	Vec3 GetSideVec() { return m_sideVec.GetNormalized(); }
-	Vec3 GetPostUpVec() { return m_postUpVec; }
-	Vec3 GetPostMoveDir(){ return m_postMoveDir; }
-	Vec3 GetInputVec() { return m_inputVec; }
-	Vec3 GetShotDir() { return m_shotDir; }
-	Vec3 GetLookPoint() { return m_lookPoint; }
-	float GetRegenerationRange() { return m_regeneRange; }
-	float GetCameraEasingSpeed() { return m_cameraEasingSpeed; }
+	Vec3 GetNowPlanetPos() const { return m_nowPlanetPos; }
+	Vec3 GetNormVec() const { return Vec3(m_rigid->GetPos() - m_nowPlanetPos).GetNormalized(); }
+	Vec3 GetFrontVec() const { return m_frontVec.GetNormalized(); }
+	Vec3 GetSideVec() const { return m_sideVec.GetNormalized(); }
+	Vec3 GetPostUpVec() const{ return m_postUpVec; }
+	Vec3 GetPostMoveDir()const{ return m_postMoveDir; }
+	Vec3 GetInputVec()const { return m_inputVec; }
+	Vec3 GetShotDir()const { return m_shotDir; }
+	Vec3 GetLookPoint() const{ return m_lookPoint; }
+	float GetRegenerationRange() const{ return m_regeneRange; }
+	float GetCameraEasingSpeed()const { return m_cameraEasingSpeed; }
 	int WatchHp()const { return static_cast<int>(m_Hp); }
 	bool GetOperationFlag()const { return m_isOperationFlag; }
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
@@ -50,15 +50,15 @@ public:
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
 	void IsWarp() { m_isJumpFlag = true;}
-	int GetPlayerModelhandle() { return m_modelHandle; }
+	int GetPlayerModelhandle() const { return m_modelHandle; }
 	bool IsSearch() { return m_isSearchFlag; }
 	bool OnDamage() { return m_isOnDamageFlag; }
 	bool IsClear() { return m_isClearFlag; }
-	int GetDamageFrame() { return m_damageFrame; }
+	int GetDamageFrame() const { return m_damageFrame; }
 	int& SetReverse() { return m_reverseFlag; }
 	//int GetSearchRemainTime() { return m_searchRemainTime; }
-	bool GetJumpFlag() { return m_isJumpFlag; }
-	std::string GetState() { return m_state; }
+	bool GetJumpFlag() const { return m_isJumpFlag; }
+	std::string GetState() const { return m_state; }
 
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
@@ -76,6 +76,7 @@ public:
 	void CommandJump();
 	void BoostUpdate();
 	void OperationUpdate();
+
 private:
 	Vec3 Move();
 

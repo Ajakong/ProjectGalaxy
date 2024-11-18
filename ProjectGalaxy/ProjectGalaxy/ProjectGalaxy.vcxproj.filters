@@ -318,8 +318,14 @@
     <ClCompile Include="Object\Enemy\SpaceEmperor.cpp">
       <Filter>ソース ファイル\Object\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Planet\DumbbellPlanet.cpp">
+      <Filter>ソース ファイル\Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WatchGalaxy.cpp">
+      <Filter>ソース ファイル\Galaxy\cpp</Filter>
+    </ClCompile>
     <ClCompile Include="Object\LocationsManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\LoadManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -515,8 +521,14 @@
     <ClInclude Include="Object\Enemy\SpaceEmperor.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Planet\DumbbellPlanet.h">
+      <Filter>ヘッダー ファイル\Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WatchGalaxy.h">
+      <Filter>ヘッダー ファイル\Galaxy\h</Filter>
+    </ClInclude>
     <ClInclude Include="Object\LocationsManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\LoadManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
