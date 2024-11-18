@@ -1,15 +1,15 @@
-#pragma once
+ï»¿#pragma once
 #include "Enemy.h"
 
 /// <summary>
-/// ƒvƒŒƒCƒ„[‚ğ‹”FŒã‚»‚Ì•ûŒü‚É‘–‚è‘±‚¯‚é“G
+/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¦–èªå¾Œãã®æ–¹å‘ã«èµ°ã‚Šç¶šã‘ã‚‹æ•µ
 /// </summary>
 class Gorori : public Enemy
 {
 public:
-	/// <param name="m_modelhandle">ƒGƒlƒ~[‚Ìƒ‚ƒfƒ‹</param>
-		/// <param name="obj">‰e‹¿‚ğ—^‚¦‚éƒIƒuƒWƒF</param>
-	Gorori(Vec3 pos);
+	/// <param name="m_modelhandle">ã‚¨ãƒãƒŸãƒ¼ã®ãƒ¢ãƒ‡ãƒ«</param>
+		/// <param name="obj">å½±éŸ¿ã‚’ä¸ãˆã‚‹ã‚ªãƒ–ã‚¸ã‚§</param>
+	Gorori(Vec3 pos,Vec3 velocity);
 	~Gorori();
 
 	void Init();
@@ -28,16 +28,16 @@ public:
 
 	void SetTarget(std::shared_ptr<Collidable> target);
 
-	//ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+	//ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 	using enemyState_t = void(Gorori::*)();
 	enemyState_t m_enemyUpdate;
 private:
 	/// <summary>
-	/// œpœjó‘Ô
+	/// å¾˜å¾ŠçŠ¶æ…‹
 	/// </summary>
 	void IdleUpdate();
 	/// <summary>
-	/// UŒ‚’†
+	/// æ”»æ’ƒä¸­
 	/// </summary>
 	void AttackUpdate();
 
@@ -67,7 +67,7 @@ private:
 	Vec3 m_attackDir;
 	Vec3 m_moveShaftPos;
 	std::shared_ptr<Collidable> m_target;
-	//ƒAƒjƒ[ƒVƒ‡ƒ“•Ï”
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å¤‰æ•°
 	int m_anim_nutral = 0;
 	int m_anim_move = 0;
 	int m_anim_jump = 0;

@@ -8,6 +8,7 @@ namespace
 	constexpr float  kGravityRange = 150;
 	constexpr float  kGravityPower = 0.098f;
 
+
 	const char* name = "planet";
 	const char* atom = "atomosphere";
 

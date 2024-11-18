@@ -120,17 +120,18 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
 	MyEngine::Physics::GetInstance().Entry(crystal.back());
 
-
 	camera = make_shared<Camera>();
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
+	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3, -1));
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
-
+	
 	warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
 	MyEngine::Physics::GetInstance().Entry(warpGate.back());
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
 	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
 	MyEngine::Physics::GetInstance().Entry(kuribo.back());
+	takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -30)));
 	spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
 	spaceEmperor.back()->SetTarget(player);
 	MyEngine::Physics::GetInstance().Entry(spaceEmperor.back());
