@@ -6,6 +6,7 @@
 #include"Gorori.h"
 #include"EnemySphere.h"
 #include"PlayerSphere.h"
+#include"PlayerStickSphere.h"
 #include"KillerTheSeeker.h"
 #include"ModelManager.h"
 #include"GraphManager.h"
@@ -79,6 +80,10 @@ namespace
 	constexpr int kAimGraphSrkY = 200;
 	constexpr int kAimGraphWidth = 400;
 	constexpr int kAimGraphHeight = 370;
+
+	constexpr int kBulletKindNormal = 0;
+	constexpr int kBulletKindStick = 1;
+
 }
 
 void MTransCopy(MATRIX& in, const MATRIX& src) {
@@ -156,6 +161,8 @@ m_modelDirAngle(0)
 	m_initMat = MV1GetLocalWorldMatrix(m_modelHandle);
 
 	m_handFrameIndex= MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
+
+	m_shotIt = &Player::ShotTheStickStar;
 }
 
 Player::~Player()
@@ -209,7 +216,7 @@ void Player::Update()
 
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
-		ShotTheStar();
+		(this->*m_shotIt)();
 	}
 
 	for (auto& item : m_sphere)
@@ -944,19 +951,40 @@ Vec3 Player::Move()
 	return ans;
 }
 
+void Player::ChangeTheStar(int kind)
+{
+	if (kind == kBulletKindNormal)//通常弾
+	{
+		m_shotIt = &Player::ShotTheStar;
+	}
+	if (kind == kBulletKindStick)//グリップ弾
+	{
+		m_shotIt = &Player::ShotTheStickStar;
+	}
+
+}
+
 void Player::ShotTheStar()
 {
+	Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
+	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+}
+
+void Player::ShotTheStickStar()
+{
+	
 	if (m_sphere.size() == 0)
 	{
 		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
-		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
+		m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
 		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 	}
 	else
 	{
-		m_sphere.back()->Effect();
+		auto stickSphere = dynamic_pointer_cast<PlayerStickSphere>(m_sphere.back());
+		stickSphere->Effect();
 	}
-
 }
 
 void Player::DamegeUpdate()

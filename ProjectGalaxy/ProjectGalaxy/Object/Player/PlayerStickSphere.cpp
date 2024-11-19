@@ -42,6 +42,12 @@ PlayerStickSphere::~PlayerStickSphere()
 {
 }
 
+void PlayerStickSphere::Update()
+{
+	m_startPos = m_player->GetLeftHandPos();
+	(this->*m_moveUpdate)();
+}
+
 void PlayerStickSphere::Draw()
 {
 	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, false);

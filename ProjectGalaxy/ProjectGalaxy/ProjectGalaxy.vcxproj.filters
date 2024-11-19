@@ -330,6 +330,9 @@
     <ClCompile Include="Object\Player\PlayerStickSphere.cpp">
       <Filter>ソース ファイル\Object\Player</Filter>
     </ClCompile>
+    <ClCompile Include="WeaponSticker.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -535,6 +538,9 @@
     </ClInclude>
     <ClInclude Include="Object\Player\PlayerStickSphere.h">
       <Filter>ヘッダー ファイル\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponSticker.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

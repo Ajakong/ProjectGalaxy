@@ -6,6 +6,7 @@ public:
 	PlayerStickSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>player, Vec3 pos, Vec3 velocity, Vec3 sideVec, int moveNum, int color = 0xff0000);
 	virtual ~PlayerStickSphere();
 
+	void Update();
 	void Draw()override;
 
 	void Effect();
