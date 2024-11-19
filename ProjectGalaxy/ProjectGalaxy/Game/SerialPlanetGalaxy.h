@@ -2,15 +2,26 @@
 #include"Galaxy.h"
 
 class Camera;
+class Collidable;
 class Player;
 class Planet;
 class BossPlanet;
 class ClearObject;
+class Coin;
 class WarpGate;
+
+//ギミック
+class Booster;
+class StarCapture;
+class SeekerLine;
+class Crystal;
+class Item;
+
 class Takobo;
 class KillerTheSeeker;
 class Gorori;
-class Item;
+class Kuribo;
+class SpaceEmperor;
 
 class SerialPlanetGalaxy :public Galaxy//GameManagerが管理,惑星やオブジェクトの情報を持っている
 {
@@ -41,10 +52,21 @@ private:
 	/// ゲームプレイ時の更新処理
 	/// </summary>
 	void GamePlayingUpdate();
+
+	/// <summary>
+	/// ボスバトル時の更新処理
+	/// </summary>
+	void BossBattleUpdate();
+
 	/// <summary>
 	/// ゲームプレイ時の描画処理
 	/// </summary>
 	void GamePlayingDraw();
+
+	/// <summary>
+	/// ボスバトル時の描画処理
+	/// </summary>
+	void BossBattleDraw();
 
 private:
 
@@ -62,25 +84,38 @@ private:
 	UserData* userData = static_cast<UserData*>(GetBufferShaderConstantBuffer(cbuffH));
 
 	std::shared_ptr<Camera> camera;
+	//ステージ
 	std::vector<std::shared_ptr<Planet>> planet;
 	std::shared_ptr<BossPlanet> bossPlanet;
+	//アイテム
 	std::vector<std::shared_ptr<ClearObject>> clearObject;
+	std::vector<std::shared_ptr<Coin>> coin;
+	//ギミック
 	std::vector<std::shared_ptr<WarpGate>> warpGate;
+	std::vector<std::shared_ptr<Booster>> booster;
+	std::vector<std::shared_ptr<StarCapture>> starCapture;
+	std::vector<std::shared_ptr<SeekerLine>> seekerLine;
+	std::vector<std::shared_ptr<Crystal>> crystal;
+	std::vector<std::shared_ptr<Item>> poworStone;
+	//エネミー
 	std::vector<std::shared_ptr<Takobo>> takobo;
 	std::vector<std::shared_ptr<KillerTheSeeker>> killerTheSeeker;
 	std::vector<std::shared_ptr<Gorori>> gorori;
-	std::vector<std::shared_ptr<Item>> poworStone;
+	std::vector<std::shared_ptr<Kuribo>> kuribo;
+	std::vector<std::shared_ptr<SpaceEmperor>> spaceEmperor;
 
 	Vec3 m_cameraUpVec;
 
 	//ボスが出現したか
 	bool m_isBossWatch = false;
-
+	
 	//ハンドル集
 	int m_skyDomeH;
 	int modelH;
 	int m_warpEffectHandle;
-	int m_miniMapScreenHandle;
+	int m_modelScreenHandle;
+	int m_bgmHandle;
+	int m_bossBattleBgmHandle;
 
 	//物体Xの数
 	int itemNum;

@@ -61,9 +61,6 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{2ca5f853-f36e-4738-963f-7d04c5ef71c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Object\WarpGate">
-      <UniqueIdentifier>{00d3c7f7-d408-4b57-8498-58ce29860230}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Galaxy">
       <UniqueIdentifier>{7fb33df1-788b-49a6-b0bf-97d95f98b22c}</UniqueIdentifier>
     </Filter>
@@ -126,6 +123,12 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\Galaxy\h">
       <UniqueIdentifier>{40def9f4-c252-4e5d-953d-e68bd94a289c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object\Enemy\Kuribo">
+      <UniqueIdentifier>{bfb8a204-5009-4026-a657-a1f8212bc252}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Object\WarpGate">
+      <UniqueIdentifier>{00d3c7f7-d408-4b57-8498-58ce29860230}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -273,9 +276,6 @@
     <ClCompile Include="Object\Base\SphereBase.cpp">
       <Filter>ソース ファイル\Object\Base</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerSphere.cpp">
-      <Filter>ソース ファイル\Object\Player</Filter>
-    </ClCompile>
     <ClCompile Include="MyLib\Quaternion.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
@@ -284,6 +284,51 @@
     </ClCompile>
     <ClCompile Include="Object\Gimmick\StarCapture.cpp">
       <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Easing.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\WarpGate\Booster.cpp">
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Gimmick\SeekerLine.cpp">
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Gimmick\Crystal.cpp">
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\DebugGalaxy.cpp">
+      <Filter>ソース ファイル\Galaxy\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\Kuribo.cpp">
+      <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Gimmick\Invisible.cpp">
+      <Filter>ソース ファイル\Object\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Item\Coin.cpp">
+      <Filter>ソース ファイル\Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\SpaceEmperor.cpp">
+      <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet\DumbbellPlanet.cpp">
+      <Filter>ソース ファイル\Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WatchGalaxy.cpp">
+      <Filter>ソース ファイル\Galaxy\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\LocationsManager.cpp">
+      <Filter>ソース ファイル\LoadManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Player\PlayerSphere.cpp">
+      <Filter>ソース ファイル\Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Player\PlayerStickSphere.cpp">
+      <Filter>ソース ファイル\Object\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -345,9 +390,6 @@
       <Filter>ヘッダー ファイル\Object</Filter>
     </ClInclude>
     <ClInclude Include="Object\Player\Player.h">
-      <Filter>ヘッダー ファイル\Object\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerSphere.h">
       <Filter>ヘッダー ファイル\Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="Object\WarpGate\WarpGate.h">
@@ -446,5 +488,58 @@
     <ClInclude Include="LoadManager\SoundManager.h">
       <Filter>ヘッダー ファイル\LoadManager</Filter>
     </ClInclude>
+    <ClInclude Include="MyLib\Easing.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\WarpGate\Booster.h">
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Gimmick\SeekerLine.h">
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Gimmick\Crystal.h">
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\CollisionUtil.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\DebugGalaxy.h">
+      <Filter>ヘッダー ファイル\Galaxy\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Kuribo.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Gimmick\Invisible.h">
+      <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item\Coin.h">
+      <Filter>ヘッダー ファイル\Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\SpaceEmperor.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet\DumbbellPlanet.h">
+      <Filter>ヘッダー ファイル\Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WatchGalaxy.h">
+      <Filter>ヘッダー ファイル\Galaxy\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\LocationsManager.h">
+      <Filter>ヘッダー ファイル\LoadManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Player\PlayerSphere.h">
+      <Filter>ヘッダー ファイル\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Player\PlayerStickSphere.h">
+      <Filter>ヘッダー ファイル\Object\Player</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ProjectGalaxy.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

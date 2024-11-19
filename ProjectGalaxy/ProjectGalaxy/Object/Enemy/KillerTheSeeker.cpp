@@ -1,4 +1,4 @@
-#include "KillerTheSeeker.h"
+ï»¿#include "KillerTheSeeker.h"
 #include"Killer.h"
 #include"ColliderSphere.h"
 #include"Physics.h"
@@ -9,7 +9,7 @@ namespace
 	constexpr float kCollisionRadius = 200.f;
 
 	/// <summary>
-		/// Å‘åHP
+		/// æœ€å¤§HP
 		/// </summary>
 	constexpr int kHp = 400;
 
@@ -18,25 +18,25 @@ namespace
 	constexpr int kStartPosZ = 0;
 
 	/// <summary>
-	/// ‘«Œ³‚©‚çƒ‚ƒfƒ‹‚Ì’†S‚Ü‚Å‚Ì‹——£
+	/// è¶³å…ƒã‹ã‚‰ãƒ¢ãƒ‡ãƒ«ã®ä¸­å¿ƒã¾ã§ã®è·é›¢
 	/// </summary>
 	constexpr int kFootToCenter = 100;
 
 	/// <summary>
-	/// UŒ‚ƒN[ƒ‹ƒ^ƒCƒ€’†‚ÌÅ’áˆÚ“®‘¬“x
+	/// æ”»æ’ƒã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ ä¸­ã®æœ€ä½ç§»å‹•é€Ÿåº¦
 	/// </summary>
 	constexpr int kIdleSpeed = 20;
 	/// <summary>
-	/// ‹…‚Ì¶¬ŠÔŠu
+	/// çƒã®ç”Ÿæˆé–“éš”
 	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
 	/// <summary>
-	/// ÄUŒ‚‚Ü‚Å‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+	/// å†æ”»æ’ƒã¾ã§ã®ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ 
 	/// </summary>
 	constexpr int kAttackCoolDownTime = 300;
 
 	/// <summary>
-	/// ƒXƒe[ƒWƒ‚ƒfƒ‹‚Ìc‰¡ƒTƒCƒY/2
+	/// ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ¢ãƒ‡ãƒ«ã®ç¸¦æ¨ªã‚µã‚¤ã‚º/2
 	/// </summary>
 	constexpr int kStageSizeHalf = 200;
 
@@ -65,7 +65,7 @@ m_hitFrame(0)
 	Set3DRadiusSoundMem(1000, m_shotSEHandle);
 	m_enemyUpdate = &KillerTheSeeker::IdleUpdate;
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kCollisionRadius;
 	m_moveShaftPos = m_rigid->GetPos();
@@ -133,7 +133,7 @@ void KillerTheSeeker::Draw()
 	//DrawBox(200, 700, 500 + m_Hp*3, 750, 0x00ff00, true);
 }
 
-void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -156,7 +156,7 @@ void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider)
 		m_isSecondFase = true;
 
 		m_attackCoolDownCount = 0;
-		m_attackDir = GetAttackDir().GetNormalized();//ƒIƒuƒWƒFƒNƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µ‚½‚à‚Ì
+		m_attackDir = GetAttackDir().GetNormalized();//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ãŸã‚‚ã®
 		m_enemyUpdate = &KillerTheSeeker::AttackRollingUpdate;
 		m_radius = 80;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
@@ -193,7 +193,7 @@ void KillerTheSeeker::IdleUpdate()
 		{
 			m_color = 0xff0000;
 			m_attackCoolDownCount = 0;
-			m_attackDir = GetAttackDir();//ƒIƒuƒWƒFƒNƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µ‚½‚à‚Ì
+			m_attackDir = GetAttackDir();//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ãŸã‚‚ã®
 			m_enemyUpdate = &KillerTheSeeker::AttackSphereUpdate;
 		}
 		else
@@ -204,7 +204,7 @@ void KillerTheSeeker::IdleUpdate()
 			{
 				if (toTarget.Length() > 4000)break;
 				m_attackCoolDownCount = 0;
-				m_attackDir = GetAttackDir();//ƒIƒuƒWƒFƒNƒg‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µ‚½‚à‚Ì
+				m_attackDir = GetAttackDir();//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ãŸã‚‚ã®
 				m_enemyUpdate = &KillerTheSeeker::AttackSphereUpdate;
 				break;
 			}

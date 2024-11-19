@@ -7,97 +7,73 @@ class Quaternion
 public:
 	Quaternion()
 	{
-		Qu.w = 1;
-		Qu.x = 0;
-		Qu.y = 0;
-		Qu.z = 0;
+		w = 1;
+		x = 0;
+		y = 0;
+		z = 0;
 	};
 	Quaternion(float _w, float _x, float _y, float _z)
 	{
-		Qu.w = _w;
-		Qu.x = _x;
-		Qu.y = _y;
-		Qu.z = _z;
+		w = _w;
+		x = _x;
+		y = _y;
+		z = _z;
 	};
+	Quaternion Conjugated() const
+	{
+		return Quaternion(w,-x, -y, -z);
+	}
+
+	Quaternion operator*(const Quaternion& q) const
+	{
+		Quaternion res;
+
+		res.x = x * q.w + w * q.x - z * q.y + y * q.z;
+		res.y = y * q.w + z * q.x + w * q.y - x * q.z;
+		res.z = z * q.w - y * q.x + x * q.y + w * q.z;
+		res.w = w * q.w - x * q.x - y * q.y - z * q.z;
+
+		return res;
+	}
+	Vec3 operator*(const Vec3& vec) const
+	{
+		Quaternion posQ = Quaternion(1.0f,vec.x, vec.y, vec.z);
+
+		Quaternion newPos = *this * posQ * this->Conjugated();
+
+		return Vec3(newPos.x, newPos.y, newPos.z);
+	}
+
 	virtual ~Quaternion() {}
+	float w;
+	float x;
+	float y;
+	float z;
 
 private:
-	struct Q
-	{
-		float w;
-		float x;
-		float y;
-		float z;
 
-		Q operator * (const Q& _q) const
-		{
-			Q tempQ;
-
-			/*クオータニオンの掛け算*/
-			tempQ.w = w * _q.w - x * _q.x - y * _q.y - z * _q.z;//実部
-			tempQ.x = w * _q.x + x * _q.w + y * _q.z - z * _q.y;//虚部x
-			tempQ.y = w * _q.y + y * _q.w + z * _q.x - x * _q.z;//虚部y
-			tempQ.z = w * _q.z + z * _q.w + x * _q.y - y * _q.x;//虚部z
-
-			return tempQ;
-		}
-
-	};
-
-	Q Qu;
-
+	
 public:
 	Quaternion QMult(Quaternion a, Quaternion b)
 	{
 		Quaternion temp;
 
 		/*クオータニオンの掛け算*/
-		temp.Qu.w = a.Qu.w * b.Qu.w - a.Qu.x * b.Qu.x - a.Qu.y * b.Qu.y - a.Qu.z * b.Qu.z;//実部
-		temp.Qu.x = a.Qu.w * b.Qu.x + a.Qu.x * b.Qu.w + a.Qu.y * b.Qu.z - a.Qu.z * b.Qu.y;//虚部x
-		temp.Qu.y = a.Qu.w * b.Qu.y + a.Qu.y * b.Qu.w + a.Qu.z * b.Qu.x - a.Qu.x * b.Qu.z;//虚部y
-		temp.Qu.z = a.Qu.w * b.Qu.z + a.Qu.z * b.Qu.w + a.Qu.x * b.Qu.y - a.Qu.y * b.Qu.x;//虚部z
+		temp.w = a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z;//実部
+		temp.x = a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y;//虚部x
+		temp.y = a.w * b.y + a.y * b.w + a.z * b.x - a.x * b.z;//虚部y
+		temp.z = a.w * b.z + a.z * b.w + a.x * b.y - a.y * b.x;//虚部z
 
 		return temp;
 	}
-	Quaternion AddRotationQuaternion(double radian, Vec3 Axis)
-	{
-		Quaternion ans;
-		ans.Qu.w = Qu.w;
-		ans.Qu.x = Qu.x;
-		ans.Qu.y= Qu.y;
-		ans.Qu.z = Qu.z;
-
-		double norm;
-		double ccc, sss;
-
-		ans.Qu.w = ans.Qu.x = ans.Qu.y = ans.Qu.z = 0.0;
-
-		norm = Axis.x * Axis.x + Axis.y * Axis.y + Axis.z * Axis.z;
-		if (norm <= 0.0) return ans;
-
-		norm = 1.0 / sqrt(norm);
-		Axis.x *= static_cast<float> (norm);
-		Axis.y *= static_cast<float> (norm);
-		Axis.z *= static_cast<float> (norm);
-
-		ccc = cos(0.5 * radian);
-		sss = sin(0.5 * radian);
-
-		ans.Qu.w += static_cast<float>(ccc);
-		ans.Qu.x += static_cast<float>(sss) * Axis.x;
-		ans.Qu.y += static_cast<float>(sss) * Axis.y;
-		ans.Qu.z += static_cast<float>(sss) * Axis.z;
-
-		return ans;
-	}
+	
 	//回転クォータニオン
 	Quaternion CreateRotationQuaternion(double radian, Vec3 Axis)
 	{
 		Quaternion ans;
 		double norm;
-		double ccc, sss;
-
-		ans.Qu.w = ans.Qu.x = ans.Qu.y = ans.Qu.z = 0.0;
+		ans.w = 1.0;
+		ans.x = ans.y = ans.z = 0.0;
 
 		norm = Axis.x * Axis.x + Axis.y * Axis.y + Axis.z * Axis.z;
 		if (norm <= 0.0) return ans;
@@ -107,91 +83,52 @@ public:
 		Axis.y *= static_cast<float> (norm);
 		Axis.z *= static_cast<float> (norm);
 
-		ccc = cos(0.5 * radian);
-		sss = sin(0.5 * radian);
+		float halfRadian = 0.5f * radian;
+		float ccc = cos(halfRadian);
+		float sss = sin(halfRadian);
 
-		ans.Qu.w =static_cast<float>(ccc);
-		ans.Qu.x = static_cast<float>(sss) * Axis.x;
-		ans.Qu.y = static_cast<float>(sss) * Axis.y;
-		ans.Qu.z = static_cast<float>(sss) * Axis.z;
+		ans.w = static_cast<float>(ccc);
+		ans.x = static_cast<float>(sss) * Axis.x;
+		ans.y = static_cast<float>(sss) * Axis.y;
+		ans.z = static_cast<float>(sss) * Axis.z;
 
 		return ans;
 	}
-	void SetQuaternion(Vec3 pos) { Qu.w = 1.0; Qu.x = pos.x; Qu.y = pos.y; Qu.z = pos.z; }
+	void SetQuaternion(Vec3 pos) { w = 1.0; x = pos.x; y = pos.y; z = pos.z; }
 
 	void SetMove(float _angle, Vec3 _axis)//回転軸と角速度の設定
 	{
 		_axis.Normalize();
-		Qu.w = cos(_angle / 2.0f);//実部
-		Qu.x = _axis.x * sin(_angle / 2.0f);
-		Qu.y = _axis.y * sin(_angle / 2.0f);
-		Qu.z = _axis.z * sin(_angle / 2.0f);
+		w = cos(_angle / 2.0f);//実部
+		x = _axis.x * sin(_angle / 2.0f);
+		y = _axis.y * sin(_angle / 2.0f);
+		z = _axis.z * sin(_angle / 2.0f);
 	}
-	/// <summary>
-	/// 平行移動
-	/// </summary>
-	/// <param name="m_pos"></param>
-	/// <param name="_vec"></param>
-	/// <returns></returns>
-	Vec3 Move(Vec3& m_pos, Vec3& _vec)
-	{
-		Q qPos, qInv;
-		Vec3 vPos;
-
-		//3次元座標をクオータニオンに変換
-		qPos.w = 1.0f;
-		qPos.x = m_pos.x;
-		qPos.y = m_pos.y;
-		qPos.z = m_pos.z;
-
-		//回転クォータニオンのインバースの作成
-		//逆クォータニオンを出すのは大変なので、
-		//3次元だと同じ値になる共役クオータニオンで作成(虚部だけマイナス反転)
-		qInv.w = Qu.w;
-		qInv.x = -Qu.x;
-		qInv.y = -Qu.y;
-		qInv.z = -Qu.z;
-
-		//回転後のクオータニオンの作成
-		qPos = Qu * qPos * qInv;
-
-		//３次元座標に戻す
-		vPos.x = qPos.x;
-		vPos.y = qPos.y;
-		vPos.z = qPos.z;
-
-		// 回転後に移動
-		vPos.x += _vec.x;
-		vPos.y += _vec.y;
-		vPos.z += _vec.z;
-
-		return vPos;
-	}
-
+	
 	Vec3 ToVec3()
 	{
-		return Vec3(Qu.x, Qu.y, Qu.z);
+		return Vec3(x, y, z);
 	}
 
 	MATRIX ToMat()
 	{
 		MATRIX matQ;
 
-		float x2 = Qu.x * Qu.x;
-		float y2 = Qu.y * Qu.y;
-		float z2 = Qu.z * Qu.z;
-		float w2 = Qu.w * Qu.w;
+		float x2 = x * x;
+		float y2 = y * y;
+		float z2 = z * z;
+		float w2 = w * w;
 
 		float r00 = x2 - y2 - z2 + w2;
-		float r01 = 2.0f * (Qu.x * Qu.y + Qu.z * Qu.w);
-		float r02 = 2.0f * (Qu.x * Qu.z - Qu.y * Qu.w);
+		float r01 = 2.0f * (x * y + z * w);
+		float r02 = 2.0f * (x * z - y * w);
 
-		float r10 = 2.0f * (Qu.x * Qu.y - Qu.z * Qu.w);
+		float r10 = 2.0f * (x * y - z * w);
 		float r11 = -x2 + y2 - z2 + w2;
-		float r12 = 2.0f * (Qu.y * Qu.z + Qu.x * Qu.w);
+		float r12 = 2.0f * (y * z + x * w);
 
-		float r20 = 2.0f * (Qu.x * Qu.z + Qu.y * Qu.w);
-		float r21 = 2.0f * (Qu.y * Qu.z - Qu.x * Qu.w);
+		float r20 = 2.0f * (x * z + y * w);
+		float r21 = 2.0f * (y * z - x * w);
 		float r22 = -x2 - y2 + z2 + w2;
 
 		matQ.m[0][0] = r00;
@@ -215,14 +152,54 @@ public:
 		float dot = Dot(norm, Dir);
 		float theta = acos(dot);
 		Vec3 cross =Cross(norm, Dir);
-		Q q;
+
 		cross = cross.GetNormalized();
 		theta = theta / 2;
-		Qu.x = cross.x * sin(theta);
-		Qu.y = cross.y * sin(theta);
-		Qu.z = cross.z * sin(theta);
-		Qu.w = cos(theta);
+		x = cross.x * sin(theta);
+		y = cross.y * sin(theta);
+		z = cross.z * sin(theta);
+		w = cos(theta);
 	}
 
+
+	Vec3 Move(Vec3& m_pos, Vec3& _vec)
+	{
+		Quaternion qPos, qInv,Qu;
+		Vec3 vPos;
+
+
+		//3次元座標をクオータニオンに変換
+		qPos.w = 1.0f;
+		qPos.x = m_pos.x;
+		qPos.y = m_pos.y;
+		qPos.z = m_pos.z;
+
+		//回転クォータニオンのインバースの作成
+		//逆クォータニオンを出すのは大変なので、
+		//3次元だと同じ値になる共役クオータニオンで作成(虚部だけマイナス反転)
+		qInv.w = w;
+		qInv.x = -x;
+		qInv.y = -y;
+		qInv.z = -z;
+
+		//回転後のクオータニオンの作成
+		qPos = *this * qPos * qInv;
+
+		//３次元座標に戻す
+		vPos.x = qPos.x;
+		vPos.y = qPos.y;
+		vPos.z = qPos.z;
+
+		// 回転後に移動
+		vPos.x += _vec.x;
+		vPos.y += _vec.y;
+		vPos.z += _vec.z;
+
+		return vPos;
+	}
 };
+
+Quaternion AngleAxis(float angle, const Vec3& axis);
+
+float Dot(const Quaternion& q1, const Quaternion& q2);
 

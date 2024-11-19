@@ -1,4 +1,4 @@
-#include "Application.h"
+﻿#include "Application.h"
 #include "SceneManager.h"
 #include "GamePlayingScene.h"
 #include"TitleScene.h"
@@ -9,6 +9,7 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
 #include <cassert>
+
 
 namespace
 {
@@ -25,6 +26,8 @@ int MyLoadGraph(const TCHAR* path)
     assert(handle != -1);
     return handle;
 }
+
+
 
 Application::Application()
 {
@@ -49,9 +52,12 @@ float Application::GetGravity() const
 
 bool Application::Init()
 {
-    ChangeWindowMode(true); // �E�B���h�E���[�h�ɂ��܂�
-    //SetGraphMode(m_windowSize.w, m_windowSize.h, 1);
+    
 
+
+    ChangeWindowMode(true); // ウィンドウモードにします
+    // VSYNC待ちをしない設定に変更
+    SetWaitVSyncFlag(FALSE);
     SetUseDirect3DVersion(DX_DIRECT3D_11);
 
 
@@ -64,8 +70,13 @@ bool Application::Init()
 
     void* CallBack();
 
+    
 
-    DxLib_Init();
+    SetWindowText("なめぇを決めてください");
+    if (DxLib_Init() == -1)
+    {
+        return false;
+    }
 
     SetWindowIconID(kIconID);
 
@@ -79,19 +90,22 @@ bool Application::Init()
     Effekseer_InitDistortion();
     Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
-    SetWindowText("�Ȃ߂������߂Ă�������");
-    if (DxLib_Init() == -1)
-    {
-        return false;
-    }
+   
 
     SetDrawScreen(DX_SCREEN_BACK);
     return true;
 }
 
-void Application::Run()
+void Application::Run(HWND windowHandle)
 {
-    {// �X�R�[�v�������I�ɍ���Ă���
+    //printfがcmdに表示される
+    AllocConsole();                                      // コンソール
+    FILE* out = 0; freopen_s(&out, "CON", "w", stdout); // stdout
+    FILE* in = 0; freopen_s(&in, "CON", "r", stdin);   // stdin
+    // デバッグコンソールがアクティブウィンドウになるのでゲーム本体のウィンドウをアクティブにする
+    SetForegroundWindow(GetMainWindowHandle());
+
+    {// スコープを強制的に作っている
 
         SceneManager sceneManager;
         sceneManager.ChangeScene(std::make_shared<GamePlayingScene>(sceneManager));
@@ -102,9 +116,18 @@ void Application::Run()
 
         while (ProcessMessage() != -1)
         {
-            // FPS�̌Œ�悤�ɊJ�n���̎��Ԃ��擾
+            // FPSの固定ように開始時の時間を取得
             time = GetNowHiPerformanceCount();
+            // 現在時刻をsystem_clockを用いて取得
+            auto now = std::chrono::system_clock::now();
 
+            // 現在時刻をtime_t形式に変換
+            std::time_t t = std::chrono::system_clock::to_time_t(now);
+            printf("----------------\n");
+            //現在時刻を表示
+            printf("%d", (t / 3600 + 9) % 24);//時
+            printf(":%d", t / 60 % 60);//分
+            printf(":%d\n", t % 60);//秒
             ClearDrawScreen();
             if (CheckHitKey(KEY_INPUT_ESCAPE))
             {
@@ -118,12 +141,18 @@ void Application::Run()
             sceneManager.Draw();
             DrawEffekseer3D();
 
+            SetScreenFlipTargetWindow(windowHandle);
             ScreenFlip();
 
-            // 60FPS�ɌŒ�
+            // escキーを押したら終了する
+            if (CheckHitKey(KEY_INPUT_ESCAPE))	break;
+
+            // 60FPSに固定
             while (16667 > GetNowHiPerformanceCount() - time) {};
         }
     }
+    // コンソール解放
+    fclose(out); fclose(in); FreeConsole();
     Terminate();
 }
 

@@ -1,9 +1,9 @@
-#include "ColliderCapsule.h"
+﻿#include "ColliderCapsule.h"
 
 using namespace MyEngine;
 
-ColliderCapsule::ColliderCapsule() :
-	ColliderBase(ColliderBase::Kind::Sphere),
+ColliderCapsule::ColliderCapsule(ColideTag tag) :
+	ColliderBase(ColliderBase::Kind::Sphere,tag),
 	radius(0.0f),
 	height(0.0f)
 {

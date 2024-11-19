@@ -1,4 +1,4 @@
-#include "PauseScene.h"
+ï»¿#include "PauseScene.h"
 #include <DxLib.h>
 #include"Pad.h"
 #include "Application.h"
@@ -10,7 +10,7 @@
 #include"GraphManager.h"
 #include"FontManager.h"
 #include"Physics.h"
-
+#include"GamePlayingScene.h"
 
 namespace
 {
@@ -18,11 +18,11 @@ namespace
 	constexpr int kMenuMargin = 50;
 
 	/// <summary>
-	/// ˆê•¶š‚¸‚Â‚ÌOffsetX(•¶š—ñ‚ğ’†SÀ•W‚ğw’è‚µ‚ÄDraw‚µ‚½‚¢‚Æ‚«‚Ég‚¤B’†SÀ•W-kCharPosOffSetX*•¶š”‚Æg‚¤)
+	/// ä¸€æ–‡å­—ãšã¤ã®OffsetX(æ–‡å­—åˆ—ã‚’ä¸­å¿ƒåº§æ¨™ã‚’æŒ‡å®šã—ã¦Drawã—ãŸã„ã¨ãã«ä½¿ã†ã€‚ä¸­å¿ƒåº§æ¨™-kCharPosOffSetX*æ–‡å­—æ•°ã¨ä½¿ã†)
 	/// </summary>
 	constexpr int kCharPosOffSetX = 4;
 	/// <summary>
-	/// ˆê•¶š‚¸‚Â‚ÌOffsetX
+	/// ä¸€æ–‡å­—ãšã¤ã®OffsetX
 	/// </summary>
 	constexpr int kCharPosOffSetY = 6;
 
@@ -37,7 +37,7 @@ m_soundVol(SoundManager::GetInstance().GetSoundVol()),
 m_btnFrame(0),
 m_fadeSpeed(1),
 m_frameHandle(GraphManager::GetInstance().GetGraphData(kFrameName)),
-m_fontHandle(FontManager::GetInstance().GetFontData("SF_font.ttf", "‰ô‘z‘Ì ƒlƒNƒXƒg UP B", 60, 7, DX_FONTTYPE_NORMAL)),
+//m_fontHandle(FontManager::GetInstance().GetFontData("SF_font.ttf", "å»»æƒ³ä½“ ãƒã‚¯ã‚¹ãƒˆ UP B", 60, 7, DX_FONTTYPE_NORMAL)),
 m_tutoFlag(false)
 {
 	m_updateFunc = &PauseScene::AppearUpdate;
@@ -57,7 +57,7 @@ void PauseScene::Update()
 	{
 		m_soundVol++;
 	}
-	if (Pad::IsPress(PAD_INPUT_Y))//XBoxƒRƒ“ƒgƒ[ƒ‰[‚ÌL
+	if (Pad::IsPress(PAD_INPUT_Y))//XBoxã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®L
 	{
 		m_soundVol--;
 	}
@@ -127,7 +127,7 @@ void PauseScene::NormalUpdate()
 		}
 		if (m_select % 3 == 2 || m_select % 3 == -1)
 		{
-			m_manager.ResetScene(std::make_shared<TitleScene>(m_manager));
+			m_manager.ResetScene(std::make_shared<GamePlayingScene>(m_manager));
 			MyEngine::Physics::GetInstance().Clear();
 		}
 	}
@@ -151,11 +151,11 @@ void PauseScene::ExpandDraw()
 	int halfHeight = (size.h - 100) / 2;
 	int centerY = size.h / 2;
 
-	float rate = static_cast<float>(m_frame) / kAppeaInterval;	// Œ»İ‚ÌŠÔ‚ÌŠ„‡(0.0`1.0)
+	float rate = static_cast<float>(m_frame) / kAppeaInterval;	// ç¾åœ¨ã®æ™‚é–“ã®å‰²åˆ(0.0ï½1.0)
 	int currentHalfHeight = static_cast<int>(rate * halfHeight);
 
 	SetDrawBlendMode(DX_BLENDMODE_MUL, 255);
-	// ‚¿‚å‚Á‚ÆˆÃ‚¢‹éŒ`‚ğ•`‰æ
+	// ã¡ã‚‡ã£ã¨æš—ã„çŸ©å½¢ã‚’æç”»
 	DrawBox(kMenuMargin, centerY - currentHalfHeight, size.w - kMenuMargin, centerY + currentHalfHeight,
 		0x888888, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -168,16 +168,16 @@ void PauseScene::NormalDraw()
 	Application& app = Application::GetInstance();
 	const auto& size = app.GetWindowSize();
 	SetDrawBlendMode(DX_BLENDMODE_MUL, 255);
-	// ‚¿‚å‚Á‚ÆˆÃ‚¢‹éŒ`‚ğ•`‰æ
+	// ã¡ã‚‡ã£ã¨æš—ã„çŸ©å½¢ã‚’æç”»
 	DrawBox(kMenuMargin, kMenuMargin, size.w - kMenuMargin, size.h - kMenuMargin,
 		0x888888, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	DrawRotaString(670, 300, 6, 6, 0, 0, 0, 0xffffbb, 0, 0, "Pause");
 
-	DrawExtendFormatStringToHandle(750, 500,0.3f,0.3f,  0xffffff,m_fontHandle,"ƒQ[ƒ€‚É–ß‚é");
-	DrawExtendFormatStringToHandle(770, 600, 0.3f, 0.3f, 0xffffff,m_fontHandle, "‘€ìà–¾");
-	DrawExtendFormatStringToHandle(760, 700, 0.3f, 0.3f, 0xffffff,m_fontHandle, "ƒ^ƒCƒgƒ‹‚Ö");
+	DrawExtendFormatStringToHandle(750, 500,0.3f,0.3f,  0xffffff,m_fontHandle,"ã‚²ãƒ¼ãƒ ã«æˆ»ã‚‹");
+	DrawExtendFormatStringToHandle(770, 600, 0.3f, 0.3f, 0xffffff,m_fontHandle, "æ“ä½œèª¬æ˜");
+	DrawExtendFormatStringToHandle(760, 700, 0.3f, 0.3f, 0xffffff,m_fontHandle, "ã‚¿ã‚¤ãƒˆãƒ«ã¸");
 
 	if (m_select % 3 == 0)
 	{
@@ -196,7 +196,7 @@ void PauseScene::NormalDraw()
 	if (m_tutoFlag)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_MUL, 255);
-		// ‚¿‚å‚Á‚ÆˆÃ‚¢‹éŒ`‚ğ•`‰æ
+		// ã¡ã‚‡ã£ã¨æš—ã„çŸ©å½¢ã‚’æç”»
 		DrawBox(kMenuMargin, kMenuMargin, size.w - kMenuMargin, size.h - kMenuMargin,
 			0x111111, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);

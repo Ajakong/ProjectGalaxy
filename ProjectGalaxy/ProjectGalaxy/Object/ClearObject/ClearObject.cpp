@@ -1,4 +1,4 @@
-#include "ClearObject.h"
+﻿#include "ClearObject.h"
 #include"../MyLib/Physics/ColliderSphere.h"
 #include"../Quaternion.h"
 
@@ -11,7 +11,7 @@ ClearObject::~ClearObject()
 {
 }
 
-void ClearObject::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void ClearObject::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -22,7 +22,7 @@ void ClearObject::OnCollideEnter(std::shared_ptr<Collidable> colider)
 void ClearObject::Init()
 {
 	SetObjectTag(ObjectTag::ClearObject);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere,ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = 50;
 }

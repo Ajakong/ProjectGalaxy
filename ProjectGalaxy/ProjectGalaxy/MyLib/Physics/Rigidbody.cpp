@@ -1,21 +1,22 @@
-#include "Rigidbody.h"
+ï»¿#include "Rigidbody.h"
 
 using namespace MyEngine;
 
-Rigidbody::Rigidbody()
+Rigidbody::Rigidbody(const Vec3& pos)
 {
+	m_pos = pos;
+	m_nextPos = m_pos;
+	m_velocity = Vec3();
+	m_dir = Vec3();
 }
 
 Rigidbody::~Rigidbody()
 {
 }
 
-void Rigidbody::Init(const Vec3& pos)
+void Rigidbody::Init()
 {
-	m_pos = pos;
-	m_nextPos = m_pos;
-	m_velocity = Vec3();
-	m_dir = Vec3();
+	
 }
 
 void MyEngine::Rigidbody::ChangePosition(Vec3 pos)
@@ -26,13 +27,14 @@ void MyEngine::Rigidbody::ChangePosition(Vec3 pos)
 
 void MyEngine::Rigidbody::SetPos(Vec3 pos)
 {
+	m_nextPos = pos;
 	m_pos = pos;
 }
 
 void Rigidbody::SetVelocity(const Vec3& velocity)
 {
 	m_velocity = velocity;
-	// ˆÚ“®‚µ‚Ä‚¢‚éê‡‚Ì‚İ•ûŒü‚ğ•ÏX
+	// ç§»å‹•ã—ã¦ã„ã‚‹å ´åˆã®ã¿æ–¹å‘ã‚’å¤‰æ›´
 	if (velocity.SqLength())
 	{
 		m_dir = velocity.GetNormalized();

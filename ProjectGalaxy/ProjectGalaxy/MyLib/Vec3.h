@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 #include <DxLib.h>
 
 /// <summary>
-/// ƒxƒNƒ^[
+/// ãƒ™ã‚¯ã‚¿ãƒ¼
 /// </summary>
 class Vec3
 {
@@ -21,7 +21,7 @@ public:
 	static Vec3 Front();
 	static Vec3 Zero();
 
-	/* ‰‰Z */
+	/* æ¼”ç®— */
 	Vec3 operator+(const Vec3& val) const;
 	void operator+=(const Vec3& val);
 	Vec3 operator-(const Vec3& val) const;
@@ -37,24 +37,24 @@ public:
 	bool operator!=(const Vec3& val) const;
 
 
-	// ’·‚³æ“¾
+	// é•·ã•å–å¾—
 	float Length() const;
-	// ’·‚³‚Ì2æ‚ğæ“¾
+	// é•·ã•ã®2ä¹—ã‚’å–å¾—
 	float SqLength() const;
-	// ³‹K‰»‚µ‚½ƒxƒNƒgƒ‹‚ğæ“¾
+	// æ­£è¦åŒ–ã—ãŸãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—
 	Vec3 GetNormalized() const;
-	// ©g‚Ì³‹K‰»
+	// è‡ªèº«ã®æ­£è¦åŒ–
 	void Normalize();
 
-	// DxLib—p‚ÌVECTOR‚ğæ“¾
+	// DxLibç”¨ã®VECTORã‚’å–å¾—
 	DxLib::VECTOR VGet() const;
 
 	void SetVECTOR(DxLib::VECTOR vec);
 };
 
-// “àÏ
+// å†…ç©
 float Dot(const Vec3& item1, const Vec3& item2);
-// ŠOÏ
+// å¤–ç©
 Vec3 Cross(const Vec3& item1, const Vec3& item2);
-// Ë‰e
+// å°„å½±
 Vec3 Projection(const Vec3& projection, const Vec3& base);

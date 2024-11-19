@@ -4,9 +4,9 @@
 
 namespace
 {
-	constexpr float kGroundRadius = 500;
-	constexpr float  kGravityRange = 1500;
-	constexpr float  kGravityPower = 30;
+	constexpr float kGroundRadius = 50;
+	constexpr float  kGravityRange = 150;
+	constexpr float  kGravityPower = 0.098f;
 
 	const char* name = "planet";
 	const char* atom = "atomosphere";
@@ -20,10 +20,19 @@ m_modelHandle(modelHandle)
 	m_color = color;
 	m_rigid->SetPos(pos);
 	gravityPower = gravity;
-	m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 5000.0f, 0.0f, 0.002f, 0.0f);
-	MV1SetScale(m_modelHandle, VGet(5, 5, 5));
+	m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 50.0f, 0.0f, 0.0002f, 0.0f);
+	MV1SetScale(m_modelHandle, VGet(0.5f, 0.5f, 0.5f));
 	MV1SetPosition(m_modelHandle,m_rigid->GetPos().VGet());
 
+	//当たり判定の追加
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
+	m_colliders.back()->isTrigger = true;
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	item->radius = kGravityRange;
+	AddThroughTag(ObjectTag::Stage);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//マップの当たり判定
+	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	item2->radius = kGroundRadius;
 }
 
 SpherePlanet::~SpherePlanet()
@@ -32,14 +41,7 @@ SpherePlanet::~SpherePlanet()
 
 void SpherePlanet::Init()
 {
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//ここで入れたのは重力の影響範囲
-	m_colliders.back()->isTrigger = true;
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-	item->radius = kGravityRange;
-	AddThroughTag(ObjectTag::Stage);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//マップの当たり判定
-	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-	item2->radius = kGroundRadius;
+	
 }
 
 void SpherePlanet::Update()
@@ -49,11 +51,10 @@ void SpherePlanet::Update()
 void SpherePlanet::Draw()
 {
 
-	//DrawSphere3D(m_rigid->GetPos().VGet(), kGravityRange, 10, 0xddddff, 0x0000ff, false);
+	DrawSphere3D(m_rigid->GetPos().VGet(), kGravityRange, 10, 0xddddff, 0x0000ff, false);
 	if (m_isSearch)
 	{
 		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius, 50, m_color, 0x0000ff, false);
-
 	}
 	else
 	{
@@ -65,17 +66,14 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 {
 	Vec3 objVelocity = obj->PlanetOnlyGetRigid()->GetVelocity();
 	
-	
-	////惑星の中心からy方向に伸ばした線を軸にし、オブジェクトの位置を見て軸と惑星の中心からオブジェクトに向かうベクトルの角度分だけオブジェクトのベロシティのy方向に影響させるという考え方、Xに進みたい場合軸のXを基準に,Zに進みたい場合軸のZを基準
-	////Yは法線の角度に回転させる
 	Vec3 ansVelocity;
 	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetPos();
-	Vec3 toObj = m_rigid->GetPos() - objPos;
+	Vec3 toObj = objPos-m_rigid->GetPos();
 	toObj = toObj.GetNormalized();
+	Vec3 GravityDir = toObj * -1;
 	obj->SetUpVec(toObj);
 	if (obj->IsAntiGravity())
 	{
-
 		return objVelocity;
 	}
 
@@ -84,33 +82,9 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 		return objVelocity;
 	}
 
-	if (obj->GetTag() == ObjectTag::Gorori||obj->GetTag()==ObjectTag::KillerTheSeeker)
-	{
-		float angleX = DX_PI_F / 2 + atan2(toObj.y, toObj.x);
-		float angleZ = DX_PI_F / 2 + atan2(toObj.y, toObj.z);
-		ansVelocity = { objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ) };
-		ansVelocity += toObj * objVelocity.y;//プレイヤーのジャンプ分のベクトルの加算
-
-		ansVelocity += toObj * kGravityPower;
-		obj->SetReverceGravityVec(toObj.GetNormalized());
-
-		/*VECTOR ANSVECTOR = VGet(objVelocity.x * cos(angleX), objVelocity.x * sin(angleX) + objVelocity.z * sin(angleZ), objVelocity.z * cos(angleZ));
-		ANSVECTOR = VAdd(ANSVECTOR, objVelocity.y * toObj);
-		ansVelocity = ANSVECTOR;*/
-		//ansVelocity -= toObj;
-		return ansVelocity+ toObj * gravityPower*40*((kGravityRange+(obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() -(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length())/ kGravityRange);
-	}
-
-	if (obj->GetTag() == ObjectTag::Player)
-	{
-		//重力のみ
-		toObj = toObj * gravityPower*0.05f* ((kGravityRange+ (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
-		return toObj;
-	}
-
 	//重力のみ
-	toObj = toObj * gravityPower * ((kGravityRange +(obj->GetRigidbody()->GetPos()-m_rigid->GetPos()).Length()- (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
-	return toObj;
+	GravityDir = GravityDir * gravityPower*0.005f  * ((kGravityRange + (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
+	return GravityDir;
 }
 
 Vec3 SpherePlanet::GetNormVec(Vec3 pos)
@@ -120,7 +94,7 @@ Vec3 SpherePlanet::GetNormVec(Vec3 pos)
 	return norm;
 }
 
-void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider)
+void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	/*if (colider->GetTag() == ObjectTag::Takobo)
 	{
@@ -128,7 +102,7 @@ void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider)
 	}*/
 }
 
-void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider)
+void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{

@@ -1,4 +1,4 @@
-#include "BossPlanet.h"
+ï»¿#include "BossPlanet.h"
 #include"MyLib/Physics/ColliderSphere.h"
 
 namespace
@@ -16,12 +16,12 @@ BossPlanet::BossPlanet(Vec3 pos, int color):SpherePlanet(pos,color,3,-1),
 m_color(color)
 {
 	gravityPower = 3;
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//‚±‚±‚Å“ü‚ê‚½‚Ì‚Íd—Í‚Ì‰e‹¿”ÍˆÍ
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ã“ã“ã§å…¥ã‚ŒãŸã®ã¯é‡åŠ›ã®å½±éŸ¿ç¯„å›²
 	m_colliders.back()->isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kGravityRange;
 	AddThroughTag(ObjectTag::Stage);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);//ƒ}ƒbƒv‚Ì“–‚½‚è”»’è
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ãƒãƒƒãƒ—ã®å½“ãŸã‚Šåˆ¤å®š
 	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item2->radius = kGroundRadius;
 }

@@ -65,6 +65,23 @@ namespace
     constexpr int kAimGraphHeight = 370;
 }
 
+float GetAngle(Vec3 a, Vec3 b)
+{
+    a.Normalize();
+    b.Normalize();
+
+    float cos = Dot(a, b);
+    // コサインをクリッピング
+    cos = max(-1.0f, min(1.0f, cos));
+
+    float rad = acos(cos);
+
+#ifdef _DEBUG
+    DrawFormatString(0, 125, 0xffffff, "rad(%f),deg(%f)", rad, rad * 180 / DX_PI_F);
+#endif
+
+    return rad;
+}
 
 bool UpdateAnim(int attachNo,int modelHandle)
 {
@@ -140,7 +157,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
     SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 1.0f, 1.0f));
     MV1AttachAnim(modelHandle, 0);
     float rotate = 0;
-    Vec3 playerPos(0,-30,0);
+    Vec3 playerPos(0,-0,0);
     Vec3 nowVec= VGet(0, 0, -1);
     Vec3 dir;
     Vec3 shotDir;
@@ -188,7 +205,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         //ベクトルの長さを0.0~1.0の割合に変換する
         float rate = len / kAnalogInputMax;
         sideVec = GetCameraRightVector();
-        frontVec = Cross(sideVec, upVec).GetNormalized();
+        frontVec = (Vec3::Front()*-1).GetNormalized();
 
         move = frontVec * static_cast<float>(analogY);//入力が大きいほど利教が大きい,0の時は0
         move += sideVec * static_cast<float>(analogX);
@@ -201,10 +218,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         //速度が決定できるので移動ベクトルに反映
         move = move.GetNormalized();
         float speed = kMaxSpeed;
+        
 
         //m_angle = fmodf(m_cameraAngle, 360);//mod:余り　
         //MATRIX rotate = MGetRotY((m_angle)-DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
         moveDir = move;
+        if (moveDir.Length() == 0)
+        {
+            moveDir = Vec3(0, 0, 1);
+        }
         move = move * speed;
         return move;
     };
@@ -218,7 +240,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
     };
 
     ChangeAnim(kAnimationNumIdle);
+    int speed = 1;
+    int num=0;
    
+    Vec3 front = Vec3::Back();
+    Vec3 nowNeckDir= front;
+
+    int index = MV1SearchFrame(modelHandle, "mixamorig:Neck");
+    MATRIX ident = MV1GetFrameLocalMatrix(modelHandle, index);
+    MV1SetFrameUserLocalMatrix(modelHandle, index, ident);
     while (ProcessMessage() != -1)
     {
         // FPSの固定ように開始時の時間を取得
@@ -255,8 +285,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         angle+=0.02f;
 
         Quaternion myQ;
-        myQ=myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec);
-        myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, Vec3::Right()));
+        
+        angle += 0.02f;
+        Vec3 axis = Cross(upVec,moveDir);
+        axis.Normalize();
+        DrawLine3D(playerPos.VGet(), (playerPos + axis * 60).VGet(), 0xff00ff);
+        //myQ =myQ.QMult(myQ,myQ.CreateRotationQuaternion(angle, axis));
+        myQ = myQ.QMult(myQ,myQ.CreateRotationQuaternion(atan2(-moveDir.x, -moveDir.z), upVec));
         auto rotatemat = myQ.ToMat();
       
        
@@ -264,7 +299,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         
 
         //位置の設定
-        MV1SetPosition(stageHandle, Vec3(0, -50, 0).VGet());
+        //MV1SetPosition(stageHandle, Vec3(0, -50, 0).VGet());
         MV1SetPosition(modelHandle, playerPos.VGet());
 
         for (auto& item : star)
@@ -277,26 +312,72 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
         Physics::GetInstance().Update();
 
         //rotate += 0.1f;
-        int index = MV1SearchFrame(modelHandle, "mixamorig:Spine");
-        MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), dir.VGet());
-        nowVec = dir;
-        MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
-        MATRIX mat = MMult(shotDirMat, localMat);
-        MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
-        for (int i = 0; i < 4; i++)
         {
-            for (int j = 0;j < 4; j++)
+            int index = MV1SearchFrame(modelHandle, "mixamorig:Spine");
+            MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), dir.VGet());
+            nowVec = dir;
+            MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
+            MATRIX mat = MMult(shotDirMat, localMat);
+            MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
+            for (int i = 0; i < 4; i++)
             {
-                DrawFormatString(i * 80, j * 16, GetColor(255, 255, 255),"%f", mat.m[i][j]);
+                for (int j = 0; j < 4; j++)
+                {
+                    DrawFormatString(i * 80, j * 16, GetColor(255, 255, 255), "%f", mat.m[i][j]);
+                }
+            }
+
+            if (Pad::IsTrigger(PAD_INPUT_3))
+            {
+                ShotTheStar();
+                nowVec = VGet(0, 0, -1);
+                MV1SetFrameUserLocalMatrix(modelHandle, index, MGetIdent());
             }
         }
-
-        if (Pad::IsTrigger(PAD_INPUT_3))
+        
         {
-            ShotTheStar();
-            nowVec = VGet(0, 0, -1);
-            MV1SetFrameUserLocalMatrix(modelHandle, index, MGetIdent());
+            num += speed;
+            int index = MV1SearchFrame(modelHandle, "mixamorig:LeftArm");
+            MATRIX shotDirMat = MGetTranslate(Vec3(0, speed*5, 0).VGet());
+
+            MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
+            MATRIX mat = MMult(shotDirMat, localMat);
+            MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
+
+            if (Pad::IsTrigger(PAD_INPUT_3))
+            {
+                ShotTheStar();
+                nowVec = VGet(0, 0, -1);
+                MV1SetFrameUserLocalMatrix(modelHandle, index, MGetIdent());
+            }
+            if (num > 200)speed *= -1;
+            if (num < 0)speed *= -1;
         }
+        
+       /* {
+            int index = MV1SearchFrame(modelHandle, "mixamorig:Neck");
+            Vec3 neckPos = MV1GetFramePosition(modelHandle, index);
+            MATRIX ident = MV1GetFrameLocalMatrix(modelHandle, index);
+            Vec3 toTarget = playerPos - neckPos;
+            toTarget.Normalize();
+
+            DrawLine3D(neckPos.VGet(), (neckPos + toTarget * 30).VGet(), 0xff0000);
+            DrawLine3D(neckPos.VGet(), (neckPos + nowNeckDir * 30).VGet(), 0x0000ff);
+            if (GetAngle(front, toTarget) <= DX_PI_F / 2)
+            {
+                MATRIX DirMat = MGetRotVec2(nowNeckDir.VGet(), toTarget.VGet());
+                nowNeckDir = toTarget;
+                MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, index);
+                MATRIX mat = MMult(DirMat, localMat);
+                MV1SetFrameUserLocalMatrix(modelHandle, index, mat);
+            }
+            else
+            {
+                nowNeckDir = front;
+                MV1SetFrameUserLocalMatrix(modelHandle, index, ident);
+            }
+        }*/
+
 
         UpdateAnim(currentAnimNo,modelHandle);
         //変更前のアニメーション100%
@@ -312,6 +393,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
         MV1DrawModel(stageHandle);
         MV1DrawModel(modelHandle);
+
+        DrawSphere3D(playerPos.VGet(), 5, 8, 0xff0000, 0xffffff, true);
 
         for (auto& item : star)
         {

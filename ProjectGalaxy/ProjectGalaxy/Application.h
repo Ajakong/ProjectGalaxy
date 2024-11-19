@@ -1,5 +1,5 @@
-#pragma once
-
+ï»¿#pragma once
+#include <windows.h>
 struct Size
 {
 	int w;
@@ -7,21 +7,21 @@ struct Size
 };
 
 /// <summary>
-/// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‘S‘Ì‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-/// ƒVƒ“ƒOƒ‹ƒgƒ“ƒNƒ‰ƒX
+/// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³å…¨ä½“ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+/// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¯ãƒ©ã‚¹
 /// </summary>
 class Application
 {
 private:
 	Size m_windowSize;
 
-	Application();	// ƒVƒ“ƒOƒ‹ƒgƒ“‚Ì‚½‚ß‚Éprivate‚É
-	// ƒRƒs[•‘ã“ü‚Ì‹Ö~
-	Application(const Application& app) = delete;		// ƒRƒs[ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Ì”p~
-	void operator =(const Application& app) = delete;	// ‘ã“üƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Ì”p~
+	Application();	// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã®ãŸã‚ã«privateã«
+	// ã‚³ãƒ”ãƒ¼ï¼†ä»£å…¥ã®ç¦æ­¢
+	Application(const Application& app) = delete;		// ã‚³ãƒ”ãƒ¼ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®å»ƒæ­¢
+	void operator =(const Application& app) = delete;	// ä»£å…¥ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®å»ƒæ­¢
 
 	/// <summary>
-	/// Œãˆ—‚ğs‚¤
+	/// å¾Œå‡¦ç†ã‚’è¡Œã†
 	/// </summary>
 	void Terminate();
 
@@ -29,17 +29,17 @@ private:
 
 public:
 	/// <summary>
-	/// Application‚ÌƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ•Ô‚·
+	/// Applicationã®ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’è¿”ã™
 	/// </summary>
-	/// <returns>ApplicationƒCƒ“ƒXƒ^ƒ“ƒX‚ÌQÆ‚ğ•Ô‚·</returns>
+	/// <returns>Applicationã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®å‚ç…§ã‚’è¿”ã™</returns>
 	static Application& GetInstance()
 	{
-		static Application instance;	// ©•ª©g‚ÌÃ“IƒIƒuƒWƒFƒNƒg‚ğì‚è‚Ü‚·B
+		static Application instance;	// è‡ªåˆ†è‡ªèº«ã®é™çš„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œã‚Šã¾ã™ã€‚
 		return instance;
 	}
 
 	bool Init();
-	void Run();
+	void Run(HWND windowHandle);
 
 	float GetGravity() const;
 

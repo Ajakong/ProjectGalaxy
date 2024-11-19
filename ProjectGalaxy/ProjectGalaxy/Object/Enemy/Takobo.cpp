@@ -56,7 +56,7 @@ m_centerToEnemyAngle(0)
 	Set3DRadiusSoundMem(1000, m_shotSEHandle);
 	m_enemyUpdate = &Takobo::IdleUpdate;
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 	item->radius = kCollisionRadius;
 	m_moveShaftPos = m_rigid->GetPos();
@@ -91,7 +91,7 @@ void Takobo::SetMatrix()
 {
 	MATRIX moving = MGetTranslate(m_rigid->GetPos().VGet());
 
-	MV1SetMatrix(m_handle, moving);
+	MV1SetMatrix(m_modelHandle, moving);
 }
 
 void Takobo::DeleteManage()
@@ -113,7 +113,7 @@ void Takobo::Draw()
 {
 
 	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
-	MV1DrawModel(m_handle);
+	MV1DrawModel(m_modelHandle);
 
 	for (auto& sphere : m_sphere)
 	{
@@ -122,7 +122,7 @@ void Takobo::Draw()
 	}
 }
 
-void Takobo::OnCollideEnter(std::shared_ptr<Collidable> colider)
+void Takobo::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

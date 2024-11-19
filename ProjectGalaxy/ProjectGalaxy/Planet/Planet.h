@@ -1,5 +1,5 @@
-#pragma once
-#include"MyLib/Physics/Collidable.h"
+ï»¿#pragma once
+#include"Collidable.h"
 
 class Planet : public MyEngine::Collidable
 {
@@ -12,7 +12,7 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
-	virtual Vec3 GravityEffect(std::shared_ptr<Collidable> obj)=0;//Physics‚ÉŒÄ‚Ño‚³‚ê‚é,•Ô‚è’l‚Å•â³Œã‚ÌƒxƒNƒgƒ‹‚ğ•Ô‚·
+	virtual Vec3 GravityEffect(std::shared_ptr<Collidable> obj)=0;//Physicsã«å‘¼ã³å‡ºã•ã‚Œã‚‹,è¿”ã‚Šå€¤ã§è£œæ­£å¾Œã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¿”ã™
 	virtual Vec3 GetNormVec(Vec3 pos) = 0;
 	bool GetClearFlag() { return clearFlag; }
 	virtual void SetIsSearch(bool flag) { m_isSearch=flag; }

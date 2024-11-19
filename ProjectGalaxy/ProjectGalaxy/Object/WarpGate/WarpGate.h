@@ -1,12 +1,10 @@
-#pragma once
+﻿#pragma once
 #include "../MyLib/Physics/Collidable.h"
 class WarpGate : public MyEngine::Collidable
 {
 public:
-	WarpGate(Vec3 pos, int handle);
+	WarpGate(Vec3 pos, Vec3 warpPos, int handle);
 	~WarpGate();
-
-	void SetWarpPos(Vec3 warpPos) { m_warpPos = warpPos; }
 
 	void Init();
 	void Update();
@@ -14,7 +12,7 @@ public:
 	void Draw();
 	Vec3 GetNowPlanetPos() { return m_nowPlanetPos; }
 	
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 private:
 	Vec3 m_warpPos;
 	int m_emitterHandle;

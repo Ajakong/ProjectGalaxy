@@ -1,10 +1,15 @@
-#pragma once
+ï»¿#pragma once
 
-// ƒQ[ƒ€‘S‘Ì‚Åg—p‚·‚é’è”‚ğ’è‹`‚·‚é
-namespace Game
+// ã‚²ãƒ¼ãƒ å…¨ä½“ã§ä½¿ç”¨ã™ã‚‹å®šæ•°ã‚’å®šç¾©ã™ã‚‹
+static class Game
 {
-	constexpr int kScreenWidth = 1600;	// ‰æ–Ê‚Ì‰¡•
-	constexpr int kScreenHeight = 900;	// ‰æ–Ê‚Ìc•
+public:
+	
+	static const int kScreenWidth = 1600;	// ç”»é¢ã®æ¨ªå¹…
+	static const int kScreenHeight = 900;	// ç”»é¢ã®ç¸¦å¹…
 
-	constexpr int kColorDepth = 32;		// 16 or 32
-}
+	static const int kColorDepth = 32;		// 16 or 32
+
+	
+
+};

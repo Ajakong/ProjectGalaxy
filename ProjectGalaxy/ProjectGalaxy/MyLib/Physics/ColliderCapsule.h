@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ColliderBase.h"
 
 namespace MyEngine
@@ -6,7 +6,7 @@ namespace MyEngine
 	class ColliderCapsule : public ColliderBase
 	{
 	public:
-		ColliderCapsule();
+		ColliderCapsule(ColideTag tag);
 
 	public:
 		float radius;

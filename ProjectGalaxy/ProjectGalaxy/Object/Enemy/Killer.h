@@ -15,7 +15,7 @@ public:
 
 	virtual void Hit();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 	virtual bool IsDelete() { return m_isDeleteFlag; }
 	void SetCounterFlag() { m_counterFlag = true; }
 	Vec3 GetVelocity() { return m_velocity; }

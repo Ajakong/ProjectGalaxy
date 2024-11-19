@@ -6,12 +6,19 @@ enum class ObjectTag
 	Player,
 	Enemy,
 	Takobo,
+	Kuribo,
 	Gorori,
 	KillerTheSeeker,
+	SpaceEmperor,
 	EnemyAttack,
 	PlayerBullet,
 	WarpGate,
 	Item,
+	Coin,
 	ClearObject,
-	StarCapture
+	StarCapture,
+	SeekerLine,
+	Crystal,
+	InvisibleObject,
+	End//一番最後のタグ
 };

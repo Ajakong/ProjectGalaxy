@@ -1,15 +1,18 @@
-#pragma once
+﻿#pragma once
 #include "ColliderBase.h"
-#include"../Vec3.h"
+#include"Vec3.h"
+#include"Quaternion.h"
 namespace MyEngine
 {
 	class ColliderBox : public ColliderBase
 	{
 	public:
-		ColliderBox(Vec3 startPos,Vec3 endPos);
+		ColliderBox(ColideTag tag);
+
 	public:
-		Vec3 m_startPos;
-		Vec3 m_endPos;
+		Vec3 size;
+		Quaternion rotation;
+		Vec3 norm;
 	};
 }
 
