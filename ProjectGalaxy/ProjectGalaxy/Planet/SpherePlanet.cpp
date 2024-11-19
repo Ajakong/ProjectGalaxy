@@ -66,7 +66,6 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 {
 	Vec3 objVelocity = obj->PlanetOnlyGetRigid()->GetVelocity();
 	
-	
 	Vec3 ansVelocity;
 	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetPos();
 	Vec3 toObj = objPos-m_rigid->GetPos();
@@ -75,7 +74,6 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	obj->SetUpVec(toObj);
 	if (obj->IsAntiGravity())
 	{
-
 		return objVelocity;
 	}
 

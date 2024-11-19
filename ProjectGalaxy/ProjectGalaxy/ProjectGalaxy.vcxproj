@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(IntDir)</AdditionalUsingDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -112,7 +112,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalLibraryDirectories>
       <HeapCommitSize>
       </HeapCommitSize>
     </Link>
@@ -125,7 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(IntDir)</AdditionalUsingDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -135,7 +135,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalLibraryDirectories>
       <HeapCommitSize>
       </HeapCommitSize>
     </Link>

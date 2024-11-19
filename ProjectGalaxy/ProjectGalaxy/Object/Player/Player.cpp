@@ -313,10 +313,12 @@ void Player::SetMatrix()
 	
 #endif 
 	m_postUpVec = m_upVec;//上方向ベクトルを前のフレームの上方向ベクトルにする
-	
-	MV1SetRotationMatrix(m_modelHandle, rotatemat);//回転行列を反映
 
+	//
+
+	//MV1SetRotationMatrix(m_modelHandle, rotatemat);//回転行列を反映
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+	MV1SetRotationZYAxis(m_modelHandle, (m_moveDir * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
 	auto pos = MV1GetPosition(m_modelHandle);
 	//当たり判定の更新
 	m_headCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius * 2 + kNeutralHeadRadius));

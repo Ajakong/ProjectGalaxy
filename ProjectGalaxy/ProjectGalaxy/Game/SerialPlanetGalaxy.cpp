@@ -112,7 +112,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	seekerLine1Points.push_back(Vec3(-20, 100, 0));
 	seekerLine1Points.push_back(Vec3(0, 30, 0));
 	seekerLine1Points.push_back(Vec3(100, 200, 0));
-	seekerLine1Points.push_back(Vec3(300, 300, 100));
+	seekerLine1Points.push_back(Vec3(270, 330, 100));
 	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 
 	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
@@ -122,7 +122,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 
 	camera = make_shared<Camera>();
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
-	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3, -1));
+	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
 	planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
 	
 	warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
@@ -184,7 +184,6 @@ void SerialPlanetGalaxy::Init()
 	for (auto& item : crystal) { item->Init(); }
 	//エネミー
 	for (auto& item : kuribo) { item->Init(); }
-
 	for (auto& item : coin)item->Init();
 }
 
