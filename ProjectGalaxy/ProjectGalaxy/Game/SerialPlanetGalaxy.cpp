@@ -80,9 +80,9 @@ namespace
 	constexpr int kUiTimeCount_PosY = 90;
 
 	//カメラ
-	constexpr float kCameraDistanceFront = 80.f;
-	constexpr float kCameraDistanceAddFrontInJump = 30.f;
-	constexpr float kCameraDistanceUp = 50.f;
+	constexpr float kCameraDistanceFront = 40.f;
+	constexpr float kCameraDistanceAddFrontInJump = 15.f;
+	constexpr float kCameraDistanceUp = 25.f;
 
 
 	const char* kModelScreenName = "ModelScreen";
@@ -112,7 +112,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	seekerLine1Points.push_back(Vec3(-20, 100, 0));
 	seekerLine1Points.push_back(Vec3(0, 30, 0));
 	seekerLine1Points.push_back(Vec3(100, 200, 0));
-	seekerLine1Points.push_back(Vec3(300, 350, 100));
+	seekerLine1Points.push_back(Vec3(300, 300, 100));
 	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 
 	MyEngine::Physics::GetInstance().Entry(seekerLine.back());

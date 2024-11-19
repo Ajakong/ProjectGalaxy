@@ -154,6 +154,8 @@ m_modelDirAngle(0)
 
 	SetMatrix();
 	m_initMat = MV1GetLocalWorldMatrix(m_modelHandle);
+
+	m_handFrameIndex= MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
 }
 
 Player::~Player()
@@ -944,10 +946,17 @@ Vec3 Player::Move()
 
 void Player::ShotTheStar()
 {
-	Vec3 shotPos = m_rigid->GetPos();
-	shotPos += m_upVec.GetNormalized() * 7;
-	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir,m_sideVec, 1, 0xff0000));
-	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+	if (m_sphere.size() == 0)
+	{
+		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
+		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+	}
+	else
+	{
+		m_sphere.back()->Effect();
+	}
+
 }
 
 void Player::DamegeUpdate()

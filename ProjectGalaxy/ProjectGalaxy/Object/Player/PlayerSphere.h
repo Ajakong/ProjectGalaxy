@@ -14,6 +14,10 @@ public:
 
 	virtual void Hit();
 
+	void Effect();
+
+	bool GetStickFlag() { return m_stickFlag; }
+
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 
 	//メンバ関数ポインタ
@@ -24,10 +28,13 @@ public:
 
 protected:
 	virtual void  StraightUpdate();//球を直線状に飛ばす
-
+	virtual void StickUpdate();
+	virtual void ComeBackUpdate();
 protected:
 	
+	Vec3 m_startPos;
 	Vec3 m_sideVec;
 	int m_lifeTime;
+	bool m_stickFlag;
 };
 

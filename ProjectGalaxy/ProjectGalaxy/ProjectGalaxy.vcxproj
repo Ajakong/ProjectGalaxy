@@ -190,6 +190,8 @@
     <ClCompile Include="Object\LocationsManager.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
+    <ClCompile Include="Object\Player\PlayerSphere.cpp" />
+    <ClCompile Include="Object\Player\PlayerStickSphere.cpp" />
     <ClCompile Include="Object\WarpGate\Booster.cpp" />
     <ClCompile Include="Object\WarpGate\WarpGate.cpp" />
     <ClCompile Include="Pad.cpp" />
@@ -198,7 +200,6 @@
     <ClCompile Include="Planet\DumbbellPlanet.cpp" />
     <ClCompile Include="Planet\Planet.cpp" />
     <ClCompile Include="Planet\SpherePlanet.cpp" />
-    <ClCompile Include="PlayerSphere.cpp" />
     <ClCompile Include="Scene\ClearScene.cpp" />
     <ClCompile Include="Scene\GameOverScene.cpp" />
     <ClCompile Include="Scene\GamePlayingScene.cpp" />
@@ -258,6 +259,8 @@
     <ClInclude Include="Object\LocationsManager.h" />
     <ClInclude Include="Object\ObjectManager.h" />
     <ClInclude Include="Object\Player\Player.h" />
+    <ClInclude Include="Object\Player\PlayerSphere.h" />
+    <ClInclude Include="Object\Player\PlayerStickSphere.h" />
     <ClInclude Include="Object\WarpGate\Booster.h" />
     <ClInclude Include="Object\WarpGate\WarpGate.h" />
     <ClInclude Include="Pad.h" />
@@ -266,7 +269,6 @@
     <ClInclude Include="Planet\DumbbellPlanet.h" />
     <ClInclude Include="Planet\Planet.h" />
     <ClInclude Include="Planet\SpherePlanet.h" />
-    <ClInclude Include="PlayerSphere.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\ClearScene.h" />
     <ClInclude Include="Scene\GameOverScene.h" />

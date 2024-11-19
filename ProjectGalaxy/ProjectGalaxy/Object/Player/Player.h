@@ -21,6 +21,7 @@ public:
 	void Draw();
 
 	Vec3 GetPos() const { return  m_rigid->GetPos(); }
+	Vec3 GetLeftHandPos() { return Vec3(MV1GetFramePosition(m_modelHandle, m_handFrameIndex)); }
 	void SetVelocity(Vec3 pos) { m_rigid->SetVelocity(pos); }
 	void AddVelocity(Vec3 pos) { m_rigid->AddVelocity(pos); }
 	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
@@ -148,6 +149,8 @@ private:
 
 	int m_itemCount=0;
 
+	int m_handFrameIndex;
+
 	/// <summary>
 	/// 行動のフレームを管理する
 	/// </summary>
@@ -191,8 +194,6 @@ private:
 	Vec3 m_frontVec;
 	Vec3 m_sideVec;
 		
-		
-		;
 	Vec3 m_postUpVec;
 
 	Vec3 m_shotDir;
