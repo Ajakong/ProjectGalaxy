@@ -151,9 +151,9 @@ void Camera::WatchThisUpdate(Vec3 LookPoint)
 	SetLightPositionHandle(m_lightHandle, m_pos.VGet());
 	SetLightDirectionHandle(m_lightHandle, GetCameraFrontVector());
 	Vec3 velocity;
-	velocity.x = (m_cameraPoint.x - m_pos.x) / 10.f;
-	velocity.y = (m_cameraPoint.y - m_pos.y) / 10.f;
-	velocity.z = (m_cameraPoint.z - m_pos.z) / 10.f;
+	velocity.x = (m_cameraPoint.x - m_pos.x) / m_easingSpeed;
+	velocity.y = (m_cameraPoint.y - m_pos.y) / m_easingSpeed;
+	velocity.z = (m_cameraPoint.z - m_pos.z) / m_easingSpeed;
 	m_pos += velocity;//イージング
 	
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_lookPoint + m_upVec.GetNormalized() * 10.0f).VGet(), m_upVec.VGet());

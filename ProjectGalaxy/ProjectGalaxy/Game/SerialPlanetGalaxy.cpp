@@ -266,9 +266,9 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		{
 			StopSoundMem(m_bgmHandle);
 			PlaySoundMem(m_bossBattleBgmHandle, DX_PLAYTYPE_BACK);
-			//boss->OnBossPlanet();
+			boss->OnBossPlanet();
 
-			/*camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());*/
+			camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());
 		}
 	}
 

@@ -61,17 +61,11 @@ namespace
 
 	const char* kGetSearchSEName = "Search.mp3";
 	const char* name = "Player";
-	const char* kFileName = "SpaceHarrier2.mv1";
+	const char* kFileName = "SpaceHarrier.mv1";
 	
-	constexpr int kAnimationNumTpose = 0;
-	constexpr int kAnimationNumHit = 1;
-	constexpr int kAnimationNumJump = 2;
-	constexpr int kAnimationNumRun = 3;
-	constexpr int kAnimationNumSpin = 4;
-	constexpr int kAnimationNumIdle = 5;
-	constexpr int kAnimationNumDeath = 6;
-	constexpr int kAnimationNumFall = 7;
-	constexpr int kOperationRolling = 8;
+	
+	
+	
 
 	//照準
 	const char* kAimGraphFileName = "Elements_pro.png";
@@ -150,7 +144,7 @@ m_modelDirAngle(0)
 	AddThroughTag(ObjectTag::PlayerBullet);
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
-	ChangeAnim(kAnimationNumIdle);	
+	ChangeAnim(AnimNum::AnimationNumIdle);
 
 	SetMatrix();
 	m_initMat = MV1GetLocalWorldMatrix(m_modelHandle);
@@ -314,11 +308,11 @@ void Player::SetMatrix()
 #endif 
 	m_postUpVec = m_upVec;//上方向ベクトルを前のフレームの上方向ベクトルにする
 
-	//
-
 	//MV1SetRotationMatrix(m_modelHandle, rotatemat);//回転行列を反映
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+	
 	MV1SetRotationZYAxis(m_modelHandle, (m_moveDir * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
+	MATRIX mat=MV1GetRotationMatrix(m_modelHandle);
 	auto pos = MV1GetPosition(m_modelHandle);
 	//当たり判定の更新
 	m_headCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius * 2 + kNeutralHeadRadius));
@@ -383,7 +377,7 @@ void Player::SetBoost(Vec3 sideVec)
 {
 	m_sideVec = sideVec*-1;
 	m_isBoostFlag = true; 
-	ChangeAnim(kAnimationNumFall);
+	ChangeAnim(AnimNum::AnimationNumFall);
 }
 
 void Player::SetIsOperation(bool flag)
@@ -391,7 +385,7 @@ void Player::SetIsOperation(bool flag)
 	SetVelocity(Vec3::Zero());
 	if (flag)
 	{
-		ChangeAnim(kOperationRolling);
+		ChangeAnim(AnimNum::AnimationNumRolling);
 		SetAntiGravity();
 		m_playerUpdate = &Player::OperationUpdate;
 		//ChangeAnim(kAnimationNumFall);
@@ -400,7 +394,7 @@ void Player::SetIsOperation(bool flag)
 	else
 	{
 		SetAntiGravity(false);
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_isOperationFlag = false;
 	}
 }
@@ -426,7 +420,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 		m_playerUpdate = &Player::NeutralUpdate;
 		m_isJumpFlag = false;
 		m_isBoostFlag = false;
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 	}
 	if (colider->GetTag() == ObjectTag::Crystal)
 	{
@@ -435,7 +429,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 		m_playerUpdate = &Player::NeutralUpdate;
 		m_isJumpFlag = false;
 		m_isBoostFlag = false;
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 	}
 	if (colider->GetTag() == ObjectTag::Kuribo)
 	{
@@ -474,7 +468,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 			m_isOnDamageFlag = true;
 			m_damageFrame = kDamageFrameMax;
 
-			ChangeAnim(kAnimationNumHit);
+			ChangeAnim(AnimNum::AnimationNumHit);
 		}
 	}
 	if (colider->GetTag() == ObjectTag::Gorori)
@@ -498,7 +492,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 			m_isOnDamageFlag = true;
 			m_damageFrame = kDamageFrameMax;
 
-			ChangeAnim(kAnimationNumHit);
+			ChangeAnim(AnimNum::AnimationNumHit);
 		}
 	}
 	if (colider->GetTag() == ObjectTag::KillerTheSeeker)
@@ -524,7 +518,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 4);
 			m_isOnDamageFlag = true;
 			m_damageFrame = kDamageFrameMax;
-			ChangeAnim(kAnimationNumHit);
+			ChangeAnim(AnimNum::AnimationNumHit);
 		}
 	}
 	if (colider->GetTag() == ObjectTag::Item)
@@ -555,7 +549,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 			m_Hp -= 10;
 			m_isOnDamageFlag = true;
 			m_damageFrame = kDamageFrameMax;
-			ChangeAnim(kAnimationNumHit);
+			ChangeAnim(AnimNum::AnimationNumHit);
 		}
 	}
 	if (colider->GetTag() == ObjectTag::ClearObject)
@@ -577,6 +571,14 @@ void Player::OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::Collide
 void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
 {
 	printf("TriggerEnter\n");
+}
+
+void Player::OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+{
+	if (colider->GetTag() == ObjectTag::Stage)
+	{
+		int a = 0;
+	}
 }
 
 Vec3 Player::GetCameraToPlayer() const
@@ -654,20 +656,20 @@ void Player::NeutralUpdate()
 
 	if (std::abs(move.Length()) >= 0.2f*kMaxSpeed)
 	{
-		ChangeAnim(kAnimationNumRun);
+		ChangeAnim(AnimNum::AnimationNumRun);
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
 	//プレイヤーの最大移動速度は0.01f/frame
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
-		ChangeAnim(kAnimationNumJump);
+		ChangeAnim(AnimNum::AnimationNumJump);
 		m_isJumpFlag = true;
 		move += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
-		ChangeAnim(kAnimationNumSpin,5.f);
+		ChangeAnim(AnimNum::AnimationNumSpin,5.f);
 		m_attackRadius = kNeutralSpinRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
@@ -690,26 +692,26 @@ void Player::WalkingUpdate()
 
 	if (std::abs(ans.Length()) < 0.2f*kMaxSpeed)
 	{
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 	
 	if ((Pad::IsPress(PAD_INPUT_Z)))
 	{
-		ChangeAnim(kAnimationNumRun, kDashMag);
+		ChangeAnim(AnimNum::AnimationNumRun, kDashMag);
 		m_playerUpdate = &Player::DashUpdate;
 	}
 
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
-		ChangeAnim(kAnimationNumJump);
+		ChangeAnim(AnimNum::AnimationNumJump);
 		m_isJumpFlag = true;
 		ans += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
-		ChangeAnim(kAnimationNumSpin,5.f);
+		ChangeAnim(AnimNum::AnimationNumSpin,5.f);
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -731,7 +733,7 @@ void Player::DashUpdate()
 	if ((Pad::IsRelase(PAD_INPUT_Z)))
 	{
 		m_cameraEasingSpeed = 15.f;
-		ChangeAnim(kAnimationNumRun);
+		ChangeAnim(AnimNum::AnimationNumRun);
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
 
@@ -739,7 +741,7 @@ void Player::DashUpdate()
 	if (std::abs(ans.Length()) < 0.2f * kMaxSpeed)
 	{
 		m_cameraEasingSpeed = 15.f;
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 
@@ -747,7 +749,7 @@ void Player::DashUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
 		m_cameraEasingSpeed = 15.f;
-		ChangeAnim(kAnimationNumJump);
+		ChangeAnim(AnimNum::AnimationNumJump);
 		m_isJumpFlag = true;
 		ans += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
@@ -755,7 +757,7 @@ void Player::DashUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		m_cameraEasingSpeed = 15.f;
-		ChangeAnim(kAnimationNumSpin, 5.f);
+		ChangeAnim(AnimNum::AnimationNumSpin, 5.f);
 		m_attackRadius =kNeutralSpinRadius;
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
@@ -773,12 +775,13 @@ void Player::JumpingUpdate()
 	m_state = "Jumping";
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
+		ChangeAnim(AnimNum::AnimationNumJumpAttack);
 		m_rigid->SetVelocity(Vec3::Zero());
 		m_playerUpdate = &Player::DropAttackUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
-		ChangeAnim(kAnimationNumSpin,5.f);
+		ChangeAnim(AnimNum::AnimationNumSpin,5.f);
 		if (m_spinCount >= 1)return;
 		m_isSpinFlag = true;
 		m_spinCount++;
@@ -789,7 +792,13 @@ void Player::JumpingUpdate()
 
 void Player::DropAttackUpdate()
 {
-	m_rigid->AddVelocity(m_upVec * -1.1f);
+	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在の再生カウント
+	m_rigid->AddVelocity(m_upVec * -0.8f);
+	if (now < 16)
+	{
+		m_angle += (DX_PI_F * 2) / 16;
+		m_rigid->SetVelocity(Vec3::Zero());
+	}
 }
 
 
@@ -802,14 +811,14 @@ void Player::AimingUpdate()
 	//プレイヤーの最大移動速度は0.01f/frame
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
-		ChangeAnim(kAnimationNumJump);
+		ChangeAnim(AnimNum::AnimationNumJump);
 		m_isJumpFlag = true;
 		move += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
-		ChangeAnim(kAnimationNumSpin);
+		ChangeAnim(AnimNum::AnimationNumSpin);
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
@@ -837,7 +846,7 @@ void Player::SpiningUpdate()
 
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_isSpinFlag = false;
 		m_playerUpdate = &Player::NeutralUpdate;
 		m_spinAngle = 0;
@@ -862,7 +871,7 @@ void Player::JumpingSpinUpdate()
 	m_angle += DX_PI_F / 15;
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
-		ChangeAnim(kAnimationNumJump);
+		ChangeAnim(AnimNum::AnimationNumJump);
 		m_isSpinFlag = false;
 		m_playerUpdate = &Player::JumpingUpdate;
 		m_spinAngle = 0;
@@ -871,7 +880,7 @@ void Player::JumpingSpinUpdate()
 
 void Player::CommandJump()
 {
-	ChangeAnim(kAnimationNumJump);
+	ChangeAnim(AnimNum::AnimationNumJump);
 	m_isJumpFlag = true;
 	m_rigid->AddVelocity(m_upVec.GetNormalized() * kJumpPower);
 	m_playerUpdate = &Player::JumpingUpdate;
@@ -885,7 +894,7 @@ void Player::BoostUpdate()
 	m_moveDir = m_frontVec;
 	if (!m_isBoostFlag)
 	{
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 }
@@ -899,7 +908,7 @@ void Player::OperationUpdate()
 	if (!m_isOperationFlag)
 	{
 		SetAntiGravity(false);
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 }
@@ -968,13 +977,13 @@ void Player::DamegeUpdate()
 	{
 		if (m_prevUpdate != m_playerUpdate)
 		{
-			ChangeAnim(kAnimationNumRun);
+			ChangeAnim(AnimNum::AnimationNumRun);
 			//ダメージアニメーションのみ
 			m_playerUpdate = m_prevUpdate;
 		}
 		else
 		{
-			ChangeAnim(kAnimationNumIdle);
+			ChangeAnim(AnimNum::AnimationNumIdle);
 			m_playerUpdate = &Player::NeutralUpdate;
 			m_prevUpdate 
 				= m_playerUpdate;
@@ -989,7 +998,7 @@ void Player::AvoidUpdate()
 	{
 		actionFrame = 0;
 		m_radius = kNeutralRadius;
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 }

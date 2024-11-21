@@ -11,6 +11,20 @@ class PlayerSphere;
 class Player : public MyEngine::Collidable
 {
 public:
+	enum AnimNum : int
+	{
+		AnimationNumJump,
+		AnimationNumRun,
+		AnimationNumSpin,
+		AnimationNumTpose,
+		AnimationNumIdle,
+		AnimationNumHit,
+		AnimationNumDeath,
+		AnimationNumFall,
+		AnimationNumRolling,
+		AnimationNumJumpAttack,
+	};
+
 	Player(int modelhandle);
 	~Player();
 
@@ -66,6 +80,7 @@ public:
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 
 	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag);
+	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag);
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_playerUpdate;

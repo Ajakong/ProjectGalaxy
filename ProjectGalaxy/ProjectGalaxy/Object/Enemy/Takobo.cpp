@@ -2,6 +2,7 @@
 #include"ColliderSphere.h"
 #include"Physics.h"
 #include"SoundManager.h"
+#include"ModelManager.h"
 
 namespace
 {
@@ -41,6 +42,8 @@ namespace
 
 	const char* kShotSEhandlePath = "Shot.mp3";
 
+	const char* kTakoboFileName = "shotMonster.mv1";
+
 	const char* name = "takobo";
 }
 
@@ -63,6 +66,7 @@ m_centerToEnemyAngle(0)
 	AddThroughTag(ObjectTag::Takobo);
 	AddThroughTag(ObjectTag::Gorori);
 	AddThroughTag(ObjectTag::WarpGate);
+	m_modelHandle=ModelManager::GetInstance().GetModelData(kTakoboFileName);
 }
 
 Takobo::~Takobo()
