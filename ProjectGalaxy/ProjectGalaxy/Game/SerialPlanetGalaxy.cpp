@@ -84,8 +84,8 @@ namespace
 	constexpr float kCameraDistanceAddFrontInJump = 15.f;
 	constexpr float kCameraDistanceUp = 25.f;
 
-
 	const char* kModelScreenName = "ModelScreen";
+
 
 	constexpr float kGravityRange = 150.f;
 }
@@ -131,7 +131,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//エネミー
 	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
 	MyEngine::Physics::GetInstance().Entry(kuribo.back());
-	takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -30)));
+	takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -30),player));
+	MyEngine::Physics::GetInstance().Entry(takobo.back());
 	spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
 	spaceEmperor.back()->SetTarget(player);
 	MyEngine::Physics::GetInstance().Entry(spaceEmperor.back());
@@ -144,7 +145,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
-	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
+	
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 	for (auto& item : planet)
 	{
@@ -152,6 +153,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	}
 	//それぞれのオブジェクトの上方向ベクトルなどの更新
 	MyEngine::Physics::GetInstance().Update();
+
+	//m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
 }
 
 SerialPlanetGalaxy::~SerialPlanetGalaxy()
@@ -276,6 +279,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	
 	player->SetMatrix();//行列を反映
 	for (auto& item : kuribo) { item->SetMatrix(); }
+	for (auto& item : takobo) { item->SetMatrix(); }
 	for (auto& item : spaceEmperor) { item->SetMatrix(); }
 }
 

@@ -1,20 +1,29 @@
-#pragma once
+ï»¿#pragma once
 #include "Enemy.h"
 #include"EnemySphere.h"
 
-
+class Player;
 
 /// <summary>
-/// ¶‰E‚ÉˆÚ“®‚µAˆê’èŠÔŠu‚ÅËŒ‚‚µ‚Ä‚­‚é“Ge
-/// “¥‚İ‚Â‚¯‚ç‚ê‚é‚Æ‚Â‚Ô‚ê‚é
+/// å·¦å³ã«ç§»å‹•ã—ã€ä¸€å®šé–“éš”ã§å°„æ’ƒã—ã¦ãã‚‹æ•µe
+/// è¸ã¿ã¤ã‘ã‚‰ã‚Œã‚‹ã¨ã¤ã¶ã‚Œã‚‹
 /// </summary>
 class Takobo : public Enemy
 {
 public:
+	enum AnimNum : int
+	{
+		Empty1,
+		Brow,
+		FastWalk,
+		Idle,
+		Empty2,
+		Shot
+	};
 
-	/// <param name="m_modelhandle">ƒGƒlƒ~[‚Ìƒ‚ƒfƒ‹</param>
-	/// <param name="obj">‰e‹¿‚ğ—^‚¦‚éƒIƒuƒWƒF</param>
-	Takobo(Vec3 pos);
+	/// <param name="m_modelhandle">ã‚¨ãƒãƒŸãƒ¼ã®ãƒ¢ãƒ‡ãƒ«</param>
+	/// <param name="obj">å½±éŸ¿ã‚’ä¸ãˆã‚‹ã‚ªãƒ–ã‚¸ã‚§</param>
+	Takobo(Vec3 pos, std::shared_ptr<MyEngine::Collidable> target);
 	virtual ~Takobo();
 
 	void Init();
@@ -23,7 +32,7 @@ public:
 	void DeleteManage();
 	void Draw();
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
+	virtual void OnCollideEnter(std::shared_ptr <MyEngine::Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag);
 
 	Vec3 GetMyPos();
 	int WatchHp() const { return m_Hp; }
@@ -31,22 +40,29 @@ public:
 
 	float GetIdleSpeed() { return m_idleSpeed; }
 
-	void SetTarget(std::shared_ptr<Collidable> target);
+	void SetTarget(std::shared_ptr<MyEngine::Collidable> target);
 	void SetNormVec(Vec3 norm) { m_normVec = norm; }
 
 	std::list<std::shared_ptr<EnemySphere>> GetAttackObj() { return m_sphere; }
 	
 
-	//ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+	//ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 	using enemyState_t = void(Takobo::*)();
 	enemyState_t m_enemyUpdate;
 private:
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®é€²è¡Œ
+	//ãƒ«ãƒ¼ãƒ—ã—ãŸã‹ã©ã†ã‹ã‚’è¿”ã™
+	bool UpdateAnim(int attachNo);
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å¤‰æ›´
+	void ChangeAnim(int animIndex, int speed = 1.f);
+
+
 	/// <summary>
-	/// ’Êí(ƒN[ƒ‹ƒ_ƒEƒ“)ó‘Ô
+	/// é€šå¸¸(ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³)çŠ¶æ…‹
 	/// </summary>
 	void IdleUpdate();
 	/// <summary>
-	/// ‹…‘Ì‚ğ¶¬‚µ‚ÄUŒ‚
+	/// çƒä½“ã‚’ç”Ÿæˆã—ã¦æ”»æ’ƒ
 	/// </summary>
 	void AttackSphereUpdate();
 
@@ -70,13 +86,21 @@ private:
 	int m_bombNum = 0;
 	int m_shotSEHandle;
 
+	int m_animationSpeed;
+
+	//0.0f:prevãŒå†ç”Ÿ
+	//1.0:currentãŒå†ç”Ÿ
+	int m_currentAnimNo;//ç¾åœ¨ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
+	int m_prevAnimNo;//å¤‰æ›´å‰ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
+	float m_animBlendRate;//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæˆå‰²åˆ
+
 	Vec3 m_vec;
 	Vec3 m_attackDir;
 	Vec3 m_moveShaftPos;
 	Vec3 m_normVec;
 	Vec3 m_nowPlanetPos;
-	std::shared_ptr<Collidable> m_target;
-	//ƒAƒjƒ[ƒVƒ‡ƒ“•Ï”
+	std::shared_ptr<MyEngine::Collidable> m_target;
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å¤‰æ•°
 	int m_anim_nutral = 0;
 	int m_anim_move = 0;
 	int m_anim_jump = 0;

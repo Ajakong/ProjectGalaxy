@@ -97,7 +97,7 @@ void Kuribo::Update()
 	}
 	m_sideVec = Cross(m_upVec, m_frontVec);
 
-	m_bodyCol->SetShiftPosNum(m_upVec * 3);
+	//m_bodyCol->SetShiftPosNum(m_upVec * 5);
 }
 
 void Kuribo::SetMatrix()
@@ -137,8 +137,8 @@ void Kuribo::SetMatrix()
 	m_postUpVec = m_upVec;//上方向ベクトルを前のフレームの上方向ベクトルにする
 
 	MV1SetRotationMatrix(m_modelHandle, rotatemat);//回転行列を反映
-
-	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+	MV1SetRotationZYAxis(m_modelHandle, (m_attackDir * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
+	MV1SetPosition(m_modelHandle, (m_rigid->GetPos()-m_upVec*kRadius).VGet());
 	auto modelMat = MV1GetMatrix(m_modelHandle);
 }
 

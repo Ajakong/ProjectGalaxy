@@ -1,12 +1,14 @@
 ﻿#include"Game.h"
 #include "DebugGalaxy.h"
 #include"Player.h"
+#include"Takobo.h"
 #include"Camera.h"
 #include"BoxPlanet.h"
+#include"SpherePlanet.h"
 #include"Physics.h"
+#include"ModelManager.h"
 
 using namespace std;
-
 
 namespace
 {
@@ -68,7 +70,10 @@ namespace
 DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
 	player = playerPointer;
-	planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00));
+	planet.push_back(make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
+	
+	takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
+	MyEngine::Physics::GetInstance().Entry(takobo.back());
 	camera = make_shared<Camera>();
 }
 
@@ -89,17 +94,11 @@ void DebugGalaxy::Init()
 
 void DebugGalaxy::Update()
 {
-	player->Update();
-	if (player->OnAiming())
-	{
-		camera->Update(player->GetShotDir());
-	}
-	else
-	{
-		camera->Update(player->GetPos());
-	}
+	camera->SetEasingSpeed(player->GetCameraEasingSpeed());
+	if (player->OnAiming())camera->Update(player->GetShotDir());
+	else camera->Update(player->GetLookPoint());
 
-	Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
+	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
 	Vec3 front = player->GetFrontVec();//-1をかけて逆ベクトルにしている
 
@@ -111,9 +110,22 @@ void DebugGalaxy::Update()
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
 	camera->SetUpVec(player->GetNormVec());
 
+	////エネミー
+	//for (auto& item : kuribo) { item->Update(); }
+
+
+	//for (auto& item : planet)item->Update();//ステージの更新
+	////位置固定ギミック
+	//for (auto& item : booster) { item->Update(); }
+	//for (auto& item : starCapture) { item->Update(); }
+	//for (auto& item : seekerLine) { item->Update(); }
+	//for (auto& item : crystal) { item->Update();}
+	//for (auto& item : coin)item->Update();
+
+
 	if (player->GetBoostFlag())
 	{
-		camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * (kCameraDistanceUp - 4) - front * ((kCameraDistanceFront - 7) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+		camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 	}
 	else
 	{
@@ -127,24 +139,18 @@ void DebugGalaxy::Update()
 		}
 	}
 
-	for (auto& item : planet)item->Update();//ステージの更新
-	
-
-	MyEngine::Physics::GetInstance().Update();//当たり判定の更新
+	MyEngine::Physics::GetInstance().Update();
 
 	player->SetMatrix();//行列を反映
-	for (auto& item : planet)item->Update();
-
+	for(auto& item : takobo)item->SetMatrix();
 }
 
 void DebugGalaxy::Draw()
 {
 	if (player->OnAiming())camera->SetDebugCameraPoint();
-
 	for (auto& item : planet)
 	{
 		item->SetIsSearch(player->IsSearch());
-
 	}
 
 	MyEngine::Physics::GetInstance().Draw();
@@ -156,10 +162,8 @@ void DebugGalaxy::Draw()
 		DxLib::DrawBox(0, 0, 1600, 900,
 			0x444488, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	}
 
-	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
@@ -167,19 +171,50 @@ void DebugGalaxy::Draw()
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Front() * 20).VGet(), 0x0000ff);
 
+	DrawCircle(200, 500, 100, 0xffff00, 0);
+	DrawLine(200, 500, 200 + player->GetInputVec().x * 70, 500 + player->GetInputVec().z * 70, 0xff0000);
+	DrawLine(200, 500, 200 + player->GetPostMoveDir().x * 70, 500 + player->GetPostMoveDir().z * 70, 0x0000ff);
+	DrawCircle(200 + player->GetInputVec().x * ((player->GetInputVec().Length() * 70.f)), 500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f)), 30, 0xffff00, 0);
+
 #endif
 
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
 	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatString(0, 0, 0xffffff, "NormVec(%f,%f,%f)", player->GetNormVec().x, player->GetNormVec().y, player->GetNormVec().z);
-	DrawFormatString(0, 25, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
-	DrawFormatString(0, 50, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
-	DrawFormatString(0, 75, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
-	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)", camera->GetPos().x, camera->GetPos().y, camera->GetPos().z, (camera->GetPos() - player->GetPos()).Length());
-	
-	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
-	Vec3 playerToPlanet = planet.back()->GetRigidbody()->GetPos() - player->GetRigidbody()->GetPos();
-	DrawFormatString(0, 175, 0xffffff, "PlayerToPlanet(%f,%f,%f)", playerToPlanet.x, playerToPlanet.y, playerToPlanet.z);
+	DrawFormatString(0, 25 * 0, 0xffffff, "HP:%f", player->GetHp());
+
+	DrawFormatString(0, 25 * 1, 0xffffff, "UpVec(%f,%f,%f)", player->GetUpVec().x, player->GetUpVec().y, player->GetUpVec().z);
+
+	DrawFormatString(0, 25 * 2, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
+	DrawFormatString(0, 25 * 3, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
+	DrawFormatString(0, 25 * 4, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
+	DrawFormatString(0, 25 * 5, 0xffffff, "Camera(%f,%f,%f),Length(%f)", camera->GetPos().x, camera->GetPos().y, camera->GetPos().z, (camera->GetPos() - player->GetPos()).Length());
+
+	DrawFormatString(0, 25 * 6, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
+	DrawFormatString(0, 25 * 7, 0xffffff, player->GetState().c_str());
+	DrawFormatString(0, 25 * 8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
+
+	SetDrawScreen(m_modelScreenHandle);
+
+	SetCameraNearFar(1.f, 10000.f);
+	SetCameraPositionAndTarget_UpVecY((player->GetPos() + Vec3::Left() * -10 + Vec3::Front() * -10 + Vec3::Up() * 10).VGet(), (player->GetPos()).VGet());
+	ClearDrawScreen();
+	player->Draw();
+	SetDrawScreen(DX_SCREEN_BACK);
+
+
+
+	SetScreenFlipTargetWindow(NULL);
+
+	camera->Set();
+	ScreenFlip();
+
+	// 少し時間の経過を待つ
+	WaitTimer(2);
+
+	ClearDrawScreen();
+
+	DrawRotaGraph(800, 450, 1.0f, 0, m_modelScreenHandle, true);
+
 }

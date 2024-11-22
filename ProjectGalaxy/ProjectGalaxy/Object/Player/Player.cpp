@@ -6,6 +6,7 @@
 #include"Gorori.h"
 #include"EnemySphere.h"
 #include"PlayerSphere.h"
+#include"PlayerStickSphere.h"
 #include"KillerTheSeeker.h"
 #include"ModelManager.h"
 #include"GraphManager.h"
@@ -62,10 +63,6 @@ namespace
 	const char* kGetSearchSEName = "Search.mp3";
 	const char* name = "Player";
 	const char* kFileName = "SpaceHarrier.mv1";
-	
-	
-	
-	
 
 	//照準
 	const char* kAimGraphFileName = "Elements_pro.png";
@@ -139,6 +136,10 @@ m_modelDirAngle(0)
 		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		m_spinCol->radius = m_attackRadius;
 	}
+
+
+	m_shotUpdate = &Player::ShotTheStickStar;
+
 	m_cameraEasingSpeed = 15.f;
 	
 	AddThroughTag(ObjectTag::PlayerBullet);
@@ -203,7 +204,7 @@ void Player::Update()
 
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
-		ShotTheStar();
+		(this->*m_shotUpdate)();
 	}
 
 	for (auto& item : m_sphere)
@@ -312,8 +313,7 @@ void Player::SetMatrix()
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 	
 	MV1SetRotationZYAxis(m_modelHandle, (m_moveDir * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
-	MATRIX mat=MV1GetRotationMatrix(m_modelHandle);
-	auto pos = MV1GetPosition(m_modelHandle);
+
 	//当たり判定の更新
 	m_headCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius * 2 + kNeutralHeadRadius));
 	m_bodyCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius));
@@ -922,8 +922,6 @@ Vec3 Player::Move()
 	m_inputVec.x=analogX;
 	m_inputVec.z = -analogY;
 
-	
-
 	Vec3 ans;  // 初期化はそのままに
 	Vec3 modelDir;
 	// アナログスティックの入力を反映
@@ -957,17 +955,25 @@ Vec3 Player::Move()
 
 void Player::ShotTheStar()
 {
+	Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
+	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+	m_sphere.back()->Init();
+}
+
+void Player::ShotTheStickStar()
+{
 	if (m_sphere.size() == 0)
 	{
 		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
-		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
+		m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
 		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+		m_sphere.back()->Init();
 	}
 	else
 	{
 		m_sphere.back()->Effect();
 	}
-
 }
 
 void Player::DamegeUpdate()

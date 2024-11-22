@@ -3,6 +3,7 @@
 
 class Camera;
 class Player;
+class Takobo;
 class Planet;
 
 class DebugGalaxy : public Galaxy
@@ -25,5 +26,7 @@ private:
 	std::shared_ptr<Camera> camera;
 	std::vector<std::shared_ptr<Planet>> planet;
 	std::shared_ptr<Player> player;
+	std::vector<std::shared_ptr<Takobo>> takobo;
+
 };
 

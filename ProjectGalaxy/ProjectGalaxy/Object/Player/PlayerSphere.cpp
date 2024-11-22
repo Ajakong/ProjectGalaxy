@@ -42,19 +42,17 @@ PlayerSphere::~PlayerSphere()
 
 void PlayerSphere::Init()
 {
+	SetAntiGravity(true);
 }
 
 void PlayerSphere::Update()
 {
-	m_startPos = m_player->GetLeftHandPos();
-	(this->*m_moveUpdate)();
-	
+	(this->*m_moveUpdate)();	
 }
 
 void PlayerSphere::Draw()
 {
 	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, false);
-	DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff);
 }
 
 void PlayerSphere::Hit()
@@ -64,51 +62,20 @@ void PlayerSphere::Hit()
 
 void PlayerSphere::Effect()
 {
-	if (m_player->GetOperationFlag())
-	{
-		m_player->SetIsOperation(false);
-		m_isDeleteFlag = true;
-	}
-	if (m_stickFlag) { m_player->SetIsOperation(true); m_player->SetVelocity((m_rigid->GetPos() - m_player->GetPos()).GetNormalized() * 3); }
-	else m_moveUpdate=&PlayerSphere::ComeBackUpdate;
-	
 }
 
 void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
-	m_stickFlag = true;
-	m_moveUpdate = &PlayerSphere::StickUpdate;
-	//m_isDeleteFlag = true;
-	
+	m_isDeleteFlag = true;	
 }
 
 void PlayerSphere::StraightUpdate()
 {
-	
 	//m_velocity = Cross(m_upVec, m_sideVec);//地表に沿う
 
-	/*m_lifeTime++;
+	m_lifeTime++;
 	
 	if (m_lifeTime > kLifeTimeMax)
-	{
-		m_isDeleteFlag = true;
-	}*/
-}
-
-void PlayerSphere::StickUpdate()
-{
-	m_rigid->SetVelocity(Vec3::Zero());
-	if ((m_rigid->GetPos() - m_startPos).Length() <= 3.0f)
-	{
-		m_player->SetIsOperation(false);
-		m_isDeleteFlag = true;
-	}
-}
-
-void PlayerSphere::ComeBackUpdate()
-{
-	m_rigid->SetVelocity((m_startPos - m_rigid->GetPos()).GetNormalized() * 3);
-	if ((m_rigid->GetPos() - m_startPos).Length() <= 1.2f)
 	{
 		m_isDeleteFlag = true;
 	}
