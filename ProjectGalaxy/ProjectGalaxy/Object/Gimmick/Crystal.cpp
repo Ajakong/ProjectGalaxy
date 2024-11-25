@@ -5,7 +5,7 @@ using namespace std;
 
 
 Crystal::Crystal(Vec3 pos,Vec3 norm,Vec3 size) : Collidable(Priority::StageGimmick,ObjectTag::Crystal),
-m_Hp(30)
+m_hp(30)
 {
 	SetAntiGravity();
 	m_size = size;
@@ -28,7 +28,7 @@ void Crystal::Init()
 
 void Crystal::Update()
 {
-	if (m_Hp < 0)
+	if (m_hp < 0)
 	{
 		m_isDestroyFlag = true;
 	}
@@ -45,6 +45,6 @@ void Crystal::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Colli
 {
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
-		m_Hp -= 10;
+		m_hp -= 10;
 	}
 }

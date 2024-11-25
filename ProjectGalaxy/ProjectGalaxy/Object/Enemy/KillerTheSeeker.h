@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Enemy.h"
 
 class Killer;
@@ -18,7 +18,7 @@ public:
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 
 	Vec3 GetMyPos();
-	int WatchHp() const { return m_Hp; }
+	int WatchHp() const { return m_hp; }
 	float GetColRadius() { return m_radius; }
 
 	float GetIdleSpeed() { return m_idleSpeed; }
@@ -29,19 +29,19 @@ public:
 	Vec3 GetVelocity() const { return m_velocity; }
 	std::list<std::shared_ptr<Killer>> GetAttackObj() { return m_sphere; }
 
-	//ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+	//ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 	using enemyState_t = void(KillerTheSeeker::*)();
 	enemyState_t m_enemyUpdate;
 
 
-	int m_Hp;
+	int m_hp;
 private:
 	/// <summary>
-	/// ’Êí(ƒN[ƒ‹ƒ_ƒEƒ“)ó‘Ô
+	/// é€šå¸¸(ã‚¯ãƒ¼ãƒ«ãƒ€ã‚¦ãƒ³)çŠ¶æ…‹
 	/// </summary>
 	void IdleUpdate();
 	/// <summary>
-	/// ‹…‘Ì‚ğ¶¬‚µ‚ÄUŒ‚
+	/// çƒä½“ã‚’ç”Ÿæˆã—ã¦æ”»æ’ƒ
 	/// </summary>
 	void AttackSphereUpdate();
 	void AttackRollingUpdate();
@@ -80,7 +80,7 @@ private:
 	Vec3 m_normVec;
 	Vec3 m_nowPlanetPos;
 	std::shared_ptr<Collidable> m_target;
-	//ƒAƒjƒ[ƒVƒ‡ƒ“•Ï”
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å¤‰æ•°
 	int m_anim_nutral = 0;
 	int m_anim_move = 0;
 	int m_anim_jump = 0;

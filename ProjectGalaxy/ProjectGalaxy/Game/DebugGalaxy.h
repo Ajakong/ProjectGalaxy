@@ -23,7 +23,7 @@ public:
 
 private:
 	std::shared_ptr<Camera> camera;
-	std::vector<std::shared_ptr<Planet>> planet;
+	std::vector<std::shared_ptr<Planet>> m_planet;
 	std::shared_ptr<Player> player;
 };
 

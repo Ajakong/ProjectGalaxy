@@ -17,9 +17,9 @@ public:
 	virtual void Init() = 0;
 	virtual void Draw() = 0;
 	virtual void Update()=0;
-	//virtual int GetHP() { return m_Hp; }
+	//virtual int GetHP() { return m_hp; }
 protected:
-	//int m_Hp;
+	//int m_hp;
 	int m_modelHandle;
 	Quaternion m_myQ;
 };

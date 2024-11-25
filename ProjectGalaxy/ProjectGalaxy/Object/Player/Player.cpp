@@ -96,7 +96,7 @@ m_playerUpdate(&Player::NeutralUpdate),
 m_prevUpdate(&Player::NeutralUpdate),
 m_cameraUpdate(&Player::Planet1Update),
 m_anim_move(),
-m_Hp(50),
+m_hp(50),
 m_radius(kNeutralRadius),
 m_damageFrame(0),
 m_regeneRange(0),
@@ -187,8 +187,8 @@ void Player::Update()
 	SetShotDir();
 
 	int index = MV1SearchFrame(m_modelHandle, "mixamorig:Spine");
-	MATRIX shotDirMat = MGetRotVec2(nowVec.VGet(), m_shotDir.VGet());
-	nowVec = m_shotDir.VGet();
+	MATRIX shotDirMat = MGetRotVec2(m_nowVec.VGet(), m_shotDir.VGet());
+	m_nowVec = m_shotDir.VGet();
 
 	/*MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
 	MATRIX mat = MMult(shotDirMat, localMat);
@@ -409,7 +409,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	if (colider->GetTag() == ObjectTag::Coin)
 	{
 		printf("Coin\n");
-		m_Hp += 10;
+		m_hp += 10;
 	}
 
 	if (colider->GetTag() == ObjectTag::Stage)
@@ -461,7 +461,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 		{
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			StartJoypadVibration(DX_INPUT_PAD1, 600, 600);
-			m_Hp -= 10;
+			m_hp -= 10;
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
 			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 3);
@@ -485,7 +485,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 		{
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			StartJoypadVibration(DX_INPUT_PAD1, 600, 600);
-			m_Hp -= 10;
+			m_hp -= 10;
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
 			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 4);
@@ -506,13 +506,13 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 			auto killer = dynamic_pointer_cast<KillerTheSeeker>(colider);
 
 			killer->SetVelocity(Vec3(killer->GetRigidbody()->GetPos() - m_rigid->GetPos()).GetNormalized());
-			killer->m_Hp -= 20;
+			killer->m_hp -= 20;
 		}
 		else
 		{
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			StartJoypadVibration(DX_INPUT_PAD1, 600, 600);
-			m_Hp -= 10;
+			m_hp -= 10;
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
 			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 4);
@@ -525,7 +525,6 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	{
 		printf("Item\n");
 		PlaySoundMem(m_getItemHandle, DX_PLAYTYPE_BACK);
-		m_itemCount++;
 	}
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
 	{
@@ -546,7 +545,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 			attackSphere->DeleteFlag();
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
-			m_Hp -= 10;
+			m_hp -= 10;
 			m_isOnDamageFlag = true;
 			m_damageFrame = kDamageFrameMax;
 			ChangeAnim(AnimNum::AnimationNumHit);
@@ -557,9 +556,9 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 		printf("ClearObject\n");
 		m_isClearFlag = true;
 	}
-	if (m_Hp <= 0)
+	if (m_hp <= 0)
 	{
-		m_Hp = 0;
+		m_hp = 0;
 		m_color = 0xff0000;
 	}
 }
@@ -995,11 +994,11 @@ void Player::DamegeUpdate()
 }
 void Player::AvoidUpdate()
 {
-	actionFrame++;
+	m_actionFrame++;
 
-	if (actionFrame > kAvoidFrame)
+	if (m_actionFrame > kAvoidFrame)
 	{
-		actionFrame = 0;
+		m_actionFrame = 0;
 		m_radius = kNeutralRadius;
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;

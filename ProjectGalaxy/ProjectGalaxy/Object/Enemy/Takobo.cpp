@@ -1,12 +1,23 @@
 ﻿#include "Takobo.h"
 #include"ColliderSphere.h"
 #include"Physics.h"
+#include"Player.h"
 #include"SoundManager.h"
 #include"ModelManager.h"
 
 namespace
 {
-	constexpr float kCollisionRadius = 50.f;
+	constexpr float kScaleMag = 0.1f;
+	constexpr float kCollisionRadius = 50.f/20.f;
+
+
+	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
+
+	//アニメーションの切り替えにかかるフレーム数
+	constexpr float kAnimChangeFrame = 8.0f;
+	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
+
+	constexpr float kFrameParSecond = 60.0f;
 
 	/// <summary>
 		/// 最大HP
@@ -47,12 +58,12 @@ namespace
 	const char* name = "takobo";
 }
 
-
-Takobo::Takobo(Vec3 pos) :Enemy(-1, Priority::Low, ObjectTag::Takobo),
-m_Hp(kHp),
+Takobo::Takobo(Vec3 pos,std::shared_ptr<MyEngine::Collidable> target) :Enemy(-1, Priority::Low, ObjectTag::Takobo),
+m_hp(kHp),
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0)
 {
+	m_target=target;
 	SetCreate3DSoundFlag(true);
 	m_shotSEHandle = SoundManager::GetInstance().GetSoundData(kShotSEhandlePath);
 	SetCreate3DSoundFlag(false);
@@ -67,6 +78,9 @@ m_centerToEnemyAngle(0)
 	AddThroughTag(ObjectTag::Gorori);
 	AddThroughTag(ObjectTag::WarpGate);
 	m_modelHandle=ModelManager::GetInstance().GetModelData(kTakoboFileName);
+	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
+	ChangeAnim(Idle);
+	m_modelHeadIndex= MV1SearchFrame(m_modelHandle, "mixamorig:Head");
 }
 
 Takobo::~Takobo()
@@ -87,15 +101,23 @@ void Takobo::Update()
 		if (m_sphere.size() == 0)return;
 		sphere->Update();
 	}
-
+	UpdateAnim(m_currentAnimNo);
+	//変更前のアニメーション100%
+	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
+	//変更後のアニメーション0%
+	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
+	m_animBlendRate += 0.05f;
+	if (m_animBlendRate > 1.0f)
+	{
+		m_animBlendRate = 1.0f;
+	}
 
 }
 
 void Takobo::SetMatrix()
 {
-	MATRIX moving = MGetTranslate(m_rigid->GetPos().VGet());
-
-	MV1SetMatrix(m_modelHandle, moving);
+	MV1SetRotationZYAxis(m_modelHandle, (m_attackDir * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
+	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 }
 
 void Takobo::DeleteManage()
@@ -126,7 +148,7 @@ void Takobo::Draw()
 	}
 }
 
-void Takobo::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -134,7 +156,7 @@ void Takobo::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		m_Hp -= 20;
+		m_hp -= 20;
 	}
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
 	{
@@ -142,7 +164,7 @@ void Takobo::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 		attack->DeleteFlag();
 		if (attack->GetCounterFlag())
 		{
-			m_Hp -= 60;
+			m_hp -= 60;
 		}
 	}
 }
@@ -152,9 +174,57 @@ Vec3 Takobo::GetMyPos()
 	return  VGet(m_rigid->GetPos().x, m_rigid->GetPos().y + kFootToCenter, m_rigid->GetPos().z);
 }
 
-void Takobo::SetTarget(std::shared_ptr<Collidable> target)
+void Takobo::SetTarget(std::shared_ptr<MyEngine::Collidable> target)
 {
 	m_target = target;
+}
+
+bool Takobo::UpdateAnim(int attachNo)
+{
+	//アニメーションが設定されていないので終了
+	if (attachNo == -1) return false;
+
+	//アニメーションを進行させる
+	float now = MV1GetAttachAnimTime(m_modelHandle, attachNo);//現在の再生カウント
+	now += kAnimFrameSpeed * m_animationSpeed / kFrameParSecond;//アニメーションカウントを進める
+
+
+	//現在再生中のアニメーションの総カウントを取得する
+	float total = MV1GetAttachAnimTotalTime(m_modelHandle, attachNo);
+	bool isLoop = false;
+	while (now >= total)
+	{
+		now -= total;
+		isLoop = true;
+	}
+
+	MV1SetAttachAnimTime(m_modelHandle, attachNo, now);
+
+	return isLoop;
+}
+
+void Takobo::ChangeAnim(int animIndex, int speed)
+{
+	m_animationSpeed = speed;
+	//さらに古いアニメーションがアタッチされている場合はこの時点で削除しておく
+	if (m_prevAnimNo != -1)
+	{
+		MV1DetachAnim(m_modelHandle, m_prevAnimNo);
+	}
+
+	//現在再生中の待機アニメーションは変更前のアニメーション扱いに
+	m_prevAnimNo = m_currentAnimNo;
+
+	//変更後のアニメーションとして攻撃アニメーションを改めて設定する
+	m_currentAnimNo = MV1AttachAnim(m_modelHandle, animIndex, -1, false);
+
+	//切り替えの瞬間は変更前のアニメーションが再生される状態にする
+	m_animBlendRate = 0.0f;
+
+	//変更前のアニメーション100%
+	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
+	//変更後のアニメーション0%
+	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 }
 
 void Takobo::IdleUpdate()
@@ -178,13 +248,14 @@ void Takobo::IdleUpdate()
 		{
 			Vec3 norm = (m_rigid->GetPos() - m_nowPlanetPos).GetNormalized();
 			Vec3 toTarget = ToVec(norm, m_target->GetRigidbody()->GetPos());
-			if (toTarget.Length() > 500)break;
+			if (toTarget.Length() > 50)break;
 			float a = acos(Dot(norm, toTarget.GetNormalized())) * 180 / DX_PI_F;
 
 			if (a < 120)
 			{
 				m_attackCoolDownCount = 0;
 				m_attackDir = GetAttackDir();//オブジェクトに向かうベクトルを正規化したもの
+				ChangeAnim(Shot);
 				m_enemyUpdate = &Takobo::AttackSphereUpdate;
 			}
 			break;
@@ -198,17 +269,31 @@ void Takobo::IdleUpdate()
 
 void Takobo::AttackSphereUpdate()
 {
+	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在の再生カウント
+	
 	m_rigid->SetVelocity(VGet(0, 0, 0));
 
-	m_sphereNum++;
+	if (now > 35)
+	{
+		if (m_createFrameCount == 0)
+		{
+			Set3DPositionSoundMem(m_rigid->GetPos().VGet(), m_shotSEHandle);
+			PlaySoundMem(m_shotSEHandle, DX_PLAYTYPE_BACK);
+			Vec3 headPos = MV1GetFramePosition(m_modelHandle, m_modelHeadIndex);
+			m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), headPos, m_attackDir, 1, 0xff0000));
+			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+			m_sphereNum++;
+			m_createFrameCount = 1;
 
-	m_createFrameCount = 0;
-	Set3DPositionSoundMem(m_rigid->GetPos().VGet(), m_shotSEHandle);
-	PlaySoundMem(m_shotSEHandle,DX_PLAYTYPE_BACK);
-	m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), GetMyPos(), m_attackDir, 1, 0xff0000));
-	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
-
-	m_enemyUpdate = &Takobo::IdleUpdate;
+		}
+		
+	}
+	if (now > 100)
+	{
+		m_createFrameCount = 0;
+		ChangeAnim(Idle);
+		m_enemyUpdate = &Takobo::IdleUpdate;
+	}
 }
 
 Vec3 Takobo::GetAttackDir() const

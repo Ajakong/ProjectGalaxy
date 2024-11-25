@@ -6,7 +6,7 @@ namespace
 	/// <summary>
 	/// 球の当たり判定半径
 	/// </summary>
-	constexpr float kSphereRadius = 10.0f;
+	constexpr float kSphereRadius = 1.0f;
 	/// <summary>
 	/// 球の生成間隔
 	/// </summary>
@@ -49,17 +49,17 @@ void EnemySphere::Draw()
 
 void EnemySphere::Hit()
 {
-	//m_isDeleteFlag = true;
+	
 }
 
 void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
 {
-
+	m_isDeleteFlag = true;
 }
 
 void EnemySphere::StraightUpdate()
 {
-	m_rigid->SetVelocity(VGet(m_velocity.x * 20, m_velocity.y * 20, m_velocity.z * 20));
+	m_rigid->SetVelocity(m_velocity);
 }
 
 void EnemySphere::DeleteJudge()

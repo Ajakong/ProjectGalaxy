@@ -68,7 +68,7 @@ namespace
 DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
 	player = playerPointer;
-	planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00));
+	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00));
 	camera = make_shared<Camera>();
 }
 
@@ -80,7 +80,7 @@ void DebugGalaxy::Init()
 {
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 
-	for (auto& item : planet)
+	for (auto& item : m_planet)
 	{
 		item->Init();
 		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
@@ -127,13 +127,13 @@ void DebugGalaxy::Update()
 		}
 	}
 
-	for (auto& item : planet)item->Update();//ステージの更新
+	for (auto& item : m_planet)item->Update();//ステージの更新
 	
 
 	MyEngine::Physics::GetInstance().Update();//当たり判定の更新
 
 	player->SetMatrix();//行列を反映
-	for (auto& item : planet)item->Update();
+	for (auto& item : m_planet)item->Update();
 
 }
 
@@ -141,7 +141,7 @@ void DebugGalaxy::Draw()
 {
 	if (player->OnAiming())camera->SetDebugCameraPoint();
 
-	for (auto& item : planet)
+	for (auto& item : m_planet)
 	{
 		item->SetIsSearch(player->IsSearch());
 
@@ -180,6 +180,6 @@ void DebugGalaxy::Draw()
 	DrawFormatString(0, 100, 0xffffff, "Camera(%f,%f,%f),Length(%f)", camera->GetPos().x, camera->GetPos().y, camera->GetPos().z, (camera->GetPos() - player->GetPos()).Length());
 	
 	DrawFormatString(0, 150, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
-	Vec3 playerToPlanet = planet.back()->GetRigidbody()->GetPos() - player->GetRigidbody()->GetPos();
+	Vec3 playerToPlanet = m_planet.back()->GetRigidbody()->GetPos() - player->GetRigidbody()->GetPos();
 	DrawFormatString(0, 175, 0xffffff, "PlayerToPlanet(%f,%f,%f)", playerToPlanet.x, playerToPlanet.y, playerToPlanet.z);
 }

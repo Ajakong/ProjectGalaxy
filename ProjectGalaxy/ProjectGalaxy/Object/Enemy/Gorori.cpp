@@ -50,7 +50,7 @@ Vec3 norm(Vec3 a);
 float lerp(float start, float end, float t);
 
 Gorori::Gorori(Vec3 pos,Vec3 velocity) :Enemy(-1, Priority::Static, ObjectTag::Gorori),
-m_Hp(kHp),
+m_hp(kHp),
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0),
 m_attackCount(0),
@@ -135,7 +135,7 @@ void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		m_Hp -= 20;
+		m_hp -= 20;
 	}
 }
 

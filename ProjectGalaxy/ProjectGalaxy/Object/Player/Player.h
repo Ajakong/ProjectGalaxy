@@ -39,7 +39,7 @@ public:
 	void SetVelocity(Vec3 pos) { m_rigid->SetVelocity(pos); }
 	void AddVelocity(Vec3 pos) { m_rigid->AddVelocity(pos); }
 	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
-	float GetHp() { return m_Hp; }
+	float GetHp() { return m_hp; }
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetMoveDir() const{ return m_moveDir; }
 	Vec3 GetNowPlanetPos() const { return m_nowPlanetPos; }
@@ -53,7 +53,7 @@ public:
 	Vec3 GetLookPoint() const{ return m_lookPoint; }
 	float GetRegenerationRange() const{ return m_regeneRange; }
 	float GetCameraEasingSpeed()const { return m_cameraEasingSpeed; }
-	int WatchHp()const { return static_cast<int>(m_Hp); }
+	int WatchHp()const { return static_cast<int>(m_hp); }
 	bool GetOperationFlag()const { return m_isOperationFlag; }
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
@@ -153,23 +153,19 @@ private:
 	std::shared_ptr<MyEngine::ColliderSphere> m_spinCol;
 	std::shared_ptr<MyEngine::ColliderSphere> m_footCol;
 	std::shared_ptr<MyEngine::ColliderSphere> m_bodyCol;
-	float m_Hp;
+	float m_hp;
 	float m_cameraEasingSpeed;
 	int m_modelHandle = 0;
 	int m_aimGraphHandle = 0;
 
-	int rotRad = 0;
-
 	int m_speed = 1.f;
-
-	int m_itemCount=0;
 
 	int m_handFrameIndex;
 
 	/// <summary>
 	/// 行動のフレームを管理する
 	/// </summary>
-	int actionFrame = 0;
+	int m_actionFrame = 0;
 	int m_pointLightHandle = -1;
 	int m_hitSEHandle;
 	int m_parrySEHandle;
@@ -203,7 +199,7 @@ private:
 	Vec3 m_moveDir;
 	Vec3 m_postMoveDir;
 	Vec3 m_nowPlanetPos;
-	Vec3 nowVec;
+	Vec3 m_nowVec;
 	Vec3 m_inputVec;
 
 	Vec3 m_frontVec;
@@ -252,6 +248,6 @@ private:
 
 	int m_visibleCount = 0;
 
-	int HitCount = 0;
+	int m_hitCount = 0;
 };
 
