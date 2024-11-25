@@ -676,7 +676,7 @@ void Player::NeutralUpdate()
 	}
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
-		m_playerUpdate = &Player::AimingUpdate;
+		//m_playerUpdate = &Player::AimingUpdate;
 	}
 	
 	m_rigid->SetVelocity(move);
@@ -717,7 +717,7 @@ void Player::WalkingUpdate()
 	}
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
-		m_playerUpdate = &Player::AimingUpdate;
+		//m_playerUpdate = &Player::AimingUpdate;
 	}
 	m_rigid->SetVelocity(ans);
 }
@@ -814,16 +814,19 @@ void Player::AimingUpdate()
 		ChangeAnim(AnimNum::AnimationNumJump);
 		m_isJumpFlag = true;
 		move += m_upVec.GetNormalized() * kJumpPower;
+		ChangeAnim(AnimNum::AnimationNumJump);
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(AnimNum::AnimationNumSpin);
 		m_isSpinFlag = true;
+		ChangeAnim(AnimNum::AnimationNumSpin);
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 	
