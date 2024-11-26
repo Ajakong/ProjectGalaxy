@@ -111,7 +111,7 @@ namespace MyEngine
 		std::shared_ptr<Rigidbody> GetRigidbody() const { return m_rigid; }
 	protected:
 		std::shared_ptr<Collide> AddCollider(const ColliderBase::Kind& kind,const ColliderBase::ColideTag& tag);
-		void RemoveCollider(std::shared_ptr<Collide> col);
+		void RemoveCollider(std::shared_ptr<ColliderBase> col);
 
 		void SetAntiGravity(bool flag = true) { m_isAntiGravity=flag; }
 	protected:

@@ -5,7 +5,7 @@
 #include"Vec3.h"
 #include "ObjectTag.h"
 #include <DxLib.h>
-
+#include "Collidable.h"
 
 
 namespace MyEngine
@@ -28,12 +28,6 @@ namespace MyEngine
 			TriggerEnter,
 			TriggerStay,
 			TriggerExit
-		};
-		struct OnCollideInfoData
-		{
-			std::shared_ptr<Collidable> own;
-			std::shared_ptr<Collidable> send;
-			OnCollideInfoKind kind;
 		};
 		struct CollideHitInfo
 		{
@@ -94,7 +88,7 @@ namespace MyEngine
 		std::vector<std::shared_ptr<Collidable>> GetCollisionList() const;
 		void CheckCollide();
 
-		CollideHitInfo IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr <Collidable::Collide> & colliderA, const std::shared_ptr<Collidable::Collide>& colliderB) const;
+		CollideHitInfo IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::Collide> & colliderA, const std::shared_ptr<Collidable::Collide>& colliderB) const;
 		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<Collidable::Collide>& primaryCollider, const std::shared_ptr<Collidable::Collide>& secondaryCollider, const CollideHitInfo info);
 		/// <summary>
 		/// 判定通知リストに追加する

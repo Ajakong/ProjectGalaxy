@@ -55,7 +55,7 @@ std::shared_ptr<Collidable::Collide> MyEngine::Collidable::AddCollider(const Col
 	collider->tag = tag;
 	return collider;
 }
-void MyEngine::Collidable::RemoveCollider(std::shared_ptr<Collide> col)
+void MyEngine::Collidable::RemoveCollider(std::shared_ptr<ColliderBase> col)
 {
 	auto it = std::find(m_colliders.begin(), m_colliders.end(), col);
 	if (it == m_colliders.end()) return;
