@@ -286,10 +286,6 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	for (auto& item : m_takobo) { item->SetMatrix(); }
 	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
 
-	for (auto& item : kuribo) { item->SetMatrix(); }
-	for (auto& item : takobo) { item->SetMatrix(); }
-	for (auto& item : spaceEmperor) { item->SetMatrix(); }
-
 }
 
 void SerialPlanetGalaxy::BossBattleUpdate()

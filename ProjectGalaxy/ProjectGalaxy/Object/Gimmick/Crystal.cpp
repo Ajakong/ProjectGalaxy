@@ -11,7 +11,7 @@ m_hp(30)
 	m_size = size;
 	m_rigid->SetPos(pos);
 	auto col=AddCollider(MyEngine::ColliderBase::Kind::Box, MyEngine::ColliderBase::ColideTag::Body);
-	auto box = dynamic_pointer_cast<MyEngine::ColliderBox>(col);
+	auto box = dynamic_pointer_cast<MyEngine::ColliderBox>(col->col);
 	box->norm = norm;
 	box->size = m_size;
 	box->rotation = Quaternion();

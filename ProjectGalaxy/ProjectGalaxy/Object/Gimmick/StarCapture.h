@@ -34,7 +34,7 @@ private:
 	int m_radius;
 	int m_captureRadius;
 	int m_captureFrame;
-	std::shared_ptr<MyEngine::ColliderSphere> m_captureCol;
+	std::shared_ptr<Collidable::CollideInfo> m_captureCol;
 	std::shared_ptr<MyEngine::Collidable> m_target;
 	std::shared_ptr<Player> m_player;
 	Vec3 m_playerStartPos;

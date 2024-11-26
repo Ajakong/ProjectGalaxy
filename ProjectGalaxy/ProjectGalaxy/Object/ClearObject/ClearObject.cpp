@@ -23,7 +23,7 @@ void ClearObject::Init()
 {
 	SetObjectTag(ObjectTag::ClearObject);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere,ColliderBase::ColideTag::Body);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = 50;
 }
 

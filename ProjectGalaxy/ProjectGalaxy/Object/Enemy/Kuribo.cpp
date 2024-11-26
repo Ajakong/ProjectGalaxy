@@ -54,14 +54,14 @@ m_chaseFrameCount(0)
 	m_rigid->SetPos(pos);
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_bodyCol->radius = kRadius;
 	}
 	
 #ifdef _DEBUG
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		item->radius = kSearchRadius;
 		item->isTrigger = true;
 		m_searchCol = item;

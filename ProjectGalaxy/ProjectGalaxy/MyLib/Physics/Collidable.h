@@ -18,7 +18,7 @@ namespace MyEngine
 	{
 		friend Physics;
 	public:
-		struct Collide
+		struct CollideInfo
 		{
 			std::shared_ptr<ColliderBase> col;
 			ColliderBase::ColideTag tag;
@@ -110,15 +110,15 @@ namespace MyEngine
 
 		std::shared_ptr<Rigidbody> GetRigidbody() const { return m_rigid; }
 	protected:
-		std::shared_ptr<Collide> AddCollider(const ColliderBase::Kind& kind,const ColliderBase::ColideTag& tag);
-		void RemoveCollider(std::shared_ptr<ColliderBase> col);
+		std::shared_ptr<CollideInfo> AddCollider(const ColliderBase::Kind& kind,const ColliderBase::ColideTag& tag);
+		void RemoveCollider(std::shared_ptr<Collidable::CollideInfo> col);
 
 		void SetAntiGravity(bool flag = true) { m_isAntiGravity=flag; }
 	protected:
 		// 物理データ
 		std::shared_ptr<Rigidbody> m_rigid;
 		// 当たり判定データ
-		std::vector<std::shared_ptr<Collide>> m_colliders;
+		std::vector<std::shared_ptr<CollideInfo>> m_colliders;
 		Vec3 m_upVec;
 		Vec3 m_postUpVec;
 		Vec3 m_frontVec;

@@ -38,7 +38,7 @@ m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname))
 	SetAntiGravity(true);
 	m_warpPos = warpPos;
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = 6;
 	m_rigid->SetPos(pos);
 

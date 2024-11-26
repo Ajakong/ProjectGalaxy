@@ -6,7 +6,7 @@ namespace MyEngine
 	class ColliderCapsule : public ColliderBase
 	{
 	public:
-		ColliderCapsule(ColideTag tag);
+		ColliderCapsule();
 
 	public:
 		float radius;

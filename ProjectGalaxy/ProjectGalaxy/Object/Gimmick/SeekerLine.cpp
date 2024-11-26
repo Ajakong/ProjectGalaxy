@@ -28,7 +28,7 @@ m_num(0)
 	}
 	m_rigid->SetPos(m_points.front());
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kRadius;
 	item->isTrigger = true;
 	SetAntiGravity();

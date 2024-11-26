@@ -37,9 +37,9 @@ namespace MyEngine
 		// 当たり判定種別取得
 		Kind GetKind() const { return m_kind; }
 		// 当たった情報更新
-		void UpdateHit(const ColliderBase* collider, bool isHit);
-		bool IsHit(const ColliderBase* collider) const { return m_isHit.at(collider); }
-		bool IsPreHit(const ColliderBase* collider) const { return m_isPreHit.at(collider); }
+		void UpdateHit(const std::shared_ptr<ColliderBase> collider, bool isHit);
+		bool IsHit(const std::shared_ptr<ColliderBase> collider) const { return m_isHit.at(collider); }
+		bool IsPreHit(const std::shared_ptr<ColliderBase> collider) const { return m_isPreHit.at(collider); }
 		bool NowOnHit() { return m_isNowOnHit; }
 		void SetNowOnHit(bool flag) { m_isNowOnHit = flag; }
 		Vec3 GetShift() const{ return m_posShift; }
@@ -57,8 +57,8 @@ namespace MyEngine
 		//オブジェクトの位置からの当たり判定の相対量
 		Vec3 m_posShift;
 		Kind m_kind;
-		std::unordered_map<const ColliderBase*, bool> m_isHit;
-		std::unordered_map<const ColliderBase*, bool> m_isPreHit;
+		std::unordered_map<const std::shared_ptr<ColliderBase>, bool> m_isHit;
+		std::unordered_map<const std::shared_ptr<ColliderBase>, bool> m_isPreHit;
 		bool m_isNowOnHit;
 	};
 }

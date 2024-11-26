@@ -23,7 +23,7 @@ Item::~Item()
 void Item::Init()
 {
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-	m_col = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	m_col = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	m_col->radius = 2.5f;
 	
 }

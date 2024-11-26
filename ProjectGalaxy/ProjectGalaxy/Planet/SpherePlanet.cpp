@@ -27,11 +27,11 @@ m_modelHandle(modelHandle)
 	//当たり判定の追加
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
 	m_colliders.back()->col->isTrigger = true;
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kGravityRange;
 	AddThroughTag(ObjectTag::Stage);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//マップの当たり判定
-	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item2->radius = kGroundRadius;
 }
 

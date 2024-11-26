@@ -12,7 +12,7 @@ void Coin::Init()
 {
 	SetObjectTag(ObjectTag::Coin);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-	m_col = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	m_col = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	m_col->radius = 2.5f;
 	m_col->isTrigger = true;
 }

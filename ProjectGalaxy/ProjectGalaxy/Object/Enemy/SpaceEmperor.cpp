@@ -40,13 +40,13 @@ m_armMoveDir(Vec3::Zero())
 	m_update = &SpaceEmperor::IntroUpdate;
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col); 
 		item->radius = 6;
 
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine:: ColliderBase::ColideTag::Fist);
-		m_armCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_armCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_armCol->radius = 6;
 	}
 	MV1SetScale(m_modelHandle,Vec3(kScaleMag, kScaleMag, kScaleMag).VGet());
@@ -94,7 +94,7 @@ void SpaceEmperor::Draw()
 
 	for (auto& col : m_colliders)
 	{
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(col);
+		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(col->col);
 		DrawSphere3D((m_rigid->GetPos()+item->GetShift()).VGet(), item->radius, 20, 0xffff00, 0xffffff, false);
 	}
 }

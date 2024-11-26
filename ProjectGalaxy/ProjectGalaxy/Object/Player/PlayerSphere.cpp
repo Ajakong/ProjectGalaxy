@@ -26,7 +26,7 @@ m_stickFlag(false)
 	m_rigid->SetVelocity(VGet(m_velocity.x * 2, m_velocity.y * 2, m_velocity.z * 2));
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = m_radius;
 	m_color = color;
 	//moveNumによって挙動が変わるのかもしれない(実装するかわからん)
@@ -62,27 +62,6 @@ void PlayerSphere::Hit()
 
 void PlayerSphere::Effect()
 {
-	if (m_player->GetOperationFlag())
-	{
-		m_player->SetIsOperation(false);
-		m_isDeleteFlag = true;
-	}
-	if (m_stickFlag)
-	{
-		if ((m_player->GetPos() - m_rigid->GetPos()).Length() < 20)
-		{
-			m_moveUpdate = &PlayerSphere::ComeBackUpdate;
-		}
-		else
-		{
-			m_player->SetIsOperation(true);
-			m_player->SetVelocity((m_rigid->GetPos() - m_player->GetPos()).GetNormalized() * 3);
-		}
-
-	}
-	else m_moveUpdate = &PlayerSphere::ComeBackUpdate;
-	
-
 }
 
 void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)

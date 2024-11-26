@@ -39,7 +39,5 @@ protected:
 	//このフラグを見てシーンを移行する
 	bool m_isGameOverFlag = false;
 	bool m_isClearFlag = false;	
-
-	int m_modelScreenHandle;
 };
 

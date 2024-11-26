@@ -117,23 +117,23 @@ m_modelDirAngle(0)
 	m_rigid->SetPos(Vec3(0, 0, 0));
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Head);
-		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_headCol->radius = kNeutralHeadRadius - 0.2f;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_bodyCol->radius = kNeutralBodyRadius - 0.2f;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
-		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_footCol->radius = kNeutralFootRadius - 0.2f;
 	}
 
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Spin);
-		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_spinCol->radius = m_attackRadius;
 	}
 

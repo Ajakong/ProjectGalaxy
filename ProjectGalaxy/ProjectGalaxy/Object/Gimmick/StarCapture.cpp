@@ -23,7 +23,7 @@ m_recastTime(0)
 	SetAntiGravity();
 	
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = m_radius;
 	m_rigid->SetVelocity(Vec3(0, 0, 0));
 	m_ratio = 0;
@@ -64,7 +64,7 @@ void StarCapture::Draw()
 	for (auto& col : m_colliders)
 	{
 		int color = 0x0000ff*65000*(m_recastTime/kRecastTimeMax);
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(col);
+		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(col->col);
 		DrawSphere3D(m_rigid->GetPos().VGet(), item->radius, 20, color, 0xffffff, false);
 		DrawFormatString(0, 200, 0xddaa00, "Velocity(%f,%f,%f)", m_rigid->GetVelocity().x, m_rigid->GetVelocity().y, m_rigid->GetVelocity().z);
 		DrawFormatString(0, 250, 0xddaa00,"Pos(%f,%f,%f)",m_rigid->GetPos().x, m_rigid->GetPos().y, m_rigid->GetPos().z);
@@ -81,9 +81,10 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::C
 		if (m_recastTime < kRecastTimeMax)return;
 		if (m_colliders.size() > 1)return;
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-		m_captureCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
-		m_captureCol->radius = m_captureRadius;
-		m_captureCol->isTrigger = true;
+		auto item= dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
+		item->radius = m_captureRadius;
+		m_captureCol->col = item;
+		m_captureCol->col->isTrigger = true;
 
 		auto sphere = dynamic_pointer_cast<PlayerSphere>(colider);
 

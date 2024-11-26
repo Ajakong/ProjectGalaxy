@@ -7,7 +7,7 @@ namespace MyEngine
 	class ColliderBox : public ColliderBase
 	{
 	public:
-		ColliderBox(ColideTag tag);
+		ColliderBox();
 
 	public:
 		Vec3 size;

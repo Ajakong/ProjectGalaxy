@@ -60,7 +60,7 @@ m_modelHandle(ModelManager::GetInstance().GetModelData(modelFileName))
 	m_enemyUpdate = &Gorori::IdleUpdate;
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kCollisionRadius;
 	m_moveShaftPos = m_rigid->GetPos();
 	AddThroughTag(ObjectTag::Gorori);

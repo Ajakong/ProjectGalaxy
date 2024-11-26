@@ -18,7 +18,7 @@ m_enemy(std::dynamic_pointer_cast<Enemy>(enemy))
 {
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = m_radius;
 	m_color = color;
 	//moveNumによって挙動が変わるのかもしれない(実装するかわからん)

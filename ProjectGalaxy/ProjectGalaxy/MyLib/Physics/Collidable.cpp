@@ -30,13 +30,13 @@ Collidable::~Collidable()
 {
 }
 
-std::shared_ptr<Collidable::Collide> MyEngine::Collidable::AddCollider(const ColliderBase::Kind& kind, const ColliderBase::ColideTag& tag)
+std::shared_ptr<Collidable::CollideInfo> MyEngine::Collidable::AddCollider(const ColliderBase::Kind& kind, const ColliderBase::ColideTag& tag)
 {
-	std::shared_ptr<Collide> collider;
+	std::shared_ptr<CollideInfo> collider;
 
 	if (kind == ColliderBase::Kind::Sphere)
 	{
-		collider->col = std::make_shared<ColliderSphere>(tag);
+		collider->col = std::make_shared<ColliderSphere>();
 
 	}
 	else if (kind == ColliderBase::Kind::Capsule)
@@ -45,17 +45,18 @@ std::shared_ptr<Collidable::Collide> MyEngine::Collidable::AddCollider(const Col
 	}
 	else if (kind == ColliderBase::Kind::Box)
 	{
-		collider->col = std::make_shared<ColliderBox>(tag);
+		collider->col = std::make_shared<ColliderBox>();
 	}
-
+	collider->tag = tag;
 	if (collider)
 	{
 		m_colliders.emplace_back(collider);
 	}
-	collider->tag = tag;
+	
 	return collider;
+
 }
-void MyEngine::Collidable::RemoveCollider(std::shared_ptr<ColliderBase> col)
+void MyEngine::Collidable::RemoveCollider(std::shared_ptr<Collidable::CollideInfo> col)
 {
 	auto it = std::find(m_colliders.begin(), m_colliders.end(), col);
 	if (it == m_colliders.end()) return;

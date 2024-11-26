@@ -66,7 +66,7 @@ m_hitFrame(0)
 	m_enemyUpdate = &KillerTheSeeker::IdleUpdate;
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kCollisionRadius;
 	m_moveShaftPos = m_rigid->GetPos();
 	AddThroughTag(ObjectTag::Takobo);
@@ -159,7 +159,7 @@ void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngin
 		m_attackDir = GetAttackDir().GetNormalized();//オブジェクトに向かうベクトルを正規化したもの
 		m_enemyUpdate = &KillerTheSeeker::AttackRollingUpdate;
 		m_radius = 80;
-		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
+		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		item->radius = 80;
 		m_hp = 80;
 	}
