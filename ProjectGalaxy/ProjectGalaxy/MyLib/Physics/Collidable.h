@@ -18,6 +18,12 @@ namespace MyEngine
 	{
 		friend Physics;
 	public:
+		struct Collide
+		{
+			std::shared_ptr<ColliderBase> col;
+			ColliderBase::ColideTag tag;
+		};
+
 		// 優先度判別
 		enum class Priority : int
 		{
@@ -84,7 +90,6 @@ namespace MyEngine
 
 		/* Getter */	
 		ObjectTag GetTag() const { return m_tag; }
-		std::shared_ptr<ColliderBase> GetColData(int index) const { return m_colliders.at(index); }
 		Priority GetPriority() const { return m_priority; }
 		void SetObjectTag(ObjectTag tag) { m_tag = tag; }
 		bool IsAntiGravity() { return m_isAntiGravity; }
@@ -105,15 +110,15 @@ namespace MyEngine
 
 		std::shared_ptr<Rigidbody> GetRigidbody() const { return m_rigid; }
 	protected:
-		std::shared_ptr<ColliderBase> AddCollider(const ColliderBase::Kind& kind,const ColliderBase::ColideTag& tag);
-		void RemoveCollider(std::shared_ptr<ColliderBase> col);
+		std::shared_ptr<Collide> AddCollider(const ColliderBase::Kind& kind,const ColliderBase::ColideTag& tag);
+		void RemoveCollider(std::shared_ptr<Collide> col);
 
 		void SetAntiGravity(bool flag = true) { m_isAntiGravity=flag; }
 	protected:
 		// 物理データ
 		std::shared_ptr<Rigidbody> m_rigid;
 		// 当たり判定データ
-		std::vector<std::shared_ptr<ColliderBase>> m_colliders;
+		std::vector<std::shared_ptr<Collide>> m_colliders;
 		Vec3 m_upVec;
 		Vec3 m_postUpVec;
 		Vec3 m_frontVec;
@@ -122,7 +127,7 @@ namespace MyEngine
 		bool m_isDestroyFlag;
 	
 	private:
-		std::list<ObjectTag>	throughTags;
+		std::list<ObjectTag>	m_throughTags;
 
 		ObjectTag m_tag;
 		Priority m_priority;

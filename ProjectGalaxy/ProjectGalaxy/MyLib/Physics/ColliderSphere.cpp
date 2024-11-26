@@ -2,8 +2,8 @@
 
 using namespace MyEngine;
 
-ColliderSphere::ColliderSphere(ColideTag tag) :
-	ColliderBase(ColliderBase::Kind::Sphere,tag),
+ColliderSphere::ColliderSphere() :
+	ColliderBase(ColliderBase::Kind::Sphere),
 	radius(0.0f)
 {
 

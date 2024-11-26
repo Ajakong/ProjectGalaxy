@@ -1,10 +1,10 @@
 ﻿#include "ColliderBase.h"
 
-MyEngine::ColliderBase::ColliderBase(Kind kind,ColideTag tag) :
+MyEngine::ColliderBase::ColliderBase(Kind kind) :
 	isTrigger(false),
 	m_kind(kind),
-	m_tag(tag),
-	m_posShift(Vec3::Zero())
+	m_posShift(Vec3::Zero()),
+	m_isNowOnHit(false)
 {
 	m_isPreHit.clear();
 	m_isHit.clear();
