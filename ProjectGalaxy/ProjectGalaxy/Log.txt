@@ -1,5 +1,6 @@
 ﻿0:ChangeWindowMode実行 
 0:ウインドウモードフラグが立てられました
+
 2:ＤＸライブラリの初期化処理開始
 3:	システムの情報を出力します
 3:		ＤＸライブラリ Ver3.24b
@@ -160,3 +161,4 @@
 5292:IDXGISwapChain2 を作成します.... 成功
 5293:IDXGIFactory2->CreateSwapChainForHwnd の戻り値：0x00000000
 5293:IDXGIOutput を取得します.... 成功
+

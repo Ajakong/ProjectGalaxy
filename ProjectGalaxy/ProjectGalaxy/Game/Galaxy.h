@@ -34,6 +34,7 @@ public:
 
 protected:
 	std::shared_ptr<Player> player;
+	int m_modelScreenHandle;
 
 	//このフラグを見てシーンを移行する
 	bool m_isGameOverFlag = false;

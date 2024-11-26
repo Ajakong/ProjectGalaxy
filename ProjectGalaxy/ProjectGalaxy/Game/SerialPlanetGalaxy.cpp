@@ -129,6 +129,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
+
 	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
 	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
 	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -30),player));
@@ -136,6 +137,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
 	m_spaceEmperor.back()->SetTarget(player);
 	MyEngine::Physics::GetInstance().Entry(m_spaceEmperor.back());
+
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
 	//アイテム
@@ -155,6 +157,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	MyEngine::Physics::GetInstance().Update();
 
 	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
+
 }
 
 SerialPlanetGalaxy::~SerialPlanetGalaxy()
@@ -278,9 +281,15 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	MyEngine::Physics::GetInstance().Update();
 	
 	player->SetMatrix();//行列を反映
+
 	for (auto& item : m_kuribo) { item->SetMatrix(); }
 	for (auto& item : m_takobo) { item->SetMatrix(); }
 	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
+
+	for (auto& item : kuribo) { item->SetMatrix(); }
+	for (auto& item : takobo) { item->SetMatrix(); }
+	for (auto& item : spaceEmperor) { item->SetMatrix(); }
+
 }
 
 void SerialPlanetGalaxy::BossBattleUpdate()

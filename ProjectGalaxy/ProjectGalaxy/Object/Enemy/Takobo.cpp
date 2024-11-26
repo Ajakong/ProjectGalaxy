@@ -59,7 +59,9 @@ namespace
 }
 
 Takobo::Takobo(Vec3 pos,std::shared_ptr<MyEngine::Collidable> target) :Enemy(-1, Priority::Low, ObjectTag::Takobo),
+
 m_hp(kHp),
+
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0)
 {
@@ -80,7 +82,9 @@ m_centerToEnemyAngle(0)
 	m_modelHandle=ModelManager::GetInstance().GetModelData(kTakoboFileName);
 	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
 	ChangeAnim(Idle);
+
 	m_modelHeadIndex= MV1SearchFrame(m_modelHandle, "mixamorig:Head");
+
 }
 
 Takobo::~Takobo()
@@ -275,15 +279,18 @@ void Takobo::AttackSphereUpdate()
 
 	if (now > 35)
 	{
+
 		if (m_createFrameCount == 0)
 		{
 			Set3DPositionSoundMem(m_rigid->GetPos().VGet(), m_shotSEHandle);
 			PlaySoundMem(m_shotSEHandle, DX_PLAYTYPE_BACK);
+
 			Vec3 headPos = MV1GetFramePosition(m_modelHandle, m_modelHeadIndex);
 			m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), headPos, m_attackDir, 1, 0xff0000));
 			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 			m_sphereNum++;
 			m_createFrameCount = 1;
+
 
 		}
 		

@@ -87,8 +87,11 @@ public:
 	playerState_t m_playerUpdate;
 
 	playerState_t m_prevUpdate;
-	using cameraState_t = void(Player::*)();
-	cameraState_t m_cameraUpdate;
+	playerState_t m_cameraUpdate;
+	/// <summary>
+	/// 弾の種類によって中身を入れ替える
+	/// </summary>
+	playerState_t m_shotUpdate;
 
 	void CommandJump();
 	void BoostUpdate();
@@ -98,6 +101,7 @@ private:
 	Vec3 Move();
 
 	void ShotTheStar();
+	void ShotTheStickStar();
 
 	//アニメーションの進行
 	//ループしたかどうかを返す

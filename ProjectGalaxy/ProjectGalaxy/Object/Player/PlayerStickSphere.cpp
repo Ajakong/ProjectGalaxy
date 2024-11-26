@@ -42,6 +42,17 @@ PlayerStickSphere::~PlayerStickSphere()
 {
 }
 
+void PlayerStickSphere::Init()
+{
+
+}
+
+void PlayerStickSphere::Update()
+{
+	m_startPos = m_player->GetLeftHandPos();
+	(this->*m_moveUpdate)();
+}
+
 void PlayerStickSphere::Draw()
 {
 	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, false);
@@ -85,10 +96,10 @@ void PlayerStickSphere::StraightUpdate()
 void PlayerStickSphere::StickUpdate()
 {
 	m_rigid->SetVelocity(Vec3::Zero());
-	if ((m_rigid->GetPos() - m_startPos).Length() <= 3.0f)
+	if ((m_rigid->GetPos() - m_startPos).Length() <= 5.0f)
 	{
 		m_player->SetIsOperation(false);
-		m_isDeleteFlag = true;
+		m_moveUpdate = &PlayerStickSphere::ComeBackUpdate;
 	}
 }
 

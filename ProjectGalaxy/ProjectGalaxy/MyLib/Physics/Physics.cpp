@@ -159,6 +159,8 @@ void MyEngine::Physics::MoveNextPos() const
 					{
 						for (const auto& objCol : obj->m_colliders)
 						{
+							if (objCol->GetTag() != ColliderBase::ColideTag::Body)continue;
+
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
 							{
 								planet->OnTriggerEnter(obj,col->tag,objCol->tag);
