@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include"Vec3.h"
 #include<memory>
 #include<vector>
@@ -19,12 +19,14 @@ public:
 	bool GetGameOver() const { return m_isGameOverFlag; }
 	bool GetClear() const { return m_isClearFlag; }
 
+private:
+
 	using managerState_t = void(GameManager::*)();
 	managerState_t m_managerUpdate;
 
 	using managerState_t = void(GameManager::*)();
 	managerState_t m_managerDraw;
-private:
+
 	void IntroUpdate();
 	void IntroDraw();
 
@@ -36,7 +38,7 @@ private:
 	std::vector<std::shared_ptr<Galaxy>> galaxy;
 	std::shared_ptr<Player> player;
 
-	//‚±‚Ìƒtƒ‰ƒO‚ğŒ©‚ÄƒV[ƒ“‚ğˆÚs‚·‚é
+	//ã“ã®ãƒ•ãƒ©ã‚°ã‚’è¦‹ã¦ã‚·ãƒ¼ãƒ³ã‚’ç§»è¡Œã™ã‚‹
 	bool m_isGameOverFlag = false;
 	bool m_isClearFlag = false;
 };

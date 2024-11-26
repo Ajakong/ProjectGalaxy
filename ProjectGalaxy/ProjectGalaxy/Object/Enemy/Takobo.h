@@ -35,7 +35,7 @@ public:
 	virtual void OnCollideEnter(std::shared_ptr <MyEngine::Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag);
 
 	Vec3 GetMyPos();
-	int WatchHp() const { return m_Hp; }
+	int WatchHp() const { return m_hp; }
 	float GetColRadius() { return m_radius; }
 
 	float GetIdleSpeed() { return m_idleSpeed; }
@@ -68,13 +68,14 @@ private:
 
 	Vec3 GetAttackDir() const;
 private:
-	int m_Hp;
+	int m_hp;
 
 	int m_attackCoolDownCount;
 
 	float m_radius = 0;
 
 	int m_modelHandle = 0;
+	int m_modelHeadIndex;
 
 	int m_createFrameCount = 0;
 

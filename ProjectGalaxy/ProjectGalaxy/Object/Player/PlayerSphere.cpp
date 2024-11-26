@@ -62,6 +62,27 @@ void PlayerSphere::Hit()
 
 void PlayerSphere::Effect()
 {
+	if (m_player->GetOperationFlag())
+	{
+		m_player->SetIsOperation(false);
+		m_isDeleteFlag = true;
+	}
+	if (m_stickFlag)
+	{
+		if ((m_player->GetPos() - m_rigid->GetPos()).Length() < 20)
+		{
+			m_moveUpdate = &PlayerSphere::ComeBackUpdate;
+		}
+		else
+		{
+			m_player->SetIsOperation(true);
+			m_player->SetVelocity((m_rigid->GetPos() - m_player->GetPos()).GetNormalized() * 3);
+		}
+
+	}
+	else m_moveUpdate = &PlayerSphere::ComeBackUpdate;
+	
+
 }
 
 void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)

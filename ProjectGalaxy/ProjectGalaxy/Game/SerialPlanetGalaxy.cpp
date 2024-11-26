@@ -98,13 +98,13 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//LocationsManager::GetInstance().LoadLocations();
 	//ギミック
 	//ブースター
-	booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
-	MyEngine::Physics::GetInstance().Entry(booster.back());
-	booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
-	MyEngine::Physics::GetInstance().Entry(booster.back());
+	m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
+	MyEngine::Physics::GetInstance().Entry(m_booster.back());
+	m_booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
+	MyEngine::Physics::GetInstance().Entry(m_booster.back());
 	//スターキャプチャー
-	starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
-	MyEngine::Physics::GetInstance().Entry(starCapture.back());
+	m_starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
+	MyEngine::Physics::GetInstance().Entry(m_starCapture.back());
 	//シーカーライン
 	std::vector<Vec3>seekerLine1Points;
 	seekerLine1Points.push_back(Vec3(-50, -25,0));
@@ -113,57 +113,60 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	seekerLine1Points.push_back(Vec3(0, 30, 0));
 	seekerLine1Points.push_back(Vec3(100, 200, 0));
 	seekerLine1Points.push_back(Vec3(270, 330, 100));
-	seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
+	m_seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 
-	MyEngine::Physics::GetInstance().Entry(seekerLine.back());
+	MyEngine::Physics::GetInstance().Entry(m_seekerLine.back());
 	//クリスタル
-	crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
-	MyEngine::Physics::GetInstance().Entry(crystal.back());
+	m_crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
+	MyEngine::Physics::GetInstance().Entry(m_crystal.back());
 
-	camera = make_shared<Camera>();
-	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
-	planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
-	planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
+	m_camera = make_shared<Camera>();
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
 	
-	warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
-	MyEngine::Physics::GetInstance().Entry(warpGate.back());
+	m_warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
+	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
-	kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
-	MyEngine::Physics::GetInstance().Entry(kuribo.back());
-	takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -30),player));
-	MyEngine::Physics::GetInstance().Entry(takobo.back());
-	spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
-	spaceEmperor.back()->SetTarget(player);
-	MyEngine::Physics::GetInstance().Entry(spaceEmperor.back());
+
+	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
+	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -30),player));
+	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
+	m_spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
+	m_spaceEmperor.back()->SetTarget(player);
+	MyEngine::Physics::GetInstance().Entry(m_spaceEmperor.back());
+
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
 	//アイテム
-	coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
-	MyEngine::Physics::GetInstance().Entry(coin.back());
+	m_coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
+	MyEngine::Physics::GetInstance().Entry(m_coin.back());
 
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
 	
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
-	for (auto& item : planet)
+	for (auto& item : m_planet)
 	{
 		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
 	}
 	//それぞれのオブジェクトの上方向ベクトルなどの更新
 	MyEngine::Physics::GetInstance().Update();
 
-	//m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
+	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
+
 }
 
 SerialPlanetGalaxy::~SerialPlanetGalaxy()
 {
-	planet.clear();
-	takobo.clear();
-	gorori.clear();
-	poworStone.clear();
-	warpGate.clear();
+	m_planet.clear();
+	m_takobo.clear();
+	m_gorori.clear();
+	m_poworStone.clear();
+	m_warpGate.clear();
 }
 
 void SerialPlanetGalaxy::Init()
@@ -175,19 +178,19 @@ void SerialPlanetGalaxy::Init()
 	// 深度値記録バッファ用RT
 	DxLib::SetCreateGraphChannelBitDepth(32);
 	DxLib::SetCreateDrawValidGraphChannelNum(1);
-	for (auto& item : planet)
+	for (auto& item : m_planet)
 	{
 		item->Init();
 	}
 	
-	for (auto& item : booster)item->Init();
+	for (auto& item : m_booster)item->Init();
 	
-	for (auto& item : warpGate)item->Init();
-	for (auto& item : seekerLine) { item->Init(); }
-	for (auto& item : crystal) { item->Init(); }
+	for (auto& item : m_warpGate)item->Init();
+	for (auto& item : m_seekerLine) { item->Init(); }
+	for (auto& item : m_crystal) { item->Init(); }
 	//エネミー
-	for (auto& item : kuribo) { item->Init(); }
-	for (auto& item : coin)item->Init();
+	for (auto& item : m_kuribo) { item->Init(); }
+	for (auto& item : m_coin)item->Init();
 }
 
 void SerialPlanetGalaxy::Update()
@@ -210,10 +213,10 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
-	camera->SetEasingSpeed(player->GetCameraEasingSpeed());
-	if (player->OnAiming())camera->Update(player->GetShotDir());
-	else if (spaceEmperor.back()->GetIsFind())camera->Update(spaceEmperor.back()->GetNeckPos());
-	else camera->Update(player->GetLookPoint());
+	m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
+	if (player->OnAiming())m_camera->Update(player->GetShotDir());
+	else if (m_spaceEmperor.back()->GetIsFind())m_camera->Update(m_spaceEmperor.back()->GetNeckPos());
+	else m_camera->Update(player->GetLookPoint());
 
 	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
@@ -223,21 +226,21 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 	//player->SetUpVec(planetToPlayer);
 
-	camera->SetBoost(player->GetBoostFlag());
+	m_camera->SetBoost(player->GetBoostFlag());
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
-	camera->SetUpVec(player->GetNormVec());
+	m_camera->SetUpVec(player->GetNormVec());
 
 	////エネミー
-	//for (auto& item : kuribo) { item->Update(); }
+	//for (auto& item : m_kuribo) { item->Update(); }
 
 
 	//for (auto& item : planet)item->Update();//ステージの更新
 	////位置固定ギミック
-	//for (auto& item : booster) { item->Update(); }
-	//for (auto& item : starCapture) { item->Update(); }
-	//for (auto& item : seekerLine) { item->Update(); }
-	//for (auto& item : crystal) { item->Update();}
-	//for (auto& item : coin)item->Update();
+	//for (auto& item : m_booster) { item->Update(); }
+	//for (auto& item : m_starCapture) { item->Update(); }
+	//for (auto& item : m_seekerLine) { item->Update(); }
+	//for (auto& item : m_crystal) { item->Update();}
+	//for (auto& item : m_coin)item->Update();
 
 	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 
@@ -245,42 +248,48 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 	if (player->GetBoostFlag())
 	{
-		camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+		m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 	}
 	else
 	{
 		if (player->OnAiming())
 		{
-			camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -5 + player->GetNormVec() * 8 + player->GetSideVec() * 2);
+			m_camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -5 + player->GetNormVec() * 8 + player->GetSideVec() * 2);
 		}
 		else
 		{
-			camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+			m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 		}
 	}
 
 	//ボス登場時演出
-	bool onBoss = (spaceEmperor.back()->GetRigidbody()->GetPos() - player->GetPos()).Length() < kGravityRange;
+	bool onBoss = (m_spaceEmperor.back()->GetRigidbody()->GetPos() - player->GetPos()).Length() < kGravityRange;
 	if (onBoss)
 	{
 		
-		auto boss = spaceEmperor.back();
+		auto boss = m_spaceEmperor.back();
 		if (!boss->GetIsFind())
 		{
 			StopSoundMem(m_bgmHandle);
 			PlaySoundMem(m_bossBattleBgmHandle, DX_PLAYTYPE_BACK);
 			boss->OnBossPlanet();
 
-			camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());
+			m_camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());
 		}
 	}
 
 	MyEngine::Physics::GetInstance().Update();
 	
 	player->SetMatrix();//行列を反映
+
+	for (auto& item : m_kuribo) { item->SetMatrix(); }
+	for (auto& item : m_takobo) { item->SetMatrix(); }
+	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
+
 	for (auto& item : kuribo) { item->SetMatrix(); }
 	for (auto& item : takobo) { item->SetMatrix(); }
 	for (auto& item : spaceEmperor) { item->SetMatrix(); }
+
 }
 
 void SerialPlanetGalaxy::BossBattleUpdate()
@@ -290,11 +299,11 @@ void SerialPlanetGalaxy::BossBattleUpdate()
 
 void SerialPlanetGalaxy::GamePlayingDraw()
 {
-	if (player->OnAiming())camera->SetDebugCameraPoint();
+	if (player->OnAiming())m_camera->SetDebugCameraPoint();
 	Vec3 pos = MV1GetPosition(m_skyDomeH);
 	DxLib::MV1DrawModel(m_skyDomeH);
 
-	for (auto& item : planet)
+	for (auto& item : m_planet)
 	{
 		item->SetIsSearch(player->IsSearch());
 	}
@@ -335,12 +344,12 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*2, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
 	DrawFormatString(0, 25*3, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
 	DrawFormatString(0, 25*4, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
-	DrawFormatString(0, 25*5, 0xffffff, "Camera(%f,%f,%f),Length(%f)",camera->GetPos().x, camera->GetPos().y, camera->GetPos().z,(camera->GetPos() - player->GetPos()).Length());
+	DrawFormatString(0, 25*5, 0xffffff, "Camera(%f,%f,%f),Length(%f)",m_camera->GetPos().x, m_camera->GetPos().y, m_camera->GetPos().z,(m_camera->GetPos() - player->GetPos()).Length());
 	
 	DrawFormatString(0, 25*6, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
 	DrawFormatString(0, 25*7, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25*8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
-
+	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetNowFootOnHit());
 	SetDrawScreen(m_modelScreenHandle);
 
 	SetCameraNearFar(1.f, 10000.f);
@@ -353,7 +362,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	SetScreenFlipTargetWindow(NULL);
 
-	camera->Set();
+	m_camera->Set();
 	ScreenFlip();
 
 	// 少し時間の経過を待つ

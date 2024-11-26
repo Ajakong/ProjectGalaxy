@@ -21,7 +21,7 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color)
 	
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Box, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
-		m_colliders.back()->isTrigger = true;
+		m_colliders.back()->col->isTrigger = true;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back());
 		item->norm = Vec3(0, 1, 0);
 		item->size = Vec3(60, 100, 100);

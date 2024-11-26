@@ -1,4 +1,4 @@
-﻿#include"Game.h"
+#include"Game.h"
 #include "DebugGalaxy.h"
 #include"Player.h"
 #include"Takobo.h"
@@ -70,8 +70,9 @@ namespace
 DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
 	player = playerPointer;
-	planet.push_back(make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
-	
+
+	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00));
+
 	takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
 	MyEngine::Physics::GetInstance().Entry(takobo.back());
 	camera = make_shared<Camera>();
@@ -85,7 +86,7 @@ void DebugGalaxy::Init()
 {
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 
-	for (auto& item : planet)
+	for (auto& item : m_planet)
 	{
 		item->Init();
 		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
@@ -139,16 +140,22 @@ void DebugGalaxy::Update()
 		}
 	}
 
-	MyEngine::Physics::GetInstance().Update();
+	for (auto& item : m_planet)item->Update();//ステージの更新
+	
+
+	MyEngine::Physics::GetInstance().Update();//当たり判定の更新
 
 	player->SetMatrix();//行列を反映
-	for(auto& item : takobo)item->SetMatrix();
+	for (auto& item : m_planet)item->Update();
 }
 
 void DebugGalaxy::Draw()
 {
 	if (player->OnAiming())camera->SetDebugCameraPoint();
-	for (auto& item : planet)
+
+
+	for (auto& item : m_planet)
+
 	{
 		item->SetIsSearch(player->IsSearch());
 	}

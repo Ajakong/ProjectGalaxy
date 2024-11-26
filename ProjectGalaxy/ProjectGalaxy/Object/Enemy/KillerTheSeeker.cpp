@@ -50,7 +50,7 @@ namespace
 
 
 KillerTheSeeker::KillerTheSeeker(Vec3 pos) :Enemy(-1, Priority::Static, ObjectTag::KillerTheSeeker),
-m_Hp(kHp),
+m_hp(kHp),
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0),
 m_radius(kCollisionRadius),
@@ -130,7 +130,7 @@ void KillerTheSeeker::Draw()
 		sphere->Draw();
 	}
 
-	//DrawBox(200, 700, 500 + m_Hp*3, 750, 0x00ff00, true);
+	//DrawBox(200, 700, 500 + m_hp*3, 750, 0x00ff00, true);
 }
 
 void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
@@ -146,12 +146,12 @@ void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngin
 		{
 			PlaySoundMem(m_counterHitSEHandle, DX_PLAYTYPE_BACK);
 			attack->DeleteFlag();
-			m_Hp -= 30;
+			m_hp -= 30;
 
 		}
 		m_isHitFrame = true;
 	}
-	if (m_Hp < 0 && !m_isSecondFase)
+	if (m_hp < 0 && !m_isSecondFase)
 	{
 		m_isSecondFase = true;
 
@@ -161,7 +161,7 @@ void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngin
 		m_radius = 80;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back());
 		item->radius = 80;
-		m_Hp = 80;
+		m_hp = 80;
 	}
 
 }
@@ -189,7 +189,7 @@ void KillerTheSeeker::IdleUpdate()
 		Vec3 norm = (m_rigid->GetPos() - m_nowPlanetPos).GetNormalized();
 		Vec3 toTarget = ToVec(m_rigid->GetPos(), m_target->GetRigidbody()->GetPos());
 
-		if (m_Hp < 300 && m_Hp >= 100)
+		if (m_hp < 300 && m_hp >= 100)
 		{
 			m_color = 0xff0000;
 			m_attackCoolDownCount = 0;

@@ -83,26 +83,24 @@ private:
 	int cbuffH = CreateShaderConstantBuffer(sizeof(UserData));
 	UserData* userData = static_cast<UserData*>(GetBufferShaderConstantBuffer(cbuffH));
 
-	std::shared_ptr<Camera> camera;
+	std::shared_ptr<Camera> m_camera;
 	//ステージ
-	std::vector<std::shared_ptr<Planet>> planet;
-	std::shared_ptr<BossPlanet> bossPlanet;
+	std::vector<std::shared_ptr<Planet>> m_planet;
 	//アイテム
-	std::vector<std::shared_ptr<ClearObject>> clearObject;
-	std::vector<std::shared_ptr<Coin>> coin;
+	std::vector<std::shared_ptr<Coin>> m_coin;
 	//ギミック
-	std::vector<std::shared_ptr<WarpGate>> warpGate;
-	std::vector<std::shared_ptr<Booster>> booster;
-	std::vector<std::shared_ptr<StarCapture>> starCapture;
-	std::vector<std::shared_ptr<SeekerLine>> seekerLine;
-	std::vector<std::shared_ptr<Crystal>> crystal;
-	std::vector<std::shared_ptr<Item>> poworStone;
+	std::vector<std::shared_ptr<WarpGate>> m_warpGate;
+	std::vector<std::shared_ptr<Booster>> m_booster;
+	std::vector<std::shared_ptr<StarCapture>> m_starCapture;
+	std::vector<std::shared_ptr<SeekerLine>> m_seekerLine;
+	std::vector<std::shared_ptr<Crystal>> m_crystal;
+	std::vector<std::shared_ptr<Item>> m_poworStone;
 	//エネミー
-	std::vector<std::shared_ptr<Takobo>> takobo;
-	std::vector<std::shared_ptr<KillerTheSeeker>> killerTheSeeker;
-	std::vector<std::shared_ptr<Gorori>> gorori;
-	std::vector<std::shared_ptr<Kuribo>> kuribo;
-	std::vector<std::shared_ptr<SpaceEmperor>> spaceEmperor;
+	std::vector<std::shared_ptr<Takobo>> m_takobo;
+	std::vector<std::shared_ptr<KillerTheSeeker>> m_killerTheSeeker;
+	std::vector<std::shared_ptr<Gorori>> m_gorori;
+	std::vector<std::shared_ptr<Kuribo>> m_kuribo;
+	std::vector<std::shared_ptr<SpaceEmperor>> m_spaceEmperor;
 
 	Vec3 m_cameraUpVec;
 
@@ -111,24 +109,8 @@ private:
 	
 	//ハンドル集
 	int m_skyDomeH;
-	int modelH;
 	int m_warpEffectHandle;
 	int m_bgmHandle;
 	int m_bossBattleBgmHandle;
-
-	//物体Xの数
-	int itemNum;
-
-	// 通常のRT
-	int RT;
-	int RT2;
-	// アウトラインのRT
-	int outlineRT;
-	// 法線情報のRT
-	int normRT;
-	// ぼかし用RT
-	int blurRT;
-	int shrinkRT;
-	int depthRT;
 };
 

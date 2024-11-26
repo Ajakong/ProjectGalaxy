@@ -3,7 +3,7 @@
 #include <cmath>
 #include <algorithm>
 #include"CollisionUtil.h"
-#include "Collidable.h"
+
 #include "ColliderSphere.h"
 #include"ColliderBox.h"
 #include "DebugDraw.h"
@@ -15,6 +15,10 @@ namespace
 {
 	// 判定最大回数
 	constexpr int CHECK_COUNT_MAX = 500;
+
+
+	constexpr float CHECK_COLLIDE_LENDGHT = 100.0f;
+	constexpr float CHECK_COLLIDE_SQ_LENDGHT = CHECK_COLLIDE_LENDGHT * CHECK_COLLIDE_LENDGHT;
 }
 
 Vec3 closestPointOnCubeAndSphere(const Vec3& cubeCenter, Vec3 size, const Vec3& sphereCenter, double sphereRadius);
@@ -83,37 +87,30 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 
 void Physics::Update()
 {
-	Gravity();
-
 	for (auto& item : m_collidables)
 	{
-		for (auto& col : item->m_colliders)
-		{
-			col->SetNowOnHit(false);
-		}
 		item->Update();
 	}
+	// 通知リストのクリア・更新
+	m_onCollideInfo.clear();
 	m_preCollideInfo = m_newCollideInfo;
 	m_newCollideInfo.clear();
 	m_preTirrigerInfo = m_newTirrigerInfo;
 	m_newTirrigerInfo.clear();
-	m_onCollideInfo.clear();
 
+	// 次の移動先を仮決定
 	MoveNextPos();
-
+	// 判定確認
 	CheckCollide();
-
+	// 通知リストを確認
 	CheckSendOnCollideInfo(m_preCollideInfo, m_newCollideInfo, false);
 	CheckSendOnCollideInfo(m_preTirrigerInfo, m_newTirrigerInfo, true);
-
+	// 座標を決定
 	FixPos();
-
-	for (const auto& info : m_onCollideInfo)
+	// 通知を送る
+	for (const auto& item : m_onCollideInfo)
 	{
-		if (static_cast<int>(info.send->col->m_tag) > static_cast<int>(ObjectTag::End) || static_cast<int>(info.send->col->m_tag) < 0)continue;//応急処置済み:Exitしても履歴に残っているが参照できずに例外がスローされる
-		if (static_cast<int>(info.own->col->m_tag) > static_cast<int>(ObjectTag::End) || static_cast<int>(info.own->col->m_tag) < 0)continue;//:上に同じ
-
-		OnCollideInfo(info.own, info.send, info.kind);
+		OnCollideInfo(item.own, item.send, item.ownTag,item.sendTag, item.hitPos, item.kind);
 	}
 
 	auto result = remove_if(m_collidables.begin(), m_collidables.end(), [this](const auto& collision)
@@ -144,7 +141,10 @@ void MyEngine::Physics::Clear()
 	m_preTirrigerInfo.clear();
 }
 
-void MyEngine::Physics::Gravity()
+/// <summary>
+/// 物理からの移動を未来の座標に適用
+/// </summary>
+void MyEngine::Physics::MoveNextPos() const
 {
 	for (const auto& item : m_stageCollidables)
 	{
@@ -155,19 +155,17 @@ void MyEngine::Physics::Gravity()
 				auto planet = dynamic_cast<Planet*>(item.get());
 				for (const auto& col : item->m_colliders)
 				{
-					if (col->isTrigger == true)
+					if (col->col->isTrigger == true)
 					{
-						int colIndex = 0;
 						for (const auto& objCol : obj->m_colliders)
 						{
 							if (objCol->GetTag() != ColliderBase::ColideTag::Body)continue;
 
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
 							{
-								planet->OnTriggerEnter(obj, col->GetTag(), objCol->GetTag());
+								planet->OnTriggerEnter(obj,col->tag,objCol->tag);
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
-							colIndex++;
 						}
 
 					}
@@ -178,13 +176,6 @@ void MyEngine::Physics::Gravity()
 		}
 
 	}
-}
-
-/// <summary>
-/// 物理からの移動を未来の座標に適用
-/// </summary>
-void MyEngine::Physics::MoveNextPos() const
-{
 
 	for (const auto& item : m_collidables)
 	{
@@ -200,10 +191,10 @@ void MyEngine::Physics::MoveNextPos() const
 
 		for (const auto& collider : item->m_colliders)
 		{
-			auto kind = collider->GetKind();
+			auto kind = collider->col->GetKind();
 			if (kind == ColliderBase::Kind::Sphere)
 			{
-				auto sphereData = dynamic_cast<ColliderSphere*>(collider.get());
+				auto sphereData = dynamic_cast<ColliderSphere*>(collider->col.get());
 				DebugDraw::SphereInfo preInfo;
 				preInfo.center = pos;
 				preInfo.radius = sphereData->radius;
@@ -216,122 +207,147 @@ void MyEngine::Physics::MoveNextPos() const
 				debug.DrawSphere(newInfo);
 			}
 		}
-
 #endif
 	}
 }
 
+
+std::vector<std::shared_ptr<Collidable>> Physics::GetCollisionList() const
+{
+	std::vector<std::shared_ptr<Collidable>> res;
+
+	for (int i = 0; i < m_collidables.size(); ++i)
+	{
+		for (int j = i + 1; j < m_collidables.size(); ++j)
+		{
+			auto& obj1 = m_collidables[i];
+			auto& obj2 = m_collidables[j];
+
+			// 移動しないオブジェクト同士なら判定しない
+			if (obj1->GetPriority() == Collidable::Priority::Static && obj2->GetPriority() == Collidable::Priority::Static) continue;
+
+			// 一定範囲内にいないなら判定しない
+			const auto& pos1 = obj1->m_rigid->GetPos();
+			const auto& pos2 = obj2->m_rigid->GetPos();
+			if ((pos1 - pos2).SqLength() < CHECK_COLLIDE_SQ_LENDGHT)
+			{
+				// 判定リストに追加
+				res.push_back(obj1);
+				res.push_back(obj2);
+			}
+		}
+	}
+
+	return res;
+}
+
+
 void MyEngine::Physics::CheckCollide()
 {
-	bool isCheck = true;
-	int checkCount = 0;
-	std::unordered_map<std::shared_ptr<Collidable>, std::list<std::shared_ptr<Collidable>>> newCollideInfo;
-	while (isCheck)
+
+	//当たり判定をする必要があるペア同士の当たり判定のリスト(位置補正リスト)を取得
+	const auto& colVec = GetCollisionList();
+	
+	//上記リストから、どれとどれが当たっているかを出す(当たり判定ペアリスト)を取得
+
+
+	//上記の結果から、位置補正を行う
+
+
+
+	// 判定リストはペアになっているので半分の数だけ繰り返す
+	int colNum = static_cast<int>(colVec.size() * 0.5f);
+	for (int i = 0; i < colNum; ++i)
 	{
-		isCheck = false;
-		++checkCount;
+		auto objA = colVec[i * 2];
+		auto objB = colVec[i * 2 + 1];
 
-		for (const auto& objA : m_collidables)
+		// それぞれが持つ判定全てを比較
+		for (int i = 0; i < objA->m_colliders.size(); ++i)
 		{
-			for (const auto& objB : m_collidables)
+			for (int j = 0; j < objB->m_colliders.size(); ++j)
 			{
-				if (objA == objB) continue;
-				// どちらかのスルー対象としてタグが入っていたら無視
-				if (objA->IsThroughTarget(objB) || objB->IsThroughTarget(objA))continue;
-				for (const auto& colA : objA->m_colliders)
+				auto& colA = objA->m_colliders.at(i);
+				auto& colB = objB->m_colliders.at(j);
+
+				// 判定
+				auto collideHitInfo =IsCollide(objA->m_rigid,objB->m_rigid,colA,colB);
+				// 当たっていなければ次の判定に
+				if (!collideHitInfo.isHit) continue;
+
+				// 通過オブジェクト確認
+				auto throughA = objA->m_throughTags;
+				auto throughB = objB->m_throughTags;
+				bool isThrough = std::find(throughA.begin(), throughA.end(), objB->GetTag()) != throughA.end()
+					|| std::find(throughB.begin(), throughB.end(), objA->GetTag()) != throughB.end();
+				// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
+				bool isTrigger = colA->col->isTrigger || colB->col->isTrigger || isThrough;
+				if (isTrigger)
 				{
-					for (const auto& colB : objB->m_colliders)
-					{
-						CollideHitInfo info = IsCollide(objA->m_rigid, objB->m_rigid, colA, colB);
-
-						if (!info.isHit) continue;
-
-						std::shared_ptr<ColideInfo> infoA;
-						infoA = std::make_shared<ColideInfo>();
-						infoA->col = objA; infoA->tag = colA->GetTag();
-
-						std::shared_ptr<ColideInfo> infoB;
-						infoB = std::make_shared<ColideInfo>();
-						infoB->col = objB; infoB->tag = colB->GetTag();
-						bool isTrigger = colA->isTrigger || colB->isTrigger;
-
-						if (isTrigger)
-						{
-							AddNewCollideInfo(infoA, infoB, m_newTirrigerInfo);
-						}
-						else
-						{
-							AddNewCollideInfo(infoA, infoB, m_newCollideInfo);
-						}
-
-
-						// Triggerの場合は位置補正はしない
-						if (isTrigger)
-						{
-							isCheck = false;
-							continue;
-						}
-						auto primary = objA;
-						auto secondary = objB;
-						auto primaryCollider = colA;
-						auto secondaryCollider = colB;
-						if (objA->m_priority < objB->m_priority)
-						{
-							primary = objB;
-							secondary = objA;
-							primaryCollider = colB;
-							secondaryCollider = colA;
-						}
-
-						colA->SetNowOnHit(true);
-						colB->SetNowOnHit(true);
-						FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider, info);
-						// 位置補正をしたらもう一度初めから行う
-						isCheck = true;
-						break;
-					}
-
-					if (isCheck) break;
+					AddNewCollideInfo(objA, objB, colA->tag, colB->tag, m_newTirrigerInfo, collideHitInfo.hitPos);
+					continue;
 				}
 
-				if (isCheck) break;
+				// 通知を追加
+				AddNewCollideInfo(objA, objB, colA->tag, colB->tag, m_newCollideInfo, collideHitInfo.hitPos);
+
+				// 優先度に合わせて変数を変更
+				auto primary = objA;
+				auto secondary = objB;
+				auto primaryCollider = colA;
+				auto secondaryCollider = colB;
+				if (objA->m_priority < objB->m_priority)
+				{
+					primary = objB;
+					secondary = objA;
+					primaryCollider = colB;
+					secondaryCollider = colA;
+				}
+				// 優先度が変わらない場合
+				else if (objA->m_priority == objB->m_priority)
+				{
+					// 速度の速いを方を優先度が高いことにする
+					if (objA->m_rigid->GetVelocity().SqLength() < objB->m_rigid->GetVelocity().SqLength())
+					{
+						primary = objB;
+						secondary = objA;
+						primaryCollider = colB;
+						secondaryCollider = colA;
+					}
+				}
+
+				// 次の座標を修正する
+				FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider, collideHitInfo);
+				FixNextPos(secondary->m_rigid, primary->m_rigid, secondaryCollider, primaryCollider, collideHitInfo);
 			}
-
-			if (isCheck) break;
-		}
-
-		if (isCheck && checkCount > CHECK_COUNT_MAX)
-		{
-			//printfDx("規定数(%d)を超えました", CHECK_COUNT_MAX);
-			break;
 		}
 	}
 }
 
-MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const
+MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::Collide>& colliderA, const std::shared_ptr<Collidable::Collide>& colliderB) const
 {
 
 	CollideHitInfo info;
 
-	auto kindA = colliderA->GetKind();
-	auto kindB = colliderB->GetKind();
+	auto kindA = colliderA->col->GetKind();
+	auto kindB = colliderB->col->GetKind();
 
 	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Sphere)
 	{
-		auto sphereA = dynamic_cast<ColliderSphere*>(colliderA.get());
-		auto sphereB = dynamic_cast<ColliderSphere*>(colliderB.get());
+		auto sphereA = dynamic_cast<ColliderSphere*>(colliderA->col.get());
+		auto sphereB = dynamic_cast<ColliderSphere*>(colliderB->col.get());
 
-		auto aToB = (rigidB->GetNextPos() + colliderB->GetShift()) - (rigidA->GetNextPos() + colliderA->GetShift());
+		auto aToB = (rigidB->GetNextPos() + colliderB->col->GetShift()) - (rigidA->GetNextPos() + colliderA->col->GetShift());
 		float sumRadius = sphereA->radius + sphereB->radius;
 		info.isHit = (aToB.SqLength() < sumRadius * sumRadius);
 	}
 	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Box)
 	{
-		auto SphereA = dynamic_cast<ColliderSphere*>(colliderA.get());
-		auto BoxB = dynamic_cast<ColliderBox*>(colliderB.get());
+		auto SphereA = dynamic_cast<ColliderSphere*>(colliderA->col.get());
+		auto BoxB = dynamic_cast<ColliderBox*>(colliderB->col.get());
 
-		auto spherePos = rigidA->GetPos() + colliderA->GetShift();
-		auto boxPos = rigidB->GetPos() + colliderB->GetShift();
+		auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
+		auto boxPos = rigidB->GetPos() + colliderB->col->GetShift();
 
 		// ボックスの中心から円の中心までのベクトルを作成
 		auto boxToSphere = spherePos - boxPos;
@@ -348,11 +364,11 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 	}
 	if (kindA == ColliderBase::Kind::Box && kindB == ColliderBase::Kind::Sphere)
 	{
-		auto BoxA = dynamic_cast<ColliderBox*>(colliderA.get());
-		auto SphareB = dynamic_cast<ColliderSphere*>(colliderB.get());
+		auto BoxA = dynamic_cast<ColliderBox*>(colliderA->col.get());
+		auto SphareB = dynamic_cast<ColliderSphere*>(colliderB->col.get());
 
-		auto spherePos = rigidB->GetPos() + colliderB->GetShift();
-		auto boxPos = rigidA->GetPos() + colliderA->GetShift();
+		auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
+		auto boxPos = rigidA->GetPos() + colliderA->col->GetShift();
 
 		// ボックスの中心から円の中心までのベクトルを作成
 		auto boxToSphere = spherePos - boxPos;
@@ -370,35 +386,37 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 	return info;
 }
 
-void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider, const CollideHitInfo info)
+void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<Collidable::Collide>& primaryCollider, const std::shared_ptr<Collidable::Collide>& secondaryCollider, const CollideHitInfo info)
 {
 	Vec3 fixedPos = secondaryRigid->GetNextPos();
 
-	auto primaryKind = primaryCollider->GetKind();
-	auto secondaryKind = secondaryCollider->GetKind();
+	auto primaryKind = primaryCollider->col->GetKind();
+	auto secondaryKind = secondaryCollider->col->GetKind();
+
+	
 
 	if (primaryKind == ColliderBase::Kind::Sphere)
 	{
 		if (secondaryKind == ColliderBase::Kind::Sphere)
 		{
-			auto primarySphere = dynamic_cast<ColliderSphere*>(primaryCollider.get());
-			auto secondarySphere = dynamic_cast<ColliderSphere*>(secondaryCollider.get());
+			auto primarySphere = dynamic_cast<ColliderSphere*>(primaryCollider->col.get());
+			auto secondarySphere = dynamic_cast<ColliderSphere*>(secondaryCollider->col.get());
 
 			// primaryからsecondaryへのベクトルを作成
-			auto primaryToSecondary = (secondaryRigid->GetNextPos() + secondaryCollider->GetShift()) -
-				(primaryRigid->GetNextPos() + primaryCollider->GetShift());
+			auto primaryToSecondary = (secondaryRigid->GetNextPos() + secondaryCollider->col->GetShift()) -
+				(primaryRigid->GetNextPos() + primaryCollider->col->GetShift());
 			// そのままだとちょうど当たる位置になるので少し余分に離す
 			float  awayDist = primarySphere->radius + secondarySphere->radius + 0.0001f;
 			// 長さを調整
 			primaryToSecondary = primaryToSecondary.GetNormalized() * awayDist;
 			// primaryからベクトル方向に押す
-			fixedPos = (primaryRigid->GetNextPos() + primaryCollider->GetShift()) + primaryToSecondary;
+			fixedPos = (primaryRigid->GetNextPos() + primaryCollider->col->GetShift()) + primaryToSecondary;
 		}
 		if (secondaryKind == ColliderBase::Kind::Box)
 		{
-			auto dir = (primaryRigid->GetPos() + primaryCollider->GetShift()) - info.hitPos;
+			auto dir = (primaryRigid->GetPos() + primaryCollider->col->GetShift()) - info.hitPos;
 			dir.Normalize();
-			auto sphereCol = dynamic_cast<ColliderSphere*>(primaryCollider.get());
+			auto sphereCol = dynamic_cast<ColliderSphere*>(primaryCollider->col.get());
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
 			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
 		}
@@ -407,9 +425,9 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 	{
 		if (secondaryKind == ColliderBase::Kind::Sphere)
 		{
-			auto dir = (secondaryRigid->GetPos() + secondaryCollider->GetShift()) - info.hitPos;
+			auto dir = (secondaryRigid->GetPos() + secondaryCollider->col->GetShift()) - info.hitPos;
 			dir.Normalize();
-			auto sphereCol = dynamic_cast<ColliderSphere*>(secondaryCollider.get());
+			auto sphereCol = dynamic_cast<ColliderSphere*>(secondaryCollider->col.get());
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
 			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
 		}
@@ -417,177 +435,107 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 	secondaryRigid->SetNextPos(fixedPos);
 }
 
-void MyEngine::Physics::AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std::shared_ptr<ColideInfo> objB, SendCollideInfo& info)
+void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB,ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos)
 {
-	std::shared_ptr<ColideInfo> parent = objA;
-	std::shared_ptr<ColideInfo> child = objB;
-	// Aが親として取得しているか
-	bool isParentA = false;
-	for (auto& item : info)if (item.first->col == objA->col&&item.first->tag==objA->tag) { parent = item.first; isParentA = true; }
-	// Bが親として取得しているか
-	bool isParentB = false;
-	for (auto& item : info)if (item.first->col == objB->col && item.first->tag == objB->tag){child = item.first; isParentB = true;}
-	// AがBどちらかが取得している場合
-	if (isParentA || isParentB)
+	// 既に追加されている通知リストにあれば追加しない
+	for (auto& i : info)
 	{
-		if (isParentB)
-		{
-			auto temp = parent;
-			parent = child;
-			child = temp;
-		}
-		std::list<std::shared_ptr<ColideInfo>> colideInfo;
-		for (auto& item : info)if (item.first->col == parent->col&& item.first->tag == parent->tag)colideInfo = item.second;
-		// 親が子を持っているか
-		bool isChild = false;
-		for (auto& item : colideInfo)if (item->col == child->col&& item->tag == child->tag)isChild = true;
-		// 子として持っていなければ追加
-		if (!isChild)
-		{
-			info[parent].emplace_back(child);
-		}
+		if (i.own.lock() == objA.lock() && i.own.lock() == objB.lock()) return;
+		if (i.send.lock() == objB.lock() && i.send.lock() == objA.lock()) return;
+	}
 
-	}
-	// どちらも取得していない場合
-	else
-	{
-		// 普通に追加
-		info[parent].emplace_back(child);
-	}
+	// ここまで来たらまだ通知リストに追加されていないため追加
+	info.emplace_back(SendInfo{ objA, objB, ownTag, sendTag, hitPos });
 }
 
 void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger)
 {
-	for (auto& parent : newSendInfo)
+	// 1つ前に通知リストが当たったか
+	auto isPreExist = preSendInfo.size() != 0;
+
+	for (auto& info : newSendInfo)
 	{
-		// 以前の情報に親として登録されているか
-		bool isPreParent = false;// = preSendInfo.find(parent.first) != preSendInfo.end();
-		std::list<std::shared_ptr<MyEngine::Physics::ColideInfo>> preSecond;
-		std::shared_ptr<MyEngine::Physics::ColideInfo> preFirst;
-		//std::pair<const std::shared_ptr<MyEngine::Physics::ColideInfo>, std::list<std::shared_ptr<MyEngine::Physics::ColideInfo>>> info;
-		for (auto& item : preSendInfo)if (item.first->col == parent.first->col){preFirst = item.first; preSecond = item.second; isPreParent = true;}
-		bool isAllEnter = true;
+		bool isEntry = false;
 
-		for (auto& child : parent.second)
+		// 1つ前に通知リストがあった場合
+		if (isPreExist)
 		{
-			std::shared_ptr<MyEngine::Physics::ColideInfo> childFirst;
-			bool isPreChild = false;
-			if (isPreParent)
+			bool isEnter = true;
+			// 1つ前の通知リストをすべて回す
+			auto it = preSendInfo.begin();
+			for (; it != preSendInfo.end(); ++it)
 			{
-				for (auto& item : preSecond)if (item->col == child->col) { childFirst = item; isPreChild = true; }
+				// 通知リストが存在した場合は当たった時の通知を呼ばないようにする
+				if (it->own.lock() == info.own.lock() && it->send.lock() == info.send.lock()) isEnter = false;
+				if (it->own.lock() == info.send.lock() && it->send.lock() == info.own.lock()) isEnter = false;
+				if (!isEnter) break;
 			}
-
-			// 今回入ってきた場合はEnterを呼ぶ(子として登録されていない)
-			if (!isPreChild)
+			if (isEnter)
 			{
-				if (isTrigger)
-				{
-					AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerEnter);
-					AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerEnter);
-				}
-				else
-				{
-					AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideEnter);
-					AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideEnter);
-				}
-			}
-
-			// Stayは毎度呼ぶ
-			if (isTrigger)
-			{
-				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerStay);
-				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerStay);
+				// 当たった時の通知を追加
+				if (isTrigger) AddOnCollideInfo(info, OnCollideInfoKind::TriggerEnter);
+				else           AddOnCollideInfo(info, OnCollideInfoKind::CollideEnter);
 			}
 			else
 			{
-				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideStay);
-				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideStay);
-			}
-
-			// 登録されていた情報を削除
-			if (isPreChild)
-			{
-				preSendInfo[preFirst].remove(childFirst);
-			}
-			// 全て登録されていなかったとする
-			else
-			{
-				isAllEnter = false;
+				// 一つ前の通知リストから今回存在する通知のものを削除する
+				preSendInfo.erase(it);
 			}
 		}
-
-		// 全て登録されていたら親の情報も消す
-		if (isAllEnter)
+		// 1つ前に通知リストがなかった場合
+		else
 		{
-			preSendInfo.erase(preFirst);
+			// 当たった時の通知を追加
+			if (isTrigger) AddOnCollideInfo(info, OnCollideInfoKind::TriggerEnter);
+			else           AddOnCollideInfo(info, OnCollideInfoKind::CollideEnter);
 		}
 
-		
+		// 当たっている状態の通知を追加
+		if (isTrigger) AddOnCollideInfo(info, OnCollideInfoKind::TriggerStay);
+		else           AddOnCollideInfo(info, OnCollideInfoKind::CollideStay);
 	}
 
-	// 残っている前情報からExistを呼ぶ(登録が残っている＝今回抜けた)
-	for (auto& parent : preSendInfo)
+	// 上で削除されずに残った1つ前の通知リストは今回抜けているため
+	// 離れた時の通知を追加
+	for (auto& info : preSendInfo)
 	{
-		for (auto& child : parent.second)
-		{
-			if (isTrigger)
-			{
-				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::TriggerExit);
-				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::TriggerExit);
-			}
-			else
-			{
-				AddOnCollideInfo(parent.first, child, OnCollideInfoKind::CollideExit);
-				AddOnCollideInfo(child, parent.first, OnCollideInfoKind::CollideExit);
-			}
-		}
-
+		if (isTrigger) AddOnCollideInfo(info, OnCollideInfoKind::TriggerExit);
+		else           AddOnCollideInfo(info, OnCollideInfoKind::CollideExit);
 	}
-
-	
 }
-
-void MyEngine::Physics::AddOnCollideInfo(std::shared_ptr<ColideInfo> own, std::shared_ptr<ColideInfo> send, OnCollideInfoKind kind)
+void Physics::AddOnCollideInfo(const SendInfo& info, OnCollideInfoKind kind)
 {
-	OnCollideInfoData info;
-	info.own = own;
-	info.send = send;
-	info.kind = kind;
-	m_onCollideInfo.emplace_back(info);
+	m_onCollideInfo.emplace_back(OnCollideInfoData{ info.own, info.send, info.ownTag,info.sendTag, info.hitPos, kind });
+	m_onCollideInfo.emplace_back(OnCollideInfoData{ info.send, info.own, info.sendTag,info.ownTag, info.hitPos, kind });
 }
 
-void MyEngine::Physics::OnCollideInfo(std::shared_ptr<ColideInfo> own, std::shared_ptr<ColideInfo> send, OnCollideInfoKind kind)
+void MyEngine::Physics::OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind)
 {
 	auto item = send;
-	auto ownCol = own->col;
-	auto ownTag = own->tag;
-
-	auto itemCol = item->col;
-	auto itemTag = item->tag;
 
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
-		ownCol->OnCollideEnter(itemCol,ownTag, itemTag);
+		own.lock()->OnCollideEnter(item.lock(),ownTag,sendTag);
 	}
 	else if (kind == OnCollideInfoKind::CollideStay)
 	{
-		ownCol->OnCollideStay(itemCol, ownTag, itemTag);
+		own.lock()->OnCollideStay(item.lock(), ownTag, sendTag);
 	}
 	else if (kind == OnCollideInfoKind::CollideExit)
 	{
-		ownCol->OnCollideExit(itemCol, ownTag, itemTag);
+		own.lock()->OnCollideExit(item.lock(), ownTag, sendTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerEnter)
 	{
-		ownCol->OnTriggerEnter(itemCol, ownTag, itemTag);
+		own.lock()->OnTriggerEnter(item.lock(), ownTag, sendTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerStay)
 	{
-		ownCol->OnTriggerStay(itemCol, ownTag, itemTag);
+		own.lock()->OnTriggerStay(item.lock(), ownTag, sendTag);
 	}
 	else if (kind == OnCollideInfoKind::TriggerExit)
 	{
-		ownCol->OnTriggerExit(itemCol, ownTag, itemTag);
+		own.lock()->OnTriggerExit(item.lock(), ownTag, sendTag);
 	}
 }
 
@@ -606,10 +554,10 @@ void Physics::FixPos() const
 		auto& debug = DebugDraw::GetInstance();
 		for (const auto& collider : item->m_colliders)
 		{
-			auto kind = collider->GetKind();
+			auto kind = collider->col->GetKind();
 			if (kind == ColliderBase::Kind::Sphere)
 			{
-				auto sphereData = dynamic_cast<ColliderSphere*>(collider.get());
+				auto sphereData = dynamic_cast<ColliderSphere*>(collider->col.get());
 				DebugDraw::SphereInfo info;
 				info.center = rigid->GetPos();
 				info.radius = sphereData->radius;
@@ -651,3 +599,4 @@ Vec3 closestPointOnCubeAndSphere(const Vec3& cubeCenter, Vec3 size, const Vec3& 
 	// 最近接点を計算
 	return sphereCenter + direction;
 }
+

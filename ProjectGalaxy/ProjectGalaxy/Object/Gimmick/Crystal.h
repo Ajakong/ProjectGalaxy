@@ -13,7 +13,7 @@ public:
 	
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
 private:
-	int m_Hp;
+	int m_hp;
 	Vec3 m_size;
 
 };

@@ -27,7 +27,7 @@ float lerp(float start, float end, float t)
 
 
 Enemy::Enemy(int handle, Priority priority, ObjectTag tag):Collidable(priority,tag),
-	//m_Hp(50),
+	//m_hp(50),
 	m_modelHandle(handle)
 {
 }

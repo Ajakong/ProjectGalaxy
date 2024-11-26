@@ -5,8 +5,7 @@
 #include"Vec3.h"
 #include "ObjectTag.h"
 #include <DxLib.h>
-#include"ColliderBase.h"
-
+#include "Collidable.h"
 
 
 namespace MyEngine
@@ -14,6 +13,7 @@ namespace MyEngine
 	class Galaxy;
 	class Rigidbody;
 	class Collidable;
+	class ColliderBase;
 
 	class Physics final
 	{
@@ -29,25 +29,35 @@ namespace MyEngine
 			TriggerStay,
 			TriggerExit
 		};
-		struct ColideInfo
-		{
-			std::shared_ptr<Collidable> col;
-			ColliderBase::ColideTag tag;
-		};
-		struct OnCollideInfoData
-		{
-			std::shared_ptr<ColideInfo> own;
-			std::shared_ptr<ColideInfo> send;
-			OnCollideInfoKind kind;
-		};
-		
 		struct CollideHitInfo
 		{
 			bool isHit = false;
 			Vec3 hitPos;
 		};
-		using SendCollideInfo = std::unordered_map<std::shared_ptr<ColideInfo>, std::list<std::shared_ptr<ColideInfo>>>;
-	
+		struct CollideFuncArgs
+		{
+			std::shared_ptr<Collidable> send;
+			Collidable::Collide myCollide;
+			Collidable::Collide sendCollide;
+		};
+		struct SendInfo
+		{
+			std::weak_ptr<Collidable> own;
+			std::weak_ptr<Collidable> send;
+			ColliderBase::ColideTag ownTag;
+			ColliderBase::ColideTag sendTag; 
+			Vec3 hitPos;
+		};
+		struct OnCollideInfoData
+		{
+			std::weak_ptr<Collidable> own;
+			std::weak_ptr<Collidable> send;
+			ColliderBase::ColideTag ownTag;
+			ColliderBase::ColideTag sendTag;
+			Vec3 hitPos;
+			OnCollideInfoKind kind;
+		};
+		using SendCollideInfo = std::list<SendInfo>;
 	private:
 
 		Physics();
@@ -69,21 +79,31 @@ namespace MyEngine
 
 	private:
 
-		void Gravity();
-		void MoveNextPos() const;
 
+		void MoveNextPos() const;
+		/// <summary>
+	/// 判定リストの取得
+	/// </summary>
+	/// <returns>判定リスト</returns>
+		std::vector<std::shared_ptr<Collidable>> GetCollisionList() const;
 		void CheckCollide();
 
-		CollideHitInfo IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const;
-		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider,const CollideHitInfo info);
-		void AddNewCollideInfo(std::shared_ptr<ColideInfo> objA, std::shared_ptr<ColideInfo> objB, SendCollideInfo& info);
-		void CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger);
-		void AddOnCollideInfo(std::shared_ptr<ColideInfo> own, std::shared_ptr<ColideInfo> send, OnCollideInfoKind kind);
-		void OnCollideInfo(std::shared_ptr<ColideInfo> own, std::shared_ptr<ColideInfo> send, OnCollideInfoKind kind);
+		CollideHitInfo IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::Collide> & colliderA, const std::shared_ptr<Collidable::Collide>& colliderB) const;
+		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<Collidable::Collide>& primaryCollider, const std::shared_ptr<Collidable::Collide>& secondaryCollider, const CollideHitInfo info);
+		/// <summary>
+		/// 判定通知リストに追加する
+		/// </summary>
+		/// <param name="objA">オブジェクトA</param>
+		/// <param name="objB">オブジェクトB</param>
+		/// <param name="info">通知リスト</param>
+		/// <param name="hitPos">当たった座標</param>
+		void AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB, ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos = Vec3()); void CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger);
+		void AddOnCollideInfo(const SendInfo& info, OnCollideInfoKind kind);
+		void OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind);
 		void FixPos() const;
 
 	private:
-		std::list<std::shared_ptr<Collidable>> m_collidables;
+		std::vector<std::shared_ptr<Collidable>> m_collidables;
 		std::list<std::shared_ptr<Collidable>> m_stageCollidables;
 
 		std::list<OnCollideInfoData> m_onCollideInfo;

@@ -19,7 +19,7 @@ MyEngine::Collidable::Collidable(std::shared_ptr<Collidable> col) :
 	m_rigid(col->m_rigid),
 	m_colliders(col->m_colliders),
 	m_upVec(col->m_upVec),
-	throughTags(col->throughTags),
+	m_throughTags(col->m_throughTags),
 	m_tag(col->m_tag),
 	m_priority(col->m_priority)
 {
@@ -30,13 +30,14 @@ Collidable::~Collidable()
 {
 }
 
-std::shared_ptr<ColliderBase> MyEngine::Collidable::AddCollider(const ColliderBase::Kind& kind, const ColliderBase::ColideTag& tag)
+std::shared_ptr<Collidable::Collide> MyEngine::Collidable::AddCollider(const ColliderBase::Kind& kind, const ColliderBase::ColideTag& tag)
 {
-	std::shared_ptr<ColliderBase> collider;
+	std::shared_ptr<Collide> collider;
 
 	if (kind == ColliderBase::Kind::Sphere)
 	{
-		collider = std::make_shared<ColliderSphere>(tag);
+		collider->col = std::make_shared<ColliderSphere>(tag);
+
 	}
 	else if (kind == ColliderBase::Kind::Capsule)
 	{
@@ -44,14 +45,14 @@ std::shared_ptr<ColliderBase> MyEngine::Collidable::AddCollider(const ColliderBa
 	}
 	else if (kind == ColliderBase::Kind::Box)
 	{
-		collider = std::make_shared<ColliderBox>(tag);
+		collider->col = std::make_shared<ColliderBox>(tag);
 	}
 
 	if (collider)
 	{
 		m_colliders.emplace_back(collider);
 	}
-
+	collider->tag = tag;
 	return collider;
 }
 void MyEngine::Collidable::RemoveCollider(std::shared_ptr<ColliderBase> col)
@@ -65,14 +66,14 @@ void MyEngine::Collidable::RemoveCollider(std::shared_ptr<ColliderBase> col)
 /// </summary>
 void Collidable::AddThroughTag(ObjectTag tag)
 {
-	bool found = (std::find(throughTags.begin(), throughTags.end(), tag) != throughTags.end());
+	bool found = (std::find(m_throughTags.begin(), m_throughTags.end(), tag) != m_throughTags.end());
 	if (found)
 	{
 		assert(0 && L"指定タグは既に追加されています");
 	}
 	else
 	{
-		throughTags.emplace_back(tag);
+		m_throughTags.emplace_back(tag);
 	}
 }
 
@@ -81,20 +82,20 @@ void Collidable::AddThroughTag(ObjectTag tag)
 /// </summary>
 void Collidable::RemoveThroughTag(ObjectTag tag)
 {
-	bool found = (std::find(throughTags.begin(), throughTags.end(), tag) != throughTags.end());
+	bool found = (std::find(m_throughTags.begin(), m_throughTags.end(), tag) != m_throughTags.end());
 	if (!found)
 	{
 		assert(0 && L"指定タグは存在しません");
 	}
 	else
 	{
-		throughTags.remove(tag);
+		m_throughTags.remove(tag);
 	}
 }
 
 // 当たり判定を無視（スルー）する対象かどうか
 bool Collidable::IsThroughTarget(const std::shared_ptr<Collidable> target) const
 {
-	bool found = (std::find(throughTags.begin(), throughTags.end(), target->GetTag()) != throughTags.end());
+	bool found = (std::find(m_throughTags.begin(), m_throughTags.end(), target->GetTag()) != m_throughTags.end());
 	return found;
 }

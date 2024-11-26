@@ -31,7 +31,7 @@ namespace MyEngine
 
 
 		// コンストラクタ
-		ColliderBase(Kind kind,ColideTag tag);
+		ColliderBase(Kind kind);
 		virtual ~ColliderBase() {}
 
 		// 当たり判定種別取得
@@ -43,7 +43,6 @@ namespace MyEngine
 		bool NowOnHit() { return m_isNowOnHit; }
 		void SetNowOnHit(bool flag) { m_isNowOnHit = flag; }
 		Vec3 GetShift() const{ return m_posShift; }
-		ColideTag GetTag()const { return m_tag; }
 		/// <summary>
 		/// オブジェクトの座標から当たり判定の相対位置をセット
 		/// </summary>
@@ -58,7 +57,6 @@ namespace MyEngine
 		//オブジェクトの位置からの当たり判定の相対量
 		Vec3 m_posShift;
 		Kind m_kind;
-		ColideTag m_tag;
 		std::unordered_map<const ColliderBase*, bool> m_isHit;
 		std::unordered_map<const ColliderBase*, bool> m_isPreHit;
 		bool m_isNowOnHit;

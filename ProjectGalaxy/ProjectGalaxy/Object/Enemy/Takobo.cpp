@@ -59,7 +59,9 @@ namespace
 }
 
 Takobo::Takobo(Vec3 pos,std::shared_ptr<MyEngine::Collidable> target) :Enemy(-1, Priority::Low, ObjectTag::Takobo),
-m_Hp(kHp),
+
+m_hp(kHp),
+
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0)
 {
@@ -80,6 +82,9 @@ m_centerToEnemyAngle(0)
 	m_modelHandle=ModelManager::GetInstance().GetModelData(kTakoboFileName);
 	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
 	ChangeAnim(Idle);
+
+	m_modelHeadIndex= MV1SearchFrame(m_modelHandle, "mixamorig:Head");
+
 }
 
 Takobo::~Takobo()
@@ -155,7 +160,7 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,MyEngi
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		m_Hp -= 20;
+		m_hp -= 20;
 	}
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
 	{
@@ -163,7 +168,7 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,MyEngi
 		attack->DeleteFlag();
 		if (attack->GetCounterFlag())
 		{
-			m_Hp -= 60;
+			m_hp -= 60;
 		}
 	}
 }
@@ -247,7 +252,7 @@ void Takobo::IdleUpdate()
 		{
 			Vec3 norm = (m_rigid->GetPos() - m_nowPlanetPos).GetNormalized();
 			Vec3 toTarget = ToVec(norm, m_target->GetRigidbody()->GetPos());
-			if (toTarget.Length() > 500)break;
+			if (toTarget.Length() > 50)break;
 			float a = acos(Dot(norm, toTarget.GetNormalized())) * 180 / DX_PI_F;
 
 			if (a < 120)
@@ -274,15 +279,18 @@ void Takobo::AttackSphereUpdate()
 
 	if (now > 35)
 	{
-		m_sphereNum++;
 
-		m_createFrameCount = 1;
 		if (m_createFrameCount == 0)
 		{
 			Set3DPositionSoundMem(m_rigid->GetPos().VGet(), m_shotSEHandle);
 			PlaySoundMem(m_shotSEHandle, DX_PLAYTYPE_BACK);
-			m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), GetMyPos(), m_attackDir, 1, 0xff0000));
+
+			Vec3 headPos = MV1GetFramePosition(m_modelHandle, m_modelHeadIndex);
+			m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), headPos, m_attackDir, 1, 0xff0000));
 			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+			m_sphereNum++;
+			m_createFrameCount = 1;
+
 
 		}
 		

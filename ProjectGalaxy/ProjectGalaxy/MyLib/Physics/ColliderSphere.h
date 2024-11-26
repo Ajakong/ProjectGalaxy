@@ -6,7 +6,7 @@ namespace MyEngine
 	class ColliderSphere : public ColliderBase
 	{
 	public:
-		ColliderSphere(ColideTag tag);
+		ColliderSphere();
 
 		float GetRadius()const { return radius; }
 
