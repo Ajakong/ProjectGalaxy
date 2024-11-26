@@ -72,7 +72,6 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	toObj = toObj.GetNormalized();
 	Vec3 GravityDir = toObj * -1;
 	obj->SetUpVec(toObj);
-	obj->NowPlanet
 	if (obj->IsAntiGravity())
 	{
 		return objVelocity;

@@ -89,7 +89,7 @@ void Physics::Update()
 	{
 		for (auto& col : item->m_colliders)
 		{
-			col->SetNowOnHit(false);
+			col->col->SetNowOnHit(false);
 		}
 		item->Update();
 	}
@@ -155,14 +155,14 @@ void MyEngine::Physics::Gravity()
 				auto planet = dynamic_cast<Planet*>(item.get());
 				for (const auto& col : item->m_colliders)
 				{
-					if (col->isTrigger == true)
+					if (col->col->isTrigger == true)
 					{
 						int colIndex = 0;
 						for (const auto& objCol : obj->m_colliders)
 						{
 							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
 							{
-								planet->OnTriggerEnter(obj, col->GetTag(), objCol->GetTag());
+								planet->OnTriggerEnter(obj, col->col->GetTag(), objCol->col->GetTag());
 								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
 							}
 							colIndex++;
@@ -198,10 +198,10 @@ void MyEngine::Physics::MoveNextPos() const
 
 		for (const auto& collider : item->m_colliders)
 		{
-			auto kind = collider->GetKind();
+			auto kind = collider->col->GetKind();
 			if (kind == ColliderBase::Kind::Sphere)
 			{
-				auto sphereData = dynamic_cast<ColliderSphere*>(collider.get());
+				auto sphereData = dynamic_cast<ColliderSphere*>(collider->col.get());
 				DebugDraw::SphereInfo preInfo;
 				preInfo.center = pos;
 				preInfo.radius = sphereData->radius;
@@ -246,12 +246,12 @@ void MyEngine::Physics::CheckCollide()
 
 						std::shared_ptr<ColideInfo> infoA;
 						infoA = std::make_shared<ColideInfo>();
-						infoA->col = objA; infoA->tag = colA->GetTag();
+						infoA->col = objA; infoA->tag = colA->col->GetTag();
 
 						std::shared_ptr<ColideInfo> infoB;
 						infoB = std::make_shared<ColideInfo>();
-						infoB->col = objB; infoB->tag = colB->GetTag();
-						bool isTrigger = colA->isTrigger || colB->isTrigger;
+						infoB->col = objB; infoB->tag = colB->col->GetTag();
+						bool isTrigger = colA->col->isTrigger || colB->col->isTrigger;
 
 						if (isTrigger)
 						{
@@ -281,8 +281,8 @@ void MyEngine::Physics::CheckCollide()
 							secondaryCollider = colA;
 						}
 
-						colA->SetNowOnHit(true);
-						colB->SetNowOnHit(true);
+						colA->col->SetNowOnHit(true);
+						colB->col->SetNowOnHit(true);
 						FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider, info);
 						// 位置補正をしたらもう一度初めから行う
 						isCheck = true;
@@ -306,30 +306,30 @@ void MyEngine::Physics::CheckCollide()
 	}
 }
 
-MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<ColliderBase>& colliderA, const std::shared_ptr<ColliderBase>& colliderB) const
+MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::Collide>& colliderA, const std::shared_ptr<Collidable::Collide>& colliderB) const
 {
 
 	CollideHitInfo info;
 
-	auto kindA = colliderA->GetKind();
-	auto kindB = colliderB->GetKind();
+	auto kindA = colliderA->col->GetKind();
+	auto kindB = colliderB->col->GetKind();
 
 	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Sphere)
 	{
-		auto sphereA = dynamic_cast<ColliderSphere*>(colliderA.get());
-		auto sphereB = dynamic_cast<ColliderSphere*>(colliderB.get());
+		auto sphereA = dynamic_cast<ColliderSphere*>(colliderA->col.get());
+		auto sphereB = dynamic_cast<ColliderSphere*>(colliderB->col.get());
 
-		auto aToB = (rigidB->GetNextPos() + colliderB->GetShift()) - (rigidA->GetNextPos() + colliderA->GetShift());
+		auto aToB = (rigidB->GetNextPos() + colliderB->col->GetShift()) - (rigidA->GetNextPos() + colliderA->col->GetShift());
 		float sumRadius = sphereA->radius + sphereB->radius;
 		info.isHit = (aToB.SqLength() < sumRadius * sumRadius);
 	}
 	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Box)
 	{
-		auto SphereA = dynamic_cast<ColliderSphere*>(colliderA.get());
-		auto BoxB = dynamic_cast<ColliderBox*>(colliderB.get());
+		auto SphereA = dynamic_cast<ColliderSphere*>(colliderA->col.get());
+		auto BoxB = dynamic_cast<ColliderBox*>(colliderB->col.get());
 
-		auto spherePos = rigidA->GetPos() + colliderA->GetShift();
-		auto boxPos = rigidB->GetPos() + colliderB->GetShift();
+		auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
+		auto boxPos = rigidB->GetPos() + colliderB->col->GetShift();
 
 		// ボックスの中心から円の中心までのベクトルを作成
 		auto boxToSphere = spherePos - boxPos;
@@ -346,11 +346,11 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 	}
 	if (kindA == ColliderBase::Kind::Box && kindB == ColliderBase::Kind::Sphere)
 	{
-		auto BoxA = dynamic_cast<ColliderBox*>(colliderA.get());
-		auto SphareB = dynamic_cast<ColliderSphere*>(colliderB.get());
+		auto BoxA = dynamic_cast<ColliderBox*>(colliderA->col.get());
+		auto SphareB = dynamic_cast<ColliderSphere*>(colliderB->col.get());
 
-		auto spherePos = rigidB->GetPos() + colliderB->GetShift();
-		auto boxPos = rigidA->GetPos() + colliderA->GetShift();
+		auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
+		auto boxPos = rigidA->GetPos() + colliderA->col->GetShift();
 
 		// ボックスの中心から円の中心までのベクトルを作成
 		auto boxToSphere = spherePos - boxPos;
@@ -368,7 +368,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 	return info;
 }
 
-void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<ColliderBase>& primaryCollider, const std::shared_ptr<ColliderBase>& secondaryCollider, const CollideHitInfo info)
+void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<Collidable::Collide>& primaryCollider, const std::shared_ptr<Collidable::Collide>& secondaryCollider, const CollideHitInfo info)
 {
 	Vec3 fixedPos = secondaryRigid->GetNextPos();
 
@@ -604,10 +604,10 @@ void Physics::FixPos() const
 		auto& debug = DebugDraw::GetInstance();
 		for (const auto& collider : item->m_colliders)
 		{
-			auto kind = collider->GetKind();
+			auto kind = collider->col->GetKind();
 			if (kind == ColliderBase::Kind::Sphere)
 			{
-				auto sphereData = dynamic_cast<ColliderSphere*>(collider.get());
+				auto sphereData = dynamic_cast<ColliderSphere*>(collider->col.get());
 				DebugDraw::SphereInfo info;
 				info.center = rigid->GetPos();
 				info.radius = sphereData->radius;
