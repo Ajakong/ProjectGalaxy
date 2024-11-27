@@ -306,7 +306,6 @@ void MyEngine::Physics::CheckCollide()
 				// 当たっていなければ次の判定に
 				if (!collideHitInfo.isHit) continue;
 
-				
 
 				// 通過オブジェクト確認
 				auto throughA = objA->m_throughTags;
@@ -336,6 +335,7 @@ void MyEngine::Physics::CheckCollide()
 				auto secondary = objB;
 				auto primaryCollider = colA;
 				auto secondaryCollider = colB;
+
 				if (objA->m_priority < objB->m_priority)
 				{
 					primary = objB;
@@ -343,6 +343,7 @@ void MyEngine::Physics::CheckCollide()
 					primaryCollider = colB;
 					secondaryCollider = colA;
 				}
+
 				// 優先度が変わらない場合
 				else if (objA->m_priority == objB->m_priority)
 				{
@@ -496,10 +497,6 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 
 	for (auto& info : newSendInfo)
 	{
-		if (info.send.lock() == nullptr)
-		{
-			int a = 0;
-		}
 		bool isEntry = false;
 
 		// 1つ前に通知リストがあった場合

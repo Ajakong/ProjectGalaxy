@@ -354,8 +354,6 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	player->Draw();
 	SetDrawScreen(DX_SCREEN_BACK);
 	
-	
-
 	SetScreenFlipTargetWindow(NULL);
 
 	m_camera->Set();

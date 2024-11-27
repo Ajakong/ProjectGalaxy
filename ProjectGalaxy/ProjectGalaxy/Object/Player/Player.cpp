@@ -412,19 +412,16 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 		printf("Stage\n");
 		m_spinCount = 0;
 		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
-		m_playerUpdate = &Player::NeutralUpdate;
 		m_isJumpFlag = false;
 		m_isBoostFlag = false;
-		ChangeAnim(AnimNum::AnimationNumIdle);
 	}
 	if (colider->GetTag() == ObjectTag::Crystal)
 	{
 		printf("Crystal\n");
 		m_spinCount = 0;
-		m_playerUpdate = &Player::NeutralUpdate;
 		m_isJumpFlag = false;
 		m_isBoostFlag = false;
-		ChangeAnim(AnimNum::AnimationNumIdle);
+
 	}
 	if (colider->GetTag() == ObjectTag::Kuribo)
 	{
@@ -793,8 +790,10 @@ void Player::JumpingUpdate()
 		m_spinCount++;
 		m_playerUpdate = &Player::JumpingSpinUpdate;
 	}
-	if (m_playerUpdate != &Player::BoostUpdate && m_footCol->NowOnHit())
+
+	if (m_footCol->NowOnHit() || m_footCol->PreOnHit())
 	{
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 }
@@ -802,12 +801,18 @@ void Player::JumpingUpdate()
 
 void Player::DropAttackUpdate()
 {
+	m_state = "DropAttack";
 	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在の再生カウント
 	m_rigid->AddVelocity(m_upVec * -0.8f);
 	if (now < 16)
 	{
 		m_angle += (DX_PI_F * 2) / 16;
 		m_rigid->SetVelocity(Vec3::Zero());
+	}
+	if (m_footCol->NowOnHit() || m_footCol->PreOnHit())
+	{
+		ChangeAnim(AnimNum::AnimationNumIdle);
+		m_playerUpdate = &Player::NeutralUpdate;
 	}
 }
 
