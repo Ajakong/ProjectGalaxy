@@ -26,6 +26,6 @@ private:
 	int m_hitPointNum;
 	float m_speed;
 	float m_num;
-	int m_ratio;
-	int m_length;
+	float m_ratio;
+	float m_length;
 };

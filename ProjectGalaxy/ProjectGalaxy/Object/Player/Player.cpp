@@ -609,7 +609,7 @@ bool Player::UpdateAnim(int attachNo)
 	return isLoop;
 }
 
-void Player::ChangeAnim(int animIndex, int speed)
+void Player::ChangeAnim(int animIndex, float speed)
 {
 	m_speed = speed;
 	//さらに古いアニメーションがアタッチされている場合はこの時点で削除しておく
@@ -921,8 +921,8 @@ Vec3 Player::Move()
 	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
 	analogY = -analogY;
 
-	m_inputVec.x=analogX;
-	m_inputVec.z = -analogY;
+	m_inputVec.x=static_cast<float>(analogX);
+	m_inputVec.z = static_cast<float>(-analogY) ;
 
 	Vec3 ans;  // 初期化はそのままに
 	Vec3 modelDir;
@@ -1034,10 +1034,15 @@ void Player::DeleteManage()
 			bool isOut = sphere->IsDelete() == true;
 	if (isOut == true)
 	{
+		sphere->OnDestroy();
 		MyEngine::Physics::GetInstance().Exit(sphere);
 	}
 	return isOut;
 		});
+	if (result != m_sphere.end())
+	{
+		int a = 0;
+	}
 	m_sphere.erase(result, m_sphere.end());
 }
 

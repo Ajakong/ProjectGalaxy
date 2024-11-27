@@ -42,7 +42,7 @@ void Item::Draw()
 	m_rigid->SetVelocity(Vec3(0, 0, 0));
 	Vec3 offSetVec=GetCameraRightVector();
 	offSetVec -= GetCameraUpVector();
-	offSetVec *= 0.9;
+	offSetVec *= 0.9f;
 	Quaternion myQ;
 	angle+=0.05f;
 	

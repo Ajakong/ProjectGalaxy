@@ -99,6 +99,11 @@ namespace MyEngine
 		/// <param name="info">通知リスト</param>
 		/// <param name="hitPos">当たった座標</param>
 		void AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB, ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos = Vec3()); void CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger);
+		/// <summary>
+		/// obj1とobj2の当たり情報をどちらも格納
+		/// </summary>
+		/// <param name="info"></param>
+		/// <param name="kind"></param>
 		void AddOnCollideInfo(const SendInfo& info, OnCollideInfoKind kind);
 		void OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind);
 		void FixPos() const;

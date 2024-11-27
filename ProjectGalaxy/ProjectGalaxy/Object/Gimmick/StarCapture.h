@@ -7,7 +7,7 @@ class Player;
 class StarCapture : public MyEngine::Collidable
 {
 public:
-	StarCapture(Vec3 pos,int radius=3,int captureRadius=50);
+	StarCapture(Vec3 pos,float radius=3.f,float captureRadius=50.f);
 	virtual ~StarCapture();
 
 	void Init();
@@ -31,8 +31,8 @@ private:
 	int m_captureColLifeTime;
 	int m_recastTime;
 	int m_modelhandle;
-	int m_radius;
-	int m_captureRadius;
+	float m_radius;
+	float m_captureRadius;
 	int m_captureFrame;
 	std::shared_ptr<Collidable::CollideInfo> m_captureCol;
 	std::shared_ptr<MyEngine::Collidable> m_target;

@@ -48,7 +48,7 @@ private:
 	//ループしたかどうかを返す
 	bool UpdateAnim(int attachNo);
 	//アニメーションの変更
-	void ChangeAnim(int animIndex, int speed = 1.f);
+	void ChangeAnim(int animIndex, float speed = 1.f);
 
 private:
 	Vec3 m_vec;
@@ -66,7 +66,7 @@ private:
 	int m_chaseFrameCount;
 	int m_initTime;
 
-	int m_animationSpeed;
+	float m_animationSpeed;
 
 	//0.0f:prevが再生
 	//1.0:currentが再生

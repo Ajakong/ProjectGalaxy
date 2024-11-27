@@ -121,9 +121,9 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	MyEngine::Physics::GetInstance().Entry(m_crystal.back());
 
 	m_camera = make_shared<Camera>();
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
 	
 	m_warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
 	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
@@ -323,9 +323,9 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Front() * 20).VGet(), 0x0000ff);
 
 	DrawCircle(200, 500, 100, 0xffff00,0);
-	DrawLine(200, 500, 200 + player->GetInputVec().x * 70, 500 + player->GetInputVec().z * 70, 0xff0000);
-	DrawLine(200, 500, 200 + player->GetPostMoveDir().x * 70, 500 + player->GetPostMoveDir().z * 70, 0x0000ff);
-	DrawCircle(200 + player->GetInputVec().x *((player->GetInputVec().Length()*70.f)), 500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f)), 30, 0xffff00, 0);
+	DrawLine(200, 500, static_cast < int>( 200 + player->GetInputVec().x * 70), static_cast < int>( 500 + player->GetInputVec().z * 70), 0xff0000);
+	DrawLine(200, 500, static_cast < int>(200 + player->GetPostMoveDir().x * 70), static_cast < int>( 500 + player->GetPostMoveDir().z * 70), 0x0000ff);
+	DrawCircle(static_cast < int>(200 + player->GetInputVec().x *((player->GetInputVec().Length()*70.f))), static_cast < int>(500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f))), 30, 0xffff00, 0);
 
 #endif
 	

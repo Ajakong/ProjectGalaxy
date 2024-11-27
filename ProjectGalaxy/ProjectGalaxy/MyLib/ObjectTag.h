@@ -12,6 +12,7 @@ enum class ObjectTag
 	SpaceEmperor,
 	EnemyAttack,
 	PlayerBullet,
+	EnemyBullet,
 	WarpGate,
 	Item,
 	Coin,

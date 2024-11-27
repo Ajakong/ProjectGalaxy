@@ -79,6 +79,7 @@ m_centerToEnemyAngle(0)
 	AddThroughTag(ObjectTag::Takobo);
 	AddThroughTag(ObjectTag::Gorori);
 	AddThroughTag(ObjectTag::WarpGate);
+	AddThroughTag(ObjectTag::EnemyAttack);
 	m_modelHandle=ModelManager::GetInstance().GetModelData(kTakoboFileName);
 	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
 	ChangeAnim(Idle);
@@ -132,7 +133,7 @@ void Takobo::DeleteManage()
 	if (isOut == true)
 	{
 		m_sphereNum--;
-		MyEngine::Physics::GetInstance().Exit(sphere);
+		sphere->OnDestroy();
 	}
 	return isOut;
 		});

@@ -12,16 +12,19 @@ namespace
 
 }
 
-StarCapture::StarCapture(Vec3 pos, int radius, int captureRadius) : Collidable(Priority::StageGimmick, ObjectTag::StarCapture),
+StarCapture::StarCapture(Vec3 pos, float radius, float captureRadius) : Collidable(Priority::StageGimmick, ObjectTag::StarCapture),
 m_isCapturePlayer(false),
 m_captureFrame(0),
-m_recastTime(0)
+m_recastTime(0),
+m_captureColLifeTime(0),
+m_isCreateCol(false),
+m_modelhandle(-1)
 {
 	m_rigid->SetPos(pos);
 	m_radius = radius;
 	m_captureRadius = captureRadius;
 	SetAntiGravity();
-	
+	m_stateUpdate = nullptr;
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = m_radius;

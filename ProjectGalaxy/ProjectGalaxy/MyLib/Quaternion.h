@@ -68,7 +68,7 @@ public:
 	}
 	
 	//回転クォータニオン
-	Quaternion CreateRotationQuaternion(double radian, Vec3 Axis)
+	Quaternion CreateRotationQuaternion(float radian, Vec3 Axis)
 	{
 		Quaternion ans;
 		double norm;

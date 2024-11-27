@@ -305,7 +305,7 @@ bool Kuribo::UpdateAnim(int attachNo)
 	return isLoop;
 }
 
-void Kuribo::ChangeAnim(int animIndex, int speed)
+void Kuribo::ChangeAnim(int animIndex, float speed)
 {
 	m_animationSpeed = speed;
 	//さらに古いアニメーションがアタッチされている場合はこの時点で削除しておく

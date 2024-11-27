@@ -237,7 +237,7 @@ bool SpaceEmperor::UpdateAnim(int attachNo)
 	return isLoop;
 }
 
-void SpaceEmperor::ChangeAnim(int animIndex, int speed)
+void SpaceEmperor::ChangeAnim(int animIndex, float speed)
 {
 	m_animSpeed = speed;
 	//さらに古いアニメーションがアタッチされている場合はこの時点で削除しておく

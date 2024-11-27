@@ -57,8 +57,8 @@ namespace MyEngine
 		//オブジェクトの位置からの当たり判定の相対量
 		Vec3 m_posShift;
 		Kind m_kind;
-		std::unordered_map<const std::shared_ptr<ColliderBase>, bool> m_isHit;
-		std::unordered_map<const std::shared_ptr<ColliderBase>, bool> m_isPreHit;
+		std::unordered_map<std::shared_ptr<ColliderBase>, bool> m_isHit;
+		std::unordered_map<std::shared_ptr<ColliderBase>, bool> m_isPreHit;
 		bool m_isNowOnHit;
 	};
 }

@@ -35,7 +35,7 @@ private:
 	//ループしたかどうかを返す
 	bool UpdateAnim(int attachNo);
 	//アニメーションの変更
-	void ChangeAnim(int animIndex, int speed = 1.f);
+	void ChangeAnim(int animIndex, float speed = 1.f);
 
 	std::shared_ptr<MyEngine::ColliderSphere> m_armCol;
 
@@ -47,7 +47,7 @@ private:
 
 	int m_neckFrameIndex;//モデルの首のフレームのインデックス
 	float m_armExtensionSpeed;
-	int m_armExtensionDistance;
+	float m_armExtensionDistance;
 
 	float m_animSpeed;
 	Vec3 m_hitDir;

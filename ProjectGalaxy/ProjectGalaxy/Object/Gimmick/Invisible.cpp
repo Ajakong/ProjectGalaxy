@@ -4,7 +4,7 @@
 namespace
 {
 	constexpr float kRadius = 50.f;
-	constexpr int kChaseSpeed = 2.f;
+	constexpr float kChaseSpeed = 2.f;
 
 }
 Invisible::Invisible(Vec3 pos) : Collidable(Priority::Low,ObjectTag::InvisibleObject)

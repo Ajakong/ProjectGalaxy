@@ -87,10 +87,12 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 
 void Physics::Update()
 {
-	for (auto& item : m_collidables)
+	for (auto item = m_collidables.rbegin(); item != m_collidables.rend(); item++)//途中で要素を削除してもいいように逆順
 	{
-		item->Update();
+		
+		item->get()->Update();
 	}
+
 	// 通知リストのクリア・更新
 	m_onCollideInfo.clear();
 	m_preCollideInfo = m_newCollideInfo;
@@ -318,7 +320,7 @@ void MyEngine::Physics::CheckCollide()
 
 				// 次の座標を修正する
 				FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider, collideHitInfo);
-				FixNextPos(secondary->m_rigid, primary->m_rigid, secondaryCollider, primaryCollider, collideHitInfo);
+				//FixNextPos(secondary->m_rigid, primary->m_rigid, secondaryCollider, primaryCollider, collideHitInfo);
 			}
 		}
 	}
@@ -455,6 +457,10 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 
 	for (auto& info : newSendInfo)
 	{
+		if (info.send.lock() == nullptr)
+		{
+			int a = 0;
+		}
 		bool isEntry = false;
 
 		// 1つ前に通知リストがあった場合
@@ -499,12 +505,20 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 	// 離れた時の通知を追加
 	for (auto& info : preSendInfo)
 	{
+		if (info.send.lock() == nullptr)
+		{
+			int a = 0;
+		}
 		if (isTrigger) AddOnCollideInfo(info, OnCollideInfoKind::TriggerExit);
 		else           AddOnCollideInfo(info, OnCollideInfoKind::CollideExit);
 	}
 }
 void Physics::AddOnCollideInfo(const SendInfo& info, OnCollideInfoKind kind)
 {
+	if (info.send.lock() == nullptr)
+	{
+		int a = 0;
+	}
 	m_onCollideInfo.emplace_back(OnCollideInfoData{ info.own, info.send, info.ownTag,info.sendTag, info.hitPos, kind });
 	m_onCollideInfo.emplace_back(OnCollideInfoData{ info.send, info.own, info.sendTag,info.ownTag, info.hitPos, kind });
 }
@@ -581,7 +595,7 @@ Vec3 closestPointOnCube(const Vec3& cubeCenter, const Vec3& size, const Vec3& po
 	return closest;
 }
 
-Vec3 closestPointOnCubeAndSphere(const Vec3& cubeCenter, Vec3 size, const Vec3& sphereCenter, double sphereRadius) {
+Vec3 closestPointOnCubeAndSphere(const Vec3& cubeCenter, Vec3 size, const Vec3& sphereCenter, float sphereRadius) {
 	// 立方体の最近接点
 	Vec3 closestPoint = closestPointOnCube(cubeCenter, size, sphereCenter);
 
@@ -589,7 +603,7 @@ Vec3 closestPointOnCubeAndSphere(const Vec3& cubeCenter, Vec3 size, const Vec3& 
 	Vec3 direction = closestPoint - sphereCenter;
 
 	// ベクトルの長さ
-	double length = std::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+	float length = std::sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
 
 	// ベクトルを正規化
 	if (length > 0) {

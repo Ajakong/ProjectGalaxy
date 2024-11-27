@@ -105,10 +105,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 	//rot = rot2 * rot;
 	//rot = rot3 * rot;
 
-	int pos, pos_add;
-	LONGLONG time;
-	LONGLONG temp_time;
-	MSG msg;
 	HWND hWnd[1];
 	WNDCLASS myProg;
 

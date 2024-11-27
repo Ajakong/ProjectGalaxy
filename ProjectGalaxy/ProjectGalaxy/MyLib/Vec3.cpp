@@ -16,6 +16,13 @@ Vec3::Vec3(float inX, float inY, float inZ) :
 {
 }
 
+Vec3::Vec3(int inX, int inY, int inZ):
+	x(static_cast<float>(inX)),
+	y(static_cast<float>(inY)),
+	z(static_cast<float>(inZ))
+{
+}
+
 Vec3::Vec3(DxLib::VECTOR vec) :
 	x(vec.x),
 	y(vec.y),

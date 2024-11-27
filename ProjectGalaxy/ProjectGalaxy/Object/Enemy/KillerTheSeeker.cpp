@@ -56,7 +56,8 @@ m_centerToEnemyAngle(0),
 m_radius(kCollisionRadius),
 m_isSecondFase(false),
 m_isHitFrame(0),
-m_hitFrame(0)
+m_hitFrame(0),
+m_attackCount(0)
 {
 	m_counterHitSEHandle = SoundManager::GetInstance().GetSoundData(kCounterHitSEhandlePath);
 	SetCreate3DSoundFlag(true);
@@ -228,7 +229,7 @@ void KillerTheSeeker::AttackSphereUpdate()
 		m_createFrameCount = 0;
 		Set3DPositionSoundMem(m_rigid->GetPos().VGet(), m_shotSEHandle);
 		PlaySoundMem(m_shotSEHandle, DX_PLAYTYPE_BACK);
-		m_sphere.push_back(std::make_shared<Killer>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), m_target, GetMyPos()+m_upVec*i*2, m_attackDir, 1, 0xff0000));
+		m_sphere.push_back(std::make_shared<Killer>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), m_target, GetMyPos()+m_upVec*static_cast<float>(i*2), m_attackDir, 1, 0xff0000));
 		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 
 	}	

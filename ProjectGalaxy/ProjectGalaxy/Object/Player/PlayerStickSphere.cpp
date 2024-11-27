@@ -49,6 +49,7 @@ void PlayerStickSphere::Init()
 
 void PlayerStickSphere::Update()
 {
+	
 	m_startPos = m_player->GetLeftHandPos();
 	(this->*m_moveUpdate)();
 }

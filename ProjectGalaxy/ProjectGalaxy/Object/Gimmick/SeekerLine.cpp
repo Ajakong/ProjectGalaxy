@@ -10,9 +10,9 @@ namespace
 }
 
 
-int EaseInOutNum(int x)
+float EaseInOutNum(float x)
 {
-	return -1 * (cos(x * DX_PI_F) - 1) / 2;
+	return -1.f * (cos(x * DX_PI_F) - 1.f) / 2.f;
 }
 
 
@@ -20,7 +20,9 @@ SeekerLine::SeekerLine(std::vector<Vec3> points, int color) : Collidable(Priorit
 m_hitPointNum(0),
 m_length(0),
 m_speed(0),
-m_num(0)
+m_num(0),
+m_color(color),
+m_ratio(0)
 {
 	for (auto& point : points)
 	{

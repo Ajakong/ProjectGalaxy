@@ -20,9 +20,9 @@ std::vector<LocationsManager::LocationData> LocationsManager::LoadLocations(cons
 		byte nameCnt = 0;
 		FileRead_read(&nameCnt, sizeof(nameCnt), handle);
 		loc.name.resize(nameCnt);
-		FileRead_read(loc.name.data(), sizeof(char) * loc.name.size(), handle);
+		FileRead_read(loc.name.data(),static_cast<int>( sizeof(char) * loc.name.size()), handle);
 		//タグ
-		FileRead_read(loc.tag.data(), sizeof(char) * loc.tag.size(), handle);
+		FileRead_read(loc.tag.data(), static_cast < int>( sizeof(char) * loc.tag.size()), handle);
 		//座標情報
 		FileRead_read(&loc.pos, sizeof(loc.pos), handle);
 
