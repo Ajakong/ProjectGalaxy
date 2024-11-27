@@ -178,9 +178,13 @@ void Application::Run(HWND windowHandle)
         m_screenHandle = MakeScreen(Game::kScreenWidth, Game::kScreenHeight, true);
 
         LONGLONG time;
-
+        int updateTime;
+        int drawTime;
         while (ProcessMessage() != -1)
         {
+
+            updateTime = GetNowCount();
+            drawTime = GetNowCount();
             // FPSの固定ように開始時の時間を取得
             time = GetNowHiPerformanceCount();
             // 現在時刻をsystem_clockを用いて取得
@@ -200,12 +204,22 @@ void Application::Run(HWND windowHandle)
             Effekseer_Sync3DSetting();
 
             sceneManager.Update();
-            UpdateEffekseer3D();
-            sceneManager.Draw();
-            DrawEffekseer3D();
 
+            UpdateEffekseer3D();
+           
+            sceneManager.Draw();
             SetScreenFlipTargetWindow(windowHandle);
             ScreenFlip();
+            DrawEffekseer3D();
+            DrawFormatString(16, 48, 0xff00ff, "FPS : %.2f", GetFPS());
+            DrawBox(72, 684, 72 + updateTime, 700, 0xff0000, true);
+            DrawFormatString(16, 684, 0x00ff00, "更新 : %d", updateTime);
+            DrawBox(72, 700, 72 + drawTime, 716, 0x0000ff, true);
+            DrawFormatString(16, 700, 0x00ff00, "描画 : %d", drawTime);
+
+           
+
+           
 
             // escキーを押したら終了する
             if (CheckHitKey(KEY_INPUT_ESCAPE))	break;

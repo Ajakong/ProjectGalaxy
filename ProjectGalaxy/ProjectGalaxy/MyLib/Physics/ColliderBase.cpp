@@ -10,6 +10,7 @@ MyEngine::ColliderBase::ColliderBase(Kind kind) :
 	m_isHit.clear();
 }
 
+
 void MyEngine::ColliderBase::UpdateHit(const std::shared_ptr<ColliderBase> collider, bool isHit)
 {
 	m_isPreHit[collider] = m_isHit[collider];

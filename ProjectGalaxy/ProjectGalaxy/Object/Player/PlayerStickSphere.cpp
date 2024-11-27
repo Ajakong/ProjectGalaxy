@@ -24,12 +24,12 @@ m_sideVec(sideVec),
 m_lifeTime(0),
 m_stickFlag(false)
 {
-	m_rigid->SetVelocity(VGet(m_velocity.x * 2, m_velocity.y * 2, m_velocity.z * 2));
+	/*m_rigid->SetVelocity(VGet(m_velocity.x * 2, m_velocity.y * 2, m_velocity.z * 2));
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = m_radius;
-	m_color = color;
+	m_color = color;*/
 	//moveNumによって挙動が変わるのかもしれない(実装するかわからん)
 	//if (moveNum == 0)
 	{

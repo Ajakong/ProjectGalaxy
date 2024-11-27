@@ -109,6 +109,8 @@ namespace MyEngine
 		Vec3 GetKnockBackVelocity() { return (m_rigid->GetVelocity())*-1; }
 
 		std::shared_ptr<Rigidbody> GetRigidbody() const { return m_rigid; }
+
+		int gravityEffectCount = 0;
 	protected:
 		std::shared_ptr<CollideInfo> AddCollider(const ColliderBase::Kind& kind,const ColliderBase::ColideTag& tag);
 		void RemoveCollider(std::shared_ptr<Collidable::CollideInfo> col);
@@ -132,6 +134,7 @@ namespace MyEngine
 		ObjectTag m_tag;
 		Priority m_priority;
 		bool m_isAntiGravity;
+		
 		
 	};
 }

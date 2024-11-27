@@ -110,7 +110,7 @@ namespace MyEngine
 
 	private:
 		std::vector<std::shared_ptr<Collidable>> m_collidables;
-		std::list<std::shared_ptr<Collidable>> m_stageCollidables;
+		std::vector<std::shared_ptr<Collidable>> m_stageCollidables;
 
 		std::list<OnCollideInfoData> m_onCollideInfo;
 		SendCollideInfo m_newCollideInfo;

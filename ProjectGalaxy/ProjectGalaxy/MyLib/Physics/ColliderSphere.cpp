@@ -8,3 +8,8 @@ ColliderSphere::ColliderSphere() :
 {
 
 }
+
+void MyEngine::ColliderSphere::DebugDraw(Vec3 pos)
+{
+	DrawSphere3D((pos + m_posShift).VGet(), radius, 2 * radius, 0xffff00-0x00ff00* m_isNowOnHit, 0xffffff, true);
+}

@@ -8,6 +8,7 @@ namespace MyEngine
 	public:
 		ColliderSphere();
 
+		void DebugDraw(Vec3 pos);
 		float GetRadius()const { return radius; }
 
 	public:

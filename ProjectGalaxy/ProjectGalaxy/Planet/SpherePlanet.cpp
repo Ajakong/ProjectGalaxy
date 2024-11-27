@@ -6,7 +6,7 @@ namespace
 {
 	constexpr float kGroundRadius = 50;
 	constexpr float  kGravityRange = 150;
-	constexpr float  kGravityPower = 0.098f;
+	constexpr float  kGravityPower = 0.98f;
 
 	const char* name = "planet";
 	const char* atom = "atomosphere";
@@ -83,7 +83,7 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	}
 
 	//重力のみ
-	GravityDir = GravityDir * gravityPower*0.005f  * ((kGravityRange + (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length() - (obj->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length()) / kGravityRange) + objVelocity;
+	GravityDir = GravityDir * kGravityPower +objVelocity;
 	return GravityDir;
 }
 
