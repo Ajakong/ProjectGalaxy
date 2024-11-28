@@ -59,7 +59,7 @@ m_modelHandle(ModelManager::GetInstance().GetModelData(modelFileName))
 {
 	m_enemyUpdate = &Gorori::IdleUpdate;
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kCollisionRadius;
 	m_moveShaftPos = m_rigid->GetPos();
@@ -131,7 +131,7 @@ void Gorori::Draw()
 	MV1DrawModel(m_modelHandle);
 }
 
-void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

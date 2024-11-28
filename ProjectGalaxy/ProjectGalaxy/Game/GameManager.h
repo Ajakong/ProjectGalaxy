@@ -3,6 +3,7 @@
 #include<memory>
 #include<vector>
 
+
 class Vec3;
 class Galaxy;
 class Player;

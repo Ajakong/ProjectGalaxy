@@ -66,7 +66,7 @@ m_attackCount(0)
 	Set3DRadiusSoundMem(1000, m_shotSEHandle);
 	m_enemyUpdate = &KillerTheSeeker::IdleUpdate;
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kCollisionRadius;
 	m_moveShaftPos = m_rigid->GetPos();
@@ -134,7 +134,7 @@ void KillerTheSeeker::Draw()
 	//DrawBox(200, 700, 500 + m_hp*3, 750, 0x00ff00, true);
 }
 
-void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

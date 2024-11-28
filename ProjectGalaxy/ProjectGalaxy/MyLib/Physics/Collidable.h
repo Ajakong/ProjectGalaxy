@@ -21,7 +21,7 @@ namespace MyEngine
 		struct CollideInfo
 		{
 			std::shared_ptr<ColliderBase> col;
-			ColliderBase::ColideTag tag;
+			ColideTag tag;
 		};
 
 		// 優先度判別
@@ -81,12 +81,12 @@ namespace MyEngine
 		virtual void Draw()=0;
 
 		// 衝突したとき
-		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag) {}
-		virtual void OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag) {}
-		virtual void OnCollideExit(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag) {}
-		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag) {}
-		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag) {}
-		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag) {}
+		virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag) {}
+		virtual void OnCollideStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag) {}
+		virtual void OnCollideExit(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag) {}
+		virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag) {}
+		virtual void OnTriggerStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag) {}
+		virtual void OnTriggerExit(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag) {}
 
 		/* Getter */	
 		ObjectTag GetTag() const { return m_tag; }
@@ -109,8 +109,10 @@ namespace MyEngine
 		Vec3 GetKnockBackVelocity() { return (m_rigid->GetVelocity())*-1; }
 
 		std::shared_ptr<Rigidbody> GetRigidbody() const { return m_rigid; }
+
+		int gravityEffectCount = 0;
 	protected:
-		std::shared_ptr<CollideInfo> AddCollider(const ColliderBase::Kind& kind,const ColliderBase::ColideTag& tag);
+		std::shared_ptr<CollideInfo> AddCollider(const ColliderBase::Kind& kind,const ColideTag& tag);
 		void RemoveCollider(std::shared_ptr<Collidable::CollideInfo> col);
 
 		void SetAntiGravity(bool flag = true) { m_isAntiGravity=flag; }
@@ -132,6 +134,7 @@ namespace MyEngine
 		ObjectTag m_tag;
 		Priority m_priority;
 		bool m_isAntiGravity;
+		
 		
 	};
 }

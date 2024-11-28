@@ -2,6 +2,8 @@
 #include <unordered_map>
 #include<memory>
 #include"Vec3.h"
+#include<string>
+#include"ColideTag.h"
 
 namespace MyEngine
 {
@@ -16,24 +18,11 @@ namespace MyEngine
 			Box,
 		};
 
-
-		enum class ColideTag
-		{
-			Head,
-			Body,
-			Fist,
-			Foot,
-			Spin,
-			one,//汎用的なタグ1
-			two,//汎用的なタグ2
-			three//汎用的なタグ3
-		};
-
-
 		// コンストラクタ
 		ColliderBase(Kind kind);
-		virtual ~ColliderBase() {}
+		virtual ~ColliderBase() {}		
 
+		void DebugDraw(Vec3 pos) {}
 		// 当たり判定種別取得
 		Kind GetKind() const { return m_kind; }
 		// 当たった情報更新
@@ -41,7 +30,9 @@ namespace MyEngine
 		bool IsHit(const std::shared_ptr<ColliderBase> collider) const { return m_isHit.at(collider); }
 		bool IsPreHit(const std::shared_ptr<ColliderBase> collider) const { return m_isPreHit.at(collider); }
 		bool NowOnHit() { return m_isNowOnHit; }
+		bool PreOnHit() { return m_isPreOnHit; }
 		void SetNowOnHit(bool flag) { m_isNowOnHit = flag; }
+		void SetPreOnHit(bool flag) { m_isPreOnHit = flag; }
 		Vec3 GetShift() const{ return m_posShift; }
 		/// <summary>
 		/// オブジェクトの座標から当たり判定の相対位置をセット
@@ -53,12 +44,16 @@ namespace MyEngine
 		// メンバ変数のコーディング規約無視している
 		bool isTrigger;
 
-	private:
+	protected:
 		//オブジェクトの位置からの当たり判定の相対量
 		Vec3 m_posShift;
 		Kind m_kind;
 		std::unordered_map<std::shared_ptr<ColliderBase>, bool> m_isHit;
 		std::unordered_map<std::shared_ptr<ColliderBase>, bool> m_isPreHit;
 		bool m_isNowOnHit;
+		bool m_isPreOnHit;
 	};
+
+
 }
+

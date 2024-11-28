@@ -10,7 +10,7 @@ m_hp(30)
 	SetAntiGravity();
 	m_size = size;
 	m_rigid->SetPos(pos);
-	auto col=AddCollider(MyEngine::ColliderBase::Kind::Box, MyEngine::ColliderBase::ColideTag::Body);
+	auto col=AddCollider(MyEngine::ColliderBase::Kind::Box, ColideTag::Body);
 	auto box = dynamic_pointer_cast<MyEngine::ColliderBox>(col->col);
 	box->norm = norm;
 	box->size = m_size;
@@ -41,7 +41,7 @@ void Crystal::Draw()
 }
 
 
-void Crystal::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Crystal::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{

@@ -89,7 +89,6 @@ void Physics::Update()
 {
 	for (auto item = m_collidables.rbegin(); item != m_collidables.rend(); item++)//途中で要素を削除してもいいように逆順
 	{
-		
 		item->get()->Update();
 	}
 
@@ -117,10 +116,12 @@ void Physics::Update()
 
 	auto result = remove_if(m_collidables.begin(), m_collidables.end(), [this](const auto& collision)
 		{
-			bool isOut = collision->IsDestroy() == true;
+			bool isOut = collision->IsDestroy() == true||collision == nullptr;
 	return isOut;
 		});
 	m_collidables.erase(result, m_collidables.end());
+
+	Gravity();
 }
 
 void MyEngine::Physics::Draw()
@@ -143,41 +144,65 @@ void MyEngine::Physics::Clear()
 	m_preTirrigerInfo.clear();
 }
 
+void MyEngine::Physics::Gravity()
+{
+	// 判定リストはペアになっているので半分の数だけ繰り返す
+	for (auto& stage : m_stageCollidables)
+	{
+		// それぞれが持つ判定全てを比較
+		for (auto& item : m_collidables)
+		{
+			for (auto& col : item->m_colliders)
+			{
+				if (item->GetTag() == ObjectTag::Stage)continue;
+				for (auto stageCol : stage->m_colliders)
+				{
+					auto& colA = stageCol;
+					auto& colB = col;
+
+					if (colB->tag != ColideTag::Body)continue;
+					// 判定
+					auto collideHitInfo = IsCollide(stage->m_rigid, item->m_rigid, colA, colB);
+					// 当たっていなければ次の判定に
+					if (!collideHitInfo.isHit) continue;
+
+					// 通過オブジェクト確認
+					auto throughA = stage->m_throughTags;
+					auto throughB = item->m_throughTags;
+					bool isThrough = std::find(throughA.begin(), throughA.end(), item->GetTag()) != throughA.end()
+						|| std::find(throughB.begin(), throughB.end(), stage->GetTag()) != throughB.end();
+					// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
+					bool isTrigger = colA->col->isTrigger || colB->col->isTrigger || isThrough;
+					if (isTrigger)
+					{
+						if (item->GetTag() == ObjectTag::Player)
+						{
+							int a = 0;
+						}
+						auto planet = dynamic_cast<Planet*>(stage.get());
+						item->m_rigid->SetVelocity(planet->GravityEffect(item));
+						item->gravityEffectCount++;
+						continue;
+					}
+				}
+
+			}
+		}
+	}
+}
+
 /// <summary>
 /// 物理からの移動を未来の座標に適用
 /// </summary>
 void MyEngine::Physics::MoveNextPos() const
 {
-	for (const auto& item : m_stageCollidables)
-	{
-		for (const auto& obj : m_collidables)
-		{
-			if (obj->GetTag() != ObjectTag::Stage)
-			{
-				auto planet = dynamic_cast<Planet*>(item.get());
-				for (const auto& col : item->m_colliders)
-				{
-					if (col->col->isTrigger == true)
-					{
-						for (const auto& objCol : obj->m_colliders)
-						{
-							if (objCol->tag != ColliderBase::ColideTag::Body)continue;
 
-							if (IsCollide(item->m_rigid, obj->m_rigid, col, objCol).isHit)
-							{
-								planet->OnTriggerEnter(obj,col->tag,objCol->tag);
-								obj->m_rigid->SetVelocity(planet->GravityEffect(obj));
-							}
-						}
+	//当たり判定をする必要があるペア同士の当たり判定のリスト(位置補正リスト)を取得
+	
+	//上記リストから、どれとどれが当たっているかを出す(当たり判定ペアリスト)を取得
 
-					}
-				}
 
-			}
-
-		}
-
-	}
+	//上記の結果から、位置補正を行う
 
 	for (const auto& item : m_collidables)
 	{
@@ -224,8 +249,9 @@ std::vector<std::shared_ptr<Collidable>> Physics::GetCollisionList() const
 		{
 			auto& obj1 = m_collidables[i];
 			auto& obj2 = m_collidables[j];
-
-			// 移動しないオブジェクト同士なら判定しない
+			obj1->gravityEffectCount = 0;
+			obj2->gravityEffectCount = 0;
+						// 移動しないオブジェクト同士なら判定しない
 			if (obj1->GetPriority() == Collidable::Priority::Static && obj2->GetPriority() == Collidable::Priority::Static) continue;
 
 			// 一定範囲内にいないなら判定しない
@@ -272,6 +298,12 @@ void MyEngine::Physics::CheckCollide()
 				auto& colA = objA->m_colliders.at(i);
 				auto& colB = objB->m_colliders.at(j);
 
+				colA->col->SetPreOnHit(colA->col->NowOnHit());
+				colB->col->SetPreOnHit(colB->col->NowOnHit());
+			    
+				colA->col->SetNowOnHit(false);
+				colB->col->SetNowOnHit(false);
+
 				// 判定
 				auto collideHitInfo =IsCollide(objA->m_rigid,objB->m_rigid,colA,colB);
 				colA->col->UpdateHit(colB->col, collideHitInfo.isHit);
@@ -279,6 +311,7 @@ void MyEngine::Physics::CheckCollide()
 				// 当たっていなければ次の判定に
 				if (!collideHitInfo.isHit) continue;
 
+				
 				// 通過オブジェクト確認
 				auto throughA = objA->m_throughTags;
 				auto throughB = objB->m_throughTags;
@@ -291,6 +324,14 @@ void MyEngine::Physics::CheckCollide()
 					AddNewCollideInfo(objA, objB, colA->tag, colB->tag, m_newTirrigerInfo, collideHitInfo.hitPos);
 					continue;
 				}
+				//Triggerじゃなければ今当たってるフラグを立てる
+				
+				colA->col->SetNowOnHit(true);
+				colB->col->SetNowOnHit(true);
+
+				printf((ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "と" + ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "がHIT\n").c_str());
+				printf((ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "と" + ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "がHIT\n").c_str());
+
 
 				// 通知を追加
 				AddNewCollideInfo(objA, objB, colA->tag, colB->tag, m_newCollideInfo, collideHitInfo.hitPos);
@@ -300,6 +341,7 @@ void MyEngine::Physics::CheckCollide()
 				auto secondary = objB;
 				auto primaryCollider = colA;
 				auto secondaryCollider = colB;
+
 				if (objA->m_priority < objB->m_priority)
 				{
 					primary = objB;
@@ -307,6 +349,7 @@ void MyEngine::Physics::CheckCollide()
 					primaryCollider = colB;
 					secondaryCollider = colA;
 				}
+
 				// 優先度が変わらない場合
 				else if (objA->m_priority == objB->m_priority)
 				{
@@ -436,10 +479,11 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
 		}
 	}
+	secondaryRigid->SetVelocity(fixedPos - secondaryRigid->GetPos());
 	secondaryRigid->SetNextPos(fixedPos);
 }
 
-void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB,ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos)
+void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB,ColideTag ownTag, ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos)
 {
 	// 既に追加されている通知リストにあれば追加しない
 	for (auto& i : info)
@@ -449,7 +493,7 @@ void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA,
 	}
 
 	// ここまで来たらまだ通知リストに追加されていないため追加
-	info.emplace_back(SendInfo{ objA, objB, ownTag, sendTag, hitPos });
+	info.emplace_back(SendInfo{ objA, objB, ownTag, sendTag, hitPos});
 }
 
 void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger)
@@ -459,10 +503,6 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 
 	for (auto& info : newSendInfo)
 	{
-		if (info.send.lock() == nullptr)
-		{
-			int a = 0;
-		}
 		bool isEntry = false;
 
 		// 1つ前に通知リストがあった場合
@@ -519,13 +559,13 @@ void Physics::AddOnCollideInfo(const SendInfo& info, OnCollideInfoKind kind)
 {
 	if (info.send.lock() == nullptr)
 	{
-		int a = 0;
+		return;
 	}
 	m_onCollideInfo.emplace_back(OnCollideInfoData{ info.own, info.send, info.ownTag,info.sendTag, info.hitPos, kind });
 	m_onCollideInfo.emplace_back(OnCollideInfoData{ info.send, info.own, info.sendTag,info.ownTag, info.hitPos, kind });
 }
 
-void MyEngine::Physics::OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind)
+void MyEngine::Physics::OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColideTag ownTag, ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind)
 {
 	auto item = send;
 

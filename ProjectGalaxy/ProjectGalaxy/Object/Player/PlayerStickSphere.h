@@ -14,7 +14,7 @@ public:
 
 	bool GetStickFlag() { return m_stickFlag; }
 
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 
 	
 

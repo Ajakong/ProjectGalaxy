@@ -12,7 +12,7 @@ public:
 	void Draw();
 	Vec3 GetNowPlanetPos() { return m_nowPlanetPos; }
 	
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag);
+	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 private:
 	Vec3 m_warpPos;
 	int m_emitterHandle;

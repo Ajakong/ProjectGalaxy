@@ -50,7 +50,7 @@ namespace
 
 	constexpr int kAvoidFrame = 60;
 
-	constexpr float kJumpPower = 1.5f;
+	constexpr float kJumpPower =20.f;
 
 
 	constexpr int kSearchRemainTimeMax = 28;
@@ -116,26 +116,26 @@ m_modelDirAngle(0)
 	m_postUpVec = m_upVec;
 	m_rigid->SetPos(Vec3(0, 0, 0));
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Head);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Head);
 		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_headCol->radius = kNeutralHeadRadius - 0.2f;
 	}
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_bodyCol->radius = kNeutralBodyRadius - 0.2f;
 	}
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Foot);
 		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_footCol->radius = kNeutralFootRadius - 0.2f;
 	}
 
-	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Spin);
+	/*{
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Spin);
 		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_spinCol->radius = m_attackRadius;
-	}
+	}*/
 
 
 	m_shotUpdate = &Player::ShotTheStickStar;
@@ -224,7 +224,7 @@ void Player::Update()
 	}
 	else
 	{
-		m_spinCol->radius = m_radius;
+		//m_spinCol->radius = m_radius;
 	}
 	
 	if (m_isOnDamageFlag)
@@ -249,10 +249,7 @@ void Player::Update()
 		m_animBlendRate = 1.0f;
 	}
 
-	if (m_playerUpdate!=&Player::BoostUpdate&&m_footCol->NowOnHit())
-	{
-		m_playerUpdate = &Player::JumpingUpdate;
-	}
+	
 }
 
 void Player::SetMatrix()
@@ -264,25 +261,25 @@ void Player::SetMatrix()
 	//m_myQ = m_myQ.CreateRotationQuaternion(angleY, RotateYAxis) * m_myQ;//角度の変化量だけ渡す
 
 	//if (m_inputVec.Length() != 0)
-	{
-		m_postMoveDir = m_inputVec;
-	}
-	Vec3 modelUp = GetUpDirection(m_modelHandle);
-	float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
+	//{
+	//	m_postMoveDir = m_inputVec;
+	//}
+	//Vec3 modelUp = GetUpDirection(m_modelHandle);
+	//float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
 
-	//printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
+	////printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
 
-	if (angle * 180.0f / 3.141592f > 10)
-	{
-		int a = 0;
-	}
+	//if (angle * 180.0f / 3.141592f > 10)
+	//{
+	//	int a = 0;
+	//}
 
-	Vec3 axis = Cross(modelUp, m_rigid->GetVelocity());//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
-	axis.Normalize();//単位ベクトル化
+	//Vec3 axis = Cross(modelUp, m_rigid->GetVelocity());//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
+	//axis.Normalize();//単位ベクトル化
 
-	m_myQ =m_myQ.CreateRotationQuaternion(angle, axis) * m_myQ;//回転の掛け算
-	
-	auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
+	//m_myQ =m_myQ.CreateRotationQuaternion(angle, axis) * m_myQ;//回転の掛け算
+	//
+	//auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
 
 	//printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 	
@@ -292,7 +289,7 @@ void Player::SetMatrix()
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + RotateYAxis * 100).VGet(), 0xff0000);
 
 	//回転軸のデバッグ表示(紫)
-	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
+	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
 
 	//上方向ベクトルのデバッグ表示(赤)
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_upVec * 100).VGet(), 0xff0000);
@@ -331,13 +328,11 @@ void Player::Draw()
 		//MV1DrawModel(m_modelHandle);
 	}
 	MV1DrawModel(m_modelHandle);
-	/*DrawSphere3D((m_rigid->GetPos() + m_headCol->GetShift()).VGet(), m_headCol->GetRadius(), 10, m_color, 0xff4444, true);
-	DrawSphere3D((m_rigid->GetPos() + m_footCol->GetShift()).VGet(), m_footCol->GetRadius(), 10, m_color, 0x4444ff, true);
-
-	DrawSphere3D((m_rigid->GetPos() + m_bodyCol->GetShift()).VGet(), m_bodyCol->GetRadius(), 10, m_color, 0xffff44, true);
-	DrawSphere3D((m_rigid->GetPos() + m_spinCol->GetShift()).VGet(), m_spinCol->GetRadius(), 10, 0x00ff00, 0xffffff, false);*/
+	m_headCol->DebugDraw(m_rigid->GetPos());
+	m_bodyCol->DebugDraw(m_rigid->GetPos());
+	m_footCol->DebugDraw(m_rigid->GetPos());
+	//m_spinCol->DebugDraw(m_rigid->GetPos());
 	
-
 #if _DEBUG
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
 	Vec3 axis = Cross(m_upVec, m_moveDir);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
@@ -403,7 +398,7 @@ void Player::SetCameraAngle(float cameraAngle)
 	m_cameraAngle = cameraAngle;
 }
 
-void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	printf("CollideEnter");
 	if (colider->GetTag() == ObjectTag::Coin)
@@ -417,19 +412,16 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 		printf("Stage\n");
 		m_spinCount = 0;
 		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
-		m_playerUpdate = &Player::NeutralUpdate;
 		m_isJumpFlag = false;
 		m_isBoostFlag = false;
-		ChangeAnim(AnimNum::AnimationNumIdle);
 	}
 	if (colider->GetTag() == ObjectTag::Crystal)
 	{
 		printf("Crystal\n");
 		m_spinCount = 0;
-		m_playerUpdate = &Player::NeutralUpdate;
 		m_isJumpFlag = false;
 		m_isBoostFlag = false;
-		ChangeAnim(AnimNum::AnimationNumIdle);
+
 	}
 	if (colider->GetTag() == ObjectTag::Kuribo)
 	{
@@ -563,16 +555,16 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 }
 
-void Player::OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Player::OnCollideStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 }
 
-void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	printf("TriggerEnter\n");
 }
 
-void Player::OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+void Player::OnTriggerStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -679,6 +671,11 @@ void Player::NeutralUpdate()
 	}
 	
 	m_rigid->SetVelocity(move);
+
+	//if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->NowOnHit())
+	//{
+	//	m_playerUpdate = &Player::JumpingUpdate;
+	//}
 }
 
 void Player::WalkingUpdate()
@@ -719,6 +716,11 @@ void Player::WalkingUpdate()
 		//m_playerUpdate = &Player::AimingUpdate;
 	}
 	m_rigid->SetVelocity(ans);
+
+	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->NowOnHit())
+	{
+		m_playerUpdate = &Player::JumpingUpdate;
+	}*/
 }
 
 void Player::DashUpdate()
@@ -767,6 +769,8 @@ void Player::DashUpdate()
 		m_playerUpdate = &Player::AimingUpdate;
 	}
 	m_rigid->SetVelocity(ans*kDashMag);
+
+	
 }
 
 void Player::JumpingUpdate()
@@ -786,17 +790,29 @@ void Player::JumpingUpdate()
 		m_spinCount++;
 		m_playerUpdate = &Player::JumpingSpinUpdate;
 	}
+
+	if (m_footCol->NowOnHit() || m_footCol->PreOnHit())
+	{
+		ChangeAnim(AnimNum::AnimationNumIdle);
+		m_playerUpdate = &Player::NeutralUpdate;
+	}
 }
 
 
 void Player::DropAttackUpdate()
 {
+	m_state = "DropAttack";
 	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在の再生カウント
 	m_rigid->AddVelocity(m_upVec * -0.8f);
 	if (now < 16)
 	{
 		m_angle += (DX_PI_F * 2) / 16;
 		m_rigid->SetVelocity(Vec3::Zero());
+	}
+	if (m_footCol->NowOnHit() || m_footCol->PreOnHit())
+	{
+		ChangeAnim(AnimNum::AnimationNumIdle);
+		m_playerUpdate = &Player::NeutralUpdate;
 	}
 }
 

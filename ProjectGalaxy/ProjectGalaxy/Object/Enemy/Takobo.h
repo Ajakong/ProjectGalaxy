@@ -32,7 +32,7 @@ public:
 	void DeleteManage();
 	void Draw();
 
-	virtual void OnCollideEnter(std::shared_ptr <MyEngine::Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag);
+	virtual void OnCollideEnter(std::shared_ptr <MyEngine::Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 
 	Vec3 GetMyPos();
 	int WatchHp() const { return m_hp; }

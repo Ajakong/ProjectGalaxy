@@ -53,14 +53,14 @@ m_chaseFrameCount(0)
 	m_comebackPoint = pos;
 	m_rigid->SetPos(pos);
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_bodyCol->radius = kRadius;
 	}
 	
 #ifdef _DEBUG
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		item->radius = kSearchRadius;
 		item->isTrigger = true;
@@ -157,7 +157,7 @@ void Kuribo::Draw()
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_upVec * 30).VGet(), 0xff0000);
 }
 
-void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -169,12 +169,12 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		if (targetTag == ColliderBase::ColideTag::Foot)
+		if (targetTag == ColideTag::Foot)
 		{
 			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
 			m_moveUpdate = &Kuribo::DeathUpdate;
 		}
-		else if(targetTag == ColliderBase::ColideTag::Spin)
+		else if(targetTag == ColideTag::Spin)
 		{
 			m_rigid->SetVelocity(m_attackDir * -kAwayStrength + m_upVec * kAwayStrength * 1.5f);
 			m_moveUpdate = &Kuribo::JumpUpdate;
@@ -187,7 +187,7 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 }
 
-void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

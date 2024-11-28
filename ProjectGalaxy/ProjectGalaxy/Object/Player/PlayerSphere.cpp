@@ -25,7 +25,7 @@ m_stickFlag(false)
 {
 	m_rigid->SetVelocity(VGet(m_velocity.x * 2, m_velocity.y * 2, m_velocity.z * 2));
 	m_rigid->SetPos(pos);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = m_radius;
 	m_color = color;
@@ -64,7 +64,7 @@ void PlayerSphere::Effect()
 {
 }
 
-void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	m_isDeleteFlag = true;	
 }
