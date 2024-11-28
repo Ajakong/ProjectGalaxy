@@ -25,7 +25,7 @@ m_modelhandle(-1)
 	m_captureRadius = captureRadius;
 	SetAntiGravity();
 	m_stateUpdate = nullptr;
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = m_radius;
 	m_rigid->SetVelocity(Vec3(0, 0, 0));
@@ -77,13 +77,13 @@ void StarCapture::Draw()
 #endif
 }
 
-void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
 		if (m_recastTime < kRecastTimeMax)return;
 		if (m_colliders.size() > 1)return;
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 		auto item= dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		item->radius = m_captureRadius;
 		m_captureCol->col = item;
@@ -105,7 +105,7 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::C
 	}
 }
 
-void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -115,7 +115,7 @@ void StarCapture::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::C
 	}
 }
 
-void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -130,7 +130,7 @@ void StarCapture::OnTriggerStay(std::shared_ptr<Collidable> colider,MyEngine::Co
 	}
 }
 
-void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void StarCapture::OnTriggerExit(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	/*if (colider->GetTag() == ObjectTag::Player)
 	{

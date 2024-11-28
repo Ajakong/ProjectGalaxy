@@ -30,7 +30,7 @@ Collidable::~Collidable()
 {
 }
 
-std::shared_ptr<Collidable::CollideInfo> MyEngine::Collidable::AddCollider(const ColliderBase::Kind& kind, const ColliderBase::ColideTag& tag)
+std::shared_ptr<Collidable::CollideInfo> MyEngine::Collidable::AddCollider(const ColliderBase::Kind& kind, const ColideTag& tag)
 {
 	std::shared_ptr<CollideInfo> collider;
 	collider = std::make_shared<CollideInfo>();

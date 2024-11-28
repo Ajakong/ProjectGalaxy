@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include<string>
 
 enum class ObjectTag
 {
@@ -23,3 +24,6 @@ enum class ObjectTag
 	InvisibleObject,
 	End//一番最後のタグ
 };
+
+ 
+std::string ObjectTag_String(ObjectTag tag);

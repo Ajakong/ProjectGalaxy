@@ -120,6 +120,8 @@ void Physics::Update()
 	return isOut;
 		});
 	m_collidables.erase(result, m_collidables.end());
+
+	Gravity();
 }
 
 void MyEngine::Physics::Draw()
@@ -142,21 +144,8 @@ void MyEngine::Physics::Clear()
 	m_preTirrigerInfo.clear();
 }
 
-/// <summary>
-/// 物理からの移動を未来の座標に適用
-/// </summary>
-void MyEngine::Physics::MoveNextPos() const
+void MyEngine::Physics::Gravity()
 {
-
-	//当たり判定をする必要があるペア同士の当たり判定のリスト(位置補正リスト)を取得
-	
-	//上記リストから、どれとどれが当たっているかを出す(当たり判定ペアリスト)を取得
-
-
-	//上記の結果から、位置補正を行う
-
-
-
 	// 判定リストはペアになっているので半分の数だけ繰り返す
 	for (auto& stage : m_stageCollidables)
 	{
@@ -171,7 +160,7 @@ void MyEngine::Physics::MoveNextPos() const
 					auto& colA = stageCol;
 					auto& colB = col;
 
-					if (colB->tag != ColliderBase::ColideTag::Body)continue;
+					if (colB->tag != ColideTag::Body)continue;
 					// 判定
 					auto collideHitInfo = IsCollide(stage->m_rigid, item->m_rigid, colA, colB);
 					// 当たっていなければ次の判定に
@@ -196,10 +185,24 @@ void MyEngine::Physics::MoveNextPos() const
 						continue;
 					}
 				}
-				
+
 			}
 		}
 	}
+}
+
+/// <summary>
+/// 物理からの移動を未来の座標に適用
+/// </summary>
+void MyEngine::Physics::MoveNextPos() const
+{
+
+	//当たり判定をする必要があるペア同士の当たり判定のリスト(位置補正リスト)を取得
+	
+	//上記リストから、どれとどれが当たっているかを出す(当たり判定ペアリスト)を取得
+
+
+	//上記の結果から、位置補正を行う
 
 	for (const auto& item : m_collidables)
 	{
@@ -309,7 +312,7 @@ void MyEngine::Physics::CheckCollide()
 				// 当たっていなければ次の判定に
 				if (!collideHitInfo.isHit) continue;
 
-
+				
 				// 通過オブジェクト確認
 				auto throughA = objA->m_throughTags;
 				auto throughB = objB->m_throughTags;
@@ -323,12 +326,13 @@ void MyEngine::Physics::CheckCollide()
 					continue;
 				}
 				//Triggerじゃなければ今当たってるフラグを立てる
-				if (objA->GetTag() == ObjectTag::Player || objB->GetTag() == ObjectTag::Player)
-				{
-					int a = 0;
-				}
+				
 				colA->col->SetNowOnHit(true);
 				colB->col->SetNowOnHit(true);
+
+				printf((ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "と" + ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "がHIT\n").c_str());
+				printf((ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "と" + ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "がHIT\n").c_str());
+
 
 				// 通知を追加
 				AddNewCollideInfo(objA, objB, colA->tag, colB->tag, m_newCollideInfo, collideHitInfo.hitPos);
@@ -480,7 +484,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 	secondaryRigid->SetNextPos(fixedPos);
 }
 
-void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB,ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos)
+void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB,ColideTag ownTag, ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos)
 {
 	// 既に追加されている通知リストにあれば追加しない
 	for (auto& i : info)
@@ -562,7 +566,7 @@ void Physics::AddOnCollideInfo(const SendInfo& info, OnCollideInfoKind kind)
 	m_onCollideInfo.emplace_back(OnCollideInfoData{ info.send, info.own, info.sendTag,info.ownTag, info.hitPos, kind });
 }
 
-void MyEngine::Physics::OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColliderBase::ColideTag ownTag, ColliderBase::ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind)
+void MyEngine::Physics::OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColideTag ownTag, ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind)
 {
 	auto item = send;
 

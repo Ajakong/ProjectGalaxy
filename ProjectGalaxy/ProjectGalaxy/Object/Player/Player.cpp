@@ -116,23 +116,23 @@ m_modelDirAngle(0)
 	m_postUpVec = m_upVec;
 	m_rigid->SetPos(Vec3(0, 0, 0));
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Head);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Head);
 		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_headCol->radius = kNeutralHeadRadius - 0.2f;
 	}
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_bodyCol->radius = kNeutralBodyRadius - 0.2f;
 	}
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Foot);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Foot);
 		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_footCol->radius = kNeutralFootRadius - 0.2f;
 	}
 
 	/*{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Spin);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Spin);
 		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_spinCol->radius = m_attackRadius;
 	}*/
@@ -398,7 +398,7 @@ void Player::SetCameraAngle(float cameraAngle)
 	m_cameraAngle = cameraAngle;
 }
 
-void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	printf("CollideEnter");
 	if (colider->GetTag() == ObjectTag::Coin)
@@ -555,16 +555,16 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::Collid
 	}
 }
 
-void Player::OnCollideStay(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void Player::OnCollideStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 }
 
-void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	printf("TriggerEnter\n");
 }
 
-void Player::OnTriggerStay(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+void Player::OnTriggerStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
 	{

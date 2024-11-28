@@ -29,7 +29,7 @@ m_ratio(0)
 		m_points.push_back(point);
 	}
 	m_rigid->SetPos(m_points.front());
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kRadius;
 	item->isTrigger = true;
@@ -100,7 +100,7 @@ void SeekerLine::Draw()
 	}
 }
 
-void SeekerLine::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void SeekerLine::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

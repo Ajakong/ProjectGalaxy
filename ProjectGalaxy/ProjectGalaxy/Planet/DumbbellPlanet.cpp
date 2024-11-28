@@ -25,18 +25,18 @@ m_modelHandle(modelHandle)
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 
 	//当たり判定の追加
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);//ここで入れたのは重力の影響範囲
 	m_colliders.back()->col->isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kGravityRange;
 	AddThroughTag(ObjectTag::Stage);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::one);//マップの当たり判定
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::one);//マップの当たり判定
 	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item2->radius = kGroundRadius;
-	AddCollider(MyEngine::ColliderBase::Kind::Box, MyEngine::ColliderBase::ColideTag::two);
+	AddCollider(MyEngine::ColliderBase::Kind::Box, ColideTag::two);
 	auto item3 = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back()->col);
 	item3->size = Vec3();
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::three);//マップの当たり判定
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::three);//マップの当たり判定
 	auto item4 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item4->radius = kGroundRadius;
 
@@ -68,15 +68,15 @@ Vec3 DumbbellPlanet::GetNormVec(Vec3 pos)
 	return m_gravityDir;
 }
 
-void DumbbellPlanet::OnCollideEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+void DumbbellPlanet::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 
 }
 
-void DumbbellPlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+void DumbbellPlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 }
 
-void DumbbellPlanet::OnTriggerExit(std::shared_ptr<Collidable> colider, MyEngine::ColliderBase::ColideTag ownTag, MyEngine::ColliderBase::ColideTag targetTag)
+void DumbbellPlanet::OnTriggerExit(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 }

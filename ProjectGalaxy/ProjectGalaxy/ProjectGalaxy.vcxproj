@@ -164,9 +164,11 @@
     <ClCompile Include="LoadManager\ScreenManager.cpp" />
     <ClCompile Include="LoadManager\SoundManager.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MyLib\ColideTag.cpp" />
     <ClCompile Include="MyLib\DebugDraw.cpp" />
     <ClCompile Include="MyLib\Easing.cpp" />
     <ClCompile Include="MyLib\Geometry.cpp" />
+    <ClCompile Include="MyLib\ObjectTag.cpp" />
     <ClCompile Include="MyLib\Physics\Collidable.cpp" />
     <ClCompile Include="MyLib\Physics\ColliderBase.cpp" />
     <ClCompile Include="MyLib\Physics\ColliderBox.cpp" />
@@ -232,6 +234,7 @@
     <ClInclude Include="LoadManager\ModelManager.h" />
     <ClInclude Include="LoadManager\ScreenManager.h" />
     <ClInclude Include="LoadManager\SoundManager.h" />
+    <ClInclude Include="MyLib\ColideTag.h" />
     <ClInclude Include="MyLib\DebugDraw.h" />
     <ClInclude Include="MyLib\Easing.h" />
     <ClInclude Include="MyLib\Geometry.h" />

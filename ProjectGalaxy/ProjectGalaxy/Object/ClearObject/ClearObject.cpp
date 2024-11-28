@@ -11,7 +11,7 @@ ClearObject::~ClearObject()
 {
 }
 
-void ClearObject::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void ClearObject::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
@@ -22,7 +22,7 @@ void ClearObject::OnCollideEnter(std::shared_ptr<Collidable> colider,MyEngine::C
 void ClearObject::Init()
 {
 	SetObjectTag(ObjectTag::ClearObject);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere,ColliderBase::ColideTag::Body);
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere,ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = 50;
 }

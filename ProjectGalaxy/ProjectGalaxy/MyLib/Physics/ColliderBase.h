@@ -2,6 +2,8 @@
 #include <unordered_map>
 #include<memory>
 #include"Vec3.h"
+#include<string>
+#include"ColideTag.h"
 
 namespace MyEngine
 {
@@ -16,24 +18,9 @@ namespace MyEngine
 			Box,
 		};
 
-
-		enum class ColideTag
-		{
-			Head,
-			Body,
-			Fist,
-			Foot,
-			Spin,
-			one,//汎用的なタグ1
-			two,//汎用的なタグ2
-			three//汎用的なタグ3
-		};
-
-
 		// コンストラクタ
 		ColliderBase(Kind kind);
-		virtual ~ColliderBase() {}
-
+		virtual ~ColliderBase() {}		
 
 		void DebugDraw(Vec3 pos) {}
 		// 当たり判定種別取得
@@ -66,4 +53,7 @@ namespace MyEngine
 		bool m_isNowOnHit;
 		bool m_isPreOnHit;
 	};
+
+
 }
+

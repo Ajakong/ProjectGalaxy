@@ -25,12 +25,12 @@ m_modelHandle(modelHandle)
 	MV1SetPosition(m_modelHandle,m_rigid->GetPos().VGet());
 
 	//当たり判定の追加
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//ここで入れたのは重力の影響範囲
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);//ここで入れたのは重力の影響範囲
 	m_colliders.back()->col->isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kGravityRange;
 	AddThroughTag(ObjectTag::Stage);
-	AddCollider(MyEngine::ColliderBase::Kind::Sphere, MyEngine::ColliderBase::ColideTag::Body);//マップの当たり判定
+	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);//マップの当たり判定
 	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item2->radius = kGroundRadius;
 }
@@ -94,7 +94,7 @@ Vec3 SpherePlanet::GetNormVec(Vec3 pos)
 	return norm;
 }
 
-void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	/*if (colider->GetTag() == ObjectTag::Takobo)
 	{
@@ -102,7 +102,7 @@ void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider,MyEngine::
 	}*/
 }
 
-void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider,MyEngine::ColliderBase::ColideTag ownTag,MyEngine::ColliderBase::ColideTag targetTag)
+void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{
