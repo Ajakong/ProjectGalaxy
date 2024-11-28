@@ -306,7 +306,6 @@ void MyEngine::Physics::CheckCollide()
 
 				// 判定
 				auto collideHitInfo =IsCollide(objA->m_rigid,objB->m_rigid,colA,colB);
-
 				colA->col->UpdateHit(colB->col, collideHitInfo.isHit);
 				colB->col->UpdateHit(colA->col, collideHitInfo.isHit);
 				// 当たっていなければ次の判定に
