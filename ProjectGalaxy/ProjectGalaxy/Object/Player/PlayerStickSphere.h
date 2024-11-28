@@ -16,8 +16,6 @@ public:
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 
-	
-
 	std::shared_ptr<Player>m_player;
 
 protected:

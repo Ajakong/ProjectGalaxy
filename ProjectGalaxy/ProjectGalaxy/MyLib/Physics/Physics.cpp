@@ -87,9 +87,10 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 
 void Physics::Update()
 {
-	for (auto item = m_collidables.rbegin(); item != m_collidables.rend(); item++)//途中で要素を削除してもいいように逆順
+	std::reverse_iterator<std::vector<int>::iterator> rit;
+	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(),m_collidables.rend()))//途中で要素を削除してもいいように逆順
 	{
-		item->get()->Update();
+		item->Update();
 	}
 
 	// 通知リストのクリア・更新

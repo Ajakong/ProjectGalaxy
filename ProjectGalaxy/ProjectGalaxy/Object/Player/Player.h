@@ -126,6 +126,7 @@ private:
 	void SpiningUpdate();
 	void JumpingSpinUpdate();
 	void JumpingUpdate();
+	void JumpBoostUpdate();
 	void DropAttackUpdate();
 	void AimingUpdate();
 	/// <summary>

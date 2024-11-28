@@ -23,7 +23,7 @@ m_sideVec(sideVec),
 m_lifeTime(0),
 m_stickFlag(false)
 {
-	m_rigid->SetVelocity(VGet(m_velocity.x * 2, m_velocity.y * 2, m_velocity.z * 2));
+	m_rigid->SetVelocity(VGet(m_velocity.x * 4, m_velocity.y * 4, m_velocity.z * 4));
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);

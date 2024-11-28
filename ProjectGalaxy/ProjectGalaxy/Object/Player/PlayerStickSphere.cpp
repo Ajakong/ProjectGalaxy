@@ -50,6 +50,7 @@ void PlayerStickSphere::Init()
 void PlayerStickSphere::Update()
 {
 	
+
 	m_startPos = m_player->GetLeftHandPos();
 	(this->*m_moveUpdate)();
 }
@@ -91,7 +92,7 @@ void PlayerStickSphere::OnCollideEnter(std::shared_ptr<Collidable> colider, Coli
 
 void PlayerStickSphere::StraightUpdate()
 {
-
+	
 }
 
 void PlayerStickSphere::StickUpdate()

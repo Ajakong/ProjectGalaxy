@@ -96,8 +96,10 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 {
 	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 	//LocationsManager::GetInstance().LoadLocations();
+#ifdef _DEBUG
 	//ギミック
 	//ブースター
+#else
 	m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
 	MyEngine::Physics::GetInstance().Entry(m_booster.back());
 	m_booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
@@ -120,19 +122,24 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
 	MyEngine::Physics::GetInstance().Entry(m_crystal.back());
 
+#endif
+
 	m_camera = make_shared<Camera>();
+
+
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
 	
 	m_warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
 	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
+
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
 
 	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
 	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -30),player));
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -40),player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	m_spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
 	m_spaceEmperor.back()->SetTarget(player);
@@ -216,7 +223,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
 	if (player->OnAiming())m_camera->Update(player->GetShotDir());
 	else if (m_spaceEmperor.back()->GetIsFind())m_camera->Update(m_spaceEmperor.back()->GetNeckPos());
-	else m_camera->Update(player->GetLookPoint());
+	else m_camera->Update(m_takobo.back()->GetHeadPos());
 
 	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
@@ -248,7 +255,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 	if (player->GetBoostFlag())
 	{
-		m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+		m_camera->SetCameraPoint(m_takobo.back()->GetHeadPos() +m_takobo.back()->GetUpVec().GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 	}
 	else
 	{
@@ -258,7 +265,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		}
 		else
 		{
-			m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+			m_camera->SetCameraPoint((m_takobo.back()->GetHeadPos() + m_takobo.back()->GetUpVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
 		}
 	}
 

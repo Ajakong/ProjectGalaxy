@@ -6,7 +6,7 @@ namespace
 {
 	constexpr float kGroundRadius = 50;
 	constexpr float  kGravityRange = 150;
-	constexpr float  kGravityPower = 0.98f;
+	constexpr float  kGravityPower = 0.098f;
 
 	const char* name = "planet";
 	const char* atom = "atomosphere";
@@ -80,6 +80,11 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	if (obj->GetTag() == ObjectTag::EnemyAttack)
 	{
 		return objVelocity;
+	}
+
+	if (obj->GetTag() == ObjectTag::PlayerBullet)
+	{
+		return GravityDir * kGravityPower*0.5f + objVelocity;
 	}
 
 	//重力のみ

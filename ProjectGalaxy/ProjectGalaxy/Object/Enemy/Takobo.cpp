@@ -84,7 +84,7 @@ m_centerToEnemyAngle(0)
 	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
 	ChangeAnim(Idle);
 
-	m_modelHeadIndex= MV1SearchFrame(m_modelHandle, "mixamorig:Head");
+	m_modelHeadIndex= MV1SearchFrame(m_modelHandle, "Head");
 
 }
 
@@ -174,9 +174,24 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,Colide
 	}
 }
 
-Vec3 Takobo::GetMyPos()
+Vec3 Takobo::GetPos() const
 {
 	return  VGet(m_rigid->GetPos().x, m_rigid->GetPos().y + kFootToCenter, m_rigid->GetPos().z);
+}
+
+Vec3 Takobo::GetUpVec() const
+{
+	return m_upVec;
+}
+
+Vec3 Takobo::GetFrontVec() const
+{
+	return m_attackDir;
+}
+
+Vec3 Takobo::GetHeadPos() const
+{
+	return MV1GetFramePosition(m_modelHandle, m_modelHeadIndex);
 }
 
 void Takobo::SetTarget(std::shared_ptr<MyEngine::Collidable> target)
@@ -240,7 +255,7 @@ void Takobo::IdleUpdate()
 		m_vec.x *= -1;
 	}
 
-	m_rigid->SetVelocity(VGet(m_vec.x, 0, 0));
+	m_rigid->SetVelocity(Vec3(0, 0, 0));
 
 	m_attackCoolDownCount++;
 
@@ -280,7 +295,6 @@ void Takobo::AttackSphereUpdate()
 
 	if (now > 35)
 	{
-
 		if (m_createFrameCount == 0)
 		{
 			Set3DPositionSoundMem(m_rigid->GetPos().VGet(), m_shotSEHandle);
@@ -291,16 +305,13 @@ void Takobo::AttackSphereUpdate()
 			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 			m_sphereNum++;
 			m_createFrameCount = 1;
-
-
 		}
-		
 	}
 	if (now > 100)
 	{
 		m_createFrameCount = 0;
 		ChangeAnim(Idle);
-		m_enemyUpdate = &Takobo::IdleUpdate;
+		m_enemyUpdate = &Takobo::AttackSphereUpdate;
 	}
 }
 

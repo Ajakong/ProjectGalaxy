@@ -34,7 +34,10 @@ public:
 
 	virtual void OnCollideEnter(std::shared_ptr <MyEngine::Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 
-	Vec3 GetMyPos();
+	Vec3 GetPos() const;
+	Vec3 GetUpVec() const;
+	Vec3 GetFrontVec() const;
+	Vec3 GetHeadPos()const;
 	int WatchHp() const { return m_hp; }
 	float GetColRadius() { return m_radius; }
 

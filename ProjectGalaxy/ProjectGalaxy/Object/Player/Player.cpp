@@ -50,7 +50,7 @@ namespace
 
 	constexpr int kAvoidFrame = 60;
 
-	constexpr float kJumpPower =20.f;
+	constexpr float kJumpPower =2.f;
 
 
 	constexpr int kSearchRemainTimeMax = 28;
@@ -672,10 +672,10 @@ void Player::NeutralUpdate()
 	
 	m_rigid->SetVelocity(move);
 
-	if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
+	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
 	{
 		m_playerUpdate = &Player::JumpingUpdate;
-	}
+	}*/
 }
 
 void Player::WalkingUpdate()
@@ -717,10 +717,10 @@ void Player::WalkingUpdate()
 	}
 	m_rigid->SetVelocity(ans);
 
-	if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
+	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
 	{
 		m_playerUpdate = &Player::JumpingUpdate;
-	}
+	}*/
 }
 
 void Player::DashUpdate()
@@ -770,10 +770,10 @@ void Player::DashUpdate()
 	}
 	m_rigid->SetVelocity(ans*kDashMag);
 
-	if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
+	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
 	{
 		m_playerUpdate = &Player::JumpingUpdate;
-	}
+	}*/
 }
 
 void Player::JumpingUpdate()
@@ -788,12 +788,30 @@ void Player::JumpingUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(AnimNum::AnimationNumSpin,5.f);
-		if (m_spinCount >= 1)return;
+		/*if (m_spinCount >= 1)return;
 		m_isSpinFlag = true;
-		m_spinCount++;
+		m_spinCount++;*/
+		m_rigid->SetVelocity(m_frontVec * kJumpPower);
 		m_playerUpdate = &Player::JumpingSpinUpdate;
 	}
 
+
+	if (m_footCol->OnHit())
+	{
+		ChangeAnim(AnimNum::AnimationNumIdle);
+		m_playerUpdate = &Player::NeutralUpdate;
+	}
+}
+
+void Player::JumpBoostUpdate()
+{
+	m_state = "JumpBoost";
+	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
+	{
+		ChangeAnim(AnimNum::AnimationNumJumpAttack);
+		m_rigid->SetVelocity(Vec3::Zero());
+		m_playerUpdate = &Player::DropAttackUpdate;
+	}
 	if (m_footCol->OnHit())
 	{
 		ChangeAnim(AnimNum::AnimationNumIdle);
