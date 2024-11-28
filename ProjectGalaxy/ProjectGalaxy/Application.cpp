@@ -144,7 +144,7 @@ namespace TimeTool
         //コンソールに表示
         printf("%d", time.hour);//日
         printf(":%d", time.minute);//分
-        printf(":%d", time.second);//秒
+        printf(":%d\n", time.second);//秒
     }
 
     /// <summary>

@@ -672,10 +672,10 @@ void Player::NeutralUpdate()
 	
 	m_rigid->SetVelocity(move);
 
-	//if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->NowOnHit())
-	//{
-	//	m_playerUpdate = &Player::JumpingUpdate;
-	//}
+	if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
+	{
+		m_playerUpdate = &Player::JumpingUpdate;
+	}
 }
 
 void Player::WalkingUpdate()
@@ -717,10 +717,10 @@ void Player::WalkingUpdate()
 	}
 	m_rigid->SetVelocity(ans);
 
-	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->NowOnHit())
+	if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
 	{
 		m_playerUpdate = &Player::JumpingUpdate;
-	}*/
+	}
 }
 
 void Player::DashUpdate()
@@ -770,7 +770,10 @@ void Player::DashUpdate()
 	}
 	m_rigid->SetVelocity(ans*kDashMag);
 
-	
+	if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
+	{
+		m_playerUpdate = &Player::JumpingUpdate;
+	}
 }
 
 void Player::JumpingUpdate()
@@ -791,7 +794,7 @@ void Player::JumpingUpdate()
 		m_playerUpdate = &Player::JumpingSpinUpdate;
 	}
 
-	if (m_footCol->NowOnHit() || m_footCol->PreOnHit())
+	if (m_footCol->OnHit())
 	{
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;

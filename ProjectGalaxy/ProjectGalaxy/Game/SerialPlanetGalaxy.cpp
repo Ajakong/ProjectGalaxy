@@ -345,7 +345,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*6, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
 	DrawFormatString(0, 25*7, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25*8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
-	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetNowFootOnHit()||player->GetPreFootOnHit());
+	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
 	SetDrawScreen(m_modelScreenHandle);
 
 	SetCameraNearFar(1.f, 10000.f);

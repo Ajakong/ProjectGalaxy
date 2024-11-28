@@ -298,6 +298,16 @@ void MyEngine::Physics::CheckCollide()
 				auto& colA = objA->m_colliders.at(i);
 				auto& colB = objB->m_colliders.at(j);
 
+				//2フレームの間なにもHITしていなかったとき、衝突していない
+				if (!colA->col->PreOnHit() && !colA->col->NowOnHit())
+				{
+					colA->col->SetOnHitResult(false);
+				}
+				if (!colB->col->PreOnHit() && !colB->col->NowOnHit())
+				{
+					colB->col->SetOnHitResult(false);
+				}
+
 				colA->col->SetPreOnHit(colA->col->NowOnHit());
 				colB->col->SetPreOnHit(colB->col->NowOnHit());
 			    
@@ -327,7 +337,9 @@ void MyEngine::Physics::CheckCollide()
 				//Triggerじゃなければ今当たってるフラグを立てる
 				
 				colA->col->SetNowOnHit(true);
+				colA->col->SetOnHitResult(true);
 				colB->col->SetNowOnHit(true);
+				colB->col->SetOnHitResult(true);
 
 				printf((ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "と" + ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "がHIT\n").c_str());
 				printf((ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "と" + ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "がHIT\n").c_str());

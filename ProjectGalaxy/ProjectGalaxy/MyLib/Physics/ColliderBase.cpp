@@ -5,7 +5,8 @@ MyEngine::ColliderBase::ColliderBase(Kind kind) :
 	m_kind(kind),
 	m_posShift(Vec3::Zero()),
 	m_isNowOnHit(false),
-	m_isPreOnHit(false)
+	m_isPreOnHit(false),
+	m_isHitResult(false)
 {
 	m_isPreHit.clear();
 	m_isHit.clear();

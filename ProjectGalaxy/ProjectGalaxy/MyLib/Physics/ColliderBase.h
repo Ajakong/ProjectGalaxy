@@ -31,7 +31,9 @@ namespace MyEngine
 		bool IsPreHit(const std::shared_ptr<ColliderBase> collider) const { return m_isPreHit.at(collider); }
 		bool NowOnHit() { return m_isNowOnHit; }
 		bool PreOnHit() { return m_isPreOnHit; }
+		bool OnHit() { return m_isHitResult; }
 		void SetNowOnHit(bool flag) { m_isNowOnHit = flag; }
+		void SetOnHitResult(bool flag) { m_isHitResult = flag; }
 		void SetPreOnHit(bool flag) { m_isPreOnHit = flag; }
 		Vec3 GetShift() const{ return m_posShift; }
 		/// <summary>
@@ -50,8 +52,10 @@ namespace MyEngine
 		Kind m_kind;
 		std::unordered_map<std::shared_ptr<ColliderBase>, bool> m_isHit;
 		std::unordered_map<std::shared_ptr<ColliderBase>, bool> m_isPreHit;
+		//ライブラリの構造上2フレームの間衝突していなかった場合衝突していない判定とする
 		bool m_isNowOnHit;
 		bool m_isPreOnHit;
+		bool m_isHitResult;
 	};
 
 

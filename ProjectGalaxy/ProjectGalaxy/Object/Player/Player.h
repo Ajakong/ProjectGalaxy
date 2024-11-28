@@ -57,6 +57,7 @@ public:
 	bool GetOperationFlag()const { return m_isOperationFlag; }
 	bool GetBoostFlag() const{ return m_isBoostFlag; }
 	bool OnAiming() { return m_isAimFlag; }
+	bool GetFootOnHit() { return m_footCol->OnHit(); }
 	bool GetNowFootOnHit() { return m_footCol->NowOnHit(); }
 	bool GetPreFootOnHit() { return m_footCol->PreOnHit(); }
 	/// <param name="sideVec">加速させる方向の横ベクトル</param>
