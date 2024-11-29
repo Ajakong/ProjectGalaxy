@@ -13,18 +13,22 @@ namespace
 	constexpr int kSphereCreateFrame = 50;
 	const char* name = "Sphere";
 }
-EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, int moveNum, int color) : SphereBase(priority,tag,pos,velocity,color,kSphereRadius),
+EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, Vec3 targetPos, int moveNum, int color) : SphereBase(priority,tag,pos,velocity,color,kSphereRadius),
 m_enemy(std::dynamic_pointer_cast<Enemy>(enemy))
 {
+	m_velocity = velocity;
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = m_radius;
 	m_color = color;
+	m_targetPos = targetPos;
+
+	SetAntiGravity(true);
 	//moveNumによって挙動が変わるのかもしれない(実装するかわからん)
 	//if (moveNum == 0)
 	{
-		m_moveUpdate = &EnemySphere::StraightUpdate;
+		m_moveUpdate = &EnemySphere::ChaseUpdate;
 	}
 }
 
@@ -59,6 +63,22 @@ void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag o
 
 void EnemySphere::StraightUpdate()
 {
+	m_rigid->SetVelocity(m_velocity);
+}
+
+void EnemySphere::ChaseUpdate()
+{
+	Vec3 correctionVec = (m_targetPos - m_rigid->GetPos());
+
+	float mag = 3/60;
+	printf("%f", mag);
+	if (correctionVec.Length() <= 0.5f)
+	{
+		m_moveUpdate = &EnemySphere::StraightUpdate;
+	}
+
+	m_velocity += m_enemy->GetUpVec() *-1*(mag);
+
 	m_rigid->SetVelocity(m_velocity);
 }
 

@@ -29,7 +29,7 @@ class Enemy;
 class EnemySphere : public SphereBase
 {
 public:
-	EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag,std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, int moveNum, int color = 0xff0000);
+	EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag,std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity,Vec3 targetPos, int moveNum, int color = 0xff0000);
 	virtual ~EnemySphere();
 
 	virtual void Init();
@@ -46,11 +46,13 @@ public:
 
 protected:
 	virtual void  StraightUpdate();//球を直線状に飛ばす
+	virtual void  ChaseUpdate();
 
 protected:
 
+	Vec3 m_targetPos;
 	std::shared_ptr<Enemy>m_enemy;
-
+	
 private:
 	void DeleteJudge();
 

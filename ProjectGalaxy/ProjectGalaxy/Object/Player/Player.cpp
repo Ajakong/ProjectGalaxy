@@ -412,7 +412,6 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		printf("Stage\n");
 		m_spinCount = 0;
 		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
-		m_isJumpFlag = false;
 		m_isBoostFlag = false;
 	}
 	if (colider->GetTag() == ObjectTag::Crystal)

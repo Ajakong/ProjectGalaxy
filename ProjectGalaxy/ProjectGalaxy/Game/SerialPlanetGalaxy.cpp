@@ -223,7 +223,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
 	if (player->OnAiming())m_camera->Update(player->GetShotDir());
 	else if (m_spaceEmperor.back()->GetIsFind())m_camera->Update(m_spaceEmperor.back()->GetNeckPos());
-	else m_camera->Update(m_takobo.back()->GetHeadPos());
+	else m_camera->Update(player->GetLookPoint());
 
 	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
 	Vec3 sideVec = player->GetSideVec();
@@ -255,7 +255,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 	if (player->GetBoostFlag())
 	{
-		m_camera->SetCameraPoint(m_takobo.back()->GetHeadPos() +m_takobo.back()->GetUpVec().GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+		m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 	}
 	else
 	{
@@ -265,7 +265,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		}
 		else
 		{
-			m_camera->SetCameraPoint((m_takobo.back()->GetHeadPos() + m_takobo.back()->GetUpVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag())));
+			m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 		}
 	}
 

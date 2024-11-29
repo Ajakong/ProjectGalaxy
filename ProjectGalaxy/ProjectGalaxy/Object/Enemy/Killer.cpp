@@ -12,7 +12,7 @@ namespace
 	constexpr int kSphereCreateFrame = 50;
 	const char* name = "Killer";
 }
-Killer::Killer(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, std::shared_ptr<MyEngine::Collidable>target, Vec3 pos, Vec3 velocity, int moveNum, int color):EnemySphere(priority,tag,enemy,pos,velocity,moveNum,color)
+Killer::Killer(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, std::shared_ptr<MyEngine::Collidable>target, Vec3 pos, Vec3 velocity, int moveNum, int color):EnemySphere(priority,tag,enemy,pos,velocity,target->GetRigidbody()->GetPos(),moveNum,color)
 {
 	m_counterFlag = false;
 	m_target = target;
