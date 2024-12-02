@@ -3,6 +3,7 @@
 // EffekseerForDXLib.hをインクルードします。
 #include "EffekseerForDXLib.h"
 #include"Camera.h"
+#include"UI.h"
 #include"Physics.h"
 #include"Player.h"
 #include"WarpGate.h"
@@ -125,7 +126,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 #endif
 
 	m_camera = make_shared<Camera>();
-
+	m_ui = make_shared<UI>();
 
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
@@ -321,6 +322,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 			0x444488, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
+
+	m_ui->Draw();
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG

@@ -59,6 +59,7 @@ namespace
 	const char* kGororiHitSEName = "GororiHitSE.mp3";
 	const char* kGetItemSEName = "GetItemSE.mp3";
 	const char* kOnParrySEName = "Parry.mp3";
+	const char* kJumpDropGroundSEName = "JumpDrop_ground.mp3";
 
 	const char* kGetSearchSEName = "Search.mp3";
 	const char* name = "Player";
@@ -413,6 +414,10 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		m_spinCount = 0;
 		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
 		m_isBoostFlag = false;
+		if (m_playerUpdate == &Player::DropAttackUpdate)
+		{
+			PlaySoundMem(SoundManager::GetInstance().GetSoundData(kJumpDropGroundSEName), DX_PLAYTYPE_BACK);
+		}
 	}
 	if (colider->GetTag() == ObjectTag::Crystal)
 	{

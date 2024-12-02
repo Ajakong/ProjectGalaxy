@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Scene.h"
 #include <string>
 #include <vector>
@@ -30,7 +30,7 @@ private:
 
     bool m_isGamePlaying = false;
 
-    // ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^‚ÌéŒ¾
+    // ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿ã®å®£è¨€
     using UpdateFunc_t = void (TitleScene::*)();
     using DrawFunc_t = void (TitleScene::*)();
     UpdateFunc_t m_updateFunc = nullptr;
@@ -38,15 +38,14 @@ private:
 
 
 
-    // XVŠÖ”
+    // æ›´æ–°é–¢æ•°
     void FadeInUpdate();
     void NormalUpdate();
     void FadeOutUpdate();
 
     void ChangeScene(std::shared_ptr<Scene> next);
 
-
-    // •`‰æŠÖ”
+    // æç”»é–¢æ•°
     void FadeDraw();
     void NormalDraw();
 

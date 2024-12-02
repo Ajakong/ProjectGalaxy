@@ -2,6 +2,7 @@
 #include"Galaxy.h"
 
 class Camera;
+class UI;
 class Collidable;
 class Player;
 class Planet;
@@ -84,6 +85,7 @@ private:
 	UserData* userData = static_cast<UserData*>(GetBufferShaderConstantBuffer(cbuffH));
 
 	std::shared_ptr<Camera> m_camera;
+	std::shared_ptr<UI> m_ui;
 	//ステージ
 	std::vector<std::shared_ptr<Planet>> m_planet;
 	//アイテム

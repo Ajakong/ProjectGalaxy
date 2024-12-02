@@ -23,7 +23,7 @@ int GraphManager::GetGraphData(const char* graphname)
 	if (m_pathAndGraphInfoes.find(graphname) == m_pathAndGraphInfoes.end())
 	{
 		GraphInfo m = GraphInfo();
-		string fileName = "Data/Image/";
+		string fileName = "Data/Graph/";
 		m.handle = DxLib::LoadGraph((fileName + (string)graphname).c_str());
 		m.used = false;
 		m_pathAndGraphInfoes[graphname] = m;

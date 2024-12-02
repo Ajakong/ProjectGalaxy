@@ -191,6 +191,7 @@
     <ClCompile Include="Object\Enemy\Kuribo.cpp" />
     <ClCompile Include="Object\Enemy\SpaceEmperor.cpp" />
     <ClCompile Include="Object\Enemy\Takobo.cpp" />
+    <ClCompile Include="Object\Enemy\WickedMagician.cpp" />
     <ClCompile Include="Object\Gimmick\Crystal.cpp" />
     <ClCompile Include="Object\Gimmick\Invisible.cpp" />
     <ClCompile Include="Object\Gimmick\SeekerLine.cpp" />
@@ -217,6 +218,7 @@
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -261,6 +263,7 @@
     <ClInclude Include="Object\Enemy\KillerTheSeeker.h" />
     <ClInclude Include="Object\Enemy\SpaceEmperor.h" />
     <ClInclude Include="Object\Enemy\Takobo.h" />
+    <ClInclude Include="Object\Enemy\WickedMagician.h" />
     <ClInclude Include="Object\Gimmick\Crystal.h" />
     <ClInclude Include="Object\Gimmick\Invisible.h" />
     <ClInclude Include="Object\Gimmick\SeekerLine.h" />
@@ -288,6 +291,7 @@
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="UI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ProjectGalaxy.rc" />
