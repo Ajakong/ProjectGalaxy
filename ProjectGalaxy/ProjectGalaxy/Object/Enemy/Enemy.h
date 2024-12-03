@@ -11,7 +11,7 @@ float lerp(float start, float end, float t);
 class Enemy : public MyEngine :: Collidable
 {
 public:
-	Enemy(int handle,Priority priority,ObjectTag tag);
+	Enemy(Priority priority,ObjectTag tag);
 	virtual ~Enemy();
 
 	virtual void Init() = 0;

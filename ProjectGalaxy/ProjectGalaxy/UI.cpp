@@ -1,13 +1,18 @@
 ﻿#include "UI.h"
 #include"GraphManager.h"
+#include"Game.h"
 namespace
 {
-	const char* kGraphUIAsset3Name = "UI_asset3.png";
-	const UI::UIinfo kSearchUIInfo { 715,400,240,240 };
+	const char* kGraphUIAssetName = "Designer_ui.png";
+	const UI::UIinfo kIdemBoxUIInfo{ 0,0,255,255 };
+	const UI::UIinfo kHPBarUIInfo { 125,730,820,140 };
+	const UI::UIinfo kWindowScreenUIInfo{ 620,15,400,500 };
+
+	constexpr float kHpDecreaseSpeed = 0.3f;
 }
 UI::UI()
 {
-	m_uiAsset3Handle = GraphManager::GetInstance().GetGraphData(kGraphUIAsset3Name);
+	m_uiAssetHandle = GraphManager::GetInstance().GetGraphData(kGraphUIAssetName);
 
 }
 
@@ -23,7 +28,12 @@ void UI::Update()
 {
 }
 
-void UI::Draw()
+void UI::Draw(int m_hp)
 {
-	//DrawRectRotaGraph(kSearchUIInfo.width/2, kSearchUIInfo.height/2, kSearchUIInfo.x, kSearchUIInfo.y, kSearchUIInfo.width, kSearchUIInfo.height, 1, 0, m_uiAsset3Handle, false);
+	DrawBox(40, 40, 780, kHPBarUIInfo.height / 2+10, 0x0000044,true);
+	DrawBox(40, 40, 40+15*m_hp, kHPBarUIInfo.height / 2 + 10, 0x00044ff, true);
+
+	DrawRectRotaGraph(kHPBarUIInfo.width / 2, kHPBarUIInfo.height / 2, kHPBarUIInfo.x, kHPBarUIInfo.y, kHPBarUIInfo.width, kHPBarUIInfo.height, 1, 0, m_uiAssetHandle, true);
+	DrawRectRotaGraph(Game::kScreenWidth - kIdemBoxUIInfo.width / 2-170,kIdemBoxUIInfo.height / 2+50, kIdemBoxUIInfo.x, kIdemBoxUIInfo.y, kIdemBoxUIInfo.width, kIdemBoxUIInfo.height, 1, 0, m_uiAssetHandle, true);
+	/*DrawRectRotaGraph( Game::kScreenWidth-kWindowScreenUIInfo.width / 2, kWindowScreenUIInfo.height / 2, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 1, 0, m_uiAssetHandle, true);*/
 }

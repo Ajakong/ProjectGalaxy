@@ -168,6 +168,7 @@ void Player::Update()
 	m_isSearchFlag = false;
 	m_radius = 0;
 	(this->*m_playerUpdate)();
+	m_hp = -0.2f;
 
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{

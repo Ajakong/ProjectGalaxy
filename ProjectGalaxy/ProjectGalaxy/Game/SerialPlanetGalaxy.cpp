@@ -323,7 +323,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
-	m_ui->Draw();
+	m_ui->Draw(player->GetHp());
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG

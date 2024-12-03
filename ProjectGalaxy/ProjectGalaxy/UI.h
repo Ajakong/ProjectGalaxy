@@ -16,11 +16,13 @@ public:
 
 	void Init();
 	void Update();
-	void Draw();
+	void Draw(int m_hp);
+
 
 private:
 
-	int m_uiAsset3Handle;
+	int m_uiAssetHandle;
+
 
 };
 
