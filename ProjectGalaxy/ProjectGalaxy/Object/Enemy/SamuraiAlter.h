@@ -5,7 +5,7 @@
 class SamuraiAlter : public Enemy
 {
 public:
-	SamuraiAlter();
+	SamuraiAlter(Vec3 pos);
 	~SamuraiAlter();
 
 	void Init();
@@ -17,8 +17,7 @@ public:
 	void OnBossPlanet();
 	bool GetIsFind() { return m_isFindTarget; }
 	Vec3 GetNeckPos() const { return m_neckPos; }
-	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
-
+	
 	//メンバ関数ポインタ
 	using emperorState_t = void(SamuraiAlter::*)();
 	emperorState_t m_update;

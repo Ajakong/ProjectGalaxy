@@ -2,6 +2,7 @@
 #include "DebugGalaxy.h"
 #include"Player.h"
 #include"Takobo.h"
+#include"SamuraiAlter.h"
 #include"Camera.h"
 #include"BoxPlanet.h"
 #include"SpherePlanet.h"
@@ -73,8 +74,9 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 
 	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00));
 
-	takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
-	MyEngine::Physics::GetInstance().Entry(takobo.back());
+	//takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
+	samuraiAlter.push_back(make_shared<SamuraiAlter>(Vec3(0, 0, -30)));
+	MyEngine::Physics::GetInstance().Entry(samuraiAlter.back());
 	camera = make_shared<Camera>();
 }
 

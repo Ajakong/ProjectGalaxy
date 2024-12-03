@@ -6,8 +6,15 @@ namespace
 	const char* kModelFileName = "AlienSoldier.mv1";
 }
 
-SamuraiAlter::SamuraiAlter() : Enemy(Priority::High,ObjectTag::Enemy)
+SamuraiAlter::SamuraiAlter(Vec3 pos) : Enemy(Priority::High,ObjectTag::Enemy)
 {
+	{
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
+		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
+		item->radius = 6;
+
+	}
+	m_rigid->SetPos(pos);
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kModelFileName);
 }
 

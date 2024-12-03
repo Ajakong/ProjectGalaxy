@@ -49,7 +49,7 @@ namespace
 }
 
 
-KillerTheSeeker::KillerTheSeeker(Vec3 pos) :Enemy(-1, Priority::Static, ObjectTag::KillerTheSeeker),
+KillerTheSeeker::KillerTheSeeker(Vec3 pos) :Enemy(Priority::Static, ObjectTag::KillerTheSeeker),
 m_hp(kHp),
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0),

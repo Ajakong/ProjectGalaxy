@@ -49,7 +49,7 @@ Vec3 ToVec(Vec3 a, Vec3 b);
 Vec3 norm(Vec3 a);
 float lerp(float start, float end, float t);
 
-Gorori::Gorori(Vec3 pos,Vec3 velocity) :Enemy(-1, Priority::Static, ObjectTag::Gorori),
+Gorori::Gorori(Vec3 pos,Vec3 velocity) :Enemy(Priority::Static, ObjectTag::Gorori),
 m_hp(kHp),
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0),

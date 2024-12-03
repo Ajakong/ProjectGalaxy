@@ -14,7 +14,7 @@ namespace
 GameManager::GameManager() :
 	player(std::make_shared<Player>(ModelManager::GetInstance().GetModelData(kPlayerFileName)))
 {
-	galaxy.push_back(std::make_shared<SerialPlanetGalaxy>(player));
+	galaxy.push_back(std::make_shared<DebugGalaxy>(player));
 }
 
 GameManager::~GameManager()

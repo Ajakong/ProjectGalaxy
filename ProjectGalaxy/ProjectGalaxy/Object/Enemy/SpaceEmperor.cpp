@@ -25,7 +25,7 @@ namespace
 
 }
 
-SpaceEmperor::SpaceEmperor(Vec3 pos) : Enemy(-1,Priority::Boss,ObjectTag::SpaceEmperor),
+SpaceEmperor::SpaceEmperor(Vec3 pos) : Enemy(Priority::Boss,ObjectTag::SpaceEmperor),
 m_armExtensionDistance(0),
 m_armExtensionSpeed(kArmExtensionSpeedMax),
 m_animBlendRate(0),
