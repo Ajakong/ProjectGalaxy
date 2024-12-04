@@ -54,8 +54,8 @@ m_armMoveDir(Vec3::Zero())
 
 	m_frontVec = Vec3::Front();
 	m_neckFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:Neck");
-	m_vsH = LoadVertexShader("SpaceEmperorVertexShader.vso");
-	ShaderInit();
+	/*m_vsH = LoadVertexShader("SpaceEmperorVertexShader.vso");
+	ShaderInit();*/
 }
 
 SpaceEmperor::~SpaceEmperor()
@@ -64,38 +64,38 @@ SpaceEmperor::~SpaceEmperor()
 
 void SpaceEmperor::ShaderInit()
 {
-	// メッシュの数を取ってくる
-	auto meshNum = MV1GetMeshNum(m_modelHandle);
+	//// メッシュの数を取ってくる
+	//auto meshNum = MV1GetMeshNum(m_modelHandle);
 
-	VECTOR maxPos = { 0, 0, 0 };
-	VECTOR minPos = { 1000, 1000, 1000 };
-	bool hasNormalMap = false;
-	for (int i = 0; i < meshNum; ++i)
-	{
-		// 輪切りの時は裏側も描画しないと変になる
-		MV1SetMeshBackCulling(m_modelHandle, i, DX_CULLING_NONE);
+	//VECTOR maxPos = { 0, 0, 0 };
+	//VECTOR minPos = { 1000, 1000, 1000 };
+	//bool hasNormalMap = false;
+	//for (int i = 0; i < meshNum; ++i)
+	//{
+	//	// 輪切りの時は裏側も描画しないと変になる
+	//	MV1SetMeshBackCulling(m_modelHandle, i, DX_CULLING_NONE);
 
-		// モデルの大きさを取得
-		auto modelMaxPos = MV1GetMeshMaxPosition(m_modelHandle, i);
-		maxPos.x = max(maxPos.x, modelMaxPos.x);
-		maxPos.y = max(maxPos.y, modelMaxPos.y);
-		maxPos.z = max(maxPos.z, modelMaxPos.z);
+	//	// モデルの大きさを取得
+	//	auto modelMaxPos = MV1GetMeshMaxPosition(m_modelHandle, i);
+	//	maxPos.x = max(maxPos.x, modelMaxPos.x);
+	//	maxPos.y = max(maxPos.y, modelMaxPos.y);
+	//	maxPos.z = max(maxPos.z, modelMaxPos.z);
 
-		auto modelMinPos = MV1GetMeshMinPosition(m_modelHandle, i);
-		minPos.x = min(minPos.x, modelMinPos.x);
-		minPos.y = min(minPos.y, modelMinPos.y);
-		minPos.z = min(minPos.z, modelMinPos.z);
+	//	auto modelMinPos = MV1GetMeshMinPosition(m_modelHandle, i);
+	//	minPos.x = min(minPos.x, modelMinPos.x);
+	//	minPos.y = min(minPos.y, modelMinPos.y);
+	//	minPos.z = min(minPos.z, modelMinPos.z);
 
-		auto vtype = MV1GetTriangleListVertexType(m_modelHandle, i);
-		if (vtype == DX_MV1_VERTEX_TYPE_NMAP_1FRAME)
-		{
-			hasNormalMap = true;
-		}
-	}
-	m_userData->minY = minPos.y;
-	m_userData->maxY = maxPos.y;
-	m_userData->clickedU = 0.0f;
-	m_userData->clickedV = 0.0f;
+	//	auto vtype = MV1GetTriangleListVertexType(m_modelHandle, i);
+	//	if (vtype == DX_MV1_VERTEX_TYPE_NMAP_1FRAME)
+	//	{
+	//		hasNormalMap = true;
+	//	}
+	//}
+	//m_userData->minY = minPos.y;
+	//m_userData->maxY = maxPos.y;
+	//m_userData->clickedU = 0.0f;
+	//m_userData->clickedV = 0.0f;
 
 }
 

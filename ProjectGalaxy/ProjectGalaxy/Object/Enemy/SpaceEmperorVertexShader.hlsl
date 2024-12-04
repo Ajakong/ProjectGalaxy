@@ -10,16 +10,16 @@ struct VS_INPUT
     float4 TexCoords1 : TEXCOORD1; // サブテクスチャ座標
     
     //法線あり
-    float3 Tangent : TANGENT;//接線ベクトル
-    float3 Binormal : BINORMAL;//従法線ベクトル
+    float3 Tangent : TANGENT; //接線ベクトル
+    float3 Binormal : BINORMAL; //従法線ベクトル
 };
 
 // 頂点シェーダーの出力
 struct VS_OUTPUT
 {
-    float4 Diffuse  : COLOR0; // ディフューズカラー
+    float4 Diffuse : COLOR0; // ディフューズカラー
     float4 Specular : COLOR1; // スペキュラカラー
-    float3 Normal   : NORMAL;
+    float3 Normal : NORMAL;
     float3 Tangent : TANGENT; //接線ベクトル
     float3 Binormal : BINORMAL; //従法線ベクトル
     float2 TexCoords0 : TEXCOORD0; // テクスチャ座標
@@ -101,7 +101,7 @@ VS_OUTPUT main(VS_INPUT VSInput)
     VSOutput.TexCoords0 = VSInput.TexCoords0;
 
 	// 出力パラメータセット ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++( 終了 )
-    VSOutput.Diffuse = VSInput.Diffuse;// * (max(saturate(dot(VSInput.Normal, light)), 0.3));   // 法線情報を抜いてる
+    VSOutput.Diffuse = VSInput.Diffuse; // * (max(saturate(dot(VSInput.Normal, light)), 0.3));   // 法線情報を抜いてる
     VSOutput.Specular = VSInput.Specular;
     
     
@@ -116,4 +116,3 @@ VS_OUTPUT main(VS_INPUT VSInput)
 	// 出力パラメータを返す
     return VSOutput;
 }
-

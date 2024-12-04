@@ -299,7 +299,9 @@
     <ResourceCompile Include="ProjectGalaxy.rc" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Object\Enemy\SpaceEmperorVertexShader.hlsl" />
+    <None Include="Object\Enemy\SpaceEmperorVertexShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
