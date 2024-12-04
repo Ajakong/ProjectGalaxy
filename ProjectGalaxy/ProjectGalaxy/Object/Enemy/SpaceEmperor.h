@@ -9,6 +9,7 @@ public:
 	SpaceEmperor(Vec3 pos);
 	virtual ~SpaceEmperor();
 
+	void ShaderInit();
 	void Init();
 	void Update();
 	void SetMatrix();
@@ -30,6 +31,7 @@ private:
 	void IdleUpdate();
 	void AttackUpdate();
 	void HitUpdate();
+	void DeathUpdate();
 
 	//アニメーションの進行
 	//ループしたかどうかを返す
@@ -46,6 +48,7 @@ private:
 	float m_animBlendRate;//アニメーションの合成割合
 
 	int m_neckFrameIndex;//モデルの首のフレームのインデックス
+	int m_vsH;//バーテックスシェーダーハンドル
 	float m_armExtensionSpeed;
 	float m_armExtensionDistance;
 
@@ -55,5 +58,6 @@ private:
 	Vec3 m_neckPos;
 	Vec3 m_armMoveDir;
 	std::shared_ptr<Collidable> m_target;
+
 };
 

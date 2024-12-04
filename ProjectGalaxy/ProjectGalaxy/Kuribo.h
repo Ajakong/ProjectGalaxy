@@ -6,6 +6,21 @@ using namespace MyEngine;
 class Kuribo : public Enemy
 {
 public:
+
+	/// <summary>
+/// アニメーション番号
+/// </summary>
+	enum AnimNum : int
+	{
+		AnimationNumAttack,
+		AnimationNumIdle,
+		AnimationNumFullPowerAttack,
+		AnimationNumRoar,
+		AnimationNumRun,
+		AnimationNumSleep,
+		AnimationNumWalk,
+	};
+
 	Kuribo(Vec3 pos, int moveNum);
 	virtual ~Kuribo();
 
@@ -40,6 +55,10 @@ private:
 	/// </summary>
 	void ComebackUpdate();
 	/// <summary>
+	///　気絶時
+	/// </summary>
+	void StanUpdate();
+	/// <summary>
 	/// 死亡時
 	/// </summary>
 	void DeathUpdate();
@@ -67,6 +86,8 @@ private:
 	int m_initTime;
 
 	float m_animationSpeed;
+	int m_stanCount;
+	int m_deathCount;
 
 	//0.0f:prevが再生
 	//1.0:currentが再生

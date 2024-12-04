@@ -1,4 +1,5 @@
 ﻿#include"Game.h"
+#include"UI.h"
 #include "DebugGalaxy.h"
 #include"Player.h"
 #include"Takobo.h"
@@ -70,6 +71,7 @@ namespace
 
 DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer)
 {
+	m_ui = make_shared<UI>();
 	player = playerPointer;
 
 	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00));
@@ -164,6 +166,8 @@ void DebugGalaxy::Draw()
 
 	MyEngine::Physics::GetInstance().Draw();
 
+
+	m_ui->Draw(player->GetHp());
 	if (player->IsSearch())
 	{
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_MUL, 255);

@@ -1,4 +1,4 @@
-#include "ModelManager.h"
+﻿#include "ModelManager.h"
 #include<string>
 #include<vector>
 
@@ -9,6 +9,10 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
+	for (auto& item : m_pathAndModelInfoes)
+	{
+		MV1DeleteModel(item.second.handle);
+	}
 }
 
 ModelManager& ModelManager::GetInstance()

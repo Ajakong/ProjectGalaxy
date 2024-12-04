@@ -13,6 +13,9 @@ Collidable::Collidable(Priority priority, ObjectTag tag) :
 	m_upVec(Vec3::Up())
 {
 	m_rigid = std::make_shared<Rigidbody>();
+	m_cbuffH = CreateShaderConstantBuffer(sizeof(UserData));
+	m_userData= static_cast<UserData*>(GetBufferShaderConstantBuffer(m_cbuffH));
+	m_userData->dissolveY = 1.0f;
 }
 
 MyEngine::Collidable::Collidable(std::shared_ptr<Collidable> col) :

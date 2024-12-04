@@ -128,7 +128,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_camera = make_shared<Camera>();
 	m_ui = make_shared<UI>();
 
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_moon.mv1")));
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("GoldenBall.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
 	
@@ -179,7 +179,7 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 
 void SerialPlanetGalaxy::Init()
 {
-	SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 1.0f, 1.0f));
+	SetGlobalAmbientLight(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 
 	player->SetMatrix();//モデルに行列を反映
 

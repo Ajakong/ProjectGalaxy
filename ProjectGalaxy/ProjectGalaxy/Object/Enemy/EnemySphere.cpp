@@ -13,9 +13,10 @@ namespace
 	constexpr int kSphereCreateFrame = 50;
 	const char* name = "Sphere";
 }
-EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, Vec3 targetPos, int moveNum, int color) : SphereBase(priority,tag,pos,velocity,color,kSphereRadius),
+EnemySphere::EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity, Vec3 targetPos, int moveNum, int color,float impactTime) : SphereBase(priority,tag,pos,velocity,color,kSphereRadius),
 m_enemy(std::dynamic_pointer_cast<Enemy>(enemy))
 {
+	m_impactTime = impactTime;
 	m_velocity = velocity;
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
@@ -70,14 +71,14 @@ void EnemySphere::ChaseUpdate()
 {
 	Vec3 correctionVec = (m_targetPos - m_rigid->GetPos());
 
-	float mag = 3/60;
+	float mag = 3.f/m_impactTime;
 	printf("%f", mag);
 	if (correctionVec.Length() <= 0.5f)
 	{
 		m_moveUpdate = &EnemySphere::StraightUpdate;
 	}
 
-	m_velocity += m_enemy->GetUpVec() *-1*(mag);
+	m_velocity += m_enemy->GetShotUpVec() *-1*(mag);
 
 	m_rigid->SetVelocity(m_velocity);
 }

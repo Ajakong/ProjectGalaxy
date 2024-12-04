@@ -132,14 +132,14 @@ m_modelDirAngle(0)
 		m_footCol->radius = kNeutralFootRadius - 0.2f;
 	}
 
-	/*{
+	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Spin);
 		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_spinCol->radius = m_attackRadius;
-	}*/
+	}
 
 
-	m_shotUpdate = &Player::ShotTheStickStar;
+	m_shotUpdate = &Player::ShotTheStar;
 
 	m_cameraEasingSpeed = 15.f;
 	
@@ -168,7 +168,7 @@ void Player::Update()
 	m_isSearchFlag = false;
 	m_radius = 0;
 	(this->*m_playerUpdate)();
-	m_hp = -0.2f;
+	//m_hp = -0.00002f;
 
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
@@ -1063,7 +1063,7 @@ void Player::SetShotDir()
 	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
 	directY = -directY;
 
-	m_shotDir = m_sideVec*static_cast<float>(directX) * 0.001f;
+	m_shotDir = m_sideVec*static_cast<float>(directX) * 0.0001f;
 	m_shotDir = m_shotDir+(m_upVec*static_cast<float>(directY) * 0.0005f);
 	m_shotDir = m_shotDir + m_frontVec;
 	m_shotDir = m_shotDir.GetNormalized();

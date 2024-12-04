@@ -45,7 +45,7 @@ public:
 
 	void SetTarget(std::shared_ptr<MyEngine::Collidable> target);
 	void SetNormVec(Vec3 norm) { m_normVec = norm; }
-
+	Vec3 GetShotUpVec() { return m_shotUpVec; }
 	std::list<std::shared_ptr<EnemySphere>> GetAttackObj() { return m_sphere; }
 	
 
@@ -102,7 +102,12 @@ private:
 	Vec3 m_attackDir;
 	Vec3 m_moveShaftPos;
 	Vec3 m_normVec;
+	/// <summary>
+	/// 撃った弾の上方向ベクトル
+	/// </summary>
+	Vec3 m_shotUpVec;
 	Vec3 m_nowPlanetPos;
+	Vec3 m_strikePoint;
 	std::shared_ptr<MyEngine::Collidable> m_target;
 	//アニメーション変数
 	int m_anim_nutral = 0;

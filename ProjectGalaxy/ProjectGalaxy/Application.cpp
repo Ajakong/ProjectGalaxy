@@ -231,6 +231,8 @@ void Application::Run(HWND windowHandle)
     // コンソール解放
     fclose(out); fclose(in); FreeConsole();
     Terminate();
+
+    _CrtDumpMemoryLeaks();
 }
 
 

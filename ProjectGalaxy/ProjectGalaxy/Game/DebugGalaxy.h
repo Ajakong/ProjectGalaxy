@@ -6,6 +6,7 @@ class Player;
 class Takobo;
 class Planet;
 class SamuraiAlter;
+class UI;
 
 class DebugGalaxy : public Galaxy
 {
@@ -24,6 +25,7 @@ public:
 	managerState_t m_managerDraw;
 
 private:
+	std::shared_ptr<UI> m_ui;
 	std::shared_ptr<Camera> camera;
 	std::vector<std::shared_ptr<Planet>> m_planet;
 	std::shared_ptr<Player> player;

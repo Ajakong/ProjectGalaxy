@@ -54,11 +54,49 @@ m_armMoveDir(Vec3::Zero())
 
 	m_frontVec = Vec3::Front();
 	m_neckFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:Neck");
-
+	m_vsH = LoadVertexShader("SpaceEmperorVertexShader.vso");
+	ShaderInit();
 }
 
 SpaceEmperor::~SpaceEmperor()
 {
+}
+
+void SpaceEmperor::ShaderInit()
+{
+	// メッシュの数を取ってくる
+	auto meshNum = MV1GetMeshNum(m_modelHandle);
+
+	VECTOR maxPos = { 0, 0, 0 };
+	VECTOR minPos = { 1000, 1000, 1000 };
+	bool hasNormalMap = false;
+	for (int i = 0; i < meshNum; ++i)
+	{
+		// 輪切りの時は裏側も描画しないと変になる
+		MV1SetMeshBackCulling(m_modelHandle, i, DX_CULLING_NONE);
+
+		// モデルの大きさを取得
+		auto modelMaxPos = MV1GetMeshMaxPosition(m_modelHandle, i);
+		maxPos.x = max(maxPos.x, modelMaxPos.x);
+		maxPos.y = max(maxPos.y, modelMaxPos.y);
+		maxPos.z = max(maxPos.z, modelMaxPos.z);
+
+		auto modelMinPos = MV1GetMeshMinPosition(m_modelHandle, i);
+		minPos.x = min(minPos.x, modelMinPos.x);
+		minPos.y = min(minPos.y, modelMinPos.y);
+		minPos.z = min(minPos.z, modelMinPos.z);
+
+		auto vtype = MV1GetTriangleListVertexType(m_modelHandle, i);
+		if (vtype == DX_MV1_VERTEX_TYPE_NMAP_1FRAME)
+		{
+			hasNormalMap = true;
+		}
+	}
+	m_userData->minY = minPos.y;
+	m_userData->maxY = maxPos.y;
+	m_userData->clickedU = 0.0f;
+	m_userData->clickedV = 0.0f;
+
 }
 
 void SpaceEmperor::Init()
@@ -182,35 +220,46 @@ void SpaceEmperor::AttackUpdate()
 
 void SpaceEmperor::HitUpdate()
 {
-	{
-		int index = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
-		Vec3  leftHandShiftPos = Vec3(MV1GetFramePosition(m_modelHandle, index)) - m_rigid->GetPos();
-		m_armCol->SetShiftPosNum(leftHandShiftPos);
-	}
-	//プレイヤーの方を見るようにしたい
-	/*{
-		int index = MV1SearchFrame(m_modelHandle, "mixamorig:Neck");
-		MATRIX hitDirMat = MGetRotVec2(m_neckNowDir.VGet(), m_hitDir.VGet());
-		m_neckNowDir = m_hitDir;
-		MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
-		MATRIX mat = MMult(hitDirMat, localMat);
-		MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
-	}*/
-	int index = MV1SearchFrame(m_modelHandle, "mixamorig:LeftArm");
-	MATRIX shotDirMat = MGetTranslate((m_hitDir*m_armExtensionSpeed).VGet());
-	m_armExtensionDistance += m_armExtensionSpeed;
-	MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
-	MATRIX mat = MMult(shotDirMat, localMat);
-	MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
 
-	if (m_armExtensionDistance > 200)m_armExtensionSpeed *= -1;
-	if (m_armExtensionDistance < 0)
-	{
-		m_update = &SpaceEmperor::IdleUpdate;
-		m_armExtensionSpeed *= -1;
-	}
 
-	m_rigid->SetVelocity(Vec3::Zero());
+	//{
+	//	int index = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
+	//	Vec3  leftHandShiftPos = Vec3(MV1GetFramePosition(m_modelHandle, index)) - m_rigid->GetPos();
+	//	m_armCol->SetShiftPosNum(leftHandShiftPos);
+	//}
+	////プレイヤーの方を見るようにしたい
+	///*{
+	//	int index = MV1SearchFrame(m_modelHandle, "mixamorig:Neck");
+	//	MATRIX hitDirMat = MGetRotVec2(m_neckNowDir.VGet(), m_hitDir.VGet());
+	//	m_neckNowDir = m_hitDir;
+	//	MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
+	//	MATRIX mat = MMult(hitDirMat, localMat);
+	//	MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
+	//}*/
+	//int index = MV1SearchFrame(m_modelHandle, "mixamorig:LeftArm");
+	//MATRIX shotDirMat = MGetTranslate((m_hitDir*m_armExtensionSpeed).VGet());
+	//m_armExtensionDistance += m_armExtensionSpeed;
+	//MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
+	//MATRIX mat = MMult(shotDirMat, localMat);
+	//MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
+
+	//if (m_armExtensionDistance > 200)m_armExtensionSpeed *= -1;
+	//if (m_armExtensionDistance < 0)
+	//{
+	//	m_update = &SpaceEmperor::IdleUpdate;
+	//	m_armExtensionSpeed *= -1;
+	//}
+
+	//m_rigid->SetVelocity(Vec3::Zero());
+}
+
+void SpaceEmperor::DeathUpdate()
+{
+	m_userData->dissolveY -= 0.01f;
+	if (m_userData->dissolveY < 0)
+	{
+		m_isDestroyFlag = true;
+	}
 }
 
 

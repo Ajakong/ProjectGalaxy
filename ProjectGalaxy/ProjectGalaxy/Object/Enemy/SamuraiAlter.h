@@ -5,6 +5,16 @@
 class SamuraiAlter : public Enemy
 {
 public:
+
+	/// <summary>
+	/// アニメーション番号
+	/// </summary>
+	enum AnimNum : int
+	{
+		AnimationNumIdle,
+		AnimationNumRun,
+	};
+
 	SamuraiAlter(Vec3 pos);
 	~SamuraiAlter();
 
@@ -44,8 +54,6 @@ private:
 	float m_animBlendRate;//アニメーションの合成割合
 
 	int m_neckFrameIndex;//モデルの首のフレームのインデックス
-	float m_armExtensionSpeed;
-	float m_armExtensionDistance;
 
 	float m_animSpeed;
 	Vec3 m_hitDir;

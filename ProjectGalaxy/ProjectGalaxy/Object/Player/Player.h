@@ -43,7 +43,7 @@ public:
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetMoveDir() const{ return m_moveDir; }
 	Vec3 GetNowPlanetPos() const { return m_nowPlanetPos; }
-	Vec3 GetNormVec() const { return Vec3(m_rigid->GetPos() - m_nowPlanetPos).GetNormalized(); }
+	Vec3 GetNormVec() const { return m_upVec.GetNormalized(); }
 	Vec3 GetFrontVec() const { return m_frontVec.GetNormalized(); }
 	Vec3 GetSideVec() const { return m_sideVec.GetNormalized(); }
 	Vec3 GetPostUpVec() const{ return m_postUpVec; }

@@ -45,6 +45,7 @@ namespace
 	/// 再攻撃までのクールタイム
 	/// </summary>
 	constexpr int kAttackCoolDownTime = 300;
+	constexpr float kTimeToStrike = 200.f;
 
 	/// <summary>
 	/// ステージモデルの縦横サイズ/2
@@ -146,6 +147,8 @@ void Takobo::Draw()
 	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(m_modelHandle);
 
+	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_attackDir * 1000).VGet(), 0xff0000);
+	DrawSphere3D(m_strikePoint.VGet(), 6, 8, 0xff0000, 0x000000, true);
 	for (auto& sphere : m_sphere)
 	{
 		if (m_sphere.size() == 0)return;
@@ -300,7 +303,12 @@ void Takobo::AttackSphereUpdate()
 			PlaySoundMem(m_shotSEHandle, DX_PLAYTYPE_BACK);
 
 			Vec3 headPos = MV1GetFramePosition(m_modelHandle, m_modelHeadIndex);
-			m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), headPos, (m_attackDir*(ToVec(m_rigid->GetPos(),m_target->GetRigidbody()->GetPos() ).Length()/60) + m_upVec * 3), m_target->GetRigidbody()->GetPos(), 1, 0xff0000));
+			//着弾地点の設定
+			m_strikePoint = m_target->GetRigidbody()->GetPos();
+			Vec3 toVec = ToVec(m_rigid->GetPos(), m_strikePoint);
+			m_attackDir = toVec.GetNormalized();
+			m_shotUpVec = m_target->GetUpVec();
+			m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), headPos, (m_attackDir*(toVec.Length()/ kTimeToStrike) + m_shotUpVec * 3), m_target->GetRigidbody()->GetPos(), 1, 0xff0000, kTimeToStrike));
 			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 			m_sphereNum++;
 			m_createFrameCount = 1;

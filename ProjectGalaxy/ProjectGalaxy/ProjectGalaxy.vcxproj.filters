@@ -569,4 +569,7 @@
       <Filter>リソース ファイル</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Object\Enemy\SpaceEmperorVertexShader.hlsl" />
+  </ItemGroup>
 </Project>

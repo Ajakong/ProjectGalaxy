@@ -29,7 +29,7 @@ class Enemy;
 class EnemySphere : public SphereBase
 {
 public:
-	EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag,std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity,Vec3 targetPos, int moveNum, int color = 0xff0000);
+	EnemySphere(MyEngine::Collidable::Priority priority, ObjectTag tag,std::shared_ptr<MyEngine::Collidable>enemy, Vec3 pos, Vec3 velocity,Vec3 targetPos, int moveNum, int color = 0xff0000,float impactTime=0);
 	virtual ~EnemySphere();
 
 	virtual void Init();
@@ -49,7 +49,7 @@ protected:
 	virtual void  ChaseUpdate();
 
 protected:
-
+	float m_impactTime;
 	Vec3 m_targetPos;
 	std::shared_ptr<Enemy>m_enemy;
 	

@@ -24,6 +24,17 @@ namespace MyEngine
 			ColideTag tag;
 		};
 
+		struct UserData
+		{
+			float dissolveY;	// ディゾルヴしたい高さ
+			float minY;
+			float maxY;
+			float dummy;
+			float clickedU;
+			float clickedV;
+			float dummy2[2];
+		};
+
 		// 優先度判別
 		enum class Priority : int
 		{
@@ -127,7 +138,9 @@ namespace MyEngine
 		Vec3 m_sideVec;
 
 		bool m_isDestroyFlag;
-	
+
+		int m_cbuffH;
+		UserData* m_userData;
 	private:
 		std::list<ObjectTag>	m_throughTags;
 

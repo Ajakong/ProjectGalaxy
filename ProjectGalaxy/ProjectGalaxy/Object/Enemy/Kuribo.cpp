@@ -22,15 +22,10 @@ namespace
 	constexpr float kAwayStrength = 0.6f;
 	const char* kModelFileName = "Kuribo.mv1";
 
-	constexpr int kAnimationNumAttack = 0;
-	constexpr int kAnimationNumIdle = 1;
-	constexpr int kAnimationNumFullPowerAttack = 2;
-	constexpr int kAnimationNumRoar = 3;
-	constexpr int kAnimationNumRun = 4;
-	constexpr int kAnimationNumSleep = 5;
-	constexpr int kAnimationNumWalk = 6;
-
 	constexpr float kScaleMag = 0.03f;
+
+	constexpr int kStanCountMax = 1000;
+	constexpr int kDeathCountMax = 200;
 
 }
 
@@ -48,7 +43,9 @@ float GetVec2Angle(Vec3 a, Vec3 b)
 
 Kuribo::Kuribo(Vec3 pos, int moveNum):Enemy(Priority::Low,ObjectTag::Kuribo),
 m_attackDir(0,0,1),
-m_chaseFrameCount(0)
+m_chaseFrameCount(0),
+m_stanCount(0),
+m_deathCount(0)
 {
 	m_comebackPoint = pos;
 	m_rigid->SetPos(pos);
@@ -71,7 +68,7 @@ m_chaseFrameCount(0)
 
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kModelFileName);
 	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
-	ChangeAnim(kAnimationNumIdle);
+	ChangeAnim(AnimNum::AnimationNumIdle);
 }
 
 Kuribo::~Kuribo()
@@ -137,7 +134,7 @@ void Kuribo::SetMatrix()
 	m_postUpVec = m_upVec;//上方向ベクトルを前のフレームの上方向ベクトルにする
 
 	MV1SetRotationMatrix(m_modelHandle, rotatemat);//回転行列を反映
-	MV1SetRotationZYAxis(m_modelHandle, (m_attackDir * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
+	MV1SetRotationZYAxis(m_modelHandle, (m_frontVec * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
 	MV1SetPosition(m_modelHandle, (m_rigid->GetPos()-m_upVec*kRadius).VGet());
 	auto modelMat = MV1GetMatrix(m_modelHandle);
 }
@@ -163,21 +160,25 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	{
 		if (m_moveUpdate == &Kuribo::JumpUpdate)
 		{
-			ChangeAnim(kAnimationNumSleep);
-			m_moveUpdate = &Kuribo::DeathUpdate;
+			ChangeAnim(AnimNum::AnimationNumSleep);
+			m_moveUpdate = &Kuribo::StanUpdate;
 		}
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		if (targetTag == ColideTag::Foot)
+		if (m_moveUpdate == &Kuribo::StanUpdate)
+		{
+			m_moveUpdate = &Kuribo::DeathUpdate;
+		}
+		if (targetTag == ColideTag::Spin)
+		{
+			m_rigid->SetVelocity(m_attackDir * -kAwayStrength + m_upVec * kAwayStrength * 1.5f);
+			m_moveUpdate = &Kuribo::StanUpdate;
+		}
+		else if (targetTag == ColideTag::Foot)
 		{
 			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
 			m_moveUpdate = &Kuribo::DeathUpdate;
-		}
-		else if(targetTag == ColideTag::Spin)
-		{
-			m_rigid->SetVelocity(m_attackDir * -kAwayStrength + m_upVec * kAwayStrength * 1.5f);
-			m_moveUpdate = &Kuribo::JumpUpdate;
 		}
 		else
 		{
@@ -195,8 +196,7 @@ void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,
 		ToVec.Normalize();
 		if (GetVec2Angle(m_attackDir, ToVec) <= DX_PI_F /2)
 		{
-			m_attackDir = colider->GetRigidbody()->GetPos() - m_rigid->GetPos();
-			m_attackDir.Normalize();
+			
 			m_player = colider;
 
 			m_targetPoint = colider->GetRigidbody()->GetPos();
@@ -212,7 +212,7 @@ void Kuribo::SearchUpdate()
 	
 	m_searchCol->radius = kSearchRadius * 2;
 	m_comebackPoint = m_rigid->GetPos();
-	ChangeAnim(kAnimationNumWalk);
+	ChangeAnim(AnimNum::AnimationNumWalk);
 	m_moveUpdate = &Kuribo::ChaseUpdate;
 
 }
@@ -232,12 +232,14 @@ void Kuribo::ChaseUpdate()
 	//ターゲット位置が正反対の時動かなくなるバグ
 	m_attackDir = m_targetPoint - m_rigid->GetPos();
 	m_attackDir.Normalize();
+	m_sideVec = Cross(m_attackDir, m_upVec).GetNormalized();
+	m_attackDir = Cross(m_upVec, m_sideVec).GetNormalized();
 	m_frontVec = m_attackDir;
 	m_rigid->SetVelocity(m_attackDir * kChaseSpeed);
 	if (m_chaseFrameCount > kChaseMaxFrame)
 	{
 		m_chaseFrameCount = 0;
-		ChangeAnim(kAnimationNumWalk);
+		ChangeAnim(AnimNum::AnimationNumWalk);
 		m_moveUpdate = &Kuribo::ComebackUpdate;
 		m_player = nullptr;
 	}
@@ -251,7 +253,7 @@ void Kuribo::ComebackUpdate()
 	m_rigid->SetVelocity(vec*kChaseSpeed);
 	if ((m_comebackPoint - m_rigid->GetPos()).Length() <= 3)
 	{
-		ChangeAnim(kAnimationNumIdle);
+		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_moveUpdate = &Kuribo::SearchUpdate;
 	}
 	if (!m_player.get())
@@ -265,9 +267,28 @@ void Kuribo::ComebackUpdate()
 	m_moveUpdate = &Kuribo::ChaseUpdate;
 }
 
+void Kuribo::StanUpdate()
+{
+	m_stanCount++;
+	m_rigid->SetVelocity(Vec3::Zero());
+	if (m_stanCount > kStanCountMax)
+	{
+		m_stanCount = 0;
+		ChangeAnim(AnimNum::AnimationNumIdle);
+		m_moveUpdate = &Kuribo::SearchUpdate;
+	}
+}
+
 void Kuribo::DeathUpdate()
 {
+	m_deathCount++;
+	m_userData->dissolveY -= 0.01f;
 	m_rigid->SetVelocity(Vec3::Zero());
+	if (m_userData->dissolveY<0)
+	{
+		m_isDestroyFlag = true;
+	}
+	
 }
 
 bool Kuribo::UpdateAnim(int attachNo)
