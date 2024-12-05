@@ -102,11 +102,6 @@ void Takobo::Update()
 {
 	(this->*m_enemyUpdate)();
 
-	for (auto& sphere : m_sphere)
-	{
-		if (m_sphere.size() == 0)return;
-		sphere->Update();
-	}
 	UpdateAnim(m_currentAnimNo);
 	//変更前のアニメーション100%
 	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
@@ -149,11 +144,6 @@ void Takobo::Draw()
 
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_attackDir * 1000).VGet(), 0xff0000);
 	DrawSphere3D(m_strikePoint.VGet(), 6, 8, 0xff0000, 0x000000, true);
-	for (auto& sphere : m_sphere)
-	{
-		if (m_sphere.size() == 0)return;
-		sphere->Draw();
-	}
 }
 
 void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,ColideTag ownTag,ColideTag targetTag)
