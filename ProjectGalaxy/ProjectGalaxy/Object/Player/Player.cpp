@@ -139,7 +139,7 @@ m_modelDirAngle(0)
 	}
 
 
-	m_shotUpdate = &Player::ShotTheStar;
+	m_shotUpdate = &Player::ShotTheStickStar;
 
 	m_cameraEasingSpeed = 15.f;
 	
@@ -316,9 +316,9 @@ void Player::SetMatrix()
 	MV1SetRotationZYAxis(m_modelHandle, (m_moveDir * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
 
 	//当たり判定の更新
-	m_headCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius * 2 + kNeutralHeadRadius));
-	m_bodyCol->SetShiftPosNum(m_upVec * (kNeutralFootRadius * 2 + kNeutralBodyRadius));
-	m_footCol->SetShiftPosNum(m_upVec * kNeutralFootRadius);
+	m_headCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 2 + m_bodyCol->GetRadius() * 2 + m_headCol->GetRadius()));
+	m_bodyCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 2 + m_bodyCol->GetRadius()));
+	m_footCol->SetShiftPosNum(m_upVec * m_footCol->GetRadius());
 	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
 	m_lookPoint = m_rigid->GetPos();
 
@@ -444,7 +444,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 			//ノックバック
 			Vec3 enemyAttackDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
 			enemyAttackDir.Normalize();
-			m_rigid->SetVelocity(enemyAttackDir * 5);
+			m_rigid->SetVelocity(enemyAttackDir * 2);
 			m_playerUpdate = &Player::DamegeUpdate;
 		}
 	}
@@ -538,7 +538,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		else
 		{
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
-			colider->GetRigidbody()->SetVelocity((colider->GetRigidbody()->GetVelocity()) * -1);
+			colider->GetRigidbody()->AddVelocity((colider->GetRigidbody()->GetVelocity()) * -1);
 			StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
 			auto attackSphere = dynamic_pointer_cast<EnemySphere>(colider);
 			attackSphere->DeleteFlag();
@@ -677,7 +677,7 @@ void Player::NeutralUpdate()
 		//m_playerUpdate = &Player::AimingUpdate;
 	}
 	
-	m_rigid->SetVelocity(move);
+	m_rigid->AddVelocity(move);
 
 	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
 	{
@@ -722,7 +722,7 @@ void Player::WalkingUpdate()
 	{
 		//m_playerUpdate = &Player::AimingUpdate;
 	}
-	m_rigid->SetVelocity(ans);
+	m_rigid->AddVelocity(ans);
 
 	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
 	{
@@ -775,7 +775,7 @@ void Player::DashUpdate()
 		m_cameraEasingSpeed = 15.f;
 		m_playerUpdate = &Player::AimingUpdate;
 	}
-	m_rigid->SetVelocity(ans*kDashMag);
+	m_rigid->AddVelocity(ans*kDashMag);
 
 	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
 	{
@@ -798,7 +798,7 @@ void Player::JumpingUpdate()
 		/*if (m_spinCount >= 1)return;
 		m_isSpinFlag = true;
 		m_spinCount++;*/
-		m_rigid->SetVelocity(m_frontVec * kJumpPower);
+		m_rigid->AddVelocity(m_frontVec * kJumpPower);
 		m_playerUpdate = &Player::JumpActionUpdate;
 	}
 
@@ -842,7 +842,7 @@ void Player::DropAttackUpdate()
 		m_angle += (DX_PI_F * 2) / 16;
 		m_rigid->SetVelocity(Vec3::Zero());
 	}
-	if (m_footCol->NowOnHit() || m_footCol->PreOnHit())
+	if (m_footCol->OnHit())
 	{
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
@@ -878,7 +878,7 @@ void Player::AimingUpdate()
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 	
-	m_rigid->SetVelocity(move);
+	m_rigid->AddVelocity(move);
 	
 }
 
@@ -891,7 +891,7 @@ void Player::SpiningUpdate()
 
 	move = Move();
 
-	m_rigid->SetVelocity(move);
+	m_rigid->AddVelocity(move);
 
 	m_spinAngle += DX_PI_F / 15;
 
@@ -952,6 +952,7 @@ void Player::BoostUpdate()
 
 void Player::OperationUpdate()
 {
+	m_rigid->SetVelocity(m_velocity);
 	m_state = "NowControl";
 	m_moveDir = m_rigid->GetPos() - m_postPos;
 	m_moveDir.Normalize();

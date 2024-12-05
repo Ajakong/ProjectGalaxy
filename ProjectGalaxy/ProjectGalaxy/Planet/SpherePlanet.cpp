@@ -8,15 +8,18 @@ namespace
 	constexpr float  kGravityRange = 150;
 	constexpr float  kGravityPower = 0.098f;
 
+	
+
 	const char* name = "planet";
 	const char* atom = "atomosphere";
 
 }
 
-SpherePlanet::SpherePlanet(Vec3 pos,int color,float gravity,int modelHandle) :Planet(),
+SpherePlanet::SpherePlanet(Vec3 pos,int color,float gravity,int modelHandle,float coefficientOfFriction) :Planet(),
 m_enemyCount(3),
 m_modelHandle(modelHandle)
 {
+	m_coefficientOfFriction = coefficientOfFriction;
 	m_color = color;
 	m_rigid->SetPos(pos);
 	gravityPower = gravity;
@@ -67,7 +70,7 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	Vec3 objVelocity = obj->PlanetOnlyGetRigid()->GetVelocity();
 	
 	Vec3 ansVelocity;
-	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetPos();
+	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetNextPos();
 	Vec3 toObj = objPos-m_rigid->GetPos();
 	toObj = toObj.GetNormalized();
 	Vec3 GravityDir = toObj * -1;
@@ -87,9 +90,16 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 		return GravityDir * kGravityPower*0.5f + objVelocity;
 	}
 
+	
 	//重力のみ
-	GravityDir = GravityDir * kGravityPower +objVelocity;
+	GravityDir = GravityDir * kGravityPower;
+
 	return GravityDir;
+}
+
+Vec3 SpherePlanet::FrictionEffect(std::shared_ptr<Collidable> obj)
+{
+	return obj->PlanetOnlyGetRigid()->GetVelocity()*(1.f-m_coefficientOfFriction);
 }
 
 Vec3 SpherePlanet::GetNormVec(Vec3 pos)

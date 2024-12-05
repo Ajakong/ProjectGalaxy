@@ -36,7 +36,7 @@ public:
 
 	Vec3 GetPos() const { return  m_rigid->GetPos(); }
 	Vec3 GetLeftHandPos() { return Vec3(MV1GetFramePosition(m_modelHandle, m_handFrameIndex)); }
-	void SetVelocity(Vec3 pos) { m_rigid->SetVelocity(pos); }
+	void SetVelocity(Vec3 pos) { m_velocity = pos; m_rigid->SetVelocity(pos); }
 	void AddVelocity(Vec3 pos) { m_rigid->AddVelocity(pos); }
 	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
 	float GetHp() { return m_hp; }
@@ -204,6 +204,7 @@ private:
 	Vec3 m_cameraPos;
 	Vec3 m_lookPoint;
 	Vec3 m_postPos;
+	Vec3 m_velocity;
 	//std::shared_ptr<Camera> m_camera;
 	Vec3 m_moveDir;
 	Vec3 m_postMoveDir;

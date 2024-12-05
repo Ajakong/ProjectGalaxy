@@ -92,7 +92,7 @@ void PlayerStickSphere::OnCollideEnter(std::shared_ptr<Collidable> colider, Coli
 
 void PlayerStickSphere::StraightUpdate()
 {
-	
+	m_rigid->SetVelocity(m_velocity*4);
 }
 
 void PlayerStickSphere::StickUpdate()

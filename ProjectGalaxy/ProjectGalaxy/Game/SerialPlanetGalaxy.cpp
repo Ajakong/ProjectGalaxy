@@ -337,7 +337,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawLine(200, 500, static_cast < int>(200 + player->GetPostMoveDir().x * 70), static_cast < int>( 500 + player->GetPostMoveDir().z * 70), 0x0000ff);
 	DrawCircle(static_cast < int>(200 + player->GetInputVec().x *((player->GetInputVec().Length()*70.f))), static_cast < int>(500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f))), 30, 0xffff00, 0);
 
-#endif
+
 	
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
 	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
@@ -356,6 +356,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*7, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25*8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
 	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
+
+#endif
 	SetDrawScreen(m_modelScreenHandle);
 
 	SetCameraNearFar(1.f, 10000.f);

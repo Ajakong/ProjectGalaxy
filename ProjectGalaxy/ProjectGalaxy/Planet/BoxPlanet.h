@@ -11,6 +11,7 @@ public:
 	void Draw();
 
 	virtual Vec3 GravityEffect(std::shared_ptr<Collidable> obj);
+	virtual Vec3 FrictionEffect(std::shared_ptr<Collidable> obj);
 	virtual Vec3 GetNormVec(Vec3 pos);
 	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 	virtual void OnTriggerExit(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);

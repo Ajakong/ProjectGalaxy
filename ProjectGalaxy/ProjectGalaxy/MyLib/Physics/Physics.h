@@ -90,6 +90,7 @@ namespace MyEngine
 		void CheckCollide();
 
 		CollideHitInfo IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::CollideInfo> & colliderA, const std::shared_ptr<Collidable::CollideInfo>& colliderB) const;
+		CollideHitInfo IsCollideNow(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::CollideInfo>& colliderA, const std::shared_ptr<Collidable::CollideInfo>& colliderB) const;
 		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<Collidable::CollideInfo>& primaryCollider, const std::shared_ptr<Collidable::CollideInfo>& secondaryCollider, const CollideHitInfo info);
 		/// <summary>
 		/// 判定通知リストに追加する

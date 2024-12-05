@@ -206,7 +206,6 @@ void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,
 
 void Kuribo::SearchUpdate()
 {
-	m_rigid->SetVelocity(Vec3(0, 0, 0));
 	if (!m_player.get())return;
 	m_rigid->SetVelocity(m_upVec);
 	
@@ -250,7 +249,7 @@ void Kuribo::ComebackUpdate()
 	Vec3 vec = m_comebackPoint - m_rigid->GetPos();
 	vec.Normalize();
 	m_frontVec = vec;
-	m_rigid->SetVelocity(vec*kChaseSpeed);
+	m_rigid->AddVelocity(vec*kChaseSpeed);
 	if ((m_comebackPoint - m_rigid->GetPos()).Length() <= 3)
 	{
 		ChangeAnim(AnimNum::AnimationNumIdle);
@@ -261,7 +260,7 @@ void Kuribo::ComebackUpdate()
 		m_attackDir = vec;
 		return;
 	}
-	m_rigid->SetVelocity(m_upVec );
+	m_rigid->AddVelocity(m_upVec );
 	m_searchCol->radius = kSearchRadius;
 	m_comebackPoint = m_rigid->GetPos();
 	m_moveUpdate = &Kuribo::ChaseUpdate;
@@ -270,7 +269,7 @@ void Kuribo::ComebackUpdate()
 void Kuribo::StanUpdate()
 {
 	m_stanCount++;
-	m_rigid->SetVelocity(Vec3::Zero());
+
 	if (m_stanCount > kStanCountMax)
 	{
 		m_stanCount = 0;
@@ -283,7 +282,6 @@ void Kuribo::DeathUpdate()
 {
 	m_deathCount++;
 	m_userData->dissolveY -= 0.01f;
-	m_rigid->SetVelocity(Vec3::Zero());
 	if (m_userData->dissolveY<0)
 	{
 		m_isDestroyFlag = true;
