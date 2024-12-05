@@ -1,4 +1,4 @@
-#include <DxLib.h>
+Ôªø#include <DxLib.h>
 #include <cassert>
 #include "Application.h"
 #include "SceneManager.h"
@@ -30,7 +30,7 @@ GamePlayingScene::GamePlayingScene(SceneManager& manager) :
 	m_drawFunc = &GamePlayingScene::FadeDraw;
 	m_gameManager->Init();
 
-	SetUseASyncLoadFlag(true);
+	//SetUseASyncLoadFlag(true);
 }
 
 GamePlayingScene::~GamePlayingScene()
@@ -50,12 +50,12 @@ void GamePlayingScene::Update()
 	if (m_isGameOver)
 	{
 		auto gameover = std::make_shared<GameOverScene>(m_manager);
-		PushScene(gameover);
+		ChangeScene(gameover);
 	}
 	else if (m_isClear)
 	{
 
-		PushScene(std::make_shared<ClearScene>(m_manager));
+		ChangeScene(std::make_shared<ClearScene>(m_manager));
 	}
 	Pad::Update();
 }
@@ -92,7 +92,7 @@ void GamePlayingScene::NormalUpdate()
 
 	m_isGameOver = m_gameManager->GetGameOver();
 	m_isClear = m_gameManager->GetClear();
-	if (Pad::IsPress(PAD_INPUT_R))//XBOXÉRÉìÉgÉçÅ[ÉâÅ[ÇÃSTART
+	if (Pad::IsPress(PAD_INPUT_R))//XBOX„Ç≥„É≥„Éà„É≠„Éº„É©„Éº„ÅÆSTART
 	{
 		m_manager.PushScene(std::make_shared<PauseScene>(m_manager));
 	}

@@ -66,7 +66,7 @@ void PlayerSphere::Effect()
 
 void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
-	m_isDeleteFlag = true;	
+	m_isDestroyFlag = true;	
 }
 
 void PlayerSphere::StraightUpdate()
@@ -77,6 +77,6 @@ void PlayerSphere::StraightUpdate()
 	
 	if (m_lifeTime > kLifeTimeMax)
 	{
-		m_isDeleteFlag = true;
+		m_isDestroyFlag = true;
 	}
 }

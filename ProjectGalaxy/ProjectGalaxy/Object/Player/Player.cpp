@@ -540,8 +540,6 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			colider->GetRigidbody()->AddVelocity((colider->GetRigidbody()->GetVelocity()) * -1);
 			StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
-			auto attackSphere = dynamic_pointer_cast<EnemySphere>(colider);
-			attackSphere->DeleteFlag();
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
 			m_hp -= 10;
@@ -1081,7 +1079,7 @@ void Player::DeleteManage()
 {
 	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
 		{
-			bool isOut = sphere->IsDelete() == true;
+			bool isOut = sphere->IsDestroy() == true;
 	if (isOut == true)
 	{
 		sphere->OnDestroy();

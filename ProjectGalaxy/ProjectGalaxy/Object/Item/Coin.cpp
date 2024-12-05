@@ -17,6 +17,28 @@ void Coin::Init()
 	m_col->isTrigger = true;
 }
 
+void Coin::Draw()
+{
+	Vec3 zero = { 0,0,0 };
+	m_rigid->SetVelocity(Vec3(0, 0, 0));
+	Vec3 offSetVec = GetCameraRightVector();
+	offSetVec -= GetCameraUpVector();
+	offSetVec *= 0.9f;
+	Quaternion myQ;
+	angle += 0.05f;
+
+	Vec3 front = GetCameraFrontVector();
+	for (int i = 0; i < 3; i++)
+	{
+		myQ.SetQuaternion(offSetVec);
+		myQ.SetMove(DX_PI_F * 2 / 3 * i + angle, front);
+		Vec3 offSet = myQ.Move(offSetVec, zero);
+		DrawSphere3D((m_rigid->GetPos() + offSet).VGet(), 1.0, 8, 0x0000aa, 0x000000, false);
+	}
+
+	DrawSphere3D(m_rigid->GetPos().VGet(), m_col->radius, 8, 0xffff00, 0xffffff, false);
+}
+
 void Coin::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)

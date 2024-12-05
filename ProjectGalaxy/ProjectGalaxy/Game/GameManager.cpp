@@ -31,12 +31,17 @@ void GameManager::Update()
 	galaxy.back()->Update();
 	if (galaxy.back()->GetClear())
 	{
+		m_isClearFlag = true;
 		galaxy.pop_back();
 		//galaxy.push_back();/*ここでステージ選択のフィールドを入れなおす*/
 	}
 	if (galaxy.size() == 0)
 	{
 		m_isClearFlag = true;
+	}
+	if (galaxy.back()->GetGameOver())
+	{
+		m_isGameOverFlag = true;
 	}
 }
 

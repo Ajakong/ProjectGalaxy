@@ -2,6 +2,8 @@
 #include "Enemy.h"
 #include"ColliderSphere.h"
 
+class Item;
+
 using namespace MyEngine;
 class Kuribo : public Enemy
 {
@@ -80,6 +82,7 @@ private:
 	std::shared_ptr<Collidable> m_player;
 	std::shared_ptr<ColliderSphere> m_bodyCol;
 	std::shared_ptr<ColliderSphere> m_searchCol;
+	std::shared_ptr<Item>m_dropItem;
 
 
 	int m_chaseFrameCount;

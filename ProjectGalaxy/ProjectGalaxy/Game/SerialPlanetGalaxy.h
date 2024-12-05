@@ -108,7 +108,7 @@ private:
 
 	//ボスが出現したか
 	bool m_isBossWatch = false;
-	
+
 	//ハンドル集
 	int m_skyDomeH;
 	int m_warpEffectHandle;

@@ -14,7 +14,7 @@ using namespace MyEngine;
 namespace
 {
 	// 判定最大回数
-	constexpr int CHECK_COUNT_MAX = 500;
+	constexpr int CHECK_COUNT_MAX = 100;
 
 
 	constexpr float CHECK_COLLIDE_LENDGHT = 100.0f;
@@ -62,6 +62,7 @@ void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 	{
 		assert(false);
 	}
+	collidable->Init();
 }
 
 void Physics::Exit(const std::shared_ptr<Collidable>& collidable)

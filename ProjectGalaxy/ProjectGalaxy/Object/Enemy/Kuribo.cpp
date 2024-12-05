@@ -1,5 +1,7 @@
 ﻿#include "Kuribo.h"
 #include"ModelManager.h"
+#include"Physics.h"
+#include"Coin.h"
 
 using namespace MyEngine;
 
@@ -168,6 +170,7 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	{
 		if (m_moveUpdate == &Kuribo::StanUpdate)
 		{
+			ChangeAnim(AnimNum::AnimationNumRoar);
 			m_moveUpdate = &Kuribo::DeathUpdate;
 		}
 		if (targetTag == ColideTag::Spin)
@@ -178,6 +181,7 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		else if (targetTag == ColideTag::Foot)
 		{
 			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
+			ChangeAnim(AnimNum::AnimationNumRoar);
 			m_moveUpdate = &Kuribo::DeathUpdate;
 		}
 		else
@@ -282,8 +286,17 @@ void Kuribo::DeathUpdate()
 {
 	m_deathCount++;
 	m_userData->dissolveY -= 0.01f;
+	float animFrame = MV1GetAttachAnimTime(m_modelHandle,m_currentAnimNo);
 	if (m_userData->dissolveY<0)
 	{
+		m_dropItem = std::make_shared<Coin>(m_rigid->GetPos(), true);
+		Physics::GetInstance().Entry(m_dropItem);
+		m_isDestroyFlag = true;
+	}
+	if (animFrame > 60)
+	{
+		m_dropItem = std::make_shared<Coin>(m_rigid->GetPos(),true);
+		Physics::GetInstance().Entry(m_dropItem);
 		m_isDestroyFlag = true;
 	}
 	

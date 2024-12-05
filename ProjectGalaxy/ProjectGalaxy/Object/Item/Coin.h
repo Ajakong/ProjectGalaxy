@@ -13,6 +13,7 @@ public:
     virtual ~Coin();
 
     void Init();
+    void Draw();
 
     virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 
