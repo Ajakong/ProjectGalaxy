@@ -93,6 +93,7 @@ public:
 	/// 弾の種類によって中身を入れ替える
 	/// </summary>
 	playerState_t m_shotUpdate;
+	playerState_t m_jumpActionUpdate;
 
 	void CommandJump();
 	void BoostUpdate();
@@ -126,6 +127,7 @@ private:
 	void SpiningUpdate();
 	void JumpingSpinUpdate();
 	void JumpingUpdate();
+	void JumpActionUpdate();
 	void JumpBoostUpdate();
 	void DropAttackUpdate();
 	void AimingUpdate();

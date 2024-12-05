@@ -152,6 +152,8 @@ m_modelDirAngle(0)
 	m_initMat = MV1GetLocalWorldMatrix(m_modelHandle);
 
 	m_handFrameIndex= MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
+
+	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
 }
 
 Player::~Player()
@@ -797,7 +799,7 @@ void Player::JumpingUpdate()
 		m_isSpinFlag = true;
 		m_spinCount++;*/
 		m_rigid->SetVelocity(m_frontVec * kJumpPower);
-		m_playerUpdate = &Player::JumpingSpinUpdate;
+		m_playerUpdate = &Player::JumpActionUpdate;
 	}
 
 
@@ -806,6 +808,11 @@ void Player::JumpingUpdate()
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
+}
+
+void Player::JumpActionUpdate()
+{
+	(this->*m_jumpActionUpdate)();
 }
 
 void Player::JumpBoostUpdate()
