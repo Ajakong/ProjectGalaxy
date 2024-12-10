@@ -303,9 +303,6 @@
     <ClCompile Include="Game\DebugGalaxy.cpp">
       <Filter>ソース ファイル\Galaxy\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Enemy\Kuribo.cpp">
-      <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Gimmick\Invisible.cpp">
       <Filter>ソース ファイル\Object\Gimmick</Filter>
     </ClCompile>
@@ -344,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="Object\Enemy\SamuraiAlter.cpp">
       <Filter>ソース ファイル\Object\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\Kuribo.cpp">
+      <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

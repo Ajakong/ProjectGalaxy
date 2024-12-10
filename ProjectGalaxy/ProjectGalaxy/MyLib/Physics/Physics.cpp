@@ -174,10 +174,6 @@ void MyEngine::Physics::Gravity()
 					auto& colA = stageCol;
 					auto& colB = col;
 
-					if (item->GetTag() == ObjectTag::Player && colB->tag == ColideTag::Body)
-					{
-						int a = 0;
-					}
 					// 判定
 					auto collideHitInfo = IsCollide(stage->m_rigid, item->m_rigid, colA, colB);
 					// 当たっていなければ次の判定に
@@ -202,10 +198,6 @@ void MyEngine::Physics::Gravity()
 					}
 					else
 					{
-						if (item->GetTag() == ObjectTag::Player)
-						{
-							int a = 0;
-						}
 						//摩擦力は触れている面積が多いほど強くなるため、そのオブジェクトの当たり判定が多く当たっているほどさらに上乗せする
 						colB->col->SetOnHitResult(true);
 						
@@ -242,6 +234,7 @@ void MyEngine::Physics::MoveNextPos() const
 		auto pos = rigid->GetPos();
 		auto nextPos = pos + rigid->GetVelocity();
 
+		//次フレームの位置を設定
 		rigid->SetNextPos(nextPos);
 
 #ifdef _DEBUG
@@ -282,7 +275,7 @@ std::vector<std::shared_ptr<Collidable>> Physics::GetCollisionList() const
 			auto& obj2 = m_collidables[j];
 			obj1->gravityEffectCount = 0;
 			obj2->gravityEffectCount = 0;
-						// 移動しないオブジェクト同士なら判定しない
+			// 移動しないオブジェクト同士なら判定しない
 			if (obj1->GetPriority() == Collidable::Priority::Static && obj2->GetPriority() == Collidable::Priority::Static) continue;
 
 			// 一定範囲内にいないなら判定しない

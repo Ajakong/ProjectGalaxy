@@ -138,13 +138,14 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
 
-	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
+	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 30),0));
+
 	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -40),player));
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -0),player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -45), player));
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -50), player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -35), player));
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, 50), player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -10), player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
@@ -371,7 +372,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*7, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25*8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
 	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
-
+	DrawFormatString(0, 25 * 10, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
+	DrawFormatString(0, 25 * 11, 0xffffff, "KuriboVelocity(%f,%f,%f)", m_kuribo.back()->GetRigidbody()->GetVelocity());
 #endif
 	SetDrawScreen(m_modelScreenHandle);
 

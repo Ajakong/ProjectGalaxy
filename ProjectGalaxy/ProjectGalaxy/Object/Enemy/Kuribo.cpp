@@ -9,7 +9,7 @@ namespace
 {
 	constexpr float kRadius = 5.f;
 	constexpr float kSearchRadius = 20.f;
-	constexpr float kChaseSpeed = 0.1f;
+	constexpr float kChaseSpeed = 0.6f;
 
 	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
 
@@ -59,7 +59,7 @@ m_deathCount(0)
 	
 #ifdef _DEBUG
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::one);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		item->radius = kSearchRadius;
 		item->isTrigger = true;

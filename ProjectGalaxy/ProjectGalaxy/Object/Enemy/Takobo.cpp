@@ -125,7 +125,7 @@ void Takobo::DeleteManage()
 {
 	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
 		{
-			bool isOut = sphere->IsDelete() == true;
+			bool isOut = sphere->IsDestroy() == true;
 	if (isOut == true)
 	{
 		m_sphereNum--;
@@ -138,7 +138,6 @@ void Takobo::DeleteManage()
 
 void Takobo::Draw()
 {
-
 	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(m_modelHandle);
 
@@ -160,7 +159,7 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,Colide
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
 	{
 		auto attack= dynamic_pointer_cast<EnemySphere>(colider);
-		attack->DeleteFlag();
+
 		if (attack->GetCounterFlag())
 		{
 			m_hp -= 60;
@@ -243,14 +242,7 @@ void Takobo::ChangeAnim(int animIndex, int speed)
 
 void Takobo::IdleUpdate()
 {
-	m_vec.x = 1;
-	if (abs(m_rigid->GetPos().x - m_moveShaftPos.x) > 5)
-	{
-		m_vec.x *= -1;
-	}
-
-	m_rigid->SetVelocity(Vec3(0, 0, 0));
-
+	//攻撃インターバルの更新
 	m_attackCoolDownCount++;
 
 	if (m_attackCoolDownCount > kAttackCoolDownTime)
@@ -261,12 +253,15 @@ void Takobo::IdleUpdate()
 		case 0:
 		{
 			
+			//プレイヤーが視界に入っているか
 			
 			//float a = acos(Dot(norm, toTarget.GetNormalized())) * 180 / DX_PI_F;
 
-			//if (a < 120)
+			//if (a < 120)//視界に入っていたら
 			{
+				//インターバルを初期化して
 				m_attackCoolDownCount = 0;
+				//攻撃
 				m_attackDir = GetAttackDir();//オブジェクトに向かうベクトルを正規化したもの
 				ChangeAnim(Shot);
 				m_enemyUpdate = &Takobo::AttackSphereUpdate;
@@ -286,17 +281,19 @@ void Takobo::AttackSphereUpdate()
 	
 	m_rigid->SetVelocity(VGet(0, 0, 0));
 
-	if (now > 35)
+	if (now > 35)//モーションが発射モーションになった時
 	{
-		if (m_createFrameCount == 0)
+		if (m_createFrameCount == 0)//一度も弾を生成してなければ
 		{
+			//音の更新
 			Set3DPositionSoundMem(m_rigid->GetPos().VGet(), m_shotSEHandle);
 			PlaySoundMem(m_shotSEHandle, DX_PLAYTYPE_BACK);
-
+			
 			Vec3 headPos = MV1GetFramePosition(m_modelHandle, m_modelHeadIndex);
 			//着弾地点の設定
 			m_strikePoint = m_target->GetRigidbody()->GetPos();
 			Vec3 toVec = ToVec(m_rigid->GetPos(), m_strikePoint);
+			//攻撃方向の確定
 			m_attackDir = toVec.GetNormalized();
 			m_shotUpVec = m_target->GetUpVec();
 			m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), headPos, (m_attackDir*(toVec.Length()/ kTimeToStrike) + m_shotUpVec * 3), m_target->GetRigidbody()->GetPos(), 1, 0xff0000, kTimeToStrike));

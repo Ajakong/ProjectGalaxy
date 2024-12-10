@@ -44,7 +44,6 @@ void EnemySphere::Init()
 void EnemySphere::Update()
 {
 	(this->*m_moveUpdate)();
-	DeleteJudge();
 }
 
 void EnemySphere::Draw()
@@ -81,8 +80,4 @@ void EnemySphere::ChaseUpdate()
 	m_velocity += m_enemy->GetShotUpVec() *-1*(mag);
 	
 	m_rigid->SetVelocity(m_velocity);
-}
-
-void EnemySphere::DeleteJudge()
-{
 }

@@ -437,7 +437,8 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		{
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
 		}
-		else
+		
+		if(ownTag==ColideTag::Body)
 		{
 			//HPを減らす
 
@@ -446,6 +447,10 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 			enemyAttackDir.Normalize();
 			m_rigid->SetVelocity(enemyAttackDir * 2);
 			m_playerUpdate = &Player::DamegeUpdate;
+		}
+		else if (ownTag == ColideTag::Foot)
+		{
+			CommandJump();
 		}
 	}
 	if (colider->GetTag() == ObjectTag::Takobo)

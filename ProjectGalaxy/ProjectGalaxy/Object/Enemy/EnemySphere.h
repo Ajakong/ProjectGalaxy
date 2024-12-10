@@ -54,7 +54,7 @@ protected:
 	std::shared_ptr<Enemy>m_enemy;
 	
 private:
-	void DeleteJudge();
+
 
 private:
 
