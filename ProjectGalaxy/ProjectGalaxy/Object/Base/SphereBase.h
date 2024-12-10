@@ -3,8 +3,7 @@
 class SphereBase : public MyEngine::Collidable
 {
 public:
-	virtual bool IsDelete() { return m_isDeleteFlag; }
-	void DeleteFlag() { m_isDeleteFlag = true; }
+
 	bool GetCounterFlag() { return m_counterFlag; }
 
 	void SetCounterFlag() { m_counterFlag = true; }
@@ -25,7 +24,6 @@ protected:
 protected:
 	int m_color = 0;
 
-	bool m_isDeleteFlag = 0;
 	bool m_counterFlag;
 
 	float m_radius = 0;

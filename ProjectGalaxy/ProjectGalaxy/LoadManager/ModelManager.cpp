@@ -34,8 +34,9 @@ int ModelManager::GetModelData(const char* modelname)
 		return m.handle;
 	}
 	else {
+		
 		m_pathAndModelInfoes[modelname].used = true;
-		return m_pathAndModelInfoes[modelname].handle;
+		return MV1DuplicateModel(m_pathAndModelInfoes[modelname].handle);
 	}
 }
 

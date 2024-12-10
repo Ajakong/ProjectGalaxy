@@ -44,7 +44,6 @@ void EnemySphere::Init()
 void EnemySphere::Update()
 {
 	(this->*m_moveUpdate)();
-	DeleteJudge();
 }
 
 void EnemySphere::Draw()
@@ -59,7 +58,7 @@ void EnemySphere::Hit()
 
 void EnemySphere::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
-	m_isDeleteFlag = true;
+	m_isDestroyFlag = true;
 }
 
 void EnemySphere::StraightUpdate()
@@ -71,18 +70,14 @@ void EnemySphere::ChaseUpdate()
 {
 	Vec3 correctionVec = (m_targetPos - m_rigid->GetPos());
 
-	float mag = 3.f/m_impactTime;
-	printf("%f", mag);
+	float mag = 7.f/m_impactTime;
+	printf("EnemySphere:Verocity(%f,%f,%f)\n", m_velocity.x, m_velocity.y, m_velocity.z);
 	if (correctionVec.Length() <= 0.5f)
 	{
 		m_moveUpdate = &EnemySphere::StraightUpdate;
 	}
 
 	m_velocity += m_enemy->GetShotUpVec() *-1*(mag);
-
+	
 	m_rigid->SetVelocity(m_velocity);
-}
-
-void EnemySphere::DeleteJudge()
-{
 }

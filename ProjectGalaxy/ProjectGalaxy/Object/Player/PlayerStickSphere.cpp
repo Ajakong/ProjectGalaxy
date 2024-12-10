@@ -66,7 +66,7 @@ void PlayerStickSphere::Effect()
 	if (m_player->GetOperationFlag())
 	{
 		m_player->SetIsOperation(false);
-		m_isDeleteFlag = true;
+		m_isDestroyFlag = true;
 	}
 	if (m_stickFlag)
 	{
@@ -92,7 +92,7 @@ void PlayerStickSphere::OnCollideEnter(std::shared_ptr<Collidable> colider, Coli
 
 void PlayerStickSphere::StraightUpdate()
 {
-	
+	m_rigid->SetVelocity(m_velocity*4);
 }
 
 void PlayerStickSphere::StickUpdate()
@@ -110,6 +110,6 @@ void PlayerStickSphere::ComeBackUpdate()
 	m_rigid->SetVelocity((m_startPos - m_rigid->GetPos()).GetNormalized() * 3);
 	if ((m_rigid->GetPos() - m_startPos).Length() <= 1.2f)
 	{
-		m_isDeleteFlag = true;
+		m_isDestroyFlag = true;
 	}
 }

@@ -39,7 +39,7 @@ public:
 	}
 
 	bool Init();
-	void Run(HWND windowHandle);
+	void Run();
 
 	float GetGravity() const;
 

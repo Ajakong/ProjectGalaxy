@@ -10,6 +10,7 @@ public:
 	virtual ~SpaceEmperor();
 
 	void ShaderInit();
+	
 	void Init();
 	void Update();
 	void SetMatrix();
@@ -46,6 +47,7 @@ private:
 	int m_currentAnimNo;//現在のアニメーション
 	int m_prevAnimNo;//変更前のアニメーション
 	float m_animBlendRate;//アニメーションの合成割合
+
 
 	int m_neckFrameIndex;//モデルの首のフレームのインデックス
 	int m_vsH;//バーテックスシェーダーハンドル

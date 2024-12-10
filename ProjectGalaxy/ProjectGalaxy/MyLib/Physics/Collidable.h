@@ -88,6 +88,7 @@ namespace MyEngine
 		Collidable(std::shared_ptr<Collidable> col);
 		virtual ~Collidable();
 
+		virtual void Init()=0;
 		virtual void Update() = 0;
 		virtual void Draw()=0;
 

@@ -18,9 +18,9 @@ public:
 	virtual void Draw() = 0;
 	virtual void Update()=0;
 	virtual Vec3 GetShotUpVec() { return m_upVec; }
-	//virtual int GetHP() { return m_hp; }
+	virtual int GetHP() { return m_hp; }
 protected:
-	//int m_hp;
+	int m_hp;
 	int m_modelHandle;
 	Quaternion m_myQ;
 };

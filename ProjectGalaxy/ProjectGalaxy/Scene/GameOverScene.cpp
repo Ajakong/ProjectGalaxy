@@ -1,4 +1,4 @@
-#include"GameOverScene.h"
+﻿#include"GameOverScene.h"
 #include"Vec3.h"
 #include"Pad.h"
 
@@ -6,7 +6,8 @@ GameOverScene::GameOverScene(SceneManager& mgr) :
 	Scene(mgr)
 {
 	Vec3 centerPos = Vec3(800, 450, 0);
-
+	m_updateFunc = &GameOverScene::FadeInUpdate;
+	m_drawFunc = &GameOverScene::FadeDraw;
 }
 
 GameOverScene::~GameOverScene()

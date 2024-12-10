@@ -14,7 +14,7 @@ using namespace MyEngine;
 namespace
 {
 	// 判定最大回数
-	constexpr int CHECK_COUNT_MAX = 500;
+	constexpr int CHECK_COUNT_MAX = 100;
 
 
 	constexpr float CHECK_COLLIDE_LENDGHT = 100.0f;
@@ -62,6 +62,7 @@ void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 	{
 		assert(false);
 	}
+	collidable->Init();
 }
 
 void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
@@ -100,8 +101,19 @@ void Physics::Update()
 	m_preTirrigerInfo = m_newTirrigerInfo;
 	m_newTirrigerInfo.clear();
 
+	
 	// 次の移動先を仮決定
 	MoveNextPos();
+	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(), m_collidables.rend()))//途中で要素を削除してもいいように逆順
+	{
+		for (auto& col : item->m_colliders)
+		{
+			col->col->SetOnHitResult(false);
+		}
+	}
+	Gravity();
+
+	
 	// 判定確認
 	CheckCollide();
 	// 通知リストを確認
@@ -122,7 +134,8 @@ void Physics::Update()
 		});
 	m_collidables.erase(result, m_collidables.end());
 
-	Gravity();
+	
+	
 }
 
 void MyEngine::Physics::Draw()
@@ -161,7 +174,6 @@ void MyEngine::Physics::Gravity()
 					auto& colA = stageCol;
 					auto& colB = col;
 
-					if (colB->tag != ColideTag::Body)continue;
 					// 判定
 					auto collideHitInfo = IsCollide(stage->m_rigid, item->m_rigid, colA, colB);
 					// 当たっていなければ次の判定に
@@ -176,18 +188,28 @@ void MyEngine::Physics::Gravity()
 					bool isTrigger = colA->col->isTrigger || colB->col->isTrigger || isThrough;
 					if (isTrigger)
 					{
-						if (item->GetTag() == ObjectTag::Player)
-						{
-							int a = 0;
-						}
+						//重力はオブジェクトごとに一回のみ
+						if (colB->tag != ColideTag::Body)continue;
 						auto planet = dynamic_cast<Planet*>(stage.get());
-						item->m_rigid->SetVelocity(planet->GravityEffect(item));
+						item->m_rigid->AddVelocity(planet->GravityEffect(item));
+						item->m_rigid->SetNextPos(item->m_rigid->GetPos() + item->m_rigid->GetVelocity());
 						item->gravityEffectCount++;
+						continue;
+					}
+					else
+					{
+						//摩擦力は触れている面積が多いほど強くなるため、そのオブジェクトの当たり判定が多く当たっているほどさらに上乗せする
+						colB->col->SetOnHitResult(true);
+						
+						auto planet = dynamic_cast<Planet*>(stage.get());
+						item->m_rigid->SetVelocity(planet->FrictionEffect(item));
+						
 						continue;
 					}
 				}
 
 			}
+			
 		}
 	}
 }
@@ -212,6 +234,7 @@ void MyEngine::Physics::MoveNextPos() const
 		auto pos = rigid->GetPos();
 		auto nextPos = pos + rigid->GetVelocity();
 
+		//次フレームの位置を設定
 		rigid->SetNextPos(nextPos);
 
 #ifdef _DEBUG
@@ -252,7 +275,7 @@ std::vector<std::shared_ptr<Collidable>> Physics::GetCollisionList() const
 			auto& obj2 = m_collidables[j];
 			obj1->gravityEffectCount = 0;
 			obj2->gravityEffectCount = 0;
-						// 移動しないオブジェクト同士なら判定しない
+			// 移動しないオブジェクト同士なら判定しない
 			if (obj1->GetPriority() == Collidable::Priority::Static && obj2->GetPriority() == Collidable::Priority::Static) continue;
 
 			// 一定範囲内にいないなら判定しない
@@ -299,15 +322,15 @@ void MyEngine::Physics::CheckCollide()
 				auto& colA = objA->m_colliders.at(i);
 				auto& colB = objB->m_colliders.at(j);
 
-				//2フレームの間なにもHITしていなかったとき、衝突していない
-				if (!colA->col->PreOnHit() && !colA->col->NowOnHit())
-				{
-					colA->col->SetOnHitResult(false);
-				}
-				if (!colB->col->PreOnHit() && !colB->col->NowOnHit())
-				{
-					colB->col->SetOnHitResult(false);
-				}
+				////2フレームの間なにもHITしていなかったとき、衝突していない
+				//if (!colA->col->PreOnHit() && !colA->col->NowOnHit())
+				//{
+				//	colA->col->SetOnHitResult(false);
+				//}
+				//if (!colB->col->PreOnHit() && !colB->col->NowOnHit())
+				//{
+				//	colB->col->SetOnHitResult(false);
+				//}
 
 				colA->col->SetPreOnHit(colA->col->NowOnHit());
 				colB->col->SetPreOnHit(colB->col->NowOnHit());
@@ -338,9 +361,9 @@ void MyEngine::Physics::CheckCollide()
 				//Triggerじゃなければ今当たってるフラグを立てる
 				
 				colA->col->SetNowOnHit(true);
-				colA->col->SetOnHitResult(true);
+				//colA->col->SetOnHitResult(true);
 				colB->col->SetNowOnHit(true);
-				colB->col->SetOnHitResult(true);
+				//colB->col->SetOnHitResult(true);
 
 				printf((ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "と" + ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "がHIT\n").c_str());
 				printf((ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "と" + ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "がHIT\n").c_str());
@@ -376,6 +399,11 @@ void MyEngine::Physics::CheckCollide()
 					}
 				}
 
+				if (objA->GetTag() == ObjectTag::Player||objB->GetTag()==ObjectTag::Player)
+				{
+					int a = 0;
+				}
+
 				// 次の座標を修正する
 				FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider, collideHitInfo);
 				//FixNextPos(secondary->m_rigid, primary->m_rigid, secondaryCollider, primaryCollider, collideHitInfo);
@@ -385,6 +413,69 @@ void MyEngine::Physics::CheckCollide()
 }
 
 MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::CollideInfo>& colliderA, const std::shared_ptr<Collidable::CollideInfo>& colliderB) const
+{
+
+	CollideHitInfo info;
+
+	auto kindA = colliderA->col->GetKind();
+	auto kindB = colliderB->col->GetKind();
+
+	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Sphere)
+	{
+		auto sphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
+		auto sphereB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
+
+		auto aToB = (rigidB->GetNextPos() + colliderB->col->GetShift()) - (rigidA->GetNextPos() + colliderA->col->GetShift());
+		float sumRadius = sphereA->radius + sphereB->radius;
+		info.isHit = (aToB.SqLength() <= sumRadius * sumRadius);
+	}
+	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Box)
+	{
+		auto SphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
+		auto BoxB = dynamic_pointer_cast<ColliderBox>(colliderB->col);
+
+		auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
+		auto boxPos = rigidB->GetPos() + colliderB->col->GetShift();
+
+		// ボックスの中心から円の中心までのベクトルを作成
+		auto boxToSphere = spherePos - boxPos;
+		auto radius = SphereA->radius;
+		// 球に近い場所を求める
+		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxB->size, BoxB->rotation);
+		// 最近接点と球の中心との長さで判定
+		auto nearToSphere = spherePos - nearPos;
+		if (nearToSphere.SqLength() < radius * radius)
+		{
+			info.isHit = true;
+			info.hitPos = nearPos;
+		}
+	}
+	if (kindA == ColliderBase::Kind::Box && kindB == ColliderBase::Kind::Sphere)
+	{
+		auto BoxA = dynamic_pointer_cast<ColliderBox>(colliderA->col);
+		auto SphareB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
+
+		auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
+		auto boxPos = rigidA->GetPos() + colliderA->col->GetShift();
+
+		// ボックスの中心から円の中心までのベクトルを作成
+		auto boxToSphere = spherePos - boxPos;
+		auto radius = SphareB->radius;
+		// 球に近い場所を求める
+		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxA->size, BoxA->rotation);
+		// 最近接点と球の中心との長さで判定
+		auto nearToSphere = spherePos - nearPos;
+		if (nearToSphere.SqLength() < radius * radius)
+		{
+			info.isHit = true;
+			info.hitPos = nearPos;
+		}
+	}
+	return info;
+}
+
+
+MyEngine::Physics::CollideHitInfo Physics::IsCollideNow(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::CollideInfo>& colliderA, const std::shared_ptr<Collidable::CollideInfo>& colliderB) const
 {
 
 	CollideHitInfo info;
@@ -453,8 +544,6 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 	auto primaryKind = primaryCollider->col->GetKind();
 	auto secondaryKind = secondaryCollider->col->GetKind();
 
-	
-
 	if (primaryKind == ColliderBase::Kind::Sphere)
 	{
 		if (secondaryKind == ColliderBase::Kind::Sphere)
@@ -466,33 +555,33 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			auto primaryToSecondary = (secondaryRigid->GetNextPos() + secondaryCollider->col->GetShift()) -
 				(primaryRigid->GetNextPos() + primaryCollider->col->GetShift());
 			// そのままだとちょうど当たる位置になるので少し余分に離す
-			float  awayDist = primarySphere->radius + secondarySphere->radius + 0.0001f;
+			float  awayDist = primarySphere->radius + secondarySphere->radius ;
 			// 長さを調整
 			primaryToSecondary = primaryToSecondary.GetNormalized() * awayDist;
 			// primaryからベクトル方向に押す
-			fixedPos = (primaryRigid->GetNextPos() + primaryCollider->col->GetShift()) + primaryToSecondary;
+			fixedPos = (primaryRigid->GetNextPos() - primaryCollider->col->GetShift()) + primaryToSecondary-secondaryCollider->col->GetShift();
 		}
 		if (secondaryKind == ColliderBase::Kind::Box)
 		{
-			auto dir = (primaryRigid->GetPos() + primaryCollider->col->GetShift()) - info.hitPos;
+			auto dir = (primaryRigid->GetNextPos() - primaryCollider->col->GetShift() - secondaryCollider->col->GetShift()) - info.hitPos;
 			dir.Normalize();
 			auto sphereCol = dynamic_pointer_cast<ColliderSphere>(primaryCollider->col);
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
-			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
+			fixedPos = info.hitPos + dir * (sphereCol->radius);
 		}
 	}
 	if (primaryKind == ColliderBase::Kind::Box)
 	{
 		if (secondaryKind == ColliderBase::Kind::Sphere)
 		{
-			auto dir = (secondaryRigid->GetPos() + secondaryCollider->col->GetShift()) - info.hitPos;
+			auto dir = (secondaryRigid->GetNextPos() + secondaryCollider->col->GetShift() - primaryCollider->col->GetShift()) - info.hitPos;
 			dir.Normalize();
 			auto sphereCol = dynamic_pointer_cast<ColliderSphere>(secondaryCollider->col);
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
 			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
 		}
 	}
-	secondaryRigid->SetVelocity(fixedPos - secondaryRigid->GetPos());
+	
 	secondaryRigid->SetNextPos(fixedPos);
 }
 

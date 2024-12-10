@@ -138,9 +138,16 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
 
-	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
+	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 30),0));
+
 	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -40),player));
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -0),player));
+	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -50), player));
+	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, 50), player));
+	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -10), player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	m_spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
 	m_spaceEmperor.back()->SetTarget(player);
@@ -186,19 +193,19 @@ void SerialPlanetGalaxy::Init()
 	// 深度値記録バッファ用RT
 	DxLib::SetCreateGraphChannelBitDepth(32);
 	DxLib::SetCreateDrawValidGraphChannelNum(1);
-	for (auto& item : m_planet)
-	{
-		item->Init();
-	}
-	
-	for (auto& item : m_booster)item->Init();
-	
-	for (auto& item : m_warpGate)item->Init();
-	for (auto& item : m_seekerLine) { item->Init(); }
-	for (auto& item : m_crystal) { item->Init(); }
-	//エネミー
-	for (auto& item : m_kuribo) { item->Init(); }
-	for (auto& item : m_coin)item->Init();
+	//for (auto& item : m_planet)
+	//{
+	//	item->Init();
+	//}
+	//
+	//for (auto& item : m_booster)item->Init();
+	//
+	//for (auto& item : m_warpGate)item->Init();
+	//for (auto& item : m_seekerLine) { item->Init(); }
+	//for (auto& item : m_crystal) { item->Init(); }
+	////エネミー
+	//for (auto& item : m_kuribo) { item->Init(); }
+	//for (auto& item : m_coin)item->Init();
 }
 
 void SerialPlanetGalaxy::Update()
@@ -286,6 +293,15 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		}
 	}
 
+	if (m_spaceEmperor.back()->GetHP() <= 0)
+	{
+		m_isClearFlag = true;
+	}
+	if (player->GetHp()<=0)
+	{
+		m_isGameOverFlag = true;
+	}
+
 	MyEngine::Physics::GetInstance().Update();
 	
 	player->SetMatrix();//行列を反映
@@ -337,7 +353,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawLine(200, 500, static_cast < int>(200 + player->GetPostMoveDir().x * 70), static_cast < int>( 500 + player->GetPostMoveDir().z * 70), 0x0000ff);
 	DrawCircle(static_cast < int>(200 + player->GetInputVec().x *((player->GetInputVec().Length()*70.f))), static_cast < int>(500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f))), 30, 0xffff00, 0);
 
-#endif
+
 	
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
 	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
@@ -356,6 +372,9 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*7, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25*8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
 	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
+	DrawFormatString(0, 25 * 10, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
+	DrawFormatString(0, 25 * 11, 0xffffff, "KuriboVelocity(%f,%f,%f)", m_kuribo.back()->GetRigidbody()->GetVelocity());
+#endif
 	SetDrawScreen(m_modelScreenHandle);
 
 	SetCameraNearFar(1.f, 10000.f);
@@ -363,19 +382,19 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	ClearDrawScreen();
 	player->Draw();
 	SetDrawScreen(DX_SCREEN_BACK);
-	
-	SetScreenFlipTargetWindow(NULL);
+	//
+	//SetScreenFlipTargetWindow(NULL);
 
-	m_camera->Set();
-	ScreenFlip();
+	//m_camera->Set();
+	//ScreenFlip();
 
-	// 少し時間の経過を待つ
-	WaitTimer(2);
+	//// 少し時間の経過を待つ
+	//WaitTimer(2);
 
-	ClearDrawScreen();
-	
-	DrawRotaGraph(800,450,1.0f,0, m_modelScreenHandle, true);
-	
+	//ClearDrawScreen();
+	//
+	//DrawRotaGraph(800,450,1.0f,0, m_modelScreenHandle, true);
+	//
 }
 
 void SerialPlanetGalaxy::BossBattleDraw()

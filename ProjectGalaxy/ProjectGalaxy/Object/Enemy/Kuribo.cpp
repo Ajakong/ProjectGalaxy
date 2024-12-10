@@ -1,5 +1,7 @@
 ﻿#include "Kuribo.h"
 #include"ModelManager.h"
+#include"Physics.h"
+#include"Coin.h"
 
 using namespace MyEngine;
 
@@ -7,7 +9,7 @@ namespace
 {
 	constexpr float kRadius = 5.f;
 	constexpr float kSearchRadius = 20.f;
-	constexpr float kChaseSpeed = 0.1f;
+	constexpr float kChaseSpeed = 0.6f;
 
 	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
 
@@ -57,7 +59,7 @@ m_deathCount(0)
 	
 #ifdef _DEBUG
 	{
-		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
+		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::one);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		item->radius = kSearchRadius;
 		item->isTrigger = true;
@@ -168,6 +170,7 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	{
 		if (m_moveUpdate == &Kuribo::StanUpdate)
 		{
+			ChangeAnim(AnimNum::AnimationNumRoar);
 			m_moveUpdate = &Kuribo::DeathUpdate;
 		}
 		if (targetTag == ColideTag::Spin)
@@ -178,6 +181,7 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		else if (targetTag == ColideTag::Foot)
 		{
 			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
+			ChangeAnim(AnimNum::AnimationNumRoar);
 			m_moveUpdate = &Kuribo::DeathUpdate;
 		}
 		else
@@ -206,7 +210,6 @@ void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,
 
 void Kuribo::SearchUpdate()
 {
-	m_rigid->SetVelocity(Vec3(0, 0, 0));
 	if (!m_player.get())return;
 	m_rigid->SetVelocity(m_upVec);
 	
@@ -250,7 +253,7 @@ void Kuribo::ComebackUpdate()
 	Vec3 vec = m_comebackPoint - m_rigid->GetPos();
 	vec.Normalize();
 	m_frontVec = vec;
-	m_rigid->SetVelocity(vec*kChaseSpeed);
+	m_rigid->AddVelocity(vec*kChaseSpeed);
 	if ((m_comebackPoint - m_rigid->GetPos()).Length() <= 3)
 	{
 		ChangeAnim(AnimNum::AnimationNumIdle);
@@ -261,7 +264,7 @@ void Kuribo::ComebackUpdate()
 		m_attackDir = vec;
 		return;
 	}
-	m_rigid->SetVelocity(m_upVec );
+	m_rigid->AddVelocity(m_upVec );
 	m_searchCol->radius = kSearchRadius;
 	m_comebackPoint = m_rigid->GetPos();
 	m_moveUpdate = &Kuribo::ChaseUpdate;
@@ -270,7 +273,7 @@ void Kuribo::ComebackUpdate()
 void Kuribo::StanUpdate()
 {
 	m_stanCount++;
-	m_rigid->SetVelocity(Vec3::Zero());
+
 	if (m_stanCount > kStanCountMax)
 	{
 		m_stanCount = 0;
@@ -283,9 +286,17 @@ void Kuribo::DeathUpdate()
 {
 	m_deathCount++;
 	m_userData->dissolveY -= 0.01f;
-	m_rigid->SetVelocity(Vec3::Zero());
+	float animFrame = MV1GetAttachAnimTime(m_modelHandle,m_currentAnimNo);
 	if (m_userData->dissolveY<0)
 	{
+		m_dropItem = std::make_shared<Coin>(m_rigid->GetPos(), true);
+		Physics::GetInstance().Entry(m_dropItem);
+		m_isDestroyFlag = true;
+	}
+	if (animFrame > 60)
+	{
+		m_dropItem = std::make_shared<Coin>(m_rigid->GetPos(),true);
+		Physics::GetInstance().Entry(m_dropItem);
 		m_isDestroyFlag = true;
 	}
 	

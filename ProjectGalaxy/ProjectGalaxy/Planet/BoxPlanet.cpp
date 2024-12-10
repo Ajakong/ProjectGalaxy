@@ -67,6 +67,11 @@ Vec3 BoxPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 	return ans;
 }
 
+Vec3 BoxPlanet::FrictionEffect(std::shared_ptr<Collidable> obj)
+{
+	return obj->PlanetOnlyGetRigid()->GetVelocity() * (1.f - m_coefficientOfFriction);
+}
+
 Vec3 BoxPlanet::GetNormVec(Vec3 pos)
 {
 	return norm;

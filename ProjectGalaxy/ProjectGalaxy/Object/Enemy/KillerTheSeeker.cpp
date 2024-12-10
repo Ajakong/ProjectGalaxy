@@ -110,7 +110,7 @@ void KillerTheSeeker::DeleteManage()
 {
 	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
 		{
-			bool isOut = sphere->IsDelete() == true;
+			bool isOut = sphere->IsDestroy() == true;
 	if (isOut == true)
 	{
 		m_sphereNum--;
@@ -146,7 +146,6 @@ void KillerTheSeeker::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideT
 		if (attack->GetCounterFlag())
 		{
 			PlaySoundMem(m_counterHitSEHandle, DX_PLAYTYPE_BACK);
-			attack->DeleteFlag();
 			m_hp -= 30;
 
 		}

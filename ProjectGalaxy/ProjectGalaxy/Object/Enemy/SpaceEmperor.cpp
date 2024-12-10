@@ -35,6 +35,7 @@ m_neckNowDir(Vec3(0,0,-1)),
 m_isFindTarget(false),
 m_armMoveDir(Vec3::Zero())
 {
+	m_hp = 200;
 	m_rigid->SetPos(pos);
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kSpaceEmperorFileName);
 	m_update = &SpaceEmperor::IntroUpdate;
@@ -148,6 +149,7 @@ void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag 
 {
 	if (m_update == &SpaceEmperor::HitUpdate)return;
 	
+
 	if (ownTag == ColideTag::Fist)
 	{
 		if (colider->GetTag() == ObjectTag::Player)
@@ -166,7 +168,7 @@ void SpaceEmperor::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag 
 			m_update = &SpaceEmperor::HitUpdate;
 		}
 	}
-	
+	m_hp -= 20;
 }
 
 void SpaceEmperor::DoNothingUpdate()

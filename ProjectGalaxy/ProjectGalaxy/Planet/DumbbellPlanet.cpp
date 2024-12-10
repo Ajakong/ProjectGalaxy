@@ -63,6 +63,11 @@ Vec3 DumbbellPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 	return m_gravityDir;
 }
 
+Vec3 DumbbellPlanet::FrictionEffect(std::shared_ptr<Collidable> obj)
+{
+	return obj->PlanetOnlyGetRigid()->GetVelocity() * (1.f - m_coefficientOfFriction);
+}
+
 Vec3 DumbbellPlanet::GetNormVec(Vec3 pos)
 {
 	return m_gravityDir;
