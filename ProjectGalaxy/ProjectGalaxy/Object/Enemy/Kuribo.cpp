@@ -9,7 +9,7 @@ namespace
 {
 	constexpr float kRadius = 5.f;
 	constexpr float kSearchRadius = 20.f;
-	constexpr float kChaseSpeed = 0.6f;
+	constexpr float kChaseSpeed = 0.5f;
 
 	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
 
@@ -46,8 +46,7 @@ float GetVec2Angle(Vec3 a, Vec3 b)
 Kuribo::Kuribo(Vec3 pos, int moveNum):Enemy(Priority::Low,ObjectTag::Kuribo),
 m_attackDir(0,0,1),
 m_chaseFrameCount(0),
-m_stanCount(0),
-m_deathCount(0)
+m_stanCount(0)
 {
 	m_comebackPoint = pos;
 	m_rigid->SetPos(pos);
@@ -71,6 +70,8 @@ m_deathCount(0)
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kModelFileName);
 	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
 	ChangeAnim(AnimNum::AnimationNumIdle);
+	m_frontVec = Vec3(1, 0, 0);
+	m_sideVec = Vec3(0, 0, 1);
 }
 
 Kuribo::~Kuribo()
@@ -282,9 +283,14 @@ void Kuribo::StanUpdate()
 	}
 }
 
+void Kuribo::CrushUpdate()
+{
+
+}
+
 void Kuribo::DeathUpdate()
 {
-	m_deathCount++;
+
 	m_userData->dissolveY -= 0.01f;
 	float animFrame = MV1GetAttachAnimTime(m_modelHandle,m_currentAnimNo);
 	if (m_userData->dissolveY<0)

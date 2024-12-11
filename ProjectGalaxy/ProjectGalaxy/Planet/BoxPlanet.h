@@ -3,7 +3,7 @@
 class BoxPlanet :  public Planet
 {
 public:
-	BoxPlanet(Vec3 pos, int color);
+	BoxPlanet(Vec3 pos, int color, float coefficientOfFriction);
 	virtual ~BoxPlanet();
 
 	void Init();

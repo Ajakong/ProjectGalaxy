@@ -3,8 +3,9 @@
 namespace
 {
 	const Vec3 kBoxPlanetSize = Vec3(30, 50, 50);
+	constexpr float  kGravityPower = 0.098f;
 }
-BoxPlanet::BoxPlanet(Vec3 pos, int color)
+BoxPlanet::BoxPlanet(Vec3 pos, int color, float coefficientOfFriction)
 {
 	m_color = color;
 	gravityPower = 0.3f;
@@ -33,6 +34,8 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color)
 	m_rigid->SetPos(pos);
 
 	m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 500.0f, 0.0f, 0.002f, 0.0f);
+
+	m_coefficientOfFriction = coefficientOfFriction;
 }
 
 BoxPlanet::~BoxPlanet()

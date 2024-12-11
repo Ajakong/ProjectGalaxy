@@ -55,8 +55,7 @@ m_armMoveDir(Vec3::Zero())
 
 	m_frontVec = Vec3::Front();
 	m_neckFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:Neck");
-	/*m_vsH = LoadVertexShader("SpaceEmperorVertexShader.vso");
-	ShaderInit();*/
+	
 }
 
 SpaceEmperor::~SpaceEmperor()
@@ -123,7 +122,7 @@ void SpaceEmperor::Update()
 }
 
 void SpaceEmperor::SetMatrix()
-{
+{	
 	MV1SetPosition(m_modelHandle,m_rigid->GetPos().VGet());
 }
 

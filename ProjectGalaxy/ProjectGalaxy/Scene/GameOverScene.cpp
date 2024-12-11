@@ -57,15 +57,15 @@ void GameOverScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 
 void GameOverScene::FadeDraw()
 {
-	
+	DrawFormatString(0, 0, 0xffdddd, "GameOver");
 }
 
 void GameOverScene::FadeOutDraw()
 {
-	
+	DrawFormatString(0, 0, 0xffdddd, "GameOver");
 }
 
 void GameOverScene::NormalDraw()
 {
-	
+	DrawFormatString(0, 0, 0xffdddd, "GameOver");
 }

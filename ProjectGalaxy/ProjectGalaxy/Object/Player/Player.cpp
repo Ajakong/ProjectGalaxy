@@ -446,7 +446,13 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 			Vec3 enemyAttackDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
 			enemyAttackDir.Normalize();
 			m_rigid->SetVelocity(enemyAttackDir * 2);
+			StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
+			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
+			m_hp -= 10;
+			m_isOnDamageFlag = true;
+			m_damageFrame = kDamageFrameMax;
+			ChangeAnim(AnimNum::AnimationNumHit);
 		}
 		else if (ownTag == ColideTag::Foot)
 		{

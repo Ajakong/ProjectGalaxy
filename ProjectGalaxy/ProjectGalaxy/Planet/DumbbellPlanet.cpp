@@ -40,6 +40,8 @@ m_modelHandle(modelHandle)
 	auto item4 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item4->radius = kGroundRadius;
 
+
+
 }
 
 DumbbellPlanet::~DumbbellPlanet()

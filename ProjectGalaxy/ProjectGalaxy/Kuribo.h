@@ -61,6 +61,10 @@ private:
 	/// </summary>
 	void StanUpdate();
 	/// <summary>
+	/// つぶれ状態時
+	/// </summary>
+	void CrushUpdate();
+	/// <summary>
 	/// 死亡時
 	/// </summary>
 	void DeathUpdate();
@@ -90,8 +94,7 @@ private:
 
 	float m_animationSpeed;
 	int m_stanCount;
-	int m_deathCount;
-
+	
 	//0.0f:prevが再生
 	//1.0:currentが再生
 	int m_currentAnimNo;//現在のアニメーション

@@ -74,7 +74,7 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 	m_ui = make_shared<UI>();
 	player = playerPointer;
 
-	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00));
+	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00,1.f));
 
 	//takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
 	samuraiAlter.push_back(make_shared<SamuraiAlter>(Vec3(0, 0, -30)));
@@ -208,26 +208,28 @@ void DebugGalaxy::Draw()
 	DrawFormatString(0, 25 * 7, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25 * 8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
 
-	SetDrawScreen(m_modelScreenHandle);
+	auto cameraPos = GetCameraPosition();
+
+	/*SetDrawScreen(m_modelScreenHandle);
 
 	SetCameraNearFar(1.f, 10000.f);
 	SetCameraPositionAndTarget_UpVecY((player->GetPos() + Vec3::Left() * -10 + Vec3::Front() * -10 + Vec3::Up() * 10).VGet(), (player->GetPos()).VGet());
 	ClearDrawScreen();
 	player->Draw();
-	SetDrawScreen(DX_SCREEN_BACK);
+	SetDrawScreen(DX_SCREEN_BACK);*/
 
 
 
-	SetScreenFlipTargetWindow(NULL);
+	//SetScreenFlipTargetWindow(NULL);
 
-	camera->Set();
-	ScreenFlip();
+	//camera->Set();
+	//ScreenFlip();
 
-	// 少し時間の経過を待つ
-	WaitTimer(2);
+	//// 少し時間の経過を待つ
+	//WaitTimer(2);
 
-	ClearDrawScreen();
+	//ClearDrawScreen();
 
-	DrawRotaGraph(800, 450, 1.0f, 0, m_modelScreenHandle, true);
+	//DrawRotaGraph(800, 450, 1.0f, 0, m_modelScreenHandle, true);
 
 }
