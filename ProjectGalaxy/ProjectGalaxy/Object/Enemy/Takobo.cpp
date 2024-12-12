@@ -33,6 +33,8 @@ namespace
 	/// </summary>
 	constexpr int kFootToCenter = 30;
 
+	constexpr float kFiringRange = 100;
+
 	/// <summary>
 	/// 攻撃クールタイム中の最低移動速度
 	/// </summary>
@@ -91,7 +93,11 @@ m_centerToEnemyAngle(0)
 
 Takobo::~Takobo()
 {
-
+	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
+		{
+			return true;
+		});
+	m_sphere.erase(result, m_sphere.end());
 }
 
 void Takobo::Init()
@@ -130,6 +136,7 @@ void Takobo::DeleteManage()
 	{
 		m_sphereNum--;
 		sphere->OnDestroy();
+		MyEngine::Physics::GetInstance().Exit(sphere);
 	}
 	return isOut;
 		});
@@ -141,9 +148,11 @@ void Takobo::Draw()
 	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(m_modelHandle);
 
+#ifdef _DEBUG
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_attackDir * 1000).VGet(), 0xff0000);
+
 	DrawSphere3D(m_strikePoint.VGet(), 6, 8, 0xff0000, 0x000000, true);
-	
+#endif
 }
 
 void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,ColideTag ownTag,ColideTag targetTag)
@@ -242,6 +251,7 @@ void Takobo::ChangeAnim(int animIndex, int speed)
 
 void Takobo::IdleUpdate()
 {
+	if (ToVec(m_rigid->GetPos(), m_target->GetRigidbody()->GetPos()).Length() > kFiringRange) return;
 	//攻撃インターバルの更新
 	m_attackCoolDownCount++;
 

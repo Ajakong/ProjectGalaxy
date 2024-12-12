@@ -69,6 +69,9 @@ private:
 	/// </summary>
 	void BossBattleDraw();
 
+	template <typename T>
+	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
+
 private:
 
 	struct UserData

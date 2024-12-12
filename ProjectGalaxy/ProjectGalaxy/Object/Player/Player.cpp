@@ -26,6 +26,8 @@ namespace
 	constexpr float kNeutralFootRadius = 1.f;//通常時の当たり半径
 	constexpr float kNeutralSpinRadius = 3.f;//通常時の当たり半径
 
+	constexpr int kPlayerHPMax = 50;
+
 	constexpr int kDamageFrameMax = 20;
 	//アニメーション番号
 	constexpr int kIdleAnimIndex = 1;
@@ -94,7 +96,7 @@ m_playerUpdate(&Player::NeutralUpdate),
 m_prevUpdate(&Player::NeutralUpdate),
 m_cameraUpdate(&Player::Planet1Update),
 m_anim_move(),
-m_hp(50),
+m_hp(kPlayerHPMax),
 m_radius(kNeutralRadius),
 m_damageFrame(0),
 m_regeneRange(0),
@@ -139,7 +141,7 @@ m_modelDirAngle(0)
 	}
 
 
-	m_shotUpdate = &Player::ShotTheStickStar;
+	m_shotUpdate = &Player::ShotTheStar;
 
 	m_cameraEasingSpeed = 15.f;
 	
@@ -405,11 +407,7 @@ void Player::SetCameraAngle(float cameraAngle)
 void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	printf("CollideEnter");
-	if (colider->GetTag() == ObjectTag::Coin)
-	{
-		printf("Coin\n");
-		m_hp += 10;
-	}
+	
 
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
@@ -578,6 +576,16 @@ void Player::OnCollideStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,
 void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	printf("TriggerEnter\n");
+
+	if (colider->GetTag() == ObjectTag::Coin)
+	{
+		printf("Coin\n");
+		m_hp += 10;
+		if (m_hp > kPlayerHPMax)
+		{
+			m_hp = kPlayerHPMax;
+		}
+	}
 }
 
 void Player::OnTriggerStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)

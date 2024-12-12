@@ -100,7 +100,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 #ifdef _DEBUG
 	//ギミック
 	//ブースター
-#else
+
 	m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
 	MyEngine::Physics::GetInstance().Entry(m_booster.back());
 	m_booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
@@ -115,7 +115,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	seekerLine1Points.push_back(Vec3(-20, 100, 0));
 	seekerLine1Points.push_back(Vec3(0, 30, 0));
 	seekerLine1Points.push_back(Vec3(100, 200, 0));
-	seekerLine1Points.push_back(Vec3(270, 330, 100));
+	seekerLine1Points.push_back(Vec3(50, 450, 100));
 	m_seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 
 	MyEngine::Physics::GetInstance().Entry(m_seekerLine.back());
@@ -138,8 +138,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
 
-	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 30),0));
-
+	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
+	m_kuribo.push_back(make_shared<Kuribo>(Vec3(-30, 0, -40), 0));
 	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
 	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -0),player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
@@ -301,14 +301,14 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	{
 		m_isGameOverFlag = true;
 	}
-
-	MyEngine::Physics::GetInstance().Update();
-	
 	player->SetMatrix();//行列を反映
 
 	for (auto& item : m_kuribo) { item->SetMatrix(); }
 	for (auto& item : m_takobo) { item->SetMatrix(); }
 	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
+	MyEngine::Physics::GetInstance().Update();
+	
+	DeleteObject(m_kuribo);
 
 }
 
@@ -399,4 +399,28 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 void SerialPlanetGalaxy::BossBattleDraw()
 {
+}
+
+template <typename T>
+void SerialPlanetGalaxy::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
+{
+	auto result = remove_if(objects.begin(), objects.end(), [this](const auto& object)
+		{
+			return object->IsDestroy(); // IsDestroy() が true の場合削除
+		});
+	for (auto it = result; it != objects.end(); ++it) {
+		auto collidable = std::static_pointer_cast<MyEngine::Collidable>(*it);
+
+		// デバッグ: collidable が Physics に登録されているか確認
+		auto& physics = MyEngine::Physics::GetInstance();
+		auto itInPhysics = std::find(physics.m_collidables.begin(), physics.m_collidables.end(), collidable);
+
+		if (itInPhysics == physics.m_collidables.end()) {
+			assert( true);
+		}
+		else {
+			physics.Exit(collidable);
+		}
+	}
+	objects.erase(result, objects.end());
 }

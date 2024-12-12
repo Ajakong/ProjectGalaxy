@@ -78,6 +78,8 @@ namespace MyEngine
 
 		void Clear();
 
+		std::vector<std::shared_ptr<Collidable>> m_collidables;
+
 	private:
 		void Gravity();
 
@@ -110,7 +112,7 @@ namespace MyEngine
 		void FixPos() const;
 
 	private:
-		std::vector<std::shared_ptr<Collidable>> m_collidables;
+		
 		std::vector<std::shared_ptr<Collidable>> m_stageCollidables;
 
 		std::list<OnCollideInfoData> m_onCollideInfo;

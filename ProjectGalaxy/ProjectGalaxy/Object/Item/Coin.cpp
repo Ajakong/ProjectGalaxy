@@ -39,7 +39,7 @@ void Coin::Draw()
 	DrawSphere3D(m_rigid->GetPos().VGet(), m_col->radius, 8, 0xffff00, 0xffffff, false);
 }
 
-void Coin::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
+void Coin::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{

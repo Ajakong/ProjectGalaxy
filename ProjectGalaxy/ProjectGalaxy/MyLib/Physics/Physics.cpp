@@ -126,15 +126,6 @@ void Physics::Update()
 	{
 		OnCollideInfo(item.own, item.send, item.ownTag,item.sendTag, item.hitPos, item.kind);
 	}
-
-	auto result = remove_if(m_collidables.begin(), m_collidables.end(), [this](const auto& collision)
-		{
-			bool isOut = collision->IsDestroy() == true||collision == nullptr;
-	return isOut;
-		});
-	m_collidables.erase(result, m_collidables.end());
-
-	
 	
 }
 

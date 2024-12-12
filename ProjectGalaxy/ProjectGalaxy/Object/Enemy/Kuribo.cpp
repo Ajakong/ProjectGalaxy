@@ -9,7 +9,7 @@ namespace
 {
 	constexpr float kRadius = 5.f;
 	constexpr float kSearchRadius = 20.f;
-	constexpr float kChaseSpeed = 0.5f;
+	constexpr float kChaseSpeed = 0.25f;
 
 	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
 
