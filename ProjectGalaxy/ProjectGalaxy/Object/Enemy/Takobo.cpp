@@ -2,6 +2,7 @@
 #include"ColliderSphere.h"
 #include"Physics.h"
 #include"Player.h"
+#include"Coin.h"
 #include"SoundManager.h"
 #include"ModelManager.h"
 
@@ -163,7 +164,14 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,Colide
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
+		if (targetTag == ColideTag::Foot)
+		{
+			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
+			
+			m_enemyUpdate = &Takobo::DeathUpdate;
+		}
 		m_hp -= 20;
+
 	}
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
 	{
@@ -283,6 +291,14 @@ void Takobo::IdleUpdate()
 			break;
 		}
 	}
+}
+
+void Takobo::DeathUpdate()
+{
+	m_dropItem = std::make_shared<Coin>(m_rigid->GetPos(), true);
+	Physics::GetInstance().Entry(m_dropItem);
+
+	m_isDestroyFlag = true;
 }
 
 void Takobo::AttackSphereUpdate()

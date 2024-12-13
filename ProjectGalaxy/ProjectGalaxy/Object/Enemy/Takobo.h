@@ -3,6 +3,7 @@
 #include"EnemySphere.h"
 
 class Player;
+class Item;
 
 /// <summary>
 /// 左右に移動し、一定間隔で射撃してくる敵e
@@ -64,6 +65,8 @@ private:
 	/// 通常(クールダウン)状態
 	/// </summary>
 	void IdleUpdate();
+
+	void DeathUpdate();
 	/// <summary>
 	/// 球体を生成して攻撃
 	/// </summary>
@@ -109,6 +112,7 @@ private:
 	Vec3 m_nowPlanetPos;
 	Vec3 m_strikePoint;
 	std::shared_ptr<MyEngine::Collidable> m_target;
+	std::shared_ptr<Item>m_dropItem;
 	//アニメーション変数
 	int m_anim_nutral = 0;
 	int m_anim_move = 0;

@@ -39,7 +39,7 @@ public:
 	void SetVelocity(Vec3 pos) { m_velocity = pos; m_rigid->SetVelocity(pos); }
 	void AddVelocity(Vec3 pos) { m_rigid->AddVelocity(pos); }
 	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
-	float GetHp() { return m_hp; }
+	
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetMoveDir() const{ return m_moveDir; }
 	Vec3 GetNowPlanetPos() const { return m_nowPlanetPos; }
@@ -54,9 +54,10 @@ public:
 	float GetRegenerationRange() const{ return m_regeneRange; }
 	float GetCameraEasingSpeed()const { return m_cameraEasingSpeed; }
 	int WatchHp()const { return static_cast<int>(m_hp); }
-	bool GetOperationFlag()const { return m_isOperationFlag; }
-	bool GetBoostFlag() const{ return m_isBoostFlag; }
-	bool OnAiming() { return m_isAimFlag; }
+	float GetHp() { return m_hp; }
+	bool GetOperationFlag()const { return m_playerUpdate==&Player::OperationUpdate; }
+	bool GetBoostFlag() const{ return m_playerUpdate==&Player::BoostUpdate; }
+	bool OnAiming() { return m_playerUpdate==&Player::AimingUpdate; }
 	bool GetFootOnHit() { return m_footCol->OnHit(); }
 	bool GetNowFootOnHit() { return m_footCol->NowOnHit(); }
 	bool GetPreFootOnHit() { return m_footCol->PreOnHit(); }
@@ -69,10 +70,9 @@ public:
 	void IsWarp() { m_isJumpFlag = true;}
 	int GetPlayerModelhandle() const { return m_modelHandle; }
 	bool IsSearch() { return m_isSearchFlag; }
-	bool OnDamage() { return m_isOnDamageFlag; }
+	bool OnDamage() { return m_playerUpdate==&Player::DamegeUpdate; }
 	bool IsClear() { return m_isClearFlag; }
 	int GetDamageFrame() const { return m_damageFrame; }
-	int& SetReverse() { return m_reverseFlag; }
 	//int GetSearchRemainTime() { return m_searchRemainTime; }
 	bool GetJumpFlag() const { return m_isJumpFlag; }
 	std::string GetState() const { return m_state; }
@@ -162,14 +162,16 @@ private:
 	std::shared_ptr<MyEngine::ColliderSphere> m_spinCol;
 	std::shared_ptr<MyEngine::ColliderSphere> m_footCol;
 	std::shared_ptr<MyEngine::ColliderSphere> m_bodyCol;
-	float m_hp;
-	float m_cameraEasingSpeed;
+	
 	int m_modelHandle = 0;
 	int m_aimGraphHandle = 0;
-
-	float m_speed = 1.f;
-
 	int m_handFrameIndex;
+
+	//プレイヤーのステータス
+	int m_coinNum;
+	float m_hp;
+	float m_speed = 1.f;
+	float m_cameraEasingSpeed;
 
 	/// <summary>
 	/// 行動のフレームを管理する
@@ -219,25 +221,16 @@ private:
 
 	Vec3 m_shotDir;
 	Vec3 m_modelBodyRotate;
+
+	//アニメーション変数
+
 	//0.0f:prevが再生
 	//1.0:currentが再生
 	int m_currentAnimNo;//現在のアニメーション
 	int m_prevAnimNo;//変更前のアニメーション
 	float m_animBlendRate;//アニメーションの合成割合
 	
-	int m_reverseFlag=0;
-	int m_damageFrame;
-	int m_damageFrameSpeed;
-
-	//アニメーション変数
-	int m_anim_nutral = 0;
-	int m_anim_move = 0;
-	int m_anim_hit = 0;
-	int m_anim_jump = 0;
-	int m_attach_move = 0;
-	int m_attach_hit = 0;
-	int m_attach_jump = 0;
-	int m_attach_nutral = 0;
+	int m_damageFrame;//ダメージ状態の現在のフレーム数
 
 	/*int m_searchRemainTime;
 	int m_chargeRemainTime;*/

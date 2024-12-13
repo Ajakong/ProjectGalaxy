@@ -662,6 +662,8 @@ void MyEngine::Physics::OnCollideInfo(const std::weak_ptr<Collidable>& own, cons
 {
 	auto item = send;
 
+	if (own.expired() || send.expired())return;
+
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
 		own.lock()->OnCollideEnter(item.lock(),ownTag,sendTag);

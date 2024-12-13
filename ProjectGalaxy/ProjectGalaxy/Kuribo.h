@@ -75,6 +75,9 @@ private:
 	//アニメーションの変更
 	void ChangeAnim(int animIndex, float speed = 1.f);
 
+	template <typename T>
+	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
+
 private:
 	Vec3 m_vec;
 	Vec3 m_attackDir;

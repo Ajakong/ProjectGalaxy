@@ -98,6 +98,7 @@ void Kuribo::Update()
 	m_sideVec = Cross(m_upVec, m_frontVec);
 
 	//m_bodyCol->SetShiftPosNum(m_upVec * 5);
+	
 }
 
 void Kuribo::SetMatrix()
@@ -366,3 +367,18 @@ void Kuribo::ChangeAnim(int animIndex, float speed)
 	//変更後のアニメーション0%
 	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 }
+
+template <typename T>
+void Kuribo::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
+{
+	auto result = remove_if(objects.begin(), objects.end(), [this](const auto& object)
+		{
+			return object->IsDestroy(); // IsDestroy() が true の場合削除
+		});
+	for (auto it = result; it != objects.end(); ++it) {
+		auto collidable = std::static_pointer_cast<MyEngine::Collidable>(*it);
+		MyEngine::Physics::GetInstance().Exit(collidable);
+	}
+	objects.erase(result, objects.end());
+}
+

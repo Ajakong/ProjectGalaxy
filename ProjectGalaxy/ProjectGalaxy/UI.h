@@ -16,7 +16,7 @@ public:
 
 	void Init();
 	void Update();
-	void Draw(int m_hp);
+	void Draw(float m_hp);
 
 
 private:

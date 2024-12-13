@@ -52,8 +52,6 @@ float Application::GetGravity() const
 
 bool Application::Init()
 {
-    
-
 
     ChangeWindowMode(true); // ウィンドウモードにします
     // VSYNC待ちをしない設定に変更

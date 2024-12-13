@@ -95,7 +95,6 @@ m_frontVec(Vec3::Front()),
 m_playerUpdate(&Player::NeutralUpdate),
 m_prevUpdate(&Player::NeutralUpdate),
 m_cameraUpdate(&Player::Planet1Update),
-m_anim_move(),
 m_hp(kPlayerHPMax),
 m_radius(kNeutralRadius),
 m_damageFrame(0),
@@ -110,7 +109,6 @@ m_isSpinFlag(false),
 m_isOperationFlag(false),
 m_color(0x00ffff),
 m_attackRadius(0),
-m_damageFrameSpeed(1),
 m_modelBodyRotate(m_frontVec),
 m_inputVec(Vec3::Front()*-1),
 m_postMoveDir(Vec3::Front()),
@@ -689,11 +687,7 @@ void Player::NeutralUpdate()
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
-	if (Pad::IsTrigger(PAD_INPUT_Y))
-	{
-		//m_playerUpdate = &Player::AimingUpdate;
-	}
-	
+
 	m_rigid->AddVelocity(move);
 
 	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
@@ -735,10 +729,7 @@ void Player::WalkingUpdate()
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
-	if (Pad::IsTrigger(PAD_INPUT_Y))
-	{
-		//m_playerUpdate = &Player::AimingUpdate;
-	}
+
 	m_rigid->AddVelocity(ans);
 
 	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
@@ -787,11 +778,7 @@ void Player::DashUpdate()
 		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpiningUpdate;
 	}
-	if (Pad::IsTrigger(PAD_INPUT_Y))
-	{
-		m_cameraEasingSpeed = 15.f;
-		m_playerUpdate = &Player::AimingUpdate;
-	}
+
 	m_rigid->AddVelocity(ans*kDashMag);
 
 	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
@@ -1047,7 +1034,7 @@ void Player::ShotTheStickStar()
 
 void Player::DamegeUpdate()
 {	
-	m_rigid->SetVelocity(m_rigid->GetVelocity() * 0.8f);
+	m_rigid->SetVelocity(m_rigid->GetVelocity());
 	if (m_rigid->GetVelocity().Length() < 7.0f)
 	{
 		if (m_prevUpdate != m_playerUpdate)

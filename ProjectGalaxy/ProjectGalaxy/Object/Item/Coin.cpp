@@ -1,4 +1,5 @@
 ﻿#include "Coin.h"
+#include"Physics.h"
 
 Coin::Coin(Vec3 pos, bool antiGravity) : Item(pos,antiGravity)
 {
@@ -43,6 +44,6 @@ void Coin::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,C
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		m_isDestroyFlag = true;
+		MyEngine::Physics::GetInstance().Exit(shared_from_this());
 	}
 }

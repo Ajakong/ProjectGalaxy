@@ -410,17 +410,7 @@ void SerialPlanetGalaxy::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
 		});
 	for (auto it = result; it != objects.end(); ++it) {
 		auto collidable = std::static_pointer_cast<MyEngine::Collidable>(*it);
-
-		// デバッグ: collidable が Physics に登録されているか確認
-		auto& physics = MyEngine::Physics::GetInstance();
-		auto itInPhysics = std::find(physics.m_collidables.begin(), physics.m_collidables.end(), collidable);
-
-		if (itInPhysics == physics.m_collidables.end()) {
-			assert( true);
-		}
-		else {
-			physics.Exit(collidable);
-		}
+		MyEngine::Physics::GetInstance().Exit(collidable);
 	}
 	objects.erase(result, objects.end());
 }
