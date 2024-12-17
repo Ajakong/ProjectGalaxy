@@ -182,6 +182,7 @@
     <ClCompile Include="Object\Base\SphereBase.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
     <ClCompile Include="Object\ClearObject\ClearObject.cpp" />
+    <ClCompile Include="Object\Enemy\Boss.cpp" />
     <ClCompile Include="Object\Enemy\Enemy.cpp" />
     <ClCompile Include="Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Object\Enemy\EnemySphere.cpp" />
@@ -256,6 +257,7 @@
     <ClInclude Include="Object\Base\SphereBase.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
     <ClInclude Include="Object\ClearObject\ClearObject.h" />
+    <ClInclude Include="Object\Enemy\Boss.h" />
     <ClInclude Include="Object\Enemy\Enemy.h" />
     <ClInclude Include="Object\Enemy\EnemyManager.h" />
     <ClInclude Include="Object\Enemy\EnemySphere.h" />

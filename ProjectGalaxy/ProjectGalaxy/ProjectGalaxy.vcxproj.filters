@@ -345,6 +345,9 @@
     <ClCompile Include="Object\Enemy\Kuribo.cpp">
       <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Enemy\Boss.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -562,6 +565,9 @@
     </ClInclude>
     <ClInclude Include="Object\Enemy\SamuraiAlter.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\Boss.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
