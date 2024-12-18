@@ -22,5 +22,5 @@ void Boss::Update()
 
 void Boss::Draw()
 {
-	DrawSphere3D(m_rigid->GetPos().VGet(), kBodyRadiusSize);
+	//DrawSphere3D(m_rigid->GetPos().VGet(), kBodyRadiusSize);
 }
