@@ -82,6 +82,14 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 	//samuraiAlter.push_back(make_shared<SamuraiAlter>(Vec3(0, 0, -30)));
 	//MyEngine::Physics::GetInstance().Entry(samuraiAlter.back());
 	camera = make_shared<Camera>();
+
+	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
+	for (auto& item : m_planet)
+	{
+		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
+	}
+	//それぞれのオブジェクトの上方向ベクトルなどの更新
+	MyEngine::Physics::GetInstance().Update();
 }
 
 DebugGalaxy::~DebugGalaxy()
