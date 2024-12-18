@@ -5,7 +5,7 @@ namespace
 	const Vec3 kBoxPlanetSize = Vec3(30, 50, 50);
 	constexpr float  kGravityPower = 0.098f;
 }
-BoxPlanet::BoxPlanet(Vec3 pos, int color, float coefficientOfFriction)
+BoxPlanet::BoxPlanet(Vec3 pos, int color, float coefficientOfFriction, Vec3 size)
 {
 	m_color = color;
 	gravityPower = 0.3f;
@@ -14,10 +14,10 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color, float coefficientOfFriction)
 		
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back()->col);
 		item->norm = Vec3(0, 1, 0);
-		item->size = kBoxPlanetSize;
+		item->size = size;
 		item->rotation = Quaternion();
-		norm = item->norm;
-		size = item->size;
+		m_norm = item->norm;
+		m_size = item->size;
 	}
 	
 	{
@@ -25,7 +25,7 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color, float coefficientOfFriction)
 		m_colliders.back()->col->isTrigger = true;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back()->col);
 		item->norm = Vec3(0, 1, 0);
-		item->size = Vec3(60, 100, 100);
+		item->size = size * 2;
 		item->rotation = Quaternion();
 		item->isTrigger = true;
 	}
@@ -54,20 +54,21 @@ void BoxPlanet::Draw()
 {
 	if (m_isSearch)
 	{
-		DrawCube3D((m_rigid->GetPos() - size).VGet(), (m_rigid->GetPos() + size).VGet(), 0xffffff, 0xffffff, false);
-
+		DrawCube3D((m_rigid->GetPos() - m_size).VGet(), (m_rigid->GetPos() + m_size).VGet(), 0xffffff, 0xffffff, false);
+		DrawCube3D((m_rigid->GetPos() - m_size * 2).VGet(), (m_rigid->GetPos() + m_size * 2).VGet(), 0x00ffff, 0xffffff, false);
 	}
 	else
 	{
-		DrawCube3D((m_rigid->GetPos() - size).VGet(), (m_rigid->GetPos() + size).VGet(), 0x00ffff, 0xffffff, true);
+		DrawCube3D((m_rigid->GetPos() - m_size).VGet(), (m_rigid->GetPos() + m_size).VGet(), 0x00ffff, 0xffffff, true);
+		DrawCube3D((m_rigid->GetPos() - m_size*2).VGet(), (m_rigid->GetPos() + m_size*2).VGet(), 0x00ffff, 0xffffff, false);
 	}
 	
 }
 
 Vec3 BoxPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 {
-	Vec3 ans = obj->GetRigidbody()->GetVelocity() + norm*-1;
-	return ans;
+	Vec3 ans = obj->GetRigidbody()->GetVelocity() + m_norm*-1;
+	return ans*kGravityPower;
 }
 
 Vec3 BoxPlanet::FrictionEffect(std::shared_ptr<Collidable> obj)
@@ -77,7 +78,7 @@ Vec3 BoxPlanet::FrictionEffect(std::shared_ptr<Collidable> obj)
 
 Vec3 BoxPlanet::GetNormVec(Vec3 pos)
 {
-	return norm;
+	return m_norm;
 }
 
 void BoxPlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)

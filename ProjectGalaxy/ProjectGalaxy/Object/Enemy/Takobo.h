@@ -113,11 +113,6 @@ private:
 	Vec3 m_strikePoint;
 	std::shared_ptr<MyEngine::Collidable> m_target;
 	std::shared_ptr<Item>m_dropItem;
-	//アニメーション変数
-	int m_anim_nutral = 0;
-	int m_anim_move = 0;
-	int m_anim_jump = 0;
-	int m_anim_attack = 0;
 
 	std::list<std::shared_ptr<EnemySphere>> m_sphere;
 };

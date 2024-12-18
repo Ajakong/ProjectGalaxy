@@ -346,7 +346,7 @@
       <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
     </ClCompile>
     <ClCompile Include="Object\Enemy\Boss.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Object\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -567,7 +567,7 @@
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Object\Enemy\Boss.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

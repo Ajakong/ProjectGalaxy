@@ -17,7 +17,7 @@ namespace
 	constexpr int CHECK_COUNT_MAX = 100;
 
 
-	constexpr float CHECK_COLLIDE_LENDGHT = 100.0f;
+	constexpr float CHECK_COLLIDE_LENDGHT = 500.0f;
 	constexpr float CHECK_COLLIDE_SQ_LENDGHT = CHECK_COLLIDE_LENDGHT * CHECK_COLLIDE_LENDGHT;
 }
 

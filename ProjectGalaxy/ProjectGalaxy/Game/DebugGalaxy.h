@@ -6,6 +6,7 @@ class Player;
 class Takobo;
 class Planet;
 class SamuraiAlter;
+class Boss;
 class UI;
 
 class DebugGalaxy : public Galaxy
@@ -31,6 +32,7 @@ private:
 	std::shared_ptr<Player> player;
 	std::vector<std::shared_ptr<Takobo>> takobo;
 	std::vector<std::shared_ptr<SamuraiAlter>> samuraiAlter;
+	std::vector<std::shared_ptr<Boss>> boss;
 
 };
 

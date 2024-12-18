@@ -3,6 +3,7 @@
 #include "DebugGalaxy.h"
 #include"Player.h"
 #include"Takobo.h"
+#include"Boss.h"
 #include"SamuraiAlter.h"
 #include"Camera.h"
 #include"BoxPlanet.h"
@@ -74,11 +75,12 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 	m_ui = make_shared<UI>();
 	player = playerPointer;
 
-	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00,1.f));
-
+	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00,1.f, Vec3(200, 50, 200)));
 	//takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
-	samuraiAlter.push_back(make_shared<SamuraiAlter>(Vec3(0, 0, -30)));
-	MyEngine::Physics::GetInstance().Entry(samuraiAlter.back());
+	boss.push_back(make_shared<Boss>(Vec3(0, 50, 100)));
+	MyEngine::Physics::GetInstance().Entry(boss.back());
+	//samuraiAlter.push_back(make_shared<SamuraiAlter>(Vec3(0, 0, -30)));
+	//MyEngine::Physics::GetInstance().Entry(samuraiAlter.back());
 	camera = make_shared<Camera>();
 }
 
@@ -144,13 +146,11 @@ void DebugGalaxy::Update()
 		}
 	}
 
-	for (auto& item : m_planet)item->Update();//ステージの更新
-	
 
 	MyEngine::Physics::GetInstance().Update();//当たり判定の更新
 
 	player->SetMatrix();//行列を反映
-	for (auto& item : m_planet)item->Update();
+
 }
 
 void DebugGalaxy::Draw()
