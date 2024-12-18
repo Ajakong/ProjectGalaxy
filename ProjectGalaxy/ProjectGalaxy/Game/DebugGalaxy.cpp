@@ -75,7 +75,7 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 	m_ui = make_shared<UI>();
 	player = playerPointer;
 
-	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00,1.f, Vec3(200, 50, 200)));
+	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00,1.f, Vec3(100, 50, 100)));
 	//takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
 	boss.push_back(make_shared<Boss>(Vec3(0, 50, 100)));
 	MyEngine::Physics::GetInstance().Entry(boss.back());
@@ -90,13 +90,21 @@ DebugGalaxy::~DebugGalaxy()
 
 void DebugGalaxy::Init()
 {
-	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
+	//MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 
-	for (auto& item : m_planet)
-	{
-		item->Init();
-		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
-	}
+	//for (auto& item : m_planet)
+	//{
+	//	item->Init();
+	//	MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
+	//}
+
+	SetGlobalAmbientLight(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
+
+	player->SetMatrix();//モデルに行列を反映
+
+	// 深度値記録バッファ用RT
+	DxLib::SetCreateGraphChannelBitDepth(32);
+	DxLib::SetCreateDrawValidGraphChannelNum(1);
 }
 
 void DebugGalaxy::Update()

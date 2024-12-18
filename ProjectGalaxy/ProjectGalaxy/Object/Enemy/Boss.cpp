@@ -2,7 +2,7 @@
 #include"ColliderSphere.h"
 namespace
 {
-	constexpr float kBodyRadiusSize = 50.f;
+	constexpr float kBodyRadiusSize = 20.f;
 	constexpr int kKnockBackFrameMax = 50;
 
 	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
