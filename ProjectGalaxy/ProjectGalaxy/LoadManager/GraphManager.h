@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include<map>
 #include<string>
 #include"DxLib.h"
 struct GraphInfo {
-	int handle;//ƒnƒ“ƒhƒ‹
-	bool used;//ˆê“xˆÈãg—pÏ‚İ‚©H
+	int handle;//ãƒãƒ³ãƒ‰ãƒ«
+	bool used;//ä¸€åº¦ä»¥ä¸Šä½¿ç”¨æ¸ˆã¿ã‹ï¼Ÿ
 };
 class GraphManager
 {
@@ -19,5 +19,6 @@ public:
 
 	int GetGraphData(const char* filepath);
 	void DeleteGraphData(const char* filepath);
+	void Clear();
 };
 

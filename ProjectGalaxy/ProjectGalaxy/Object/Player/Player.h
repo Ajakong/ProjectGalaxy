@@ -57,10 +57,10 @@ public:
 	float GetHp() { return m_hp; }
 	bool GetOperationFlag()const { return m_playerUpdate==&Player::OperationUpdate; }
 	bool GetBoostFlag() const{ return m_playerUpdate==&Player::BoostUpdate; }
-	bool OnAiming() { return m_playerUpdate==&Player::AimingUpdate; }
+	bool OnAiming() { return m_isAimFlag; }
 	bool GetFootOnHit() { return m_footCol->OnHit(); }
-	bool GetNowFootOnHit() { return m_footCol->NowOnHit(); }
-	bool GetPreFootOnHit() { return m_footCol->PreOnHit(); }
+	//bool GetNowFootOnHit() { return m_footCol->NowOnHit(); }
+	//bool GetPreFootOnHit() { return m_footCol->PreOnHit(); }
 	/// <param name="sideVec">加速させる方向の横ベクトル</param>
 	void SetBoost(Vec3 sideVec);
 	void SetIsOperation(bool flag);

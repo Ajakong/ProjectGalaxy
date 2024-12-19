@@ -337,8 +337,8 @@ void MyEngine::Physics::CheckCollide()
 				//	colB->col->SetOnHitResult(false);
 				//}
 
-				colA->col->SetPreOnHit(colA->col->NowOnHit());
-				colB->col->SetPreOnHit(colB->col->NowOnHit());
+				//colA->col->SetPreOnHit(colA->col->NowOnHit());
+				//colB->col->SetPreOnHit(colB->col->NowOnHit());
 			    
 				colA->col->SetNowOnHit(false);
 				colB->col->SetNowOnHit(false);

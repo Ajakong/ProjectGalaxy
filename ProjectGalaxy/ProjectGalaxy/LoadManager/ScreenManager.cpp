@@ -1,4 +1,4 @@
-#include "ScreenManager.h"
+﻿#include "ScreenManager.h"
 
 ScreenManager::ScreenManager()
 {
@@ -29,4 +29,10 @@ int ScreenManager::GetScreenData(const char* screenname,int width, int height)
 		m_pathAndScreenInfoes[screenname].used = true;
 		return m_pathAndScreenInfoes[screenname].handle;
 	}
+}
+
+void ScreenManager::Clear()
+{
+
+	m_pathAndScreenInfoes.clear();
 }

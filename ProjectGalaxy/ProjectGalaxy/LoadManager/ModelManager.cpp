@@ -46,3 +46,12 @@ void ModelManager::DeleteModelData(const char* modelname)
 	DxLib::DeleteGraph(m_pathAndModelInfoes[modelname].handle);
 	m_pathAndModelInfoes.erase(modelname);
 }
+
+void ModelManager::Clear()
+{
+	for (auto& info : m_pathAndModelInfoes)
+	{
+		MV1DeleteModel(info.second.handle);
+	}
+	m_pathAndModelInfoes.clear();
+}

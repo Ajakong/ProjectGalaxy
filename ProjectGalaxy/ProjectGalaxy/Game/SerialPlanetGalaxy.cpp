@@ -15,6 +15,7 @@
 #include"Takobo.h"
 #include"KillerTheSeeker.h"
 #include"SpaceEmperor.h"
+#include"Boss.h"
 #include"Gorori.h"
 #include"Kuribo.h"
 #include"Item.h"
@@ -149,10 +150,11 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -10), player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
+	/*m_spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
 	m_spaceEmperor.back()->SetTarget(player);
-	MyEngine::Physics::GetInstance().Entry(m_spaceEmperor.back());
-
+	MyEngine::Physics::GetInstance().Entry(m_spaceEmperor.back());*/
+	m_boss.push_back(make_shared<Boss>(Vec3(300, 250, 100)));
+	MyEngine::Physics::GetInstance().Entry(m_boss.back());
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
 	//アイテム
@@ -229,8 +231,21 @@ void SerialPlanetGalaxy::IntroDraw()
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
 	m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
+	bool bossFind=false;
+	Vec3 cameraTarget;
+	std::shared_ptr<SpaceEmperor> FindBoss;
+	for (auto& boss : m_spaceEmperor)
+	{
+		bossFind = boss->GetIsFind();
+		if (bossFind)
+		{
+			cameraTarget = boss->GetNeckPos();
+			FindBoss = boss;
+			break;
+		}
+	}
 	if (player->OnAiming())m_camera->Update(player->GetShotDir());
-	else if (m_spaceEmperor.back()->GetIsFind())m_camera->Update(m_spaceEmperor.back()->GetNeckPos());
+	else if (bossFind)m_camera->Update(cameraTarget);
 	else m_camera->Update(player->GetLookPoint());
 
 	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
@@ -278,36 +293,37 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 
 	//ボス登場時演出
-	bool onBoss = (m_spaceEmperor.back()->GetRigidbody()->GetPos() - player->GetPos()).Length() < kGravityRange;
-	if (onBoss)
+	if (bossFind)
 	{
-		
-		auto boss = m_spaceEmperor.back();
-		if (!boss->GetIsFind())
+		bool onBoss = (FindBoss->GetRigidbody()->GetPos() - player->GetPos()).Length() < kGravityRange;
+		if (onBoss)
 		{
-			StopSoundMem(m_bgmHandle);
-			PlaySoundMem(m_bossBattleBgmHandle, DX_PLAYTYPE_BACK);
-			boss->OnBossPlanet();
+			if (!FindBoss->GetIsFind())
+			{
+				StopSoundMem(m_bgmHandle);
+				PlaySoundMem(m_bossBattleBgmHandle, DX_PLAYTYPE_BACK);
+				FindBoss->OnBossPlanet();
 
-			m_camera->WatchThis(boss->GetRigidbody()->GetPos() + boss->GetUpVec() * 50, boss->GetRigidbody()->GetPos() + boss->GetFrontVec() * -50, boss->GetUpVec());
+				m_camera->WatchThis(FindBoss->GetRigidbody()->GetPos() + FindBoss->GetUpVec() * 50, FindBoss->GetRigidbody()->GetPos() + FindBoss->GetFrontVec() * -50, FindBoss->GetUpVec());
+			}
 		}
-	}
 
-	if (m_spaceEmperor.back()->GetHP() <= 0)
-	{
-		m_isClearFlag = true;
+		if (FindBoss->GetHP() <= 0)
+		{
+			m_isClearFlag = true;
+		}
 	}
 	if (player->GetHp()<=0)
 	{
 		m_isGameOverFlag = true;
 	}
+	
+	MyEngine::Physics::GetInstance().Update();
 	player->SetMatrix();//行列を反映
 
 	for (auto& item : m_kuribo) { item->SetMatrix(); }
 	for (auto& item : m_takobo) { item->SetMatrix(); }
 	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
-	MyEngine::Physics::GetInstance().Update();
-	
 	DeleteObject(m_kuribo);
 
 }

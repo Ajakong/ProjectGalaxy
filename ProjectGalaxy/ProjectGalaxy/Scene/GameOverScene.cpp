@@ -1,6 +1,9 @@
 ﻿#include"GameOverScene.h"
+#include"GamePlayingScene.h"
+#include"SceneManager.h"
 #include"Vec3.h"
 #include"Pad.h"
+#include"DxLib.h"
 
 GameOverScene::GameOverScene(SceneManager& mgr) :
 	Scene(mgr)
@@ -22,12 +25,17 @@ void GameOverScene::Update()
 {
 	(this->*m_updateFunc)();
 
+
 	Pad::Update();
 }
 
 void GameOverScene::Draw()
 {
 	(this->*m_drawFunc)();
+	if (Pad::IsTrigger(PAD_INPUT_1))
+	{
+		ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
+	}
 }
 
 void GameOverScene::FadeInUpdate()
@@ -53,6 +61,7 @@ void GameOverScene::FadeOutUpdate()
 
 void GameOverScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 {
+	m_manager.ChangeScene(nextScene);
 }
 
 void GameOverScene::FadeDraw()

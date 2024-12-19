@@ -11,6 +11,9 @@
 #include"PauseScene.h"
 #include"Physics.h"
 #include"SoundManager.h"
+#include"ModelManager.h"
+#include"GraphManager.h"
+
 
 #include"GameManager.h"
 
@@ -35,6 +38,9 @@ GamePlayingScene::GamePlayingScene(SceneManager& manager) :
 
 GamePlayingScene::~GamePlayingScene()
 {
+	SoundManager::GetInstance().Clear();
+	GraphManager::GetInstance().Clear();
+	ModelManager::GetInstance().Clear();
 }
 
 void GamePlayingScene::Load()

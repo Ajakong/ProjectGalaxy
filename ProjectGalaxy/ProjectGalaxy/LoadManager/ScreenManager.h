@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<map>
 #include<string>
 #include"DxLib.h"
@@ -19,5 +19,7 @@ public:
 
 	static ScreenManager& GetInstance();
 	int GetScreenData(const char* screenname, int width, int height);
+
+	void Clear();
 };
 

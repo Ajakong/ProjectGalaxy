@@ -169,6 +169,7 @@ void Player::Update()
 {
 	m_isSearchFlag = false;
 	m_radius = 0;
+	
 	(this->*m_playerUpdate)();
 	//m_hp = -0.00002f;
 
@@ -579,6 +580,7 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	{
 		printf("Coin\n");
 		m_hp += 10;
+		m_shotUpdate = &Player::ShotTheStickStar;
 		if (m_hp > kPlayerHPMax)
 		{
 			m_hp = kPlayerHPMax;
@@ -736,6 +738,10 @@ void Player::WalkingUpdate()
 	{
 		m_playerUpdate = &Player::JumpingUpdate;
 	}*/
+	if (!m_footCol->OnHit())
+	{
+		m_playerUpdate = &Player::JumpingUpdate;
+	}
 }
 
 void Player::DashUpdate()
@@ -785,6 +791,11 @@ void Player::DashUpdate()
 	{
 		m_playerUpdate = &Player::JumpingUpdate;
 	}*/
+
+	if (!m_footCol->OnHit())
+	{
+		m_playerUpdate = &Player::JumpingUpdate;
+	}
 }
 
 void Player::JumpingUpdate()

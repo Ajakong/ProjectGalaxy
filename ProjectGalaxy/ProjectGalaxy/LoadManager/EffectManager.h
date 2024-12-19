@@ -19,6 +19,6 @@ public:
 	int GetEffectData(const char* filepath);
 	void DeleteEffectData(const char* effectname);
 
-	
+	void Clear();
 };
 

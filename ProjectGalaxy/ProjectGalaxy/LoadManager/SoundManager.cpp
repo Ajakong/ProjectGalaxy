@@ -1,4 +1,4 @@
-#include "SoundManager.h"
+﻿#include "SoundManager.h"
 #include<string>
 #include<vector>
 
@@ -44,5 +44,14 @@ int SoundManager::GetSoundData(const char* soundname)
 	}
 	ChangeVolumeSoundMem(m_soundVol, m_pathAndSoundInfoes[soundname].handle);
 	return m_pathAndSoundInfoes[soundname].handle;
+}
+
+void SoundManager::Clear()
+{
+	for (auto& info : m_pathAndSoundInfoes)
+	{
+		DeleteSoundMem(info.second.handle);
+	}
+	m_pathAndSoundInfoes.clear();
 }
 

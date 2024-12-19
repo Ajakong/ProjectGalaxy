@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include<map>
 #include<string>
 #include"DxLib.h"
 struct SoundInfo {
-	int handle;//ƒnƒ“ƒhƒ‹
-	bool used;//ˆê“xˆÈãg—pÏ‚İ‚©H
+	int handle;//ãƒãƒ³ãƒ‰ãƒ«
+	bool used;//ä¸€åº¦ä»¥ä¸Šä½¿ç”¨æ¸ˆã¿ã‹ï¼Ÿ
 };
 class SoundManager
 {
@@ -22,5 +22,6 @@ public:
 	void ChangeSoundVolume(int vol);
 	int GetSoundData(const char* filepath);
 
+	void Clear();
 };
 

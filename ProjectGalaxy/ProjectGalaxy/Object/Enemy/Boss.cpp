@@ -1,5 +1,5 @@
 ﻿#include "Boss.h"
-#include"ColliderSphere.h"
+
 namespace
 {
 	constexpr float kBodyRadiusSize = 20.f;
@@ -17,8 +17,8 @@ Boss::Boss(Vec3 pos):Enemy(Priority::Boss,ObjectTag::Enemy)
 {
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
-	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-	item->radius = kBodyRadiusSize;
+	m_collision = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
+	m_collision->radius = kBodyRadiusSize;
 
 	m_color = 0xff00ff;
 	m_bossUpdate = &Boss::NeutralUpdate;
@@ -34,6 +34,7 @@ void Boss::Init()
 
 void Boss::Update()
 {
+	(this->*m_bossUpdate)();
 }
 
 void Boss::Draw()
@@ -47,6 +48,8 @@ void Boss::InitUpdate()
 
 void Boss::NeutralUpdate()
 {
+	m_rigid->AddVelocity(m_upVec * 2);
+	m_bossUpdate = &Boss::JumpingUpdate;
 }
 
 void Boss::AnglyUpdate()
@@ -65,6 +68,14 @@ void Boss::KnockBackUpdate()
 	{
 		m_color = 0xff00ff;
 		m_knockBackFrame = 0;
+		m_bossUpdate = &Boss::NeutralUpdate;
+	}
+}
+
+void Boss::JumpingUpdate()
+{
+	if (m_collision->OnHit())
+	{
 		m_bossUpdate = &Boss::NeutralUpdate;
 	}
 }

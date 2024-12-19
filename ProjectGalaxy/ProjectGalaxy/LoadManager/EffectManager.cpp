@@ -44,3 +44,12 @@ void EffectManager::DeleteEffectData(const char* effectname)
 	DeleteEffekseerEffect(m_pathAndEffectInfoes[effectname].handle);
 	m_pathAndEffectInfoes.erase(effectname);
 }
+
+void EffectManager::Clear()
+{
+	for (auto& info : m_pathAndEffectInfoes)
+	{
+		DeleteEffekseerEffect(info.second.handle);
+	}
+	m_pathAndEffectInfoes.clear();
+}

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Enemy.h"
+#include"ColliderSphere.h"
 class Boss : public Enemy
 {
 public:
@@ -16,6 +17,7 @@ private:
 	void AnglyUpdate();
 	void DestroyPlanetUpdate();
 	void KnockBackUpdate();
+	void JumpingUpdate();
 
 	//アニメーションの進行
 	//ループしたかどうかを返す
@@ -41,5 +43,8 @@ private:
 	int m_knockBackFrame;
 
 	int m_color;
+
+	std::shared_ptr<MyEngine::ColliderSphere> m_collision;
+
 };
 

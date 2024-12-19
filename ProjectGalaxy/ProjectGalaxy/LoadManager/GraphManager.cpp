@@ -41,3 +41,12 @@ void GraphManager::DeleteGraphData(const char* graphname)
 	DxLib::DeleteGraph(m_pathAndGraphInfoes[graphname].handle);
 	m_pathAndGraphInfoes.erase(graphname);
 }
+
+void GraphManager::Clear()
+{
+	for (auto& info : m_pathAndGraphInfoes)
+	{
+		DeleteGraph(info.second.handle);
+	}
+	m_pathAndGraphInfoes.clear();
+}
