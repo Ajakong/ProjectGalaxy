@@ -35,11 +35,22 @@ void Boss::Init()
 void Boss::Update()
 {
 	(this->*m_bossUpdate)();
+
+	for (auto& impacts : m_impacts)
+	{
+		impacts->Update();
+	}
+
+	DeleteObject(m_impacts);
 }
 
 void Boss::Draw()
 {
 	DrawSphere3D(m_rigid->GetPos().VGet(), kBodyRadiusSize,8,m_color,0x000000,true);
+	for (auto& impacts : m_impacts)
+	{
+		impacts->Draw();
+	}
 }
 
 void Boss::InitUpdate()
@@ -77,6 +88,7 @@ void Boss::JumpingUpdate()
 	if (m_collision->OnHit())
 	{
 		m_bossUpdate = &Boss::NeutralUpdate;
+		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos(), 50.f, m_upVec * -1));
 	}
 }
 
@@ -137,4 +149,15 @@ void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 {
 
 }
+
+template <typename T>
+void Boss::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
+{
+	auto result = remove_if(objects.begin(), objects.end(), [this](const auto& object)
+		{
+			return object->GetDeleteFlag(); // IsDestroy() が true の場合削除
+		});
+	objects.erase(result, objects.end());
+}
+
 

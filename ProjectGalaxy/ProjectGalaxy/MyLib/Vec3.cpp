@@ -222,3 +222,17 @@ Vec3 Projection(const Vec3& projection, const Vec3& base)
 	auto d = Dot(dirN, projection);
 	return dirN * d;
 }
+
+Vec3 GetPerpendicular(const Vec3& vec)
+{
+	// 自身が Z軸に平行である場合
+	if (vec.x == 0.0f && vec.y == 0.0f)
+		return Vec3(1.0f, 0.0f, 0.0f);  // X軸に平行なベクトルを返す
+
+	// 自身が X軸に平行である場合
+	if (vec.y == 0.0f && vec.z == 0.0f)
+		return Vec3(0.0f, 1.0f, 0.0f);  // Y軸に平行なベクトルを返す
+
+	// 任意のベクトルに対して垂直なベクトルを計算（外積を利用）
+	return Cross(vec,Vec3(1.0f, 0.0f, 0.0f));  // X軸と外積をとる
+}

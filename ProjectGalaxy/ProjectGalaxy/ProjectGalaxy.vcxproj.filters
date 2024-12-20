@@ -130,6 +130,9 @@
     <Filter Include="ソース ファイル\Object\WarpGate">
       <UniqueIdentifier>{00d3c7f7-d408-4b57-8498-58ce29860230}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Object\Enemy\Boss">
+      <UniqueIdentifier>{6dfed3c2-11d8-4012-8433-83923c2847ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -154,9 +157,6 @@
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Vec2.cpp">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClCompile>
-    <ClCompile Include="MyLib\Vec3.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics\Collidable.cpp">
@@ -346,7 +346,13 @@
       <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
     </ClCompile>
     <ClCompile Include="Object\Enemy\Boss.cpp">
-      <Filter>ソース ファイル\Object\Enemy</Filter>
+      <Filter>ソース ファイル\Object\Enemy\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Enemy\StampImpact.cpp">
+      <Filter>ソース ファイル\Object\Enemy\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Vec3.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -567,6 +573,9 @@
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Object\Enemy\Boss.h">
+      <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\StampImpact.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

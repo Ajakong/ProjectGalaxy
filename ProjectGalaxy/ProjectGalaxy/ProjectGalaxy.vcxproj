@@ -192,6 +192,7 @@
     <ClCompile Include="Object\Enemy\Kuribo.cpp" />
     <ClCompile Include="Object\Enemy\SamuraiAlter.cpp" />
     <ClCompile Include="Object\Enemy\SpaceEmperor.cpp" />
+    <ClCompile Include="Object\Enemy\StampImpact.cpp" />
     <ClCompile Include="Object\Enemy\Takobo.cpp" />
     <ClCompile Include="Object\Enemy\WickedMagician.cpp" />
     <ClCompile Include="Object\Gimmick\Crystal.cpp" />
@@ -266,6 +267,7 @@
     <ClInclude Include="Object\Enemy\KillerTheSeeker.h" />
     <ClInclude Include="Object\Enemy\SamuraiAlter.h" />
     <ClInclude Include="Object\Enemy\SpaceEmperor.h" />
+    <ClInclude Include="Object\Enemy\StampImpact.h" />
     <ClInclude Include="Object\Enemy\Takobo.h" />
     <ClInclude Include="Object\Enemy\WickedMagician.h" />
     <ClInclude Include="Object\Gimmick\Crystal.h" />

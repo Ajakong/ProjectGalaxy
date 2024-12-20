@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Enemy.h"
 #include"ColliderSphere.h"
+#include"StampImpact.h"
 class Boss : public Enemy
 {
 public:
@@ -28,6 +29,9 @@ private:
 	// 衝突したとき
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
+
+	template <typename T>
+	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
 private:
 	//メンバ関数ポインタ
 	using bossState_t = void(Boss::*)();
@@ -45,6 +49,6 @@ private:
 	int m_color;
 
 	std::shared_ptr<MyEngine::ColliderSphere> m_collision;
-
+	std::vector<std::shared_ptr<StampImpact>> m_impacts;
 };
 
