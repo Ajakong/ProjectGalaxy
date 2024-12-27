@@ -12,8 +12,14 @@ namespace
 	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
 
 	constexpr float kFrameParSecond = 60.0f;
+
+	constexpr int kActionFrame = 100;
 }
-Boss::Boss(Vec3 pos):Enemy(Priority::Boss,ObjectTag::Enemy)
+Boss::Boss(Vec3 pos):Enemy(Priority::Boss,ObjectTag::Enemy),
+	m_jumpCount(0),
+	m_actionFrame(0),
+	m_isHit(false),
+	m_knockBackFrame(0)
 {
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
@@ -35,7 +41,17 @@ void Boss::Init()
 void Boss::Update()
 {
 	(this->*m_bossUpdate)();
-
+	if (m_isHit)
+	{
+		m_knockBackFrame++;
+		m_color = 0xff0000;
+	}
+	if (m_knockBackFrame > 30)
+	{
+		m_knockBackFrame = 0;
+		m_isHit = false;
+		m_color = 0xff00ff;
+	}
 	for (auto& impacts : m_impacts)
 	{
 		impacts->Update();
@@ -59,8 +75,21 @@ void Boss::InitUpdate()
 
 void Boss::NeutralUpdate()
 {
-	m_rigid->AddVelocity(m_upVec * 2);
-	m_bossUpdate = &Boss::JumpingUpdate;
+	m_actionFrame++;
+	if (m_actionFrame < kActionFrame)return;
+	m_actionFrame = 0;
+	switch (GetRand(1))
+	{
+	case(0):
+		m_rigid->AddVelocity(m_upVec * 2);
+		m_bossUpdate = &Boss::JumpingUpdate;
+		break;
+	case(1):
+		m_rigid->AddVelocity(m_upVec * 4);
+		m_bossUpdate = &Boss::FullpowerJumpUpdate;
+		break;
+	}
+	
 }
 
 void Boss::AnglyUpdate()
@@ -85,10 +114,43 @@ void Boss::KnockBackUpdate()
 
 void Boss::JumpingUpdate()
 {
+	
 	if (m_collision->OnHit())
 	{
+		if (m_jumpCount > 2)
+		{
+			m_jumpCount = 0;
+			switch (GetRand(1))
+			{
+			case(0):
+				m_bossUpdate = &Boss::NeutralUpdate;
+				break;
+			case(1):
+				m_rigid->AddVelocity(m_upVec * 4);
+				m_bossUpdate = &Boss::FullpowerJumpUpdate;
+				break;
+			}
+
+		}
+		else
+		{
+			m_jumpCount++;
+			m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, 50.f, m_upVec * -1));
+			m_rigid->AddVelocity(m_upVec * 2);
+		}
+		
+	}
+	
+}
+
+void Boss::FullpowerJumpUpdate()
+{
+	if (m_collision->OnHit())
+	{
+		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, 50.f, m_upVec * -1,3.f));
+
 		m_bossUpdate = &Boss::NeutralUpdate;
-		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos(), 50.f, m_upVec * -1));
+
 	}
 }
 
@@ -143,6 +205,10 @@ void Boss::ChangeAnim(int animIndex, int speed)
 
 void Boss::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
+	if (colider->GetTag() == ObjectTag::PlayerBullet)
+	{
+		m_isHit = true;
+	}
 }
 
 void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)

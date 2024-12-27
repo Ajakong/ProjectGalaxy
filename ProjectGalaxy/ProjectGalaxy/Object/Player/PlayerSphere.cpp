@@ -47,6 +47,7 @@ void PlayerSphere::Init()
 
 void PlayerSphere::Update()
 {
+	m_rigid->SetVelocity(VGet(m_velocity.x * 8, m_velocity.y * 8, m_velocity.z * 8));
 	(this->*m_moveUpdate)();	
 }
 
