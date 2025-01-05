@@ -20,8 +20,9 @@ namespace
 	const char* effectname = "warpEffect.efk";
 }
 
-Booster::Booster(Vec3 pos, Vec3 Dir, int handle) :Collidable(Priority::StageGimmick, ObjectTag::WarpGate),
-m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname))
+Booster::Booster(Vec3 pos, Vec3 Dir, int handle, float power) :Collidable(Priority::StageGimmick, ObjectTag::WarpGate),
+m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname)),
+m_power(power)
 {
 	m_dir = Dir;
 	SetAntiGravity();
@@ -100,7 +101,7 @@ void Booster::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTa
 	{
 		PlaySoundMem(SoundManager::GetInstance().GetSoundData("boost.mp3"), DX_PLAYTYPE_BACK);
 		//colider->GetRigidbody()->SetVelocity(Vec3(m_rigid->GetPos()-colider->GetRigidbody()->GetPos()).GetNormalized()*15);
-		colider->GetRigidbody()->SetVelocity(m_dir *2.f);
+		colider->GetRigidbody()->SetVelocity(m_dir * m_power);
 		auto player = std::dynamic_pointer_cast<Player>(colider);
 		player->SetPos(m_rigid->GetPos());
 		player->m_playerUpdate = &Player::BoostUpdate;

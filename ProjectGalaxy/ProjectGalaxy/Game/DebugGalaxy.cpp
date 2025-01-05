@@ -218,11 +218,14 @@ void DebugGalaxy::Draw()
 	DrawFormatString(0, 25 * 2, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
 	DrawFormatString(0, 25 * 3, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
 	DrawFormatString(0, 25 * 4, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
-	DrawFormatString(0, 25 * 5, 0xffffff, "Camera(%f,%f,%f),Length(%f)", camera->GetPos().x, camera->GetPos().y, camera->GetPos().z, (camera->GetPos() - player->GetPos()).Length());
+
 
 	DrawFormatString(0, 25 * 6, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
 	DrawFormatString(0, 25 * 7, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25 * 8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
+	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
+	DrawFormatString(0, 25 * 10, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
+
 
 	auto cameraPos = GetCameraPosition();
 

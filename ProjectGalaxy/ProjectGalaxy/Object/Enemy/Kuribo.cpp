@@ -186,11 +186,13 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 			ChangeAnim(AnimNum::AnimationNumRoar);
 			m_moveUpdate = &Kuribo::DeathUpdate;
 		}
-		else
-		{
-
-		}
 		
+		
+	}
+
+	if (colider->GetTag() == ObjectTag::PlayerBullet)
+	{
+		m_moveUpdate = &Kuribo::ChaseUpdate;
 	}
 }
 
@@ -233,7 +235,7 @@ void Kuribo::JumpUpdate()
 
 void Kuribo::ChaseUpdate()
 {
-	if (!m_player.get())m_chaseFrameCount++;
+	m_chaseFrameCount++;
 	//ターゲット位置が正反対の時動かなくなるバグ
 	m_attackDir = m_targetPoint - m_rigid->GetPos();
 	m_attackDir.Normalize();

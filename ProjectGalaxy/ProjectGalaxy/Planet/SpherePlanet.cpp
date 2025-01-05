@@ -15,7 +15,8 @@ namespace
 
 }
 
-SpherePlanet::SpherePlanet(Vec3 pos,int color,float gravity,int modelHandle,float coefficientOfFriction) :Planet(),
+SpherePlanet::SpherePlanet(Vec3 pos,int color,float gravity,int modelHandle,float coefficientOfFriction,float scale) :Planet(),
+m_scale(scale),
 m_enemyCount(3),
 m_modelHandle(modelHandle)
 {
@@ -31,11 +32,11 @@ m_modelHandle(modelHandle)
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);//ここで入れたのは重力の影響範囲
 	m_colliders.back()->col->isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-	item->radius = kGravityRange;
+	item->radius = kGravityRange*m_scale;
 	AddThroughTag(ObjectTag::Stage);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);//マップの当たり判定
 	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-	item2->radius = kGroundRadius;
+	item2->radius = kGroundRadius*m_scale;
 }
 
 SpherePlanet::~SpherePlanet()
@@ -54,14 +55,15 @@ void SpherePlanet::Update()
 void SpherePlanet::Draw()
 {
 
-	DrawSphere3D(m_rigid->GetPos().VGet(), kGravityRange, 10, 0xddddff, 0x0000ff, false);
+	DrawSphere3D(m_rigid->GetPos().VGet(), kGravityRange*m_scale, 10, 0xddddff, 0x0000ff, false);
 	if (m_isSearch)
 	{
-		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius, 50, m_color, 0x0000ff, false);
+		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius*m_scale, 50, m_color, 0x0000ff, false);
 	}
 	else
 	{
 		MV1DrawModel(m_modelHandle);
+		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius * m_scale, 50, m_color, 0x0000ff, false);
 	}
 }
 
@@ -77,7 +79,7 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	obj->SetUpVec(toObj);
 	if (obj->IsAntiGravity())
 	{
-		return objVelocity;
+		return Vec3::Zero();
 	}
 
 	if (obj->GetTag() == ObjectTag::EnemyAttack)
@@ -87,7 +89,7 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 
 	if (obj->GetTag() == ObjectTag::PlayerBullet)
 	{
-		return GravityDir * kGravityPower*0.5f + objVelocity;
+		return GravityDir * kGravityPower + objVelocity;
 	}
 
 	

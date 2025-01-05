@@ -12,6 +12,7 @@
 #include"SeekerLine.h"
 #include"Crystal.h"
 #include"BossPlanet.h"
+#include"BoxPlanet.h"
 #include"Takobo.h"
 #include"KillerTheSeeker.h"
 #include"SpaceEmperor.h"
@@ -102,10 +103,13 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//ギミック
 	//ブースター
 
-	m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1));
+	m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1,4.5f));
 	MyEngine::Physics::GetInstance().Entry(m_booster.back());
 	m_booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
 	MyEngine::Physics::GetInstance().Entry(m_booster.back());
+
+	m_warpGate.push_back(make_shared<WarpGate>(Vec3(0, -50, -70), Vec3(-200, -300, 0), -1));
+	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
 	//スターキャプチャー
 	m_starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
 	MyEngine::Physics::GetInstance().Entry(m_starCapture.back());
@@ -121,8 +125,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 
 	MyEngine::Physics::GetInstance().Entry(m_seekerLine.back());
 	//クリスタル
-	m_crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
-	MyEngine::Physics::GetInstance().Entry(m_crystal.back());
+	//m_crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
+	//MyEngine::Physics::GetInstance().Entry(m_crystal.back());
 
 #endif
 
@@ -130,6 +134,9 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_ui = make_shared<UI>();
 
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("GoldenBall.mv1")));
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-100, 50, 400), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1"),4));
+	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-200, -300, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
+	m_planet.push_back(std::make_shared<BoxPlanet>(Vec3(0, -50, 200), 0x00ffff, 1.0f, Vec3(30, 30, 50)));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
 	
@@ -139,8 +146,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 	//エネミー
 
-	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, -30),0));
-	m_kuribo.push_back(make_shared<Kuribo>(Vec3(-30, 0, -40), 0));
+	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 200),0));
+	//m_kuribo.push_back(make_shared<Kuribo>(Vec3(-30, 0, -40), 0));
 	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
 	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -0),player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
@@ -279,6 +286,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	if (player->GetBoostFlag())
 	{
 		m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * (kCameraDistanceUp - 40) - front * ((kCameraDistanceFront - 70) + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+		//m_camera->SetCameraPoint(player->GetPos() + Vec3::Left() *30);
 	}
 	else
 	{
@@ -289,6 +297,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		else
 		{
 			m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+			//m_camera->SetCameraPoint(player->GetPos() + Vec3::Left() * 30);
 		}
 	}
 
@@ -363,6 +372,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Front() * 20).VGet(), 0x0000ff);
+	DrawLine3D(UIPos.VGet(), Vec3(UIPos + player->GetRigidbody()->GetVelocity() * 20).VGet(), 0x00ffff);
 
 	DrawCircle(200, 500, 100, 0xffff00,0);
 	DrawLine(200, 500, static_cast < int>( 200 + player->GetInputVec().x * 70), static_cast < int>( 500 + player->GetInputVec().z * 70), 0xff0000);
@@ -396,7 +406,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	SetCameraNearFar(1.f, 10000.f);
 	SetCameraPositionAndTarget_UpVecY((player->GetPos() + Vec3::Left() * -10+Vec3::Front()*-10+Vec3::Up()*10).VGet(), (player->GetPos()).VGet());
 	ClearDrawScreen();
-	player->Draw();
+	//player->Draw();
 	SetDrawScreen(DX_SCREEN_BACK);
 	//
 	//SetScreenFlipTargetWindow(NULL);

@@ -3,7 +3,7 @@
 class Booster : public MyEngine::Collidable
 {
 public:
-	Booster(Vec3 pos, Vec3 Dir, int handle);
+	Booster(Vec3 pos, Vec3 Dir, int handle,float power = 2.f);
 	virtual ~Booster();
 
 	void SetWarpPos(Vec3 warpPos) { m_warpPos = warpPos; }
@@ -20,6 +20,7 @@ private:
 	Vec3 m_warpPos;
 	int m_emitterHandle;
 	int m_effectPlayHandle;
+	float m_power;
 	Vec3 m_nowPlanetPos;
 	int m_gaussScreenHandle;
 	int m_colorScreenHandle;

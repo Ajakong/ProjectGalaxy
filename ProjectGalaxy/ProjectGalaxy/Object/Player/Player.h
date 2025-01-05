@@ -41,6 +41,7 @@ public:
 	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
 	
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
+	Vec3 GetVelocity() const { return m_rigid->GetVelocity(); }
 	Vec3 GetMoveDir() const{ return m_moveDir; }
 	Vec3 GetNowPlanetPos() const { return m_nowPlanetPos; }
 	Vec3 GetNormVec() const { return m_upVec.GetNormalized(); }

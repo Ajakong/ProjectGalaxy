@@ -575,7 +575,15 @@ void Player::OnCollideStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,
 void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	printf("TriggerEnter\n");
-
+	if (colider->GetTag() == ObjectTag::Stage)
+	{
+		if (m_nowPlanetPos != colider->GetRigidbody()->GetPos())
+		{
+			m_rigid->SetVelocity(Vec3::Zero());
+		}
+		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
+		
+	}
 	if (colider->GetTag() == ObjectTag::Coin)
 	{
 		printf("Coin\n");
@@ -692,10 +700,10 @@ void Player::NeutralUpdate()
 
 	m_rigid->AddVelocity(move);
 
-	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
+	if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
 	{
 		m_playerUpdate = &Player::JumpingUpdate;
-	}*/
+	}
 }
 
 void Player::WalkingUpdate()

@@ -25,7 +25,7 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color, float coefficientOfFriction, Vec3 size
 		m_colliders.back()->col->isTrigger = true;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back()->col);
 		item->norm = Vec3(0, 1, 0);
-		item->size = size * 2;
+		item->size = Vec3(size.x,size.y*5,size.z);
 		item->rotation = Quaternion();
 		item->isTrigger = true;
 	}
@@ -67,7 +67,8 @@ void BoxPlanet::Draw()
 
 Vec3 BoxPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 {
-	Vec3 ans = obj->GetRigidbody()->GetVelocity() + m_norm*-1;
+	obj->SetUpVec(m_norm);
+	Vec3 ans = m_norm*-1;
 	return ans*kGravityPower;
 }
 

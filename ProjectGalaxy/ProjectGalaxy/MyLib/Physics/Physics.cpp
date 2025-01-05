@@ -179,7 +179,17 @@ void MyEngine::Physics::Gravity()
 					bool isTrigger = colA->col->isTrigger || colB->col->isTrigger || isThrough;
 					if (isTrigger)
 					{
+						if (object->GetTag() == ObjectTag::Player)
+						{
+							printf("Player");
+							if (colB->tag == ColideTag::Foot)
+							{
+								printf("の足");
+							}
+
+						}
 						//重力はオブジェクトごとに一回のみ
+						//重力の強さぶんベクトルに加算
 						if (colB->tag != ColideTag::Body)continue;
 						auto planet = dynamic_cast<Planet*>(stage.get());
 						object->m_rigid->AddVelocity(planet->GravityEffect(object));
@@ -365,8 +375,8 @@ void MyEngine::Physics::CheckCollide()
 				}
 				//Triggerじゃなければ今当たってるフラグを立てる
 				
-				colA->col->SetNowOnHit(true);
-				colB->col->SetNowOnHit(true);
+				colA->col->SetOnHitResult(true);
+				colB->col->SetOnHitResult(true);
 
 				printf((ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "と" + ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "がHIT\n").c_str());
 				printf((ObjectTag_String(objB->m_tag) + "の" + ColideTag_String(colB->tag) + "と" + ObjectTag_String(objA->m_tag) + "の" + ColideTag_String(colA->tag) + "がHIT\n").c_str());
@@ -581,7 +591,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			dir.Normalize();
 			auto sphereCol = dynamic_pointer_cast<ColliderSphere>(secondaryCollider->col);
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
-			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
+			fixedPos = info.hitPos + dir * (sphereCol->radius);
 		}
 	}
 	
