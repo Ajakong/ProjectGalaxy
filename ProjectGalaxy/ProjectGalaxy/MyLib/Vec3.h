@@ -46,6 +46,7 @@ public:
 	Vec3 GetNormalized() const;
 	// 自身の正規化
 	void Normalize();
+	
 
 	// DxLib用のVECTORを取得
 	DxLib::VECTOR VGet() const;

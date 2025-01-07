@@ -105,7 +105,7 @@ namespace MyEngine
 		Priority GetPriority() const { return m_priority; }
 		void SetObjectTag(ObjectTag tag) { m_tag = tag; }
 		bool IsAntiGravity() { return m_isAntiGravity; }
-		void SetUpVec(Vec3 vel) { m_upVec = vel; }
+		void SetUpVec(Vec3 vel) { m_nextUpVec = vel; }
 		Vec3 GetUpVec() { return m_upVec; }
 		Vec3 GetFrontVec() { return m_frontVec; }
 		// 当たり判定を無視（スルー）するタグの追加/削除
@@ -133,6 +133,8 @@ namespace MyEngine
 		std::shared_ptr<Rigidbody> m_rigid;
 		// 当たり判定データ
 		std::vector<std::shared_ptr<CollideInfo>> m_colliders;
+		//補間先のUpVec
+		Vec3 m_nextUpVec;
 		Vec3 m_upVec;
 		Vec3 m_postUpVec;
 		Vec3 m_frontVec;

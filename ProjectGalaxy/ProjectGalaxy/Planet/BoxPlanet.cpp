@@ -22,12 +22,12 @@ BoxPlanet::BoxPlanet(Vec3 pos, int color, float coefficientOfFriction, Vec3 size
 	
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Box, ColideTag::Body);//ここで入れたのは重力の影響範囲
-		m_colliders.back()->col->isTrigger = true;
+		m_colliders.back()->col->m_isTrigger = true;
 		auto item = dynamic_pointer_cast<MyEngine::ColliderBox>(m_colliders.back()->col);
 		item->norm = Vec3(0, 1, 0);
 		item->size = Vec3(size.x,size.y*5,size.z);
 		item->rotation = Quaternion();
-		item->isTrigger = true;
+		item->m_isTrigger = true;
 	}
 	AddThroughTag(ObjectTag::Stage);
 	AddCollider(MyEngine::ColliderBase::Kind::Box, ColideTag::Body);//マップの当たり判定

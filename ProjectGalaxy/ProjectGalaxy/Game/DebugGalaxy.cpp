@@ -8,6 +8,7 @@
 #include"Camera.h"
 #include"BoxPlanet.h"
 #include"SpherePlanet.h"
+#include"PolygonModelPlanet.h"
 #include"Physics.h"
 #include"ModelManager.h"
 
@@ -75,10 +76,12 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 	m_ui = make_shared<UI>();
 	player = playerPointer;
 
-	m_planet.push_back(make_shared<BoxPlanet>(Vec3(0, -50, 0), 0xffff00,1.f, Vec3(100, 50, 100)));
+	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("MechSpiderM1.mv1"), Vec3(0, -200, 0), 1,1,400.f));
 	//takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
-	boss.push_back(make_shared<Boss>(Vec3(0, 50, 100)));
-	MyEngine::Physics::GetInstance().Entry(boss.back());
+
+	/*boss.push_back(make_shared<Boss>(Vec3(0, 50, 100)));
+	MyEngine::Physics::GetInstance().Entry(boss.back());*/
+	
 	//samuraiAlter.push_back(make_shared<SamuraiAlter>(Vec3(0, 0, -30)));
 	//MyEngine::Physics::GetInstance().Entry(samuraiAlter.back());
 	camera = make_shared<Camera>();

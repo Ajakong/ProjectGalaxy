@@ -354,6 +354,21 @@
     <ClCompile Include="MyLib\Vec3.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
+    <ClCompile Include="MyLib\Physics\ColliderPolygonModel.cpp">
+      <Filter>ソース ファイル\MyLib\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet\PolygonModelPlanet.cpp">
+      <Filter>ソース ファイル\Planet\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Physics\ColliderLine3D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Item\FullPowerDropItem.cpp">
+      <Filter>ソース ファイル\Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Item\StickStarItem.cpp">
+      <Filter>ソース ファイル\Object\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -577,6 +592,21 @@
     </ClInclude>
     <ClInclude Include="Object\Enemy\StampImpact.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderPolygonModel.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet\PolygonModelPlanet.h">
+      <Filter>ヘッダー ファイル\Planet\h</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Physics\ColliderLine3D.h">
+      <Filter>ヘッダー ファイル\MyLib\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item\FullPowerDropItem.h">
+      <Filter>ヘッダー ファイル\Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item\StickStarItem.h">
+      <Filter>ヘッダー ファイル\Object\Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

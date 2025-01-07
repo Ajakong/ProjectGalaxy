@@ -20,6 +20,8 @@
 #include"Gorori.h"
 #include"Kuribo.h"
 #include"Item.h"
+#include"StickStarItem.h"
+#include"FullPowerDropItem.h"
 #include"Coin.h"
 #include"ClearObject.h"
 #include<cassert>
@@ -167,7 +169,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//アイテム
 	m_coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
 	MyEngine::Physics::GetInstance().Entry(m_coin.back());
-
+	m_item.push_back(make_shared<StickStarItem>(Vec3(-55, -50, 0),true));
+	m_item.push_back(make_shared <FullPowerDropItem>(Vec3(55, -50, 0),true));
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
@@ -176,6 +179,10 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	for (auto& item : m_planet)
 	{
 		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
+	}
+	for (auto& item : m_item)
+	{
+		MyEngine::Physics::GetInstance().Entry(item);
 	}
 	//それぞれのオブジェクトの上方向ベクトルなどの更新
 	MyEngine::Physics::GetInstance().Update();
@@ -238,21 +245,8 @@ void SerialPlanetGalaxy::IntroDraw()
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
 	m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
-	bool bossFind=false;
-	Vec3 cameraTarget;
-	std::shared_ptr<SpaceEmperor> FindBoss;
-	for (auto& boss : m_spaceEmperor)
-	{
-		bossFind = boss->GetIsFind();
-		if (bossFind)
-		{
-			cameraTarget = boss->GetNeckPos();
-			FindBoss = boss;
-			break;
-		}
-	}
+	
 	if (player->OnAiming())m_camera->Update(player->GetShotDir());
-	else if (bossFind)m_camera->Update(cameraTarget);
 	else m_camera->Update(player->GetLookPoint());
 
 	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
@@ -301,30 +295,13 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		}
 	}
 
-	//ボス登場時演出
-	if (bossFind)
-	{
-		bool onBoss = (FindBoss->GetRigidbody()->GetPos() - player->GetPos()).Length() < kGravityRange;
-		if (onBoss)
-		{
-			if (!FindBoss->GetIsFind())
-			{
-				StopSoundMem(m_bgmHandle);
-				PlaySoundMem(m_bossBattleBgmHandle, DX_PLAYTYPE_BACK);
-				FindBoss->OnBossPlanet();
-
-				m_camera->WatchThis(FindBoss->GetRigidbody()->GetPos() + FindBoss->GetUpVec() * 50, FindBoss->GetRigidbody()->GetPos() + FindBoss->GetFrontVec() * -50, FindBoss->GetUpVec());
-			}
-		}
-
-		if (FindBoss->GetHP() <= 0)
-		{
-			m_isClearFlag = true;
-		}
-	}
 	if (player->GetHp()<=0)
 	{
 		m_isGameOverFlag = true;
+	}
+	if (player->IsClear())
+	{
+		m_isClearFlag = true;
 	}
 	
 	MyEngine::Physics::GetInstance().Update();
@@ -334,6 +311,8 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	for (auto& item : m_takobo) { item->SetMatrix(); }
 	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
 	DeleteObject(m_kuribo);
+	DeleteObject(m_takobo);
+	DeleteObject(m_boss);
 
 }
 

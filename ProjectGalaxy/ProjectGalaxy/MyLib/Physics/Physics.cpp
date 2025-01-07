@@ -6,6 +6,8 @@
 
 #include "ColliderSphere.h"
 #include"ColliderBox.h"
+#include"ColliderPolygonModel.h"
+#include"ColliderLine3D.h"
 #include "DebugDraw.h"
 #include"Planet.h"
 
@@ -157,9 +159,13 @@ void MyEngine::Physics::Gravity()
 		// それぞれが持つ判定全てを比較
 		for (auto& object : m_collidables)
 		{
+			if (object->IsAntiGravity())continue;
 			for (auto& col : object->m_colliders)
 			{
+
 				if (object->GetTag() == ObjectTag::Stage)continue;
+				
+				if ((object->GetRigidbody()->GetPos() - stage->GetRigidbody()->GetPos()).Length() > 200)continue;
 				for (auto stageCol : stage->m_colliders)
 				{
 					auto& colA = stageCol;
@@ -176,7 +182,7 @@ void MyEngine::Physics::Gravity()
 					bool isThrough = std::find(throughA.begin(), throughA.end(), object->GetTag()) != throughA.end()
 						|| std::find(throughB.begin(), throughB.end(), stage->GetTag()) != throughB.end();
 					// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
-					bool isTrigger = colA->col->isTrigger || colB->col->isTrigger || isThrough;
+					bool isTrigger = colA->col->m_isTrigger || colB->col->m_isTrigger || isThrough;
 					if (isTrigger)
 					{
 						if (object->GetTag() == ObjectTag::Player)
@@ -367,7 +373,7 @@ void MyEngine::Physics::CheckCollide()
 				bool isThrough = std::find(throughA.begin(), throughA.end(), objB->GetTag()) != throughA.end()
 					|| std::find(throughB.begin(), throughB.end(), objA->GetTag()) != throughB.end();
 				// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
-				bool isTrigger = colA->col->isTrigger || colB->col->isTrigger || isThrough;
+				bool isTrigger = colA->col->m_isTrigger || colB->col->m_isTrigger || isThrough;
 				if (isTrigger)
 				{
 					AddNewCollideInfo(objA, objB, colA->tag, colB->tag, m_newTirrigerInfo, collideHitInfo.hitPos);
@@ -412,11 +418,6 @@ void MyEngine::Physics::CheckCollide()
 					}
 				}
 
-				if (objA->GetTag() == ObjectTag::Player||objB->GetTag()==ObjectTag::Player)
-				{
-					int a = 0;
-				}
-
 				// 次の座標を修正する
 				FixNextPos(primary->m_rigid, secondary->m_rigid, primaryCollider, secondaryCollider, collideHitInfo);
 				//FixNextPos(secondary->m_rigid, primary->m_rigid, secondaryCollider, primaryCollider, collideHitInfo);
@@ -432,123 +433,295 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 
 	auto kindA = colliderA->col->GetKind();
 	auto kindB = colliderB->col->GetKind();
-
-	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Sphere)
+	//kindA=球の当たり判定
+	if (kindA == ColliderBase::Kind::Sphere)
 	{
-		auto sphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
+		//ReadMe::同じオブジェクト同士はまあいいとして、違うオブジェクト同士は関数化してください。
+		//下にAとB入れ替えただけの同じコードが書かれているじゃないですか。同じオブジェクト同士も関数化してください。判定関数だけ持つクラス作ってもいいかも
+		if (kindB == ColliderBase::Kind::Sphere)
+		{
+			auto sphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
+			auto sphereB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
+
+			auto aToB = (rigidB->GetNextPos() + colliderB->col->GetShift()) - (rigidA->GetNextPos() + colliderA->col->GetShift());
+			float sumRadius = sphereA->radius + sphereB->radius;
+			info.isHit = (aToB.SqLength() <= sumRadius * sumRadius);
+		}
+		if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Box)
+		{
+			auto SphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
+			auto BoxB = dynamic_pointer_cast<ColliderBox>(colliderB->col);
+
+			auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
+			auto boxPos = rigidB->GetPos() + colliderB->col->GetShift();
+
+			// ボックスの中心から円の中心までのベクトルを作成
+			auto boxToSphere = spherePos - boxPos;
+			auto radius = SphereA->radius;
+			// 球に近い場所を求める
+			auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxB->size, BoxB->rotation);
+			// 最近接点と球の中心との長さで判定
+			auto nearToSphere = spherePos - nearPos;
+			if (nearToSphere.SqLength() < radius * radius)
+			{
+				info.isHit = true;
+				info.hitPos = nearPos;
+			}
+		}
+		if (kindB == ColliderBase::Kind::Polygons) 
+		{
+			auto sphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
+			auto polygonB = dynamic_pointer_cast<ColliderPolygonModel>(colliderB->col);
+			auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
+			float sphereRadius = sphereA->radius;
+
+			// 最も球に近い衝突点を探す
+			Vec3 closestHitPos;  // 最も近い衝突点
+			Vec3 closestNormal;  // 最も近い衝突点の法線
+			float closestDistance = sphereRadius;
+
+			for (auto& item : polygonB->GetTriangles()) {
+				Vec3 n = item.Normal();
+				float distance = Dot((spherePos - item.vertex[0]), n);
+
+				// 球が三角形の面に接触しているか
+				if (std::abs(distance) <= sphereRadius)
+				{
+					Vec3 hitPoint = spherePos - n * distance;
+
+					// 衝突点が三角形内部、辺に接触しているか
+					if (IsPointInsideTriangle(hitPoint, item.vertex[0], item.vertex[1], item.vertex[2]) ||
+						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[0], item.vertex[1]) ||
+						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[1], item.vertex[2]) ||
+						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[2], item.vertex[0])) {
+
+						// 最も近い衝突点を更新
+						float currentDistance = (hitPoint - spherePos).Length();
+						if (currentDistance < closestDistance)
+						{
+							info.isHit = true;
+							closestHitPos = hitPoint;
+							closestNormal = n;
+							closestDistance = currentDistance;
+						}
+					}
+				}
+
+				// 三角形の頂点が球に接触しているか
+				for (int i = 0; i < 3; i++)
+				{
+					if ((spherePos - item.vertex[i]).Length() <= sphereRadius)
+					{
+						Vec3 hitPoint = item.vertex[i];
+
+						// 最も近い頂点衝突点を更新
+						float currentDistance = (hitPoint - spherePos).Length();
+						if (currentDistance < closestDistance) {
+							info.isHit = true;
+							closestHitPos = hitPoint;
+							closestNormal = (spherePos - hitPoint).GetNormalized();  // 頂点と球の中心から法線方向を計算
+							closestDistance = currentDistance;
+						}
+					}
+				}
+			}
+
+			// 最も近い衝突点が見つかった場合
+			if (info.isHit)
+			{
+				info.hitPos = closestHitPos;
+				info.Norm = closestNormal;
+			}
+		}
+		if (kindB == ColliderBase::Kind::Line)
+		{
+			auto sphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
+			auto LineB = dynamic_pointer_cast<ColliderLine3D>(colliderB->col);
+
+			// 球の中心位置
+			auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
+			float sphereRadius = sphereA->radius;
+
+			// 線分の始点と終点
+			auto line = LineB->GetLine();
+			Vec3 lineStart = line.start;
+			Vec3 lineEnd = line.end;
+
+			// 線分の方向ベクトルと長さ
+			Vec3 lineDir = lineEnd - lineStart;
+			float lineLength = lineDir.Length();
+			lineDir = lineDir.GetNormalized();
+
+			// 球の中心から線分の始点へのベクトル
+			Vec3 L = spherePos - lineStart;
+
+			// 線分上の最短点を求める（t: 線分上の割合 [0, 1]）
+			float t = Dot(L, lineDir) / lineLength;
+			t = std::clamp(t, 0.0f, 1.0f); // t を [0, 1] に制限
+
+			// 線分上の最短点
+			Vec3 closestPoint = lineStart + lineDir * (t * lineLength);
+
+#ifdef _DEBUG
+			// デバッグ用に最短点を描画
+			DrawSphere3D(closestPoint.VGet(), 5, 5, 0xff0000, 0xff0000, false);
+
+#endif
+			// 球の中心からその最短点までの距離
+			float distance = (closestPoint - spherePos).Length();
+
+			// 距離が球の半径以下なら交差している
+			if (distance <= sphereRadius+1) 
+			{
+				info.hitPos = closestPoint;
+				info.isHit = true;
+			}
+		}
+	}
+	
+
+	//kindA=立方体の当たり判定
+	if (kindA == ColliderBase::Kind::Box) 
+	{
+		//立方体と球
+		if (kindB == ColliderBase::Kind::Sphere)
+		{
+			auto BoxA = dynamic_pointer_cast<ColliderBox>(colliderA->col);
+			auto SphareB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
+
+			auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
+			auto boxPos = rigidA->GetPos() + colliderA->col->GetShift();
+
+			// ボックスの中心から円の中心までのベクトルを作成
+			auto boxToSphere = spherePos - boxPos;
+			auto radius = SphareB->radius;
+			// 球に近い場所を求める
+			auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxA->size, BoxA->rotation);
+			// 最近接点と球の中心との長さで判定
+			auto nearToSphere = spherePos - nearPos;
+			if (nearToSphere.SqLength() < radius * radius)
+			{
+				info.isHit = true;
+				info.hitPos = nearPos;
+			}
+		}
+		//立方体は球以外と判定しません
+	}
+
+	//kindA=ポリゴン集合体の当たり判定
+	if (kindA == ColliderBase::Kind::Polygons)
+	{
+		//ポリゴン集合体と球
+		if (kindB == ColliderBase::Kind::Sphere)
+		{
+			auto polygonA = dynamic_pointer_cast<ColliderPolygonModel>(colliderA->col);
+			auto sphereB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
+			auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
+			float sphereRadius = sphereB->radius;
+
+			// 最も球に近い衝突点を探す
+			Vec3 closestHitPos;  // 最も近い衝突点
+			Vec3 closestNormal;  // 最も近い衝突点の法線
+			float closestDistance = sphereRadius;
+
+			for (auto& item : polygonA->GetTriangles()) {
+				Vec3 n = item.Normal();
+				float distance = Dot((spherePos - item.vertex[0]), n);
+
+				// 球が三角形の面に接触しているか
+				if (std::abs(distance) <= sphereRadius) {
+					Vec3 hitPoint = spherePos - n * distance;
+
+					// 衝突点が三角形内部、辺に接触しているか
+					if (IsPointInsideTriangle(hitPoint, item.vertex[0], item.vertex[1], item.vertex[2]) ||
+						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[0], item.vertex[1]) ||
+						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[1], item.vertex[2]) ||
+						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[2], item.vertex[0])) {
+
+						// 最も近い衝突点を更新
+						float currentDistance = (hitPoint - spherePos).Length();
+						if (currentDistance < closestDistance) {
+							info.isHit = true;
+							closestHitPos = hitPoint;
+							closestNormal = n;
+							closestDistance = currentDistance;
+						}
+					}
+				}
+
+				// 三角形の頂点が球に接触しているか
+				for (int i = 0; i < 3; i++) {
+					if ((spherePos - item.vertex[i]).Length() <= sphereRadius) {
+						Vec3 hitPoint = item.vertex[i];
+
+						// 最も近い頂点衝突点を更新
+						float currentDistance = (hitPoint - spherePos).Length();
+						if (currentDistance < closestDistance) {
+							info.isHit = true;
+							closestHitPos = hitPoint;
+							closestNormal = (spherePos - hitPoint).GetNormalized();  // 頂点と球の中心から法線方向を計算
+							closestDistance = currentDistance;
+						}
+					}
+				}
+			}
+
+			// 最も近い衝突点が見つかった場合
+			if (info.isHit) {
+				info.hitPos = closestHitPos;
+				info.Norm = closestNormal;
+			}
+		}
+		//当てる予定ないし重くなるので球以外と判定しません
+	}
+	if (kindA == ColliderBase::Kind::Line && kindB == ColliderBase::Kind::Sphere)
+	{
+		auto LineA = dynamic_pointer_cast<ColliderLine3D>(colliderA->col);
 		auto sphereB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
-
-		auto aToB = (rigidB->GetNextPos() + colliderB->col->GetShift()) - (rigidA->GetNextPos() + colliderA->col->GetShift());
-		float sumRadius = sphereA->radius + sphereB->radius;
-		info.isHit = (aToB.SqLength() <= sumRadius * sumRadius);
-	}
-	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Box)
-	{
-		auto SphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
-		auto BoxB = dynamic_pointer_cast<ColliderBox>(colliderB->col);
-
-		auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
-		auto boxPos = rigidB->GetPos() + colliderB->col->GetShift();
-
-		// ボックスの中心から円の中心までのベクトルを作成
-		auto boxToSphere = spherePos - boxPos;
-		auto radius = SphereA->radius;
-		// 球に近い場所を求める
-		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxB->size, BoxB->rotation);
-		// 最近接点と球の中心との長さで判定
-		auto nearToSphere = spherePos - nearPos;
-		if (nearToSphere.SqLength() < radius * radius)
-		{
-			info.isHit = true;
-			info.hitPos = nearPos;
-		}
-	}
-	if (kindA == ColliderBase::Kind::Box && kindB == ColliderBase::Kind::Sphere)
-	{
-		auto BoxA = dynamic_pointer_cast<ColliderBox>(colliderA->col);
-		auto SphareB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
-
+		// 球の中心位置
 		auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
-		auto boxPos = rigidA->GetPos() + colliderA->col->GetShift();
+		float sphereRadius = sphereB->radius;
 
-		// ボックスの中心から円の中心までのベクトルを作成
-		auto boxToSphere = spherePos - boxPos;
-		auto radius = SphareB->radius;
-		// 球に近い場所を求める
-		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxA->size, BoxA->rotation);
-		// 最近接点と球の中心との長さで判定
-		auto nearToSphere = spherePos - nearPos;
-		if (nearToSphere.SqLength() < radius * radius)
+		// 線分の始点と終点
+		auto line = LineA->GetLine();
+		Vec3 lineStart = line.start;
+		Vec3 lineEnd = line.end;
+
+		// 線分の方向ベクトルと長さ
+		Vec3 lineDir = lineEnd - lineStart;
+		float lineLength = lineDir.Length();
+		lineDir = lineDir.GetNormalized();
+
+		// 球の中心から線分の始点へのベクトル
+		Vec3 L = spherePos - lineStart;
+
+		// 線分上の最短点を求める（t: 線分上の割合 [0, 1]）
+		float t = Dot(L, lineDir) / lineLength;
+		t = std::clamp(t, 0.0f, 1.0f); // t を [0, 1] に制限
+
+		// 線分上の最短点
+		Vec3 closestPoint = lineStart + lineDir * (t * lineLength);
+
+#ifdef _DEBUG
+		// デバッグ用に最短点を描画
+		DrawSphere3D(closestPoint.VGet(), 5, 5, 0xff0000, 0xff0000, false);
+
+#endif
+		// 球の中心からその最短点までの距離
+		float distance = (closestPoint - spherePos).Length();
+
+		// 距離が球の半径以下なら交差している
+		if (distance <= sphereRadius + 1)
 		{
+			info.hitPos = closestPoint;
 			info.isHit = true;
-			info.hitPos = nearPos;
 		}
 	}
+
+	//kindA=ポリゴンの当たり判定
 	return info;
 }
 
-
-MyEngine::Physics::CollideHitInfo Physics::IsCollideNow(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::CollideInfo>& colliderA, const std::shared_ptr<Collidable::CollideInfo>& colliderB) const
-{
-
-	CollideHitInfo info;
-
-	auto kindA = colliderA->col->GetKind();
-	auto kindB = colliderB->col->GetKind();
-
-	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Sphere)
-	{
-		auto sphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
-		auto sphereB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
-
-		auto aToB = (rigidB->GetNextPos() + colliderB->col->GetShift()) - (rigidA->GetNextPos() + colliderA->col->GetShift());
-		float sumRadius = sphereA->radius + sphereB->radius;
-		info.isHit = (aToB.SqLength() < sumRadius * sumRadius);
-	}
-	if (kindA == ColliderBase::Kind::Sphere && kindB == ColliderBase::Kind::Box)
-	{
-		auto SphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
-		auto BoxB = dynamic_pointer_cast<ColliderBox>(colliderB->col);
-
-		auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
-		auto boxPos = rigidB->GetPos() + colliderB->col->GetShift();
-
-		// ボックスの中心から円の中心までのベクトルを作成
-		auto boxToSphere = spherePos - boxPos;
-		auto radius = SphereA->radius;
-		// 球に近い場所を求める
-		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxB->size, BoxB->rotation);
-		// 最近接点と球の中心との長さで判定
-		auto nearToSphere = spherePos - nearPos;
-		if (nearToSphere.SqLength() < radius * radius)
-		{
-			info.isHit = true;
-			info.hitPos = nearPos;
-		}
-	}
-	if (kindA == ColliderBase::Kind::Box && kindB == ColliderBase::Kind::Sphere)
-	{
-		auto BoxA = dynamic_pointer_cast<ColliderBox>(colliderA->col);
-		auto SphareB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
-
-		auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
-		auto boxPos = rigidA->GetPos() + colliderA->col->GetShift();
-
-		// ボックスの中心から円の中心までのベクトルを作成
-		auto boxToSphere = spherePos - boxPos;
-		auto radius = SphareB->radius;
-		// 球に近い場所を求める
-		auto nearPos = GetNearestPtOnBox(spherePos, boxPos, BoxA->size, BoxA->rotation);
-		// 最近接点と球の中心との長さで判定
-		auto nearToSphere = spherePos - nearPos;
-		if (nearToSphere.SqLength() < radius * radius)
-		{
-			info.isHit = true;
-			info.hitPos = nearPos;
-		}
-	}
-	return info;
-}
 
 void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<Collidable::CollideInfo>& primaryCollider, const std::shared_ptr<Collidable::CollideInfo>& secondaryCollider, const CollideHitInfo info)
 {
@@ -557,6 +730,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 	auto primaryKind = primaryCollider->col->GetKind();
 	auto secondaryKind = secondaryCollider->col->GetKind();
 
+	//primaryKind=球の位置補正
 	if (primaryKind == ColliderBase::Kind::Sphere)
 	{
 		if (secondaryKind == ColliderBase::Kind::Sphere)
@@ -582,7 +756,14 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
 			fixedPos = info.hitPos + dir * (sphereCol->radius);
 		}
+		if (secondaryKind == ColliderBase::Kind::Polygons)
+		{
+			//今回のプロジェクトではポリゴンの当たり判定を持っているオブジェクトは動かさないので割愛
+
+		}
 	}
+	//primaryKind=立方体の位置補正
+
 	if (primaryKind == ColliderBase::Kind::Box)
 	{
 		if (secondaryKind == ColliderBase::Kind::Sphere)
@@ -592,6 +773,45 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			auto sphereCol = dynamic_pointer_cast<ColliderSphere>(secondaryCollider->col);
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
 			fixedPos = info.hitPos + dir * (sphereCol->radius);
+		}
+	}
+	if (primaryKind == ColliderBase::Kind::Polygons) {
+		if (secondaryKind == ColliderBase::Kind::Sphere) {
+
+			auto secondarySphere = dynamic_pointer_cast<ColliderSphere>(secondaryCollider->col);
+			auto primaryPolygon = dynamic_pointer_cast<ColliderPolygonModel>(primaryCollider->col);
+
+			// 球の中心位置を計算
+			auto spherePos = secondaryRigid->GetPos() + secondaryCollider->col->GetShift();
+
+			// 衝突点と球の中心の距離（侵入距離）
+			float penetrationDepth = secondarySphere->radius - Dot((spherePos - info.hitPos), info.Norm);
+
+			// 侵入している場合のみ補正を適用
+			if (penetrationDepth > 0.0f) {
+				// 法線方向が球の中心に向かっているか確認（逆方向の場合は反転）
+				bool Reverce = false;
+				if (Dot(info.Norm, spherePos - info.hitPos) < 0.0f) {
+					Reverce = true;
+				}
+
+				float adjustedPenetrationDepth = penetrationDepth;
+
+				// 法線方向に補正距離分だけ移動
+				if (Reverce)
+				{
+					fixedPos = spherePos + (info.Norm*-1) * adjustedPenetrationDepth;
+				}
+				else
+				{
+					fixedPos = spherePos + info.Norm * adjustedPenetrationDepth;
+				}
+				
+			}
+			else {
+				// 侵入していない場合は補正不要
+				fixedPos = spherePos;
+			}
 		}
 	}
 	
@@ -615,7 +835,7 @@ void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, Sen
 {
 	// 1つ前に通知リストが当たったか
 	auto isPreExist = preSendInfo.size() != 0;
-
+	
 	for (auto& info : newSendInfo)
 	{
 		bool isEntry = false;
@@ -741,6 +961,46 @@ void Physics::FixPos() const
 #endif
 	}
 
+}
+
+bool MyEngine::Physics::IsPointInsideTriangle(const Vec3& point, const Vec3& v0, const Vec3& v1, const Vec3& v2) const
+{
+	Vec3 edge0 = v1 - v0;
+	Vec3 edge1 = v2 - v1;
+	Vec3 edge2 = v0 - v2;
+
+	Vec3 c0 = point - v0;
+	Vec3 c1 = point - v1;
+	Vec3 c2 = point - v2;
+
+	// クロス積を使って、三角形の外側かどうかをチェック
+	Vec3 cross0 = Cross(edge0, c0);
+	Vec3 cross1 = Cross(edge1, c1);
+	Vec3 cross2 = Cross(edge2, c2);
+
+	// すべてのクロス積が同じ方向（同じ符号）であれば点は内部にある
+	if (Dot(cross0, cross1) >= 0.0f && Dot(cross1, cross2) >= 0.0f && Dot(cross2, cross0) >= 0.0f) {
+		return true;
+	}
+
+	return false;  // 三角形外部にある
+}
+
+bool MyEngine::Physics::IsPointOnEdge(const Vec3& point, float radius, const Vec3& v0, const Vec3& v1) const
+{
+	Vec3 edge = v1 - v0;
+	Vec3 pointToV0 = point - v0;
+	float edgeLength = edge.Length();
+	float projection = Dot(pointToV0, edge) / edgeLength;
+
+	if (projection < 0.0f || projection > edgeLength) {
+		return false;  // 衝突点が辺の延長線上にない場合
+	}
+
+	Vec3 closestPoint = v0 + edge * (projection / edgeLength);
+	float distance = (point - closestPoint).Length();
+
+	return distance <= radius;  // 距離が球の半径以下なら衝突
 }
 
 Vec3 closestPointOnCube(const Vec3& cubeCenter, const Vec3& size, const Vec3& point) {

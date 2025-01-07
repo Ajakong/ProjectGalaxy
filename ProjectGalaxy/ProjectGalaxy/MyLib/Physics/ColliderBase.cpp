@@ -1,7 +1,7 @@
 ﻿#include "ColliderBase.h"
 
 MyEngine::ColliderBase::ColliderBase(Kind kind) :
-	isTrigger(false),
+	m_isTrigger(false),
 	m_kind(kind),
 	m_posShift(Vec3::Zero()),
 	m_isNowOnHit(false),

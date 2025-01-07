@@ -7,7 +7,13 @@ using namespace MyEngine;
 class Item : public MyEngine::Collidable
 {
 public:
-	Item(Vec3 pos, bool antiGravity=false);
+	/// <summary>
+	/// プレイヤーは引数のObjectTagをみて効果を使い分ける。ItemでPlayerのプロパティをいじる処理は書かない。そうそれはプラシーボ効果
+	/// </summary>
+	/// <param name="pos"></param>
+	/// <param name="tag">アイテムの種類</param>
+	/// <param name="antiGravity"></param>
+	Item(Vec3 pos, ObjectTag tag, bool antiGravity=false);
 	virtual ~Item();
 
 	virtual void Init();

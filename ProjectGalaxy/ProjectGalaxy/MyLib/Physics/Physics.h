@@ -29,10 +29,12 @@ namespace MyEngine
 			TriggerStay,
 			TriggerExit
 		};
+
 		struct CollideHitInfo
 		{
 			bool isHit = false;
 			Vec3 hitPos;
+			Vec3 Norm;
 		};
 
 		struct CollideFuncArgs
@@ -92,7 +94,6 @@ namespace MyEngine
 		void CheckCollide();
 
 		CollideHitInfo IsCollide(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::CollideInfo> & colliderA, const std::shared_ptr<Collidable::CollideInfo>& colliderB) const;
-		CollideHitInfo IsCollideNow(const std::shared_ptr<Rigidbody> rigidA, const std::shared_ptr<Rigidbody> rigidB, const std::shared_ptr<Collidable::CollideInfo>& colliderA, const std::shared_ptr<Collidable::CollideInfo>& colliderB) const;
 		void FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid, std::shared_ptr<Rigidbody> secondaryRigid, const std::shared_ptr<Collidable::CollideInfo>& primaryCollider, const std::shared_ptr<Collidable::CollideInfo>& secondaryCollider, const CollideHitInfo info);
 		/// <summary>
 		/// 判定通知リストに追加する
@@ -111,6 +112,23 @@ namespace MyEngine
 		void OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColideTag ownTag, ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind);
 		void FixPos() const;
 
+		/// <summary>
+		/// 接触点が三角形の内側にあるかの判定
+		/// </summary>
+		/// <param name="p">接触点</param>
+		/// <param name="v0">三角形の頂点0</param>
+		/// <param name="v1">三角形の頂点1</param>
+		/// <param name="v2">三角形の頂点2</param>
+		bool IsPointInsideTriangle(const Vec3& point, const Vec3& v0, const Vec3& v1, const Vec3& v2) const;
+		/// <summary>
+		/// その球は辺と接触してますかぁぁぁあ！！？
+		/// </summary>
+		/// <param name="point">判定したい球の中心点</param>
+		/// <param name="v0">辺の始点</param>
+		/// <param name="v1">辺の終点</param>
+		/// <param name="radius">球の半径</param>
+		/// <returns>true:してまぁす！！,false:してますぇん</returns>
+		bool IsPointOnEdge(const Vec3& point, float radius, const Vec3& v0, const Vec3& v1) const;
 	private:
 		
 		std::vector<std::shared_ptr<Collidable>> m_stageCollidables;

@@ -16,13 +16,15 @@ namespace MyEngine
 			Sphere,
 			Capsule,
 			Box,
+			Polygons,
+			Line
 		};
 
 		// コンストラクタ
 		ColliderBase(Kind kind);
 		virtual ~ColliderBase() {}		
 
-		void DebugDraw(Vec3 pos) {}
+		virtual void DebugDraw(Vec3 pos) {}
 		// 当たり判定種別取得
 		Kind GetKind() const { return m_kind; }
 		// 当たった情報更新
@@ -44,7 +46,7 @@ namespace MyEngine
 	public:
 		// MEMO: 色々なところで使うためColliderBase関係のpublic変数は
 		// メンバ変数のコーディング規約無視している
-		bool isTrigger;
+		bool m_isTrigger;
 
 	protected:
 		//オブジェクトの位置からの当たり判定の相対量

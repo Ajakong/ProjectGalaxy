@@ -3,6 +3,7 @@
 #include"Vec3.h"
 #include"Quaternion.h"
 #include"ColliderSphere.h"
+#include"StampImpact.h"
 #include<string>
 
 class Camera;
@@ -76,6 +77,7 @@ public:
 	int GetDamageFrame() const { return m_damageFrame; }
 	//int GetSearchRemainTime() { return m_searchRemainTime; }
 	bool GetJumpFlag() const { return m_isJumpFlag; }
+
 	std::string GetState() const { return m_state; }
 
 
@@ -95,6 +97,7 @@ public:
 	/// </summary>
 	playerState_t m_shotUpdate;
 	playerState_t m_jumpActionUpdate;
+	playerState_t m_dropAttackUpdate;
 
 	void CommandJump();
 	void BoostUpdate();
@@ -122,16 +125,39 @@ private:
 	/// 通常時
 	/// </summary>
 	void NeutralUpdate();
+	/// <summary>
+	/// 歩き
+	/// </summary>
 	void WalkingUpdate();
+	/// <summary>
+	/// 走り
+	/// </summary>
 	void DashUpdate();
-
+	/// <summary>
+	/// スピン攻撃
+	/// </summary>
 	void SpiningUpdate();
-	void JumpingSpinUpdate();
+	/// <summary>
+	/// ジャンプ中
+	/// </summary>
 	void JumpingUpdate();
+	
+	
+	//ジャンプ中の特殊アクション
 	void JumpActionUpdate();
+	void JumpingSpinUpdate();
 	void JumpBoostUpdate();
+
+	//ジャンプ中の特殊攻撃
 	void DropAttackUpdate();
+	void NormalDropAttackUpdate();
+	void FullPowerDropAttackUpdate();
+
+	/// <summary>
+	/// 照準
+	/// </summary>
 	void AimingUpdate();
+
 	/// <summary>
 	/// ダメージ時
 	/// </summary>
@@ -140,12 +166,11 @@ private:
 	/// 回避
 	/// </summary>
 	void AvoidUpdate();
-	/*m_cameraUpdateで使う*/
-	void Planet1Update();
 
 	void SetShotDir();
 	void DeleteManage();
-	
+	template <typename T>
+	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
 	Vec3 GetCameraToPlayer()const;
 
 private:
@@ -187,7 +212,8 @@ private:
 	int m_spinCount;
 
 	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
-	
+	std::vector<std::shared_ptr<StampImpact>> m_impacts;
+
 	std::string m_state;
 
 	bool m_isOnDamageFlag;
@@ -199,6 +225,8 @@ private:
 	float m_spinAngle;
 	float m_radius = 0;
 	float m_attackRadius;
+
+	float m_fullPowerChargeCount;
 
 	Quaternion m_myQ;
 	Quaternion m_rotateYQ;
@@ -255,3 +283,16 @@ private:
 	int m_hitCount = 0;
 };
 
+template<typename T>
+inline void Player::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
+{
+	auto result = remove_if(objects.begin(), objects.end(), [this](const auto& object)
+		{
+			if (object->GetDeleteFlag())
+			{
+				MyEngine::Physics::GetInstance().Exit(object);
+			}
+			return object->GetDeleteFlag(); // IsDestroy() が true の場合削除
+		});
+	objects.erase(result, objects.end());
+}

@@ -93,6 +93,7 @@ private:
 	//ステージ
 	std::vector<std::shared_ptr<Planet>> m_planet;
 	//アイテム
+	std::vector<std::shared_ptr<Item>> m_item;
 	std::vector<std::shared_ptr<Coin>> m_coin;
 	//ギミック
 	std::vector<std::shared_ptr<WarpGate>> m_warpGate;

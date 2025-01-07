@@ -30,7 +30,7 @@ m_modelHandle(modelHandle)
 
 	//当たり判定の追加
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);//ここで入れたのは重力の影響範囲
-	m_colliders.back()->col->isTrigger = true;
+	m_colliders.back()->col->m_isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kGravityRange*m_scale;
 	AddThroughTag(ObjectTag::Stage);

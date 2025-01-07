@@ -1,7 +1,8 @@
 ﻿#include "Boss.h"
-
+#include"Physics.h"
 namespace
 {
+	constexpr int kHPFull = 60;
 	constexpr float kBodyRadiusSize = 20.f;
 	constexpr int kKnockBackFrameMax = 50;
 
@@ -21,6 +22,7 @@ Boss::Boss(Vec3 pos):Enemy(Priority::Boss,ObjectTag::Enemy),
 	m_isHit(false),
 	m_knockBackFrame(0)
 {
+	m_hp = kHPFull;
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	m_collision = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
@@ -48,25 +50,22 @@ void Boss::Update()
 	}
 	if (m_knockBackFrame > 30)
 	{
-		m_knockBackFrame = 0;
 		m_isHit = false;
 		m_color = 0xff00ff;
 	}
-	for (auto& impacts : m_impacts)
+	if (m_hp <= 0)
 	{
-		impacts->Update();
+		m_dropItem = std::make_shared<ClearObject>(m_rigid->GetPos(), true);
+		Physics::GetInstance().Entry(m_dropItem);
+		m_isDestroyFlag = true;
 	}
-
 	DeleteObject(m_impacts);
 }
 
 void Boss::Draw()
 {
 	DrawSphere3D(m_rigid->GetPos().VGet(), kBodyRadiusSize,8,m_color,0x000000,true);
-	for (auto& impacts : m_impacts)
-	{
-		impacts->Draw();
-	}
+	
 }
 
 void Boss::InitUpdate()
@@ -135,7 +134,8 @@ void Boss::JumpingUpdate()
 		else
 		{
 			m_jumpCount++;
-			m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, 50.f, m_upVec * -1));
+			m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, 50.f, m_upVec * -1,ObjectTag::EnemyAttack));
+			MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 			m_rigid->AddVelocity(m_upVec * 2);
 		}
 		
@@ -147,10 +147,22 @@ void Boss::FullpowerJumpUpdate()
 {
 	if (m_collision->OnHit())
 	{
-		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, 50.f, m_upVec * -1,3.f));
+		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, 50.f, m_upVec * -1, ObjectTag::EnemyAttack,2.f));
+		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 
+		//HPが少ないほど隙がなくなる
+		m_actionFrame = -m_hp;
+		m_bossUpdate = &Boss::LandingUpdate;
+
+	}
+}
+
+void Boss::LandingUpdate()
+{
+	m_actionFrame++;
+	if (m_actionFrame > 0)
+	{
 		m_bossUpdate = &Boss::NeutralUpdate;
-
 	}
 }
 
@@ -213,7 +225,15 @@ void Boss::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 
 void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
-
+	if (m_bossUpdate == &Boss::LandingUpdate)
+	{
+		if (colider->GetTag() == ObjectTag::PlayerImpact)
+		{
+			m_rigid->AddVelocity(m_upVec * 4);
+			m_bossUpdate = &Boss::KnockBackUpdate;
+			m_hp -= 20;
+		}
+	}
 }
 
 template <typename T>
@@ -221,6 +241,10 @@ void Boss::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
 {
 	auto result = remove_if(objects.begin(), objects.end(), [this](const auto& object)
 		{
+			if (object->GetDeleteFlag())
+			{
+				MyEngine::Physics::GetInstance().Exit(object);
+			}
 			return object->GetDeleteFlag(); // IsDestroy() が true の場合削除
 		});
 	objects.erase(result, objects.end());

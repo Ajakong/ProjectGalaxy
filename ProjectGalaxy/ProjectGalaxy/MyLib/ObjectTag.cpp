@@ -25,11 +25,15 @@ std::string ObjectTag_String(ObjectTag tag)
 			break;
 		case ObjectTag::PlayerBullet: return "PlayerBullet";
 			break;
+		case ObjectTag::PlayerImpact: return "PlayerImpact";
+			break;
 		case ObjectTag::EnemyBullet: return "EnemyBullet";
 			break;
 		case ObjectTag::WarpGate: return "WarpGate";
 			break;
-		case ObjectTag::Item: return "Item";
+		case ObjectTag::FullPowerDropItem: return "FullPowerDropItem";
+			break;
+		case ObjectTag::StickStarItem: return "StickStarItem";
 			break;
 		case ObjectTag::Coin: return "Coin";
 			break;

@@ -1,6 +1,8 @@
 ﻿#include "Collidable.h"
 #include "ColliderSphere.h"
 #include "ColliderBox.h"
+#include"ColliderPolygonModel.h"
+#include"ColliderLine3D.h"
 #include<cassert>
 
 using namespace MyEngine;
@@ -50,6 +52,14 @@ std::shared_ptr<Collidable::CollideInfo> MyEngine::Collidable::AddCollider(const
 	else if (kind == ColliderBase::Kind::Box)
 	{
 		collider->col = std::make_shared<ColliderBox>();
+	}
+	else if (kind == ColliderBase::Kind::Polygons)
+	{
+		collider->col = std::make_shared<ColliderPolygonModel>();
+	}
+	else if (kind == ColliderBase::Kind::Line)
+	{
+		collider->col = std::make_shared<ColliderLine3D>();
 	}
 	collider->tag = tag;
 	if (collider)

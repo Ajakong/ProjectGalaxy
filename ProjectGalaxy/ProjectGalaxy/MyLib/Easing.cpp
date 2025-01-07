@@ -34,14 +34,37 @@ Vec3 EaseInOut(const Vec3& start, const Vec3& end, float t, float effect)
 	return Lerp(start, end, rate);
 }
 
-Vec3 Slerp(const Vec3& v1, const Vec3& v2, float t)
+Vec3 Slerp(const Vec3& start, const Vec3& end, float t)
 {
-	float dot = Dot(v1.GetNormalized(), v2.GetNormalized());
-	float angle = std::acosf(dot) * DX_PI_F/180;
-	auto axis = Cross(v1.GetNormalized(), v2.GetNormalized());
-	auto q = AngleAxis(angle * t, axis);
+	// 正規化したベクトル
+	Vec3 u = start.GetNormalized();
+	Vec3 v = end.GetNormalized();
 
-	return q * v1;
+	// 内積を計算して角度を求める
+	float dot = Dot(u, v);
+
+	// 内積の制約（-1, 1）を確保
+	dot = std::fmax(-1.0f, std::fmin(1.0f, dot));
+
+	// 回転角度を計算
+	float theta = std::acos(dot);
+
+	// 補間パラメータ
+	if (theta < 1e-6f) {
+		return start; // 回転がほとんどない場合はそのまま返す
+	}
+
+	// 補間を行う
+	float sinTheta = std::sin(theta);
+	float startWeight = std::sin((1 - t) * theta) / sinTheta;
+	float endWeight = std::sin(t * theta) / sinTheta;
+
+	// 補間したベクトルを返す
+	return Vec3(
+		startWeight * u.x + endWeight * v.x,
+		startWeight * u.y + endWeight * v.y,
+		startWeight * u.z + endWeight * v.z
+	);
 }
 
 Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, float t)

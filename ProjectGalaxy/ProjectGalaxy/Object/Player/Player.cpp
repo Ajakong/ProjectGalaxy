@@ -11,6 +11,8 @@
 #include"ModelManager.h"
 #include"GraphManager.h"
 
+#include"Easing.h"
+
 #include"Physics.h"
 
 /// <summary>
@@ -94,7 +96,6 @@ m_moveDir(Vec3::Front()),
 m_frontVec(Vec3::Front()),
 m_playerUpdate(&Player::NeutralUpdate),
 m_prevUpdate(&Player::NeutralUpdate),
-m_cameraUpdate(&Player::Planet1Update),
 m_hp(kPlayerHPMax),
 m_radius(kNeutralRadius),
 m_damageFrame(0),
@@ -109,6 +110,7 @@ m_isSpinFlag(false),
 m_isOperationFlag(false),
 m_color(0x00ffff),
 m_attackRadius(0),
+m_fullPowerChargeCount(0),
 m_modelBodyRotate(m_frontVec),
 m_inputVec(Vec3::Front()*-1),
 m_postMoveDir(Vec3::Front()),
@@ -154,6 +156,7 @@ m_modelDirAngle(0)
 	m_handFrameIndex= MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
 
 	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
+	m_dropAttackUpdate = &Player::NormalDropAttackUpdate;
 }
 
 Player::~Player()
@@ -167,6 +170,7 @@ void Player::Init()
 
 void Player::Update()
 {
+	m_upVec = Slerp(m_upVec, m_nextUpVec,1.f);
 	m_isSearchFlag = false;
 	m_radius = 0;
 	
@@ -196,17 +200,6 @@ void Player::Update()
 	MATRIX shotDirMat = MGetRotVec2(m_nowVec.VGet(), m_shotDir.VGet());
 	m_nowVec = m_shotDir.VGet();
 
-	/*MATRIX localMat = MV1GetFrameLocalMatrix(m_modelHandle, index);
-	MATRIX mat = MMult(shotDirMat, localMat);
-	MV1SetFrameUserLocalMatrix(m_modelHandle, index, mat);
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			DrawFormatString(i * 80, j * 16, GetColor(255, 255, 255), "%f", mat.m[i][j]);
-		}
-	}*/
-
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
 		(this->*m_shotUpdate)();
@@ -217,6 +210,7 @@ void Player::Update()
 		item->Update();
 	}
 	DeleteManage();
+	DeleteObject(m_impacts);
 	
 	if (m_visibleCount > 200)
 	{
@@ -437,6 +431,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		
 		if(ownTag==ColideTag::Body)
 		{
+			if (m_playerUpdate == &Player::DamegeUpdate)return;
 			//HPを減らす
 
 			//ノックバック
@@ -466,6 +461,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		}
 		else
 		{
+			if (m_playerUpdate == &Player::DamegeUpdate)return;
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			StartJoypadVibration(DX_INPUT_PAD1, 600, 600);
 			m_hp -= 10;
@@ -490,6 +486,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		}
 		else
 		{
+			if (m_playerUpdate == &Player::DamegeUpdate)return;
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			StartJoypadVibration(DX_INPUT_PAD1, 600, 600);
 			m_hp -= 10;
@@ -517,6 +514,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		}
 		else
 		{
+			if (m_playerUpdate == &Player::DamegeUpdate)return;
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			StartJoypadVibration(DX_INPUT_PAD1, 600, 600);
 			m_hp -= 10;
@@ -527,11 +525,6 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 			m_damageFrame = kDamageFrameMax;
 			ChangeAnim(AnimNum::AnimationNumHit);
 		}
-	}
-	if (colider->GetTag() == ObjectTag::Item)
-	{
-		printf("Item\n");
-		PlaySoundMem(m_getItemHandle, DX_PLAYTYPE_BACK);
 	}
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
 	{
@@ -545,6 +538,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		}
 		else
 		{
+			if (m_playerUpdate == &Player::DamegeUpdate)return;
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			colider->GetRigidbody()->AddVelocity((colider->GetRigidbody()->GetVelocity()) * -1);
 			StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
@@ -584,15 +578,42 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
 		
 	}
+	if (colider->GetTag() == ObjectTag::EnemyAttack)
+	{
+		if (m_playerUpdate == &Player::DamegeUpdate)return;
+		PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
+		colider->GetRigidbody()->AddVelocity((colider->GetRigidbody()->GetVelocity()) * -1);
+		StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
+		m_prevUpdate = m_playerUpdate;
+		m_playerUpdate = &Player::DamegeUpdate;
+		m_hp -= 10;
+		m_isOnDamageFlag = true;
+		m_damageFrame = kDamageFrameMax;
+		ChangeAnim(AnimNum::AnimationNumHit);
+	}
+	if (colider->GetTag() == ObjectTag::StickStarItem)
+	{
+		printf("StickStarItem\n");
+		m_shotUpdate = &Player::ShotTheStickStar;
+		
+	}
+	if (colider->GetTag() == ObjectTag::FullPowerDropItem)
+	{
+		printf("FullPowerDropItem\n");
+		m_dropAttackUpdate = &Player::FullPowerDropAttackUpdate;
+	}
 	if (colider->GetTag() == ObjectTag::Coin)
 	{
 		printf("Coin\n");
 		m_hp += 10;
-		m_shotUpdate = &Player::ShotTheStickStar;
 		if (m_hp > kPlayerHPMax)
 		{
 			m_hp = kPlayerHPMax;
 		}
+	}
+	if (colider->GetTag() == ObjectTag::ClearObject)
+	{
+		m_isClearFlag = true;
 	}
 }
 
@@ -857,6 +878,11 @@ void Player::JumpBoostUpdate()
 
 void Player::DropAttackUpdate()
 {
+	(this->*m_dropAttackUpdate)();
+}
+
+void Player::NormalDropAttackUpdate()
+{
 	m_state = "DropAttack";
 	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在の再生カウント
 	m_rigid->AddVelocity(m_upVec * -0.8f);
@@ -872,6 +898,36 @@ void Player::DropAttackUpdate()
 	}
 }
 
+void Player::FullPowerDropAttackUpdate()
+{
+	m_state = "FullPowerDrop";
+	
+	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在の再生カウント
+	m_rigid->AddVelocity(m_upVec * -0.8f);
+	if (Pad::IsPress(PAD_INPUT_1))
+	{
+		if (m_fullPowerChargeCount < 3)m_fullPowerChargeCount += 0.1f;
+		
+		m_angle += (DX_PI_F * 2) / 16;
+		m_rigid->SetVelocity(Vec3::Zero());
+		if (now < 16)
+		{
+			MV1SetAttachAnimTime(m_modelHandle, m_currentAnimNo, 0);
+			m_angle += (DX_PI_F * 2) / 16;
+			m_rigid->SetVelocity(Vec3::Zero());
+		}
+	}
+	
+	if (m_footCol->OnHit())
+	{
+		//ここで衝撃波を発生させる予定
+		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -m_footCol->radius, 50.f, m_upVec * -1, ObjectTag::PlayerImpact, m_fullPowerChargeCount));
+		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
+		m_fullPowerChargeCount = 0;
+		ChangeAnim(AnimNum::AnimationNumIdle);
+		m_playerUpdate = &Player::NeutralUpdate;
+	}
+}
 
 void Player::AimingUpdate()
 {
@@ -1082,10 +1138,6 @@ void Player::AvoidUpdate()
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
-}
-
-void Player::Planet1Update()
-{
 }
 
 void Player::SetShotDir()

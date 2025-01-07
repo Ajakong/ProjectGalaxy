@@ -87,7 +87,7 @@ void StarCapture::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag o
 		auto item= dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		item->radius = m_captureRadius;
 		m_captureCol->col = item;
-		m_captureCol->col->isTrigger = true;
+		m_captureCol->col->m_isTrigger = true;
 
 		auto sphere = dynamic_pointer_cast<PlayerSphere>(colider);
 

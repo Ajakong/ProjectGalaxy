@@ -14,7 +14,7 @@ namespace
 GameManager::GameManager() :
 	player(std::make_shared<Player>(ModelManager::GetInstance().GetModelData(kPlayerFileName)))
 {
-	galaxy.push_back(std::make_shared<SerialPlanetGalaxy>(player));
+	galaxy.push_back(std::make_shared<DebugGalaxy>(player));
 }
 
 GameManager::~GameManager()
@@ -29,20 +29,22 @@ void GameManager::Init()
 void GameManager::Update()
 {
 	galaxy.back()->Update();
+	if (galaxy.back()->GetGameOver())
+	{
+		m_isGameOverFlag = true;
+	}
 	if (galaxy.back()->GetClear())
 	{
 		m_isClearFlag = true;
-		galaxy.pop_back();
+		
 		//galaxy.push_back();/*ここでステージ選択のフィールドを入れなおす*/
 	}
 	if (galaxy.size() == 0)
 	{
 		m_isClearFlag = true;
+		galaxy.pop_back();
 	}
-	if (galaxy.back()->GetGameOver())
-	{
-		m_isGameOverFlag = true;
-	}
+	
 }
 
 void GameManager::Draw()

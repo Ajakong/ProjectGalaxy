@@ -2,9 +2,9 @@
 #include"../MyLib/Physics/ColliderSphere.h"
 #include"../Quaternion.h"
 
-ClearObject::ClearObject(Vec3 pos,bool antigravity) : Item(pos,antigravity)
+ClearObject::ClearObject(Vec3 pos,bool antigravity) : Item(pos,ObjectTag::ClearObject,antigravity)
 {
-	
+
 }
 
 ClearObject::~ClearObject()
@@ -24,7 +24,8 @@ void ClearObject::Init()
 	SetObjectTag(ObjectTag::ClearObject);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere,ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-	item->radius = 50;
+	item->radius = 25;
+	item->m_isTrigger = true;
 }
 
 void ClearObject::Draw()

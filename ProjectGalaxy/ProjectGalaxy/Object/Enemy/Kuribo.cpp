@@ -61,7 +61,7 @@ m_stanCount(0)
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::one);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		item->radius = kSearchRadius;
-		item->isTrigger = true;
+		item->m_isTrigger = true;
 		m_searchCol = item;
 	}
 #endif

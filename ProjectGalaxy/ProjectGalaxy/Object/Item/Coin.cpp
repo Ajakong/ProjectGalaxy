@@ -1,7 +1,7 @@
 ﻿#include "Coin.h"
 #include"Physics.h"
 
-Coin::Coin(Vec3 pos, bool antiGravity) : Item(pos,antiGravity)
+Coin::Coin(Vec3 pos, bool antiGravity) : Item(pos,ObjectTag::Coin,antiGravity)
 {
 }
 
@@ -15,7 +15,7 @@ void Coin::Init()
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	m_col = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	m_col->radius = 2.5f;
-	m_col->isTrigger = true;
+	m_col->m_isTrigger = true;
 }
 
 void Coin::Draw()

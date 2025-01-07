@@ -173,6 +173,8 @@
     <ClCompile Include="MyLib\Physics\ColliderBase.cpp" />
     <ClCompile Include="MyLib\Physics\ColliderBox.cpp" />
     <ClCompile Include="MyLib\Physics\ColliderCapsule.cpp" />
+    <ClCompile Include="MyLib\Physics\ColliderLine3D.cpp" />
+    <ClCompile Include="MyLib\Physics\ColliderPolygonModel.cpp" />
     <ClCompile Include="MyLib\Physics\ColliderSphere.cpp" />
     <ClCompile Include="MyLib\Physics\Physics.cpp" />
     <ClCompile Include="MyLib\Physics\Rigidbody.cpp" />
@@ -200,7 +202,9 @@
     <ClCompile Include="Object\Gimmick\SeekerLine.cpp" />
     <ClCompile Include="Object\Gimmick\StarCapture.cpp" />
     <ClCompile Include="Object\Item\Coin.cpp" />
+    <ClCompile Include="Object\Item\FullPowerDropItem.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
+    <ClCompile Include="Object\Item\StickStarItem.cpp" />
     <ClCompile Include="Object\LocationsManager.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
@@ -213,6 +217,7 @@
     <ClCompile Include="Planet\BoxPlanet.cpp" />
     <ClCompile Include="Planet\DumbbellPlanet.cpp" />
     <ClCompile Include="Planet\Planet.cpp" />
+    <ClCompile Include="Planet\PolygonModelPlanet.cpp" />
     <ClCompile Include="Planet\SpherePlanet.cpp" />
     <ClCompile Include="Scene\ClearScene.cpp" />
     <ClCompile Include="Scene\GameOverScene.cpp" />
@@ -248,6 +253,8 @@
     <ClInclude Include="MyLib\Physics\ColliderBase.h" />
     <ClInclude Include="MyLib\Physics\ColliderBox.h" />
     <ClInclude Include="MyLib\Physics\ColliderCapsule.h" />
+    <ClInclude Include="MyLib\Physics\ColliderLine3D.h" />
+    <ClInclude Include="MyLib\Physics\ColliderPolygonModel.h" />
     <ClInclude Include="MyLib\Physics\ColliderSphere.h" />
     <ClInclude Include="MyLib\Physics\CollisionUtil.h" />
     <ClInclude Include="MyLib\Physics\Physics.h" />
@@ -275,7 +282,9 @@
     <ClInclude Include="Object\Gimmick\SeekerLine.h" />
     <ClInclude Include="Object\Gimmick\StarCapture.h" />
     <ClInclude Include="Object\Item\Coin.h" />
+    <ClInclude Include="Object\Item\FullPowerDropItem.h" />
     <ClInclude Include="Object\Item\Item.h" />
+    <ClInclude Include="Object\Item\StickStarItem.h" />
     <ClInclude Include="Object\LocationsManager.h" />
     <ClInclude Include="Object\ObjectManager.h" />
     <ClInclude Include="Object\Player\Player.h" />
@@ -288,6 +297,7 @@
     <ClInclude Include="Planet\BoxPlanet.h" />
     <ClInclude Include="Planet\DumbbellPlanet.h" />
     <ClInclude Include="Planet\Planet.h" />
+    <ClInclude Include="Planet\PolygonModelPlanet.h" />
     <ClInclude Include="Planet\SpherePlanet.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\ClearScene.h" />

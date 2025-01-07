@@ -9,9 +9,10 @@ namespace
 	const char* name = "MaterialX";
 }
 
-Item::Item(Vec3 pos,bool antiGravity):Collidable(Priority::Static,ObjectTag::Item)
+Item::Item(Vec3 pos, ObjectTag tag,bool antiGravity):Collidable(Priority::Static,tag)
 {
 	SetAntiGravity(antiGravity);
+	
 	m_rigid->SetPos(pos);
 }
 
@@ -25,6 +26,7 @@ void Item::Init()
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	m_col = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	m_col->radius = 2.5f;
+	m_col->m_isTrigger = true;
 	
 }
 
@@ -69,5 +71,8 @@ void Item::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,C
 
 void Item::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
-	if (colider->GetTag() == ObjectTag::Stage)	m_nowPlanetPos = colider->GetRigidbody()->GetPos();
+	if (colider->GetTag() == ObjectTag::Player)
+	{
+		MyEngine::Physics::GetInstance().Exit(shared_from_this());
+	}
 }

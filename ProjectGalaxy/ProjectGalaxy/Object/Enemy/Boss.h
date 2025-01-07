@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include"ColliderSphere.h"
 #include"StampImpact.h"
+#include"ClearObject.h"
 class Boss : public Enemy
 {
 public:
@@ -20,6 +21,7 @@ private:
 	void KnockBackUpdate();
 	void JumpingUpdate();
 	void FullpowerJumpUpdate();
+	void LandingUpdate();
 
 	//アニメーションの進行
 	//ループしたかどうかを返す
@@ -40,7 +42,6 @@ private:
 
 	int m_animationSpeed;
 
-
 	//0.0f:prevが再生
 	//1.0:currentが再生
 	int m_currentAnimNo;//現在のアニメーション
@@ -48,7 +49,11 @@ private:
 	float m_animBlendRate;//アニメーションの合成割合
 	int m_knockBackFrame;
 	int m_jumpCount;
+	/// <summary>
+	/// マイナスの時はひるみ、もしくは動けない状態。
+	/// </summary>
 	int m_actionFrame;
+
 
 	int m_color;
 
@@ -56,5 +61,6 @@ private:
 
 	std::shared_ptr<MyEngine::ColliderSphere> m_collision;
 	std::vector<std::shared_ptr<StampImpact>> m_impacts;
+	std::shared_ptr<ClearObject>m_dropItem;
 };
 

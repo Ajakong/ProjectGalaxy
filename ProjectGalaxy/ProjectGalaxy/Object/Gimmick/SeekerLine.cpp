@@ -32,7 +32,7 @@ m_ratio(0)
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 	item->radius = kRadius;
-	item->isTrigger = true;
+	item->m_isTrigger = true;
 	SetAntiGravity();
 	for (int i = 1; i < m_points.size(); i++)
 	{
