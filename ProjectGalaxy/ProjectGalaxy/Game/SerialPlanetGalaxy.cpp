@@ -101,6 +101,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 {
 	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 	//LocationsManager::GetInstance().LoadLocations();
+	m_creater = std::make_shared<GalaxyCreater>("SerialPlaneytGalaxy");
 	m_creater->PlanetCreate();
 	
 #ifdef _DEBUG
