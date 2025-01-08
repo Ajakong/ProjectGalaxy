@@ -318,9 +318,6 @@
     <ClCompile Include="Game\WatchGalaxy.cpp">
       <Filter>ソース ファイル\Galaxy\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Object\LocationsManager.cpp">
-      <Filter>ソース ファイル\LoadManager</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Player\PlayerSphere.cpp">
       <Filter>ソース ファイル\Object\Player</Filter>
     </ClCompile>
@@ -368,6 +365,9 @@
     </ClCompile>
     <ClCompile Include="Object\Item\StickStarItem.cpp">
       <Filter>ソース ファイル\Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GalaxyCreater.cpp">
+      <Filter>ソース ファイル\Galaxy\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -566,9 +566,6 @@
     <ClInclude Include="Game\WatchGalaxy.h">
       <Filter>ヘッダー ファイル\Galaxy\h</Filter>
     </ClInclude>
-    <ClInclude Include="Object\LocationsManager.h">
-      <Filter>ヘッダー ファイル\LoadManager</Filter>
-    </ClInclude>
     <ClInclude Include="Object\Player\PlayerSphere.h">
       <Filter>ヘッダー ファイル\Object\Player</Filter>
     </ClInclude>
@@ -607,6 +604,9 @@
     </ClInclude>
     <ClInclude Include="Object\Item\StickStarItem.h">
       <Filter>ヘッダー ファイル\Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GalaxyCreater.h">
+      <Filter>ヘッダー ファイル\Galaxy\h</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

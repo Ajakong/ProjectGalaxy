@@ -153,6 +153,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Game\DebugGalaxy.cpp" />
     <ClCompile Include="Game\Galaxy.cpp" />
+    <ClCompile Include="Game\GalaxyCreater.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
     <ClCompile Include="Game\SerialPlanetGalaxy.cpp" />
     <ClCompile Include="Game\WatchGalaxy.cpp" />
@@ -205,7 +206,6 @@
     <ClCompile Include="Object\Item\FullPowerDropItem.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
     <ClCompile Include="Object\Item\StickStarItem.cpp" />
-    <ClCompile Include="Object\LocationsManager.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
     <ClCompile Include="Object\Player\PlayerSphere.cpp" />
@@ -233,6 +233,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Game\DebugGalaxy.h" />
     <ClInclude Include="Game\Galaxy.h" />
+    <ClInclude Include="Game\GalaxyCreater.h" />
     <ClInclude Include="Game\GameManager.h" />
     <ClInclude Include="Game\SerialPlanetGalaxy.h" />
     <ClInclude Include="Game\WatchGalaxy.h" />
@@ -285,7 +286,6 @@
     <ClInclude Include="Object\Item\FullPowerDropItem.h" />
     <ClInclude Include="Object\Item\Item.h" />
     <ClInclude Include="Object\Item\StickStarItem.h" />
-    <ClInclude Include="Object\LocationsManager.h" />
     <ClInclude Include="Object\ObjectManager.h" />
     <ClInclude Include="Object\Player\Player.h" />
     <ClInclude Include="Object\Player\PlayerSphere.h" />

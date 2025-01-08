@@ -3,6 +3,8 @@
 
 class Camera;
 class UI;
+class GalaxyCreater;
+
 class Collidable;
 class Player;
 class Planet;
@@ -90,6 +92,7 @@ private:
 
 	std::shared_ptr<Camera> m_camera;
 	std::shared_ptr<UI> m_ui;
+	std::shared_ptr<GalaxyCreater> m_creater;
 	//ステージ
 	std::vector<std::shared_ptr<Planet>> m_planet;
 	//アイテム

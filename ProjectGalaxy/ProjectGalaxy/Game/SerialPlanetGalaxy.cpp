@@ -31,7 +31,7 @@
 #include"FontManager.h"
 #include"ScreenManager.h"
 #include"ModelManager.h"
-#include"LocationsManager.h"
+#include"GalaxyCreater.h"
 #include"Game.h"
 
 using namespace std;
@@ -101,7 +101,10 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 {
 	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 	//LocationsManager::GetInstance().LoadLocations();
+	//m_creater->PlanetCreate();
+	
 #ifdef _DEBUG
+
 	//ギミック
 	//ブースター
 
