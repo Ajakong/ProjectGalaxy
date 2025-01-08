@@ -146,30 +146,26 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
 
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
-	//エネミー
 
-	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 200),0));
+	//エネミー
+	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 30), 0));
 	//m_kuribo.push_back(make_shared<Kuribo>(Vec3(-30, 0, -40), 0));
 	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -0),player));
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -60), player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -50), player));
+	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, 60), player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, 50), player));
+	m_takobo.push_back(make_shared<Takobo>(Vec3(60, 500, -10), player));
 	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -10), player));
-	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	/*m_spaceEmperor.push_back(make_shared<SpaceEmperor>(Vec3(300, 250, 100)));
-	m_spaceEmperor.back()->SetTarget(player);
-	MyEngine::Physics::GetInstance().Entry(m_spaceEmperor.back());*/
 	m_boss.push_back(make_shared<Boss>(Vec3(300, 250, 100)));
 	MyEngine::Physics::GetInstance().Entry(m_boss.back());
+
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
 	//アイテム
 	m_coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
 	MyEngine::Physics::GetInstance().Entry(m_coin.back());
-	m_item.push_back(make_shared<StickStarItem>(Vec3(-55, -50, 0),true));
+	m_item.push_back(make_shared<StickStarItem>(Vec3(0, 450, 0),true));
 	m_item.push_back(make_shared <FullPowerDropItem>(Vec3(55, -50, 0),true));
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
@@ -378,7 +374,6 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
 	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
 	DrawFormatString(0, 25 * 10, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
-	DrawFormatString(0, 25 * 11, 0xffffff, "KuriboVelocity(%f,%f,%f)", m_kuribo.back()->GetRigidbody()->GetVelocity());
 #endif
 	SetDrawScreen(m_modelScreenHandle);
 

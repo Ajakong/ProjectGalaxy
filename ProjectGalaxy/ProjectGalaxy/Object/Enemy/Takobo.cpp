@@ -184,6 +184,15 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,Colide
 	}
 }
 
+void Takobo::OnTriggerEnter(std::shared_ptr<MyEngine::Collidable> colider, ColideTag ownTag, ColideTag targetTag)
+{
+	if (colider->GetTag() == ObjectTag::PlayerImpact)
+	{
+		m_rigid->AddVelocity(m_upVec);
+		m_hp -= 20;
+	}
+}
+
 Vec3 Takobo::GetPos() const
 {
 	return  VGet(m_rigid->GetPos().x, m_rigid->GetPos().y + kFootToCenter, m_rigid->GetPos().z);

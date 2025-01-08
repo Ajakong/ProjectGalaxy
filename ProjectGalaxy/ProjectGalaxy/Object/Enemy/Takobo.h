@@ -33,7 +33,10 @@ public:
 	void DeleteManage();
 	void Draw();
 
+
 	virtual void OnCollideEnter(std::shared_ptr <MyEngine::Collidable> colider, ColideTag ownTag, ColideTag targetTag);
+	virtual void OnTriggerEnter(std::shared_ptr <MyEngine::Collidable> colider, ColideTag ownTag, ColideTag targetTag);
+
 
 	Vec3 GetPos() const;
 	Vec3 GetUpVec() const;

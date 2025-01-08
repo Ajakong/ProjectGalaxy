@@ -160,8 +160,10 @@ void Boss::FullpowerJumpUpdate()
 void Boss::LandingUpdate()
 {
 	m_actionFrame++;
+	m_color = 0x00ff00;
 	if (m_actionFrame > 0)
 	{
+		m_color = 0xff00ff;;
 		m_bossUpdate = &Boss::NeutralUpdate;
 	}
 }
@@ -232,6 +234,12 @@ void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 			m_rigid->AddVelocity(m_upVec * 4);
 			m_bossUpdate = &Boss::KnockBackUpdate;
 			m_hp -= 20;
+		}
+		if (colider->GetTag() == ObjectTag::PlayerBullet)
+		{
+			m_knockBackFrame = 44;
+			m_bossUpdate = &Boss::KnockBackUpdate;
+			m_hp -= 2;
 		}
 	}
 }
