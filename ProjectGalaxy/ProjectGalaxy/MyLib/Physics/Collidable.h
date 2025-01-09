@@ -38,6 +38,7 @@ namespace MyEngine
 		// 優先度判別
 		enum class Priority : int
 		{
+			Lowest,
 			Low,		// 低
 			Middle,		// 中
 			High,		// 高

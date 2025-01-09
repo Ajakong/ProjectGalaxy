@@ -141,7 +141,7 @@ m_modelDirAngle(0)
 	}
 
 
-	m_shotUpdate = &Player::ShotTheStar;
+	m_shotUpdate = &Player::ShotTheStickStar;
 
 	m_cameraEasingSpeed = 15.f;
 	

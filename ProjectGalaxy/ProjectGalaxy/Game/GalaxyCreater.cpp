@@ -1,7 +1,9 @@
 ﻿#include "GalaxyCreater.h"
 #include"Player.h"
 #include"SpherePlanet.h"
+#include"SeekerLine.h"
 #include"Physics.h"
+#include"ModelManager.h"
 
 GalaxyCreater::GalaxyCreater(std::string galaxyname)
 {
@@ -64,6 +66,43 @@ void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 
 }
 
+void GalaxyCreater::SeekerLineCreate()
+{
+	std::string fileName = "Data/Info/SeekerLine.loc";
+	//開くファイルのハンドルを取得
+	int handle = FileRead_open(fileName.c_str());
+
+	
+	m_seekerLineData.resize(1);
+	//読み込むオブジェクト数が何個あるか取得
+	int dataCnt = 0;
+	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
+
+	//配列の数分回す
+	for (auto& loc : m_seekerLineData)
+	{
+		//名前のバイト数を取得する
+		byte nameCnt = 0;
+		FileRead_read(&nameCnt, sizeof(nameCnt), handle);
+		//名前のサイズを変更する
+		loc.name.resize(nameCnt);
+		//名前を取得する
+		FileRead_read(loc.name.data(), sizeof(char) * static_cast<int>(loc.name.size()), handle);
+		
+		for (int i = 0; i < dataCnt; i++)
+		{
+			Vec3 pos;
+			FileRead_read(&pos, sizeof(pos), handle);
+			loc.points.push_back(pos);
+		}
+
+		auto seekerLine = std::make_shared<SeekerLine>(loc.points, loc.color);
+		MyEngine::Physics::GetInstance().Entry(seekerLine);
+	}
+	FileRead_close(handle);
+
+}
+
 void GalaxyCreater::PlanetCreate()
 {
 	std::string fileName = "Data/Info/Planet.loc";
@@ -75,6 +114,7 @@ void GalaxyCreater::PlanetCreate()
 	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
 	//読み込むオブジェクト数分の配列に変更する
 	m_planetData.resize(dataCnt);
+	m_planetModelData.resize(dataCnt);
 
 	//配列の数分回す
 	for (auto& loc : m_planetData)
@@ -92,14 +132,18 @@ void GalaxyCreater::PlanetCreate()
 		FileRead_read(&loc.color, sizeof(loc.color), handle);
 		//重力を取得する
 		FileRead_read(&loc.gravityPower, sizeof(loc.gravityPower), handle);
-		//モデルハンドルを取得する
-		FileRead_read(&loc.modelHandle, sizeof(loc.modelHandle), handle);
+		//モデル名のバイト数を取得
+		byte modelNameCnt = 0;
+		FileRead_read(&modelNameCnt, sizeof(modelNameCnt), handle);
+		//モデル名を取得する
+		FileRead_read(loc.modelName.data(), sizeof(char) * static_cast<int>(loc.modelName.size()), handle);
 		//摩擦力を取得する
 		FileRead_read(&loc.coefficientOfFriction, sizeof(loc.coefficientOfFriction), handle);
 		//大きさを取得する
 		FileRead_read(&loc.scale, sizeof(loc.scale), handle);
 
-		auto planet = std::make_shared<SpherePlanet>(loc.pos, loc.color, loc.gravityPower, loc.modelHandle, loc.coefficientOfFriction, loc.scale);
+		m_planetModelData.push_back(ModelManager::GetInstance().GetModelData(loc.modelName.c_str()));
+		auto planet = std::make_shared<SpherePlanet>(loc.pos, loc.color, loc.gravityPower, m_planetModelData.back(), loc.coefficientOfFriction, loc.scale);
 		MyEngine::Physics::GetInstance().Entry(planet);
 	}
 	FileRead_close(handle);

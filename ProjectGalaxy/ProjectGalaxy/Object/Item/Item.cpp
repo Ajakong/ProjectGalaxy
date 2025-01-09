@@ -9,7 +9,7 @@ namespace
 	const char* name = "MaterialX";
 }
 
-Item::Item(Vec3 pos, ObjectTag tag,bool antiGravity):Collidable(Priority::Static,tag)
+Item::Item(Vec3 pos, ObjectTag tag,bool antiGravity):Collidable(Priority::Lowest,tag)
 {
 	SetAntiGravity(antiGravity);
 	

@@ -32,7 +32,7 @@ m_modelHandle(modelHandle)
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);//ここで入れたのは重力の影響範囲
 	m_colliders.back()->col->m_isTrigger = true;
 	auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-	item->radius = kGravityRange*m_scale;
+	item->radius = kGroundRadius *m_scale*3;
 	AddThroughTag(ObjectTag::Stage);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);//マップの当たり判定
 	auto item2 = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
@@ -55,7 +55,7 @@ void SpherePlanet::Update()
 void SpherePlanet::Draw()
 {
 
-	DrawSphere3D(m_rigid->GetPos().VGet(), kGravityRange*m_scale, 10, 0xddddff, 0x0000ff, false);
+	//DrawSphere3D(m_rigid->GetPos().VGet(), kGravityRange*m_scale, 10, 0xddddff, 0x0000ff, false);
 	if (m_isSearch)
 	{
 		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius*m_scale, 50, m_color, 0x0000ff, false);
@@ -63,7 +63,7 @@ void SpherePlanet::Draw()
 	else
 	{
 		MV1DrawModel(m_modelHandle);
-		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius * m_scale, 50, m_color, 0x0000ff, false);
+		//DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius * m_scale, 50, m_color, 0x0000ff, false);
 	}
 }
 

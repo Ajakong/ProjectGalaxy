@@ -70,6 +70,10 @@ void PlayerSphere::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag 
 	m_isDestroyFlag = true;	
 }
 
+void PlayerSphere::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
+{
+}
+
 void PlayerSphere::StraightUpdate()
 {
 	//m_velocity = Cross(m_upVec, m_sideVec);//地表に沿う

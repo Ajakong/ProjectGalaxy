@@ -25,20 +25,29 @@ class GalaxyCreater
 		Vec3 pos;
 		int color;
 		float gravityPower;
-		int modelHandle;
+		std::string modelName;
 		float coefficientOfFriction;
 		float scale;
+	};
+	struct LocationSeekerLine
+	{
+		std::string name;
+		std::vector<Vec3> points;
+		int color;
 	};
 public:
 	GalaxyCreater(std::string galaxyname);
 	virtual ~GalaxyCreater();
 
 	void ObjectCreate(std::shared_ptr<Player> player);
+	void SeekerLineCreate();
 	void PlanetCreate();
 	
 private:
 	std::string m_galaxyName;
 	std::vector<Location> m_objectData;
 	std::vector<LocationPlanet> m_planetData;
+	std::vector<LocationSeekerLine> m_seekerLineData;
+	std::vector<int> m_planetModelData;
 };
 

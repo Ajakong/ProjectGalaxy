@@ -19,7 +19,7 @@ public:
 	bool GetStickFlag() { return m_stickFlag; }
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
-
+	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 	std::shared_ptr<Player>m_player;
 
 protected:

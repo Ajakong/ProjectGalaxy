@@ -11,6 +11,8 @@ public:
 	void SetVelocity(Vec3 vel) { m_velocity = vel; }
 
 	void OnDestroy() { m_isDestroyFlag = true; }
+
+	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 protected:
 	SphereBase(MyEngine::Collidable::Priority priority, ObjectTag tag,Vec3 pos, Vec3 velocity,int color,float radius);
 	virtual ~SphereBase();
