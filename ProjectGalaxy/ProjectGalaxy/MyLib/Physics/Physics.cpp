@@ -162,9 +162,9 @@ void MyEngine::Physics::Gravity()
 			if (object->IsAntiGravity())continue;
 			for (auto& col : object->m_colliders)
 			{
-
+				//Stage同士なら無視
 				if (object->GetTag() == ObjectTag::Stage)continue;
-				
+				//距離が離れすぎているオブジェクトも無視
 				if ((object->GetRigidbody()->GetPos() - stage->GetRigidbody()->GetPos()).Length() > 200)continue;
 				for (auto stageCol : stage->m_colliders)
 				{
@@ -192,7 +192,6 @@ void MyEngine::Physics::Gravity()
 							{
 								printf("の足");
 							}
-
 						}
 						//重力はオブジェクトごとに一回のみ
 						//重力の強さぶんベクトルに加算
@@ -215,7 +214,6 @@ void MyEngine::Physics::Gravity()
 							{
 								printf("の足");
 							}
-							
 						}
 						else
 						{

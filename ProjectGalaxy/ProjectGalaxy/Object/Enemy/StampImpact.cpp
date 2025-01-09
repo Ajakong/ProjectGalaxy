@@ -66,7 +66,7 @@ void StampImpact::Draw3DCircle(Vec3 center, float radius, int num_segments)
 	Vec3 tangent2 = Cross(normal, tangent1).GetNormalized();
 
 	// 弦の長さの計算
-	float radiusDiff = m_radiusMax - radius;
+	float radiusDiff = m_radiusMax - radius-2;
 	float rad = (radiusDiff > m_radiusMax) ? m_radiusMax : sqrtf(m_radiusMax * m_radiusMax - radiusDiff * radiusDiff);
 
 	int i = 0;

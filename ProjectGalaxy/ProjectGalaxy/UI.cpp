@@ -34,7 +34,7 @@ void UI::Draw(float m_hp)
 	DrawBox(40, 40, 40.f+15.f*static_cast<int>(m_hp), kHPBarUIInfo.height / 2 + 10, 0x00044ff, true);
 
 	DrawRectRotaGraph(static_cast<int>(kHPBarUIInfo.width / 2), static_cast<int>(kHPBarUIInfo.height / 2), kHPBarUIInfo.x, kHPBarUIInfo.y, kHPBarUIInfo.width, kHPBarUIInfo.height, 1, 0, m_uiAssetHandle, true);
-#ifdef _DEBUG
+#ifdef DEBUG
 	DrawRectRotaGraph(Game::kScreenWidth - kIdemBoxUIInfo.width / 2-170,kIdemBoxUIInfo.height / 2+50, kIdemBoxUIInfo.x, kIdemBoxUIInfo.y, kIdemBoxUIInfo.width, kIdemBoxUIInfo.height, 1, 0, m_uiAssetHandle, true);
 #endif
 	/*DrawRectRotaGraph( Game::kScreenWidth-kWindowScreenUIInfo.width / 2, kWindowScreenUIInfo.height / 2, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 1, 0, m_uiAssetHandle, true);*/

@@ -83,13 +83,16 @@ namespace MyEngine
 		std::vector<std::shared_ptr<Collidable>> m_collidables;
 
 	private:
+		/// <summary>
+		/// オブジェクトに重力をかける
+		/// </summary>
 		void Gravity();
 
 		void MoveNextPos() const;
 		/// <summary>
-	/// 判定リストの取得
-	/// </summary>
-	/// <returns>判定リスト</returns>
+		/// 判定リストの取得
+		/// </summary>
+		/// <returns>判定リスト</returns>
 		std::vector<std::shared_ptr<Collidable>> GetCollisionList() const;
 		void CheckCollide();
 

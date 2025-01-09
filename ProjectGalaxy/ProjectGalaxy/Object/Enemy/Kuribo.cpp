@@ -84,6 +84,7 @@ void Kuribo::Init()
 
 void Kuribo::Update()
 {
+	m_upVec = m_nextUpVec;
 	(this->*m_moveUpdate)();
 	UpdateAnim(m_currentAnimNo);
 	//変更前のアニメーション100%
@@ -147,9 +148,9 @@ void Kuribo::Draw()
 {
 	MV1DrawModel(m_modelHandle);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 100);
-	DrawSphere3D(m_rigid->GetPos().VGet(), kRadius, 8, 0xffaa00, 0xffffff, true);
+	//DrawSphere3D(m_rigid->GetPos().VGet(), kRadius, 8, 0xffaa00, 0xffffff, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-#ifdef _DEBUG
+#ifdef DEBUG
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 100);
 	DrawSphere3D(m_rigid->GetPos().VGet(),m_searchCol->radius, 8, 0xffaa00, 0xffffff, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);

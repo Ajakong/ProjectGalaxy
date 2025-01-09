@@ -111,6 +111,7 @@ m_isOperationFlag(false),
 m_color(0x00ffff),
 m_attackRadius(0),
 m_fullPowerChargeCount(0),
+m_landingStanFrame(0),
 m_modelBodyRotate(m_frontVec),
 m_inputVec(Vec3::Front()*-1),
 m_postMoveDir(Vec3::Front()),
@@ -175,7 +176,7 @@ void Player::Update()
 	m_radius = 0;
 	
 	(this->*m_playerUpdate)();
-	//m_hp = -0.00002f;
+
 
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
@@ -283,7 +284,7 @@ void Player::SetMatrix()
 	//printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 	
 	
-#ifdef _DEBUG
+#ifdef DEBUG
 	////回転軸のデバッグ表示(紫)
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + RotateYAxis * 100).VGet(), 0xff0000);
 
@@ -332,12 +333,12 @@ void Player::Draw()
 	m_footCol->DebugDraw(m_rigid->GetPos());
 	//m_spinCol->DebugDraw(m_rigid->GetPos());
 	
-#if _DEBUG
+#if DEBUG
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
 	Vec3 axis = Cross(m_upVec, m_moveDir);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
 	axis.Normalize();//単位ベクトル化
 	
-#ifdef _DEBUG
+#ifdef DEBUG
 	//回転軸のデバッグ表示(紫)
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + RotateYAxis * 100).VGet(), 0xff0000);
 
@@ -407,7 +408,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		printf("Stage\n");
 		m_spinCount = 0;
 		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
-		m_isBoostFlag = false;
+		m_isOperationFlag = false;
 		if (m_playerUpdate == &Player::DropAttackUpdate)
 		{
 			PlaySoundMem(SoundManager::GetInstance().GetSoundData(kJumpDropGroundSEName), DX_PLAYTYPE_BACK);
@@ -878,14 +879,16 @@ void Player::JumpBoostUpdate()
 
 void Player::DropAttackUpdate()
 {
+	//落下攻撃の更新
 	(this->*m_dropAttackUpdate)();
 }
 
 void Player::NormalDropAttackUpdate()
 {
 	m_state = "DropAttack";
-	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在の再生カウント
+	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在のアニメーション再生カウント
 	m_rigid->AddVelocity(m_upVec * -0.8f);
+
 	if (now < 16)
 	{
 		m_angle += (DX_PI_F * 2) / 16;
@@ -893,8 +896,9 @@ void Player::NormalDropAttackUpdate()
 	}
 	if (m_footCol->OnHit())
 	{
-		ChangeAnim(AnimNum::AnimationNumIdle);
-		m_playerUpdate = &Player::NeutralUpdate;
+		m_landingStanFrame = 20;
+		
+		m_playerUpdate = &Player::LandingUpdate;
 	}
 }
 
@@ -924,8 +928,19 @@ void Player::FullPowerDropAttackUpdate()
 		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -m_footCol->radius, 50.f, m_upVec * -1, ObjectTag::PlayerImpact, m_fullPowerChargeCount));
 		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 		m_fullPowerChargeCount = 0;
+		m_playerUpdate = &Player::LandingUpdate;
+		m_landingStanFrame = 60;
+	}
+}
+
+void Player::LandingUpdate()
+{
+	m_landingStanFrame--;
+	if (m_landingStanFrame < 0)
+	{
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
+
 	}
 }
 

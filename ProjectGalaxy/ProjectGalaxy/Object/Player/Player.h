@@ -92,11 +92,19 @@ public:
 
 	playerState_t m_prevUpdate;
 	playerState_t m_cameraUpdate;
+
+
 	/// <summary>
 	/// 弾の種類によって中身を入れ替える
 	/// </summary>
 	playerState_t m_shotUpdate;
+	/// <summary>
+	/// 現在のジャンプアクションによって中身を入れ替える
+	/// </summary>
 	playerState_t m_jumpActionUpdate;
+	/// <summary>
+	/// ジャンプ中の落下攻撃
+	/// </summary>
 	playerState_t m_dropAttackUpdate;
 
 	void CommandJump();
@@ -142,16 +150,40 @@ private:
 	/// </summary>
 	void JumpingUpdate();
 	
-	
 	//ジャンプ中の特殊アクション
+	/*m_jumpActionUpdateで使う*/
+	/// <summary>
+	/// ジャンプ中のアクション統括
+	/// </summary>
 	void JumpActionUpdate();
+	/// <summary>
+	/// ジャンプ中にスピン
+	/// </summary>
 	void JumpingSpinUpdate();
+	/// <summary>
+	/// ジャンプ中に加速
+	/// </summary>
 	void JumpBoostUpdate();
 
 	//ジャンプ中の特殊攻撃
+	/*m_dropAttackUpdateで使う*/
+	/// <summary>
+	/// 落下攻撃統括
+	/// </summary>
 	void DropAttackUpdate();
+	/// <summary>
+	/// ヒップドロップ攻撃
+	/// </summary>
 	void NormalDropAttackUpdate();
+	/// <summary>
+	/// 最大火力落下攻撃
+	/// </summary>
 	void FullPowerDropAttackUpdate();
+
+	/// <summary>
+	/// 落下攻撃の怯み
+	/// </summary>
+	void LandingUpdate();
 
 	/// <summary>
 	/// 照準
@@ -193,11 +225,13 @@ private:
 	int m_aimGraphHandle = 0;
 	int m_handFrameIndex;
 
+	int m_landingStanFrame;
 	//プレイヤーのステータス
 	int m_coinNum;
 	float m_hp;
 	float m_speed = 1.f;
 	float m_cameraEasingSpeed;
+
 
 	/// <summary>
 	/// 行動のフレームを管理する
