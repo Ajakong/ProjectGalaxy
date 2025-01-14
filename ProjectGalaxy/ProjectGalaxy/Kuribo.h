@@ -23,7 +23,7 @@ public:
 		AnimationNumWalk,
 	};
 
-	Kuribo(Vec3 pos, int moveNum);
+	Kuribo(Vec3 pos);
 	virtual ~Kuribo();
 
 	void Init();

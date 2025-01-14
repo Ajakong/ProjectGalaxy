@@ -100,13 +100,13 @@ m_bgmHandle(SoundManager::GetInstance().GetSoundData("WarOfAstron_Intro.mp3")),
 m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_battle.mp3"))
 {
 	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
-	//LocationsManager::GetInstance().LoadLocations();
-
+	
 	//Unityで設定したデータでオブジェクトを配置(まだ配置してない)
-	/*m_creater = std::make_shared<GalaxyCreater>("SerialPlaneytGalaxy");
+	m_creater = std::make_shared<GalaxyCreater>("SerialPlaneytGalaxy");
 	m_creater->PlanetCreate();
-	m_creater->SeekerLineCreate();*/
-
+	m_creater->SeekerLineCreate();
+	m_creater->EnemyCreate(player);
+	m_creater->ObjectCreate(player);
 #ifdef _DEBUG
 
 	//オブジェクトやギミックの配置(のちのちUnityのデータを読み込んで配置するので今は仮配置)
@@ -124,17 +124,17 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//スターキャプチャー
 	m_starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
 	MyEngine::Physics::GetInstance().Entry(m_starCapture.back());
-	//シーカーライン
-	std::vector<Vec3>seekerLine1Points;
-	seekerLine1Points.push_back(Vec3(-50, -25,0));
-	seekerLine1Points.push_back(Vec3(-20, 50, 0));
-	seekerLine1Points.push_back(Vec3(-20, 100, 0));
-	seekerLine1Points.push_back(Vec3(0, 30, 0));
-	seekerLine1Points.push_back(Vec3(100, 200, 0));
-	seekerLine1Points.push_back(Vec3(50, 450, 100));
-	m_seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
+	////シーカーライン
+	//std::vector<Vec3>seekerLine1Points;
+	//seekerLine1Points.push_back(Vec3(-50, -25,0));
+	//seekerLine1Points.push_back(Vec3(-20, 50, 0));
+	//seekerLine1Points.push_back(Vec3(-20, 100, 0));
+	//seekerLine1Points.push_back(Vec3(0, 30, 0));
+	//seekerLine1Points.push_back(Vec3(100, 200, 0));
+	//seekerLine1Points.push_back(Vec3(50, 450, 100));
+	//m_seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
 
-	MyEngine::Physics::GetInstance().Entry(m_seekerLine.back());
+	//MyEngine::Physics::GetInstance().Entry(m_seekerLine.back());
 
 
 	//クリスタル
@@ -146,31 +146,31 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_camera = make_shared<Camera>();
 	m_ui = make_shared<UI>();
 
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("GoldenBall.mv1")));
+	/*m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("GoldenBall.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-100, 50, 400), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1"),4));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-200, -300, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
 	m_planet.push_back(std::make_shared<BoxPlanet>(Vec3(0, -50, 200), 0x00ffff, 1.0f, Vec3(30, 30, 50)));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
-	
+	*/
 
 	m_warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
 	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
 
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
 
-	//エネミー
-	m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 30), 0));
-	//m_kuribo.push_back(make_shared<Kuribo>(Vec3(-30, 0, -40), 0));
-	MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -60), player));
-	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, 60), player));
-	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_takobo.push_back(make_shared<Takobo>(Vec3(60, 500, -10), player));
-	MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	m_boss.push_back(make_shared<Boss>(Vec3(300, 250, 100)));
-	MyEngine::Physics::GetInstance().Entry(m_boss.back());
+	////エネミー
+	//m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 30)));
+	//
+	//MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
+	//m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -60), player));
+	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
+	//m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, 60), player));
+	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
+	//m_takobo.push_back(make_shared<Takobo>(Vec3(60, 500, -10), player));
+	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
+	//m_boss.push_back(make_shared<Boss>(Vec3(300, 250, 100)));
+	//MyEngine::Physics::GetInstance().Entry(m_boss.back());
 
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 

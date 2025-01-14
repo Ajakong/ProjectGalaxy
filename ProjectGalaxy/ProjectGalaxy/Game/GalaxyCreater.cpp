@@ -4,6 +4,9 @@
 #include"SeekerLine.h"
 #include"Physics.h"
 #include"ModelManager.h"
+#include"Takobo.h"
+#include"Kuribo.h"
+#include"Boss.h"
 
 GalaxyCreater::GalaxyCreater(std::string galaxyname)
 {
@@ -16,7 +19,7 @@ GalaxyCreater::~GalaxyCreater()
 
 void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 {
-	std::string fileName = "Object.loc";
+	std::string fileName = "Data/Info/data.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
@@ -52,7 +55,10 @@ void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 		//大きさを取得する
 		FileRead_read(&loc.scale, sizeof(loc.scale), handle);
 
-
+		if (loc.tag == "Player")
+		{
+			player->GetRigidbody()->SetPos(loc.pos);
+		}
 	}
 	FileRead_close(handle);
 
@@ -135,7 +141,9 @@ void GalaxyCreater::PlanetCreate()
 		//モデル名のバイト数を取得
 		byte modelNameCnt = 0;
 		FileRead_read(&modelNameCnt, sizeof(modelNameCnt), handle);
+		loc.modelName.resize(modelNameCnt);
 		//モデル名を取得する
+		//取得したモデル名を利用し、後々ハンドルを受け取る
 		FileRead_read(loc.modelName.data(), sizeof(char) * static_cast<int>(loc.modelName.size()), handle);
 		//摩擦力を取得する
 		FileRead_read(&loc.coefficientOfFriction, sizeof(loc.coefficientOfFriction), handle);
@@ -148,4 +156,58 @@ void GalaxyCreater::PlanetCreate()
 	}
 	FileRead_close(handle);
 
+}
+
+void GalaxyCreater::EnemyCreate(std::shared_ptr<Player>player)
+{
+	std::string fileName = "Data/Info/Enemy.loc";
+	//開くファイルのハンドルを取得
+	int handle = FileRead_open(fileName.c_str());
+
+	//読み込むオブジェクト数が何個あるか取得
+	int dataCnt = 0;
+	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
+	//読み込むオブジェクト数分の配列に変更する
+	m_planetData.resize(dataCnt);
+	m_planetModelData.resize(dataCnt);
+
+	//配列の数分回す
+	for (auto& loc : m_enemyData)
+	{
+		//名前のバイト数を取得する
+		byte nameCnt = 0;
+		FileRead_read(&nameCnt, sizeof(nameCnt), handle);
+		//名前のサイズを変更する
+		loc.name.resize(nameCnt);
+		//名前を取得する
+		FileRead_read(loc.name.data(), sizeof(char) * static_cast<int>(loc.name.size()), handle);
+
+		//タグのバイト数を取得する
+		byte tagCnt = 0;
+		FileRead_read(&tagCnt, sizeof(tagCnt), handle);
+		//タグのサイズを変更する
+		loc.tag.resize(tagCnt);
+		//タグを取得する
+		FileRead_read(loc.tag.data(), sizeof(char) * static_cast<int>(loc.tag.size()), handle);
+
+		//座標を取得する
+		FileRead_read(&loc.pos, sizeof(loc.pos), handle);
+		
+		if (loc.tag == "Takobo")
+		{
+			auto takobo = std::make_shared<Takobo>(loc.pos,player);
+			MyEngine::Physics::GetInstance().Entry(takobo);
+		}
+		else if (loc.tag == "Kuribo")
+		{
+			auto kuribo = std::make_shared<Kuribo>(loc.pos);
+			MyEngine::Physics::GetInstance().Entry(kuribo);
+		}
+		else if (loc.tag == "Boss")
+		{
+			auto boss = std::make_shared<Boss>(loc.pos);
+			MyEngine::Physics::GetInstance().Entry(boss);
+		}
+	}
+	FileRead_close(handle);
 }

@@ -6,6 +6,7 @@
 #include<map>
 #include"Booster.h"
 #include"Collidable.h"
+#include"Enemy.h"
 
 class Player;
 
@@ -35,6 +36,12 @@ class GalaxyCreater
 		std::vector<Vec3> points;
 		int color;
 	};
+	struct StandardObject
+	{
+		std::string name;
+		std::string tag;
+		Vec3 pos;
+	};
 public:
 	GalaxyCreater(std::string galaxyname);
 	virtual ~GalaxyCreater();
@@ -42,12 +49,15 @@ public:
 	void ObjectCreate(std::shared_ptr<Player> player);
 	void SeekerLineCreate();
 	void PlanetCreate();
+	void EnemyCreate(std::shared_ptr<Player>player);
+
 	
 private:
 	std::string m_galaxyName;
 	std::vector<Location> m_objectData;
 	std::vector<LocationPlanet> m_planetData;
-	std::vector<LocationSeekerLine> m_seekerLineData;
 	std::vector<int> m_planetModelData;
+	std::vector<LocationSeekerLine> m_seekerLineData;
+	std::vector<StandardObject> m_enemyData;
 };
 
