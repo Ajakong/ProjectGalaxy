@@ -66,12 +66,13 @@ m_stanCount(0)
 	}
 #endif
 	m_moveUpdate = &Kuribo::SearchUpdate;
-
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kModelFileName);
 	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
 	ChangeAnim(AnimNum::AnimationNumIdle);
 	m_frontVec = Vec3(1, 0, 0);
 	m_sideVec = Vec3(0, 0, 1);
+
+	AddThroughTag(ObjectTag::Takobo);
 }
 
 Kuribo::~Kuribo()

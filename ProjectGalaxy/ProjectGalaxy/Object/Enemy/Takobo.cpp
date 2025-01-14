@@ -81,6 +81,7 @@ m_centerToEnemyAngle(0)
 	item->radius = kCollisionRadius;
 	m_moveShaftPos = m_rigid->GetPos();
 	AddThroughTag(ObjectTag::Takobo);
+	AddThroughTag(ObjectTag::Kuribo);
 	AddThroughTag(ObjectTag::Gorori);
 	AddThroughTag(ObjectTag::WarpGate);
 	AddThroughTag(ObjectTag::EnemyAttack);

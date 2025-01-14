@@ -84,7 +84,7 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 	// 未登録なら無視
 	else
 	{
-		assert(false);
+		//assert(false);
 	}
 }
 

@@ -168,14 +168,13 @@ void GalaxyCreater::EnemyCreate(std::shared_ptr<Player>player)
 	int dataCnt = 0;
 	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
 	//読み込むオブジェクト数分の配列に変更する
-	m_planetData.resize(dataCnt);
-	m_planetModelData.resize(dataCnt);
-
+	m_enemyData.resize(dataCnt);
+	
 	//配列の数分回す
 	for (auto& loc : m_enemyData)
 	{
 		//名前のバイト数を取得する
-		byte nameCnt = 0;
+		byte nameCnt = 0;	
 		FileRead_read(&nameCnt, sizeof(nameCnt), handle);
 		//名前のサイズを変更する
 		loc.name.resize(nameCnt);

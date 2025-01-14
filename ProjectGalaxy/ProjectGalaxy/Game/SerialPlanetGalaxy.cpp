@@ -101,23 +101,28 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 {
 	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 	
-	//Unityで設定したデータでオブジェクトを配置(まだ配置してない)
+	//Unityで設定したデータでオブジェクトを配置
 	m_creater = std::make_shared<GalaxyCreater>("SerialPlaneytGalaxy");
+	//惑星の配置
 	m_creater->PlanetCreate();
+	//ギミックの配置
 	m_creater->SeekerLineCreate();
+	//敵の配置
 	m_creater->EnemyCreate(player);
+	//その他オブジェクトの配置
 	m_creater->ObjectCreate(player);
+
 #ifdef _DEBUG
 
 	//オブジェクトやギミックの配置(のちのちUnityのデータを読み込んで配置するので今は仮配置)
 
-	//ギミック
-	//ブースター
+	////ギミック
+	////ブースター
 
-	m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1,4.5f));
-	MyEngine::Physics::GetInstance().Entry(m_booster.back());
-	m_booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
-	MyEngine::Physics::GetInstance().Entry(m_booster.back());
+	//m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1,4.5f));
+	//MyEngine::Physics::GetInstance().Entry(m_booster.back());
+	//m_booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
+	//MyEngine::Physics::GetInstance().Entry(m_booster.back());
 
 	m_warpGate.push_back(make_shared<WarpGate>(Vec3(0, -50, -70), Vec3(-200, -300, 0), -1));
 	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
@@ -178,7 +183,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
 	MyEngine::Physics::GetInstance().Entry(m_coin.back());
 	m_item.push_back(make_shared<StickStarItem>(Vec3(0, 450, 0),true));
-	m_item.push_back(make_shared <FullPowerDropItem>(Vec3(55, -50, 0),true));
+	m_item.push_back(make_shared <FullPowerDropItem>(Vec3(-550, 300, 0),true));
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
