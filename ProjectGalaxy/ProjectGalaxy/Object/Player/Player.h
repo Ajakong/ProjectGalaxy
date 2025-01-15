@@ -8,6 +8,7 @@
 
 class Camera;
 class PlayerSphere;
+class Planet;
 
 class Player : public MyEngine::Collidable
 {
@@ -44,7 +45,6 @@ public:
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetVelocity() const { return m_rigid->GetVelocity(); }
 	Vec3 GetMoveDir() const{ return m_moveDir; }
-	Vec3 GetNowPlanetPos() const { return m_nowPlanetPos; }
 	Vec3 GetNormVec() const { return m_upVec.GetNormalized(); }
 	Vec3 GetFrontVec() const { return m_frontVec.GetNormalized(); }
 	Vec3 GetSideVec() const { return m_sideVec.GetNormalized(); }
@@ -78,8 +78,7 @@ public:
 	//int GetSearchRemainTime() { return m_searchRemainTime; }
 	bool GetJumpFlag() const { return m_isJumpFlag; }
 
-	std::string GetState() const { return m_state; }
-
+	
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
@@ -232,7 +231,6 @@ private:
 	float m_speed = 1.f;
 	float m_cameraEasingSpeed;
 
-
 	/// <summary>
 	/// 行動のフレームを管理する
 	/// </summary>
@@ -248,7 +246,8 @@ private:
 	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
 	std::vector<std::shared_ptr<StampImpact>> m_impacts;
 
-	std::string m_state;
+	
+	std::shared_ptr<Planet>m_nowPlanet;
 
 	bool m_isOnDamageFlag;
 	bool m_isSpinFlag;
@@ -273,7 +272,6 @@ private:
 	//std::shared_ptr<Camera> m_camera;
 	Vec3 m_moveDir;
 	Vec3 m_postMoveDir;
-	Vec3 m_nowPlanetPos;
 	Vec3 m_nowVec;
 	Vec3 m_inputVec;
 

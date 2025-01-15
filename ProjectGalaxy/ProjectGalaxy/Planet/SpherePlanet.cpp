@@ -16,10 +16,10 @@ namespace
 }
 
 SpherePlanet::SpherePlanet(Vec3 pos,int color,float gravity,int modelHandle,float coefficientOfFriction,float scale) :Planet(),
-m_scale(scale),
 m_enemyCount(3),
 m_modelHandle(modelHandle)
 {
+	m_scale = scale;
 	m_coefficientOfFriction = coefficientOfFriction;
 	m_color = color;
 	m_rigid->SetPos(pos);

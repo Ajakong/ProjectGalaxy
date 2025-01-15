@@ -3,6 +3,8 @@
 #include"ColliderSphere.h"
 #include"StampImpact.h"
 #include"ClearObject.h"
+
+class Planet;
 class Boss : public Enemy
 {
 public:
@@ -58,7 +60,7 @@ private:
 	int m_color;
 
 	bool m_isHit;
-
+	std::shared_ptr<Planet> m_nowPlanet;
 	std::shared_ptr<MyEngine::ColliderSphere> m_collision;
 	std::vector<std::shared_ptr<StampImpact>> m_impacts;
 	std::shared_ptr<ClearObject>m_dropItem;

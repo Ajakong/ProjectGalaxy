@@ -2,6 +2,7 @@
 #include"ModelManager.h"
 #include"Physics.h"
 #include"Coin.h"
+#include"Easing.h"
 
 using namespace MyEngine;
 
@@ -85,7 +86,9 @@ void Kuribo::Init()
 
 void Kuribo::Update()
 {
-	m_upVec = m_nextUpVec;
+	//ローカル上方向ベクトルをいい感じ線形保管
+	m_upVec = Slerp(m_upVec, m_nextUpVec, 1.f);
+
 	(this->*m_moveUpdate)();
 	UpdateAnim(m_currentAnimNo);
 	//変更前のアニメーション100%
@@ -216,6 +219,7 @@ void Kuribo::OnTriggerStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,
 
 void Kuribo::SearchUpdate()
 {
+	m_state = "Search";
 	if (!m_player.get())return;
 	m_rigid->SetVelocity(m_upVec);
 	
@@ -228,6 +232,7 @@ void Kuribo::SearchUpdate()
 
 void Kuribo::JumpUpdate()
 {
+	m_state = "Jump";
 	m_initTime++;
 	if (m_initTime >= 60)
 	{
@@ -237,6 +242,7 @@ void Kuribo::JumpUpdate()
 
 void Kuribo::ChaseUpdate()
 {
+	m_state = "Chase";
 	m_chaseFrameCount++;
 	//ターゲット位置が正反対の時動かなくなるバグ
 	m_attackDir = m_targetPoint - m_rigid->GetPos();
@@ -256,6 +262,7 @@ void Kuribo::ChaseUpdate()
 
 void Kuribo::ComebackUpdate()
 {
+	m_state = "Comeback";
 	Vec3 vec = m_comebackPoint - m_rigid->GetPos();
 	vec.Normalize();
 	m_frontVec = vec;
@@ -295,7 +302,7 @@ void Kuribo::CrushUpdate()
 
 void Kuribo::DeathUpdate()
 {
-
+	m_state = "Death";
 	m_userData->dissolveY -= 0.01f;
 	float animFrame = MV1GetAttachAnimTime(m_modelHandle,m_currentAnimNo);
 	if (m_userData->dissolveY<0)

@@ -22,6 +22,6 @@ protected:
 	int m_color;
 	int m_modelHandle;
 
-	float m_scale;
+
 };
 

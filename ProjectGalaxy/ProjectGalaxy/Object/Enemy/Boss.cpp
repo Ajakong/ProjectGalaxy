@@ -1,5 +1,7 @@
 ﻿#include "Boss.h"
+#include"Planet.h"
 #include"Physics.h"
+#include"Easing.h"
 namespace
 {
 	constexpr int kHPFull = 60;
@@ -42,6 +44,8 @@ void Boss::Init()
 
 void Boss::Update()
 {
+	//上方向ベクトルをいい感じに線形保管
+	m_upVec = Slerp(m_upVec, m_nextUpVec, 1.f);
 	(this->*m_bossUpdate)();
 	if (m_isHit)
 	{
@@ -134,7 +138,7 @@ void Boss::JumpingUpdate()
 		else
 		{
 			m_jumpCount++;
-			m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, 50.f, m_upVec * -1,ObjectTag::EnemyAttack));
+			m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::EnemyAttack));
 			MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 			m_rigid->AddVelocity(m_upVec * 2);
 		}
@@ -147,7 +151,7 @@ void Boss::FullpowerJumpUpdate()
 {
 	if (m_collision->OnHit())
 	{
-		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, 50.f, m_upVec * -1, ObjectTag::EnemyAttack,2.f));
+		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::EnemyAttack,2.f));
 		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 
 		//HPが少ないほど隙がなくなる
@@ -227,6 +231,10 @@ void Boss::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 
 void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
+	if (colider->GetTag() == ObjectTag::Stage)
+	{
+		m_nowPlanet = std::dynamic_pointer_cast<Planet>(colider);
+	}
 	if (m_bossUpdate == &Boss::LandingUpdate)
 	{
 		if (colider->GetTag() == ObjectTag::PlayerImpact)

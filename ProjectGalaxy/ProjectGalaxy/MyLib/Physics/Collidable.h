@@ -120,6 +120,7 @@ namespace MyEngine
 		virtual bool IsDestroy() { return m_isDestroyFlag; }
 
 		Vec3 GetKnockBackVelocity() { return (m_rigid->GetVelocity())*-1; }
+		std::string GetState() const { return m_state; }
 
 		std::shared_ptr<Rigidbody> GetRigidbody() const { return m_rigid; }
 
@@ -145,6 +146,7 @@ namespace MyEngine
 
 		int m_cbuffH;
 		UserData* m_userData;
+		std::string m_state;
 	private:
 		std::list<ObjectTag>	m_throughTags;
 

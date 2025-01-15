@@ -1,4 +1,4 @@
-#include "FontManager.h"
+ï»¿#include "FontManager.h"
 #include<string>
 #include<vector>
 
@@ -21,13 +21,13 @@ FontManager& FontManager::GetInstance()
 
 int FontManager::GetFontData(const char* fontfilename,const char* fontname,int size,int thick,int fonttype)
 {
-	string fileName = "Font/";
-	//g—p‚·‚éƒtƒHƒ“ƒg‚ğ€”õ‚·‚é
+	string fileName = "Data/Font/";
+	//ä½¿ç”¨ã™ã‚‹ãƒ•ã‚©ãƒ³ãƒˆã‚’æº–å‚™ã™ã‚‹
 	if (AddFontResourceEx((fileName+fontfilename).c_str(), FR_PRIVATE, NULL) > 0) {
 	}
 	else {
-		// ƒtƒHƒ“ƒg“ÇƒGƒ‰[ˆ—
-		MessageBox(NULL, "ƒtƒHƒ“ƒg“Ç¸”s", "", MB_OK);
+		// ãƒ•ã‚©ãƒ³ãƒˆèª­è¾¼ã‚¨ãƒ©ãƒ¼å‡¦ç†
+		MessageBox(NULL, "ãƒ•ã‚©ãƒ³ãƒˆèª­è¾¼å¤±æ•—", "", MB_OK);
 	}
 	if (m_pathAndFontInfoes.find(fontname) == m_pathAndFontInfoes.end())
 	{

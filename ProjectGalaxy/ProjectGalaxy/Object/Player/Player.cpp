@@ -10,13 +10,13 @@
 #include"KillerTheSeeker.h"
 #include"ModelManager.h"
 #include"GraphManager.h"
+#include"Planet.h"
 
 #include"Easing.h"
 
 #include"Physics.h"
 
 /// <summary>
-/// やること:足の当たり判定を生成・踏みつけに使う
 /// スピン専用の当たり判定を生成・体より半径が大きい当たり判定にし、スピン中にだけ出現
 /// </summary>
 
@@ -90,7 +90,6 @@ m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
 m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
 m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
 m_postUpVec(Vec3::Up()),
-m_nowPlanetPos(Vec3::Up() * -50),
 m_shotDir(Vec3::Front()),
 m_moveDir(Vec3::Front()),
 m_frontVec(Vec3::Front()),
@@ -407,7 +406,6 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	{
 		printf("Stage\n");
 		m_spinCount = 0;
-		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
 		m_isOperationFlag = false;
 		if (m_playerUpdate == &Player::DropAttackUpdate)
 		{
@@ -572,11 +570,8 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	printf("TriggerEnter\n");
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
-		if (m_nowPlanetPos != colider->GetRigidbody()->GetPos())
-		{
-			m_rigid->SetVelocity(Vec3::Zero());
-		}
-		m_nowPlanetPos = colider->GetRigidbody()->GetPos();
+		
+		m_nowPlanet = std::dynamic_pointer_cast<Planet>(colider);
 		
 	}
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
@@ -925,7 +920,7 @@ void Player::FullPowerDropAttackUpdate()
 	if (m_footCol->OnHit())
 	{
 		//ここで衝撃波を発生させる予定
-		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -m_footCol->radius, 50.f, m_upVec * -1, ObjectTag::PlayerImpact, m_fullPowerChargeCount));
+		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -m_footCol->radius, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::PlayerImpact, m_fullPowerChargeCount));
 		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 		m_fullPowerChargeCount = 0;
 		m_playerUpdate = &Player::LandingUpdate;

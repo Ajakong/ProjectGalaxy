@@ -102,13 +102,13 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 	
 	//Unityで設定したデータでオブジェクトを配置
-	m_creater = std::make_shared<GalaxyCreater>("SerialPlaneytGalaxy");
+	m_creater = std::make_shared<GalaxyCreater>("SerialPlanetGalaxy");
 	//惑星の配置
 	m_creater->PlanetCreate();
 	//ギミックの配置
 	m_creater->SeekerLineCreate();
 	//敵の配置
-	m_creater->EnemyCreate(player);
+	m_enemies=m_creater->EnemyCreate(player);
 	//その他オブジェクトの配置
 	m_creater->ObjectCreate(player);
 
@@ -207,8 +207,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 SerialPlanetGalaxy::~SerialPlanetGalaxy()
 {
 	m_planet.clear();
-	m_takobo.clear();
-	m_gorori.clear();
+	m_enemies.clear();
 	m_poworStone.clear();
 	m_warpGate.clear();
 }
@@ -319,13 +318,17 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	
 	MyEngine::Physics::GetInstance().Update();
 	player->SetMatrix();//行列を反映
+	for (auto& item : m_enemies) { item->SetMatrix(); }
+	
+	//敵の削除管理
+	DeleteObject(m_enemies);
 
-	for (auto& item : m_kuribo) { item->SetMatrix(); }
+	/*for (auto& item : m_kuribo) { item->SetMatrix(); }
 	for (auto& item : m_takobo) { item->SetMatrix(); }
 	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
 	DeleteObject(m_kuribo);
 	DeleteObject(m_takobo);
-	DeleteObject(m_boss);
+	DeleteObject(m_boss);*/
 
 }
 
@@ -421,13 +424,16 @@ void SerialPlanetGalaxy::BossBattleDraw()
 template <typename T>
 void SerialPlanetGalaxy::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
 {
+	//remove_ifは移動させた要素を未定義(empty)にするみたいです。
 	auto result = remove_if(objects.begin(), objects.end(), [this](const auto& object)
 		{
-			return object->IsDestroy(); // IsDestroy() が true の場合削除
-		});
-	for (auto it = result; it != objects.end(); ++it) {
-		auto collidable = std::static_pointer_cast<MyEngine::Collidable>(*it);
+			auto flag= object->IsDestroy();
+	if (flag)
+	{
+		auto collidable = std::static_pointer_cast<MyEngine::Collidable>(object);
 		MyEngine::Physics::GetInstance().Exit(collidable);
 	}
+	return  flag;// IsDestroy() が true の場合削除
+		});
 	objects.erase(result, objects.end());
 }

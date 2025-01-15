@@ -78,33 +78,28 @@ void GalaxyCreater::SeekerLineCreate()
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
-	
-	m_seekerLineData.resize(1);
+
 	//読み込むオブジェクト数が何個あるか取得
 	int dataCnt = 0;
 	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
-
-	//配列の数分回す
-	for (auto& loc : m_seekerLineData)
+	LocationSeekerLine info;
+	for (int i = 0; i < dataCnt; i++)
 	{
 		//名前のバイト数を取得する
 		byte nameCnt = 0;
 		FileRead_read(&nameCnt, sizeof(nameCnt), handle);
 		//名前のサイズを変更する
-		loc.name.resize(nameCnt);
+		info.name.resize(nameCnt);
 		//名前を取得する
-		FileRead_read(loc.name.data(), sizeof(char) * static_cast<int>(loc.name.size()), handle);
-		
-		for (int i = 0; i < dataCnt; i++)
-		{
-			Vec3 pos;
-			FileRead_read(&pos, sizeof(pos), handle);
-			loc.points.push_back(pos);
-		}
+		FileRead_read(info.name.data(), sizeof(char) * static_cast<int>(info.name.size()), handle);
 
-		auto seekerLine = std::make_shared<SeekerLine>(loc.points, loc.color);
-		MyEngine::Physics::GetInstance().Entry(seekerLine);
+		Vec3 pos;
+		FileRead_read(&pos, sizeof(pos), handle);
+		info.points.push_back(pos);
+
 	}
+	auto seekerLine = std::make_shared<SeekerLine>(info.points, info.color);
+	MyEngine::Physics::GetInstance().Entry(seekerLine);
 	FileRead_close(handle);
 
 }
@@ -158,7 +153,7 @@ void GalaxyCreater::PlanetCreate()
 
 }
 
-void GalaxyCreater::EnemyCreate(std::shared_ptr<Player>player)
+std::vector<std::shared_ptr<Enemy>> GalaxyCreater::EnemyCreate(std::shared_ptr<Player>player)
 {
 	std::string fileName = "Data/Info/Enemy.loc";
 	//開くファイルのハンドルを取得
@@ -169,12 +164,12 @@ void GalaxyCreater::EnemyCreate(std::shared_ptr<Player>player)
 	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
 	//読み込むオブジェクト数分の配列に変更する
 	m_enemyData.resize(dataCnt);
-	
+	std::vector<std::shared_ptr<Enemy>> enemies;
 	//配列の数分回す
 	for (auto& loc : m_enemyData)
 	{
 		//名前のバイト数を取得する
-		byte nameCnt = 0;	
+		byte nameCnt = 0;
 		FileRead_read(&nameCnt, sizeof(nameCnt), handle);
 		//名前のサイズを変更する
 		loc.name.resize(nameCnt);
@@ -191,22 +186,21 @@ void GalaxyCreater::EnemyCreate(std::shared_ptr<Player>player)
 
 		//座標を取得する
 		FileRead_read(&loc.pos, sizeof(loc.pos), handle);
-		
+
 		if (loc.tag == "Takobo")
 		{
-			auto takobo = std::make_shared<Takobo>(loc.pos,player);
-			MyEngine::Physics::GetInstance().Entry(takobo);
+			enemies.push_back(std::make_shared<Takobo>(loc.pos, player));
 		}
 		else if (loc.tag == "Kuribo")
 		{
-			auto kuribo = std::make_shared<Kuribo>(loc.pos);
-			MyEngine::Physics::GetInstance().Entry(kuribo);
+			enemies.push_back(std::make_shared<Kuribo>(loc.pos));
 		}
 		else if (loc.tag == "Boss")
 		{
-			auto boss = std::make_shared<Boss>(loc.pos);
-			MyEngine::Physics::GetInstance().Entry(boss);
+			enemies.push_back(std::make_shared<Boss>(loc.pos));
 		}
+		MyEngine::Physics::GetInstance().Entry(enemies.back());
 	}
 	FileRead_close(handle);
+	return enemies;
 }

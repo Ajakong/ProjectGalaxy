@@ -20,6 +20,7 @@ class SeekerLine;
 class Crystal;
 class Item;
 
+class Enemy;
 class Takobo;
 class KillerTheSeeker;
 class Gorori;
@@ -106,12 +107,14 @@ private:
 	std::vector<std::shared_ptr<Crystal>> m_crystal;
 	std::vector<std::shared_ptr<Item>> m_poworStone;
 	//エネミー
-	std::vector<std::shared_ptr<Takobo>> m_takobo;
+	std::vector<std::shared_ptr<Enemy>> m_enemies;
+
+	/*std::vector<std::shared_ptr<Takobo>> m_takobo;
 	std::vector<std::shared_ptr<KillerTheSeeker>> m_killerTheSeeker;
 	std::vector<std::shared_ptr<Gorori>> m_gorori;
 	std::vector<std::shared_ptr<Kuribo>> m_kuribo;
 	std::vector<std::shared_ptr<SpaceEmperor>> m_spaceEmperor;
-	std::vector<std::shared_ptr<Boss>>m_boss;
+	std::vector<std::shared_ptr<Boss>>m_boss;*/
 
 	Vec3 m_cameraUpVec;
 

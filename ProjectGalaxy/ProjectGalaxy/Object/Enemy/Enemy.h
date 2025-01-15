@@ -17,6 +17,7 @@ public:
 	virtual void Init() = 0;
 	virtual void Draw() = 0;
 	virtual void Update()=0;
+	virtual void SetMatrix() {};
 	virtual Vec3 GetShotUpVec() { return m_upVec; }
 	virtual int GetHP() { return m_hp; }
 protected:

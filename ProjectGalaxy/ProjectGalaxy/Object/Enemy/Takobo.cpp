@@ -6,6 +6,7 @@
 #include"SoundManager.h"
 #include"ModelManager.h"
 
+#include"Easing.h"
 namespace
 {
 	constexpr float kScaleMag = 0.03f;
@@ -108,6 +109,8 @@ void Takobo::Init()
 
 void Takobo::Update()
 {
+	//ローカル上方向ベクトルいい感じに線形保管
+	m_upVec = Slerp(m_upVec, m_nextUpVec, 1.f);
 	(this->*m_enemyUpdate)();
 
 	UpdateAnim(m_currentAnimNo);

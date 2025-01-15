@@ -17,6 +17,7 @@ public:
 	virtual Vec3 GetNormVec(Vec3 pos) = 0;
 	bool GetClearFlag() { return clearFlag; }
 	virtual void SetIsSearch(bool flag) { m_isSearch=flag; }
+	virtual float GetScale() { return m_scale*50; }
 protected:
 	float m_coefficientOfFriction;//摩擦係数
 	int modelH;
@@ -24,5 +25,6 @@ protected:
 	bool clearFlag=false;
 	int m_pointLightHandle;
 	bool m_isSearch;
+	float m_scale;
 };
 

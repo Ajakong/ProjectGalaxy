@@ -8,6 +8,14 @@ class Player;
 class StampImpact :public MyEngine::Collidable 
 {
 public:
+	/// <summary>
+	/// 衝撃波コンストラクタ
+	/// </summary>
+	/// <param name="pos">発生位置</param>
+	/// <param name="planetRadius">衝撃波が走る惑星の半径</param>
+	/// <param name="dir">衝撃波の進む道</param>
+	/// <param name="tag">衝撃波のタグ</param>
+	/// <param name="speed">衝撃波のスピード</param>
 	StampImpact(Vec3 pos,float planetRadius,Vec3 dir,ObjectTag tag,float speed=1.f);
 	virtual ~StampImpact();
 

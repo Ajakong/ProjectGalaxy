@@ -49,7 +49,7 @@ public:
 	void ObjectCreate(std::shared_ptr<Player> player);
 	void SeekerLineCreate();
 	void PlanetCreate();
-	void EnemyCreate(std::shared_ptr<Player>player);
+	std::vector<std::shared_ptr<Enemy>> EnemyCreate(std::shared_ptr<Player>player);
 
 	
 private:
@@ -57,7 +57,7 @@ private:
 	std::vector<Location> m_objectData;
 	std::vector<LocationPlanet> m_planetData;
 	std::vector<int> m_planetModelData;
-	std::vector<LocationSeekerLine> m_seekerLineData;
+	//std::vector<LocationSeekerLine> m_seekerLineData;
 	std::vector<StandardObject> m_enemyData;
 };
 
