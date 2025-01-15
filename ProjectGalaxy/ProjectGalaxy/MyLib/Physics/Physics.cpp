@@ -798,7 +798,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 				// 法線方向に補正距離分だけ移動
 				if (Reverce)
 				{
-					fixedPos = spherePos + (info.Norm*-1) * adjustedPenetrationDepth;
+					fixedPos = spherePos + (info.Norm*-1) * adjustedPenetrationDepth-secondaryCollider->col->GetShift();
 				}
 				else
 				{
