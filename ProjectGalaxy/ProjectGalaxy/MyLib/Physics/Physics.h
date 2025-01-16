@@ -115,14 +115,7 @@ namespace MyEngine
 		void OnCollideInfo(const std::weak_ptr<Collidable>& own, const std::weak_ptr<Collidable>& send, ColideTag ownTag, ColideTag sendTag, const Vec3& hitPos, OnCollideInfoKind kind);
 		void FixPos() const;
 
-		/// <summary>
-		/// 接触点が三角形の内側にあるかの判定
-		/// </summary>
-		/// <param name="p">接触点</param>
-		/// <param name="v0">三角形の頂点0</param>
-		/// <param name="v1">三角形の頂点1</param>
-		/// <param name="v2">三角形の頂点2</param>
-		bool IsPointInsideTriangle(const Vec3& point, const Vec3& v0, const Vec3& v1, const Vec3& v2) const;
+		
 		/// <summary>
 		/// その球は辺と接触してますかぁぁぁあ！！？
 		/// </summary>

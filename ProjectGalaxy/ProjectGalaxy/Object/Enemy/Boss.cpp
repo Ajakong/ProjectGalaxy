@@ -76,6 +76,11 @@ void Boss::InitUpdate()
 {
 }
 
+void Boss::RestUpdate()
+{
+
+}
+
 void Boss::NeutralUpdate()
 {
 	m_actionFrame++;

@@ -5,7 +5,7 @@
 namespace
 {
 	constexpr float kGroundRadius = 50;
-	constexpr float  kGravityRange = 1000;
+	constexpr float  kGravityRange = 300;
 	constexpr float  kGravityPower = 0.098f;
 
 
@@ -78,6 +78,7 @@ Vec3 PolygonModelPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 	toObj = toObj.GetNormalized();
 	Vec3 GravityDir = toObj * -1;
 	obj->SetUpVec(GetNormVec(objPos));
+
 	if (obj->IsAntiGravity())
 	{
 		return Vec3::Zero();
@@ -97,6 +98,7 @@ Vec3 PolygonModelPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 	//重力のみ
 	GravityDir = GravityDir * kGravityPower;
 
+	
 	return GravityDir;
 }
 
@@ -118,7 +120,8 @@ Vec3 PolygonModelPlanet::GetNormVec(Vec3 pos)
 
 		// 距離を比較して最小値を更新
 		float distSq = (pos - currentClosest).SqLength();
-		if (distSq < minDistanceSq) {
+		if (distSq < minDistanceSq)
+		{
 			minDistanceSq = distSq;
 			closestPoint = currentClosest;
 

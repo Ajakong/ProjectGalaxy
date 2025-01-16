@@ -13,6 +13,7 @@
 #include"Crystal.h"
 #include"BossPlanet.h"
 #include"BoxPlanet.h"
+#include"PolygonModelPlanet.h"
 #include"Takobo.h"
 #include"KillerTheSeeker.h"
 #include"SpaceEmperor.h"
@@ -112,12 +113,14 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//その他オブジェクトの配置
 	m_creater->ObjectCreate(player);
 
+	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan.mv1"), Vec3(0, 500, 200), 1, 1, 5.f));
 #ifdef _DEBUG
 
 	//オブジェクトやギミックの配置(のちのちUnityのデータを読み込んで配置するので今は仮配置)
 
 	////ギミック
 	////ブースター
+
 
 	//m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1,4.5f));
 	//MyEngine::Physics::GetInstance().Entry(m_booster.back());

@@ -16,7 +16,9 @@ public:
 	virtual void Draw();
 
 private:
+
 	void InitUpdate();
+	void RestUpdate();
 	void NeutralUpdate();
 	void AnglyUpdate();
 	void DestroyPlanetUpdate();

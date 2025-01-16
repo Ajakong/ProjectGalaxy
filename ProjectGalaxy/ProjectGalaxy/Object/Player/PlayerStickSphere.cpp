@@ -131,8 +131,9 @@ void PlayerStickSphere::StickUpdate()
 
 void PlayerStickSphere::ComeBackUpdate()
 {
-	m_rigid->SetVelocity((m_startPos - m_rigid->GetPos()).GetNormalized() * 3);
-	if ((m_rigid->GetPos() - m_startPos).Length() <= 1.2f)
+	float speed = (m_startPos - m_rigid->GetPos()).Length()/10;
+	m_rigid->SetVelocity((m_startPos - m_rigid->GetPos()).GetNormalized() * speed);
+	if ((m_rigid->GetPos() - m_startPos).Length() <= 2.f)
 	{
 		m_isDestroyFlag = true;
 	}
