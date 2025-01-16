@@ -83,3 +83,5 @@ Vec3 GetClosestPointOnLineSegment(Vec3& P, Vec3& A, Vec3& B);
 /// <param name="v1">三角形の頂点1</param>
 /// <param name="v2">三角形の頂点2</param>
 bool IsPointInsideTriangle(Vec3& point,Vec3& v0, Vec3& v1, Vec3& v2);
+
+bool RayIntersectsTriangle(Vec3& rayOrigin, Vec3& rayDir,Vec3& v0, Vec3& v1, Vec3& v2);

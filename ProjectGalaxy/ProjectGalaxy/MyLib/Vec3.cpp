@@ -1,6 +1,7 @@
 ﻿#include "Vec3.h"
 #include <cmath>
 #include<algorithm>
+#include<optional>
 #include <cassert>
 
 Vec3::Vec3() :
@@ -348,4 +349,52 @@ bool IsPointInsideTriangle(Vec3& point, Vec3& v0, Vec3& v1, Vec3& v2)
 	}
 
 	return false;  // 三角形外部にある
+}
+
+bool RayIntersectsTriangle(Vec3& rayOrigin, Vec3& rayDir, Vec3& v0, Vec3& v1, Vec3& v2)
+{
+	float t=0.f;
+	const float EPSILON = 1e-6f; // 計算誤差の許容範囲
+
+	// 三角形の辺ベクトルを計算
+	Vec3 edge1 = v1 - v0;
+	Vec3 edge2 = v2 - v0;
+
+	// レイ方向と edge2 の外積を計算
+	Vec3 h = Cross(rayDir,edge2);
+	float a = Dot(edge1,h);
+
+	// レイが三角形の平面と平行である場合は交差しない
+	if (std::fabs(a) < EPSILON)
+		return false;
+
+	// 逆行列の係数
+	float f = 1.0f / a;
+
+	// レイの始点から三角形の頂点へのベクトル
+	Vec3 s = rayOrigin - v0;
+
+	// u パラメータを計算
+	float u = f * Dot(s,h);
+	if (u < 0.0f || u > 1.0f)
+		return false;
+
+	// q ベクトルを計算
+	Vec3 q = Cross(s,edge1);
+
+	// v パラメータを計算
+	float v = f * Dot(rayDir,q);
+	if (v < 0.0f || u + v > 1.0f)
+		return false;
+
+	// レイが三角形の平面と交差する距離 t を計算
+	t = f * Dot(edge2,q);
+	if (t > EPSILON)
+	{
+		// t が正なら交差している
+		return true;
+	}
+
+	// t が負またはゼロなら交差していない
+	return false;
 }

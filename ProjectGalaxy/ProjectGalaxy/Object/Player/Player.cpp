@@ -170,7 +170,7 @@ void Player::Init()
 
 void Player::Update()
 {
-	m_upVec = Slerp(m_upVec, m_nextUpVec,1.f);
+	m_upVec = Slerp(m_upVec, m_nextUpVec,0.1f);
 	m_isSearchFlag = false;
 	m_radius = 0;
 	

@@ -5,7 +5,7 @@
 namespace
 {
 	constexpr float kGroundRadius = 50;
-	constexpr float  kGravityRange = 1000;
+	constexpr float  kGravityRange = 300;
 	constexpr float  kGravityPower = 0.098f;
 
 
@@ -98,6 +98,7 @@ Vec3 PolygonModelPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 	//重力のみ
 	GravityDir = GravityDir * kGravityPower;
 
+	
 	return GravityDir;
 }
 

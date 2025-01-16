@@ -76,7 +76,7 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 	m_ui = make_shared<UI>();
 	player = playerPointer;
 
-	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan.mv1"), Vec3(0, -100, 0), 1, 1, 10.f));
+	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan.mv1"), Vec3(0, -400, 0), 1, 1, 10.f));
 	//takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
 
 	/*boss.push_back(make_shared<Boss>(Vec3(0, 50, 100)));
@@ -85,12 +85,12 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 	//samuraiAlter.push_back(make_shared<SamuraiAlter>(Vec3(0, 0, -30)));
 	//MyEngine::Physics::GetInstance().Entry(samuraiAlter.back());
 	camera = make_shared<Camera>();
-
-	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 	for (auto& item : m_planet)
 	{
 		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
 	}
+	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
+	
 	//それぞれのオブジェクトの上方向ベクトルなどの更新
 	MyEngine::Physics::GetInstance().Update();
 }
@@ -227,7 +227,7 @@ void DebugGalaxy::Draw()
 	DrawFormatString(0, 25 * 7, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25 * 8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
 	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
-	DrawFormatString(0, 25 * 10, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
+	DrawFormatString(0, 25 * 10, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity().x, player->GetRigidbody()->GetVelocity().y, player->GetRigidbody()->GetVelocity().z);
 
 
 	auto cameraPos = GetCameraPosition();
