@@ -1,5 +1,6 @@
 ﻿#include "Vec3.h"
 #include <cmath>
+#include<algorithm>
 #include <cassert>
 
 Vec3::Vec3() :
@@ -274,4 +275,77 @@ Vec3 GetClosestPtOnSegment(Vec3 pt, Vec3 start, Vec3 end)
 		float t = Dot(startToEndN, startToPt);
 		return start+startToEndN* t;
 	}
+}
+
+Vec3 GetClosestPointOnTriangle(Vec3& spherePos, Vec3& A, Vec3& B, Vec3& C)
+{
+	// 三角形の法線を計算
+	Vec3 edge1 = B - A;
+	Vec3 edge2 = C - A;
+	Vec3 normal = Cross(edge1, edge2).GetNormalized();
+
+	// 球の中心から三角形面への垂直距離を求める
+	float dist = Dot(spherePos - A, normal);
+
+	// 球の中心から三角形面への垂直に投影した点を計算
+	Vec3 projection = spherePos - normal * dist;
+
+	// 投影された点が三角形内部かどうかを確認
+	if (IsPointInsideTriangle(projection, A, B, C))
+	{
+		// 投影点が三角形内部にある場合、その点が最近接点
+		return projection;
+	}
+	else
+	{
+		// 投影点が三角形外部の場合、辺上の最近接点を計算
+		Vec3 edgeAB = GetClosestPointOnLineSegment(spherePos, A, B);
+		Vec3 edgeBC = GetClosestPointOnLineSegment(spherePos, B, C);
+		Vec3 edgeCA = GetClosestPointOnLineSegment(spherePos, C, A);
+
+		// 辺上の最近接点を比較して最小距離を求める
+		float distAB = (spherePos - edgeAB).Length();
+		float distBC = (spherePos - edgeBC).Length();
+		float distCA = (spherePos - edgeCA).Length();
+
+		if (distAB <= distBC && distAB <= distCA)
+			return edgeAB;
+		else if (distBC <= distAB && distBC <= distCA)
+			return edgeBC;
+		else
+			return edgeCA;
+	}
+}
+
+Vec3 GetClosestPointOnLineSegment(Vec3& P, Vec3& A, Vec3& B)
+{
+	Vec3 AB = B - A;
+	Vec3 AP = P - A;
+	float t = Dot(AP,AB) / Dot(AB,AB);
+	if (t < 0.0f) return A;  // Bが最寄り
+	else if (t > 1.0f) return B;  // Cが最寄り
+	else return B + AB * t;  // BC上の最寄り点
+}
+
+bool IsPointInsideTriangle(Vec3& point, Vec3& v0, Vec3& v1, Vec3& v2)
+{
+	Vec3 edge0 = v1 - v0;
+	Vec3 edge1 = v2 - v1;
+	Vec3 edge2 = v0 - v2;
+
+	Vec3 c0 = point - v0;
+	Vec3 c1 = point - v1;
+	Vec3 c2 = point - v2;
+
+	// クロス積を使って、三角形の外側かどうかをチェック
+	Vec3 cross0 = Cross(edge0, c0);
+	Vec3 cross1 = Cross(edge1, c1);
+	Vec3 cross2 = Cross(edge2, c2);
+
+	// すべてのクロス積が同じ方向（同じ符号）であれば点は内部にある
+	if (Dot(cross0, cross1) >= 0.0f && Dot(cross1, cross2) >= 0.0f && Dot(cross2, cross0) >= 0.0f) {
+		return true;
+	}
+
+	return false;  // 三角形外部にある
 }

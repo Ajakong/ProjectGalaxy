@@ -484,8 +484,9 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			{
 				//適当な2点の中点
 				Vec3 MidPoint = item.vertex[0] + (item.vertex[1] - item.vertex[0])/2;
+				Vec3 TriangleCenterLine = item.vertex[2] - MidPoint;
 				//ローカル座標をワールド座標に変換する逆行列を取得するための地点
-				Vec3 LookCoordinate = Cross(MidPoint,item.vertex[2] ).GetNormalized();
+				Vec3 LookCoordinate = Cross(TriangleCenterLine,item.Normal() ).GetNormalized();
 				//ワールド座標で見た座標から外積方向から見た座標への回転行列
 				auto WorldToLocalMat=MGetRotVec2(Vec3::Front().VGet(), (LookCoordinate * -1).VGet());
 				//ローカル座標での球の位置
@@ -493,18 +494,20 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 				//ローカル座標での線分の端1
 				Vec3 LocalMidPoint = RotateVector(MidPoint, WorldToLocalMat);
 				//ローカル座標での線分の端2
-				Vec3 LocalTriangleVectex = RotateVector(item.vertex[2], WorldToLocalMat);
+				Vec3 LocalTriangleVertex = RotateVector(item.vertex[2], WorldToLocalMat);
 
-				Vec3 nearPoint = GetClosestPtOnSegment(LocalMidPoint.VGet(), LocalTriangleVectex.VGet(), LocalSpherePos.VGet());
+				Vec3 nearPoint = GetClosestPtOnSegment(LocalSpherePos.VGet(),LocalMidPoint.VGet(), LocalTriangleVertex.VGet());
 				auto LocalToWorldMat = MGetRotVec2((LookCoordinate * -1).VGet(), Vec3::Front().VGet());
-
 
 				//球と線分の最近接点の距離が球の半径以下ならHIT
 				info.isHit= nearPoint.Length()<= sphereRadius;
-				//ローカル座標からワールド座標系に戻し、ローカル座標の軸になったMidPoint分平行移動
-				info.hitPos = RotateVector(nearPoint, LocalToWorldMat)+ MidPoint;
+				if (info.isHit)
+				{
+					//ローカル座標からワールド座標系に戻し、ローカル座標の軸になったMidPoint分平行移動
+					closestHitPos = RotateVector(nearPoint, LocalToWorldMat) + MidPoint;
 
-				info.Norm = item.Normal();
+					closestNormal = item.Normal();
+				}
 			}
 
 			// 最も近い衝突点が見つかった場合
@@ -605,50 +608,30 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			Vec3 closestNormal;  // 最も近い衝突点の法線
 			float closestDistance = sphereRadius;
 
-			for (auto& item : polygonA->GetTriangles()) {
-				Vec3 n = item.Normal();
-				float distance = Dot((spherePos - item.vertex[0]), n);
+			bool hitFlag=false;
+			for (auto& item : polygonA->GetTriangles())
+			{
+				Vec3 nearPoint = GetClosestPointOnTriangle(spherePos,item.vertex[0], item.vertex[1], item.vertex[2]);
+				
+				Vec3 closestTrianglePos = nearPoint;
+				DrawSphere3D(closestTrianglePos.VGet(), 8, 8, 0x00ff00, 0x00ff00, false);
+				
+				//球と線分の最近接点の距離が球の半径以下ならHIT
+				 hitFlag = (closestTrianglePos-spherePos).Length() <= sphereRadius;
+				if (hitFlag)
+				{
+					info.isHit = true;
 
-				// 球が三角形の面に接触しているか
-				if (std::abs(distance) <= sphereRadius) {
-					Vec3 hitPoint = spherePos - n * distance;
+					//ローカル座標からワールド座標系に戻し、ローカル座標の軸になったMidPoint分平行移動
+					closestHitPos = closestTrianglePos;
 
-					// 衝突点が三角形内部、辺に接触しているか
-					if (IsPointInsideTriangle(hitPoint, item.vertex[0], item.vertex[1], item.vertex[2]) ||
-						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[0], item.vertex[1]) ||
-						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[1], item.vertex[2]) ||
-						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[2], item.vertex[0])) {
-
-						// 最も近い衝突点を更新
-						float currentDistance = (hitPoint - spherePos).Length();
-						if (currentDistance < closestDistance) {
-							info.isHit = true;
-							closestHitPos = hitPoint;
-							closestNormal = n;
-							closestDistance = currentDistance;
-						}
-					}
-				}
-
-				// 三角形の頂点が球に接触しているか
-				for (int i = 0; i < 3; i++) {
-					if ((spherePos - item.vertex[i]).Length() <= sphereRadius) {
-						Vec3 hitPoint = item.vertex[i];
-
-						// 最も近い頂点衝突点を更新
-						float currentDistance = (hitPoint - spherePos).Length();
-						if (currentDistance < closestDistance) {
-							info.isHit = true;
-							closestHitPos = hitPoint;
-							closestNormal = (spherePos - hitPoint).GetNormalized();  // 頂点と球の中心から法線方向を計算
-							closestDistance = currentDistance;
-						}
-					}
+					closestNormal = item.Normal();
 				}
 			}
 
 			// 最も近い衝突点が見つかった場合
-			if (info.isHit) {
+			if (info.isHit)
+			{
 				info.hitPos = closestHitPos;
 				info.Norm = closestNormal;
 			}
@@ -942,29 +925,6 @@ void Physics::FixPos() const
 #endif
 	}
 
-}
-
-bool MyEngine::Physics::IsPointInsideTriangle(const Vec3& point, const Vec3& v0, const Vec3& v1, const Vec3& v2) const
-{
-	Vec3 edge0 = v1 - v0;
-	Vec3 edge1 = v2 - v1;
-	Vec3 edge2 = v0 - v2;
-
-	Vec3 c0 = point - v0;
-	Vec3 c1 = point - v1;
-	Vec3 c2 = point - v2;
-
-	// クロス積を使って、三角形の外側かどうかをチェック
-	Vec3 cross0 = Cross(edge0, c0);
-	Vec3 cross1 = Cross(edge1, c1);
-	Vec3 cross2 = Cross(edge2, c2);
-
-	// すべてのクロス積が同じ方向（同じ符号）であれば点は内部にある
-	if (Dot(cross0, cross1) >= 0.0f && Dot(cross1, cross2) >= 0.0f && Dot(cross2, cross0) >= 0.0f) {
-		return true;
-	}
-
-	return false;  // 三角形外部にある
 }
 
 bool MyEngine::Physics::IsPointOnEdge(const Vec3& point, float radius, const Vec3& v0, const Vec3& v1) const

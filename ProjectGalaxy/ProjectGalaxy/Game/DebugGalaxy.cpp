@@ -76,7 +76,7 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 	m_ui = make_shared<UI>();
 	player = playerPointer;
 
-	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("MechSpiderM1.mv1"), Vec3(0, -200, 0), 1,1,400.f));
+	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan.mv1"), Vec3(0, -100, 0), 1, 1, 10.f));
 	//takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
 
 	/*boss.push_back(make_shared<Boss>(Vec3(0, 50, 100)));
