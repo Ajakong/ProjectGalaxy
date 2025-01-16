@@ -236,3 +236,42 @@ Vec3 GetPerpendicular(const Vec3& vec)
 	// 任意のベクトルに対して垂直なベクトルを計算（外積を利用）
 	return Cross(vec,Vec3(1.0f, 0.0f, 0.0f));  // X軸と外積をとる
 }
+
+Vec3 MultiPly(Vec3& v, MATRIX& mat)
+{
+	return Vec3(
+			mat.m[0][0] * v.x + mat.m[0][1] * v.y + mat.m[0][2] * v.z,
+			mat.m[1][0] * v.x + mat.m[1][1] * v.y + mat.m[1][2] * v.z,
+			mat.m[2][0] * v.x + mat.m[2][1] * v.y + mat.m[2][2] * v.z);
+}
+
+Vec3 RotateVector(Vec3& vec, MATRIX& rotationMatrix)
+{
+	return MultiPly(vec,rotationMatrix);
+}
+
+Vec3 GetClosestPtOnSegment(Vec3 pt, Vec3 start, Vec3 end)
+{
+	// 最近接点がstart側線分外領域の場合
+	Vec3 startToPt = pt- start;
+	Vec3 startToEnd = end- start;
+	Vec3 startToEndN = startToEnd.GetNormalized();
+	if (Dot(startToPt, startToEndN) < 0)
+	{
+		return start;
+	}
+	Vec3 endToPt = pt- end;
+	Vec3 endToStart = start- end;
+	Vec3 endToStartN = endToStart.GetNormalized();
+	// 最近接点がend側線分外領域の場合
+	if (Dot(endToPt, endToStartN) < 0)
+	{
+		return end;
+	}
+	// 中間領域の場合
+	else
+	{
+		float t = Dot(startToEndN, startToPt);
+		return start+startToEndN* t;
+	}
+}

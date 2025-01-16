@@ -11,6 +11,8 @@ public:
 	float y;
 	float z;
 
+	
+
 	Vec3();
 	Vec3(float inX, float inY, float inZ);
 	Vec3(int inX, int inY, int inZ);
@@ -62,3 +64,9 @@ Vec3 Cross(const Vec3& item1, const Vec3& item2);
 Vec3 Projection(const Vec3& projection, const Vec3& base);
 
 Vec3 GetPerpendicular(const Vec3& vec);
+
+Vec3 MultiPly(Vec3& vec,MATRIX& mat);
+
+Vec3 RotateVector(Vec3& vec, MATRIX& rotationMatrix);
+
+Vec3 GetClosestPtOnSegment(Vec3 pt, Vec3 start, Vec3 end);

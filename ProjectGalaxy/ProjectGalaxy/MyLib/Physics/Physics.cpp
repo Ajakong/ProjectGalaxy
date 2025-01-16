@@ -468,6 +468,8 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		}
 		if (kindB == ColliderBase::Kind::Polygons) 
 		{
+			//2Dの線分と球の当たり判定で行う
+
 			auto sphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
 			auto polygonB = dynamic_pointer_cast<ColliderPolygonModel>(colliderB->col);
 			auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
@@ -478,50 +480,31 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			Vec3 closestNormal;  // 最も近い衝突点の法線
 			float closestDistance = sphereRadius;
 
-			for (auto& item : polygonB->GetTriangles()) {
-				Vec3 n = item.Normal();
-				float distance = Dot((spherePos - item.vertex[0]), n);
+			for (auto& item : polygonB->GetTriangles()) 
+			{
+				//適当な2点の中点
+				Vec3 MidPoint = item.vertex[0] + (item.vertex[1] - item.vertex[0])/2;
+				//ローカル座標をワールド座標に変換する逆行列を取得するための地点
+				Vec3 LookCoordinate = Cross(MidPoint,item.vertex[2] ).GetNormalized();
+				//ワールド座標で見た座標から外積方向から見た座標への回転行列
+				auto WorldToLocalMat=MGetRotVec2(Vec3::Front().VGet(), (LookCoordinate * -1).VGet());
+				//ローカル座標での球の位置
+				Vec3 LocalSpherePos = RotateVector(spherePos,WorldToLocalMat);
+				//ローカル座標での線分の端1
+				Vec3 LocalMidPoint = RotateVector(MidPoint, WorldToLocalMat);
+				//ローカル座標での線分の端2
+				Vec3 LocalTriangleVectex = RotateVector(item.vertex[2], WorldToLocalMat);
 
-				// 球が三角形の面に接触しているか
-				if (std::abs(distance) <= sphereRadius)
-				{
-					Vec3 hitPoint = spherePos - n * distance;
+				Vec3 nearPoint = GetClosestPtOnSegment(LocalMidPoint.VGet(), LocalTriangleVectex.VGet(), LocalSpherePos.VGet());
+				auto LocalToWorldMat = MGetRotVec2((LookCoordinate * -1).VGet(), Vec3::Front().VGet());
 
-					// 衝突点が三角形内部、辺に接触しているか
-					if (IsPointInsideTriangle(hitPoint, item.vertex[0], item.vertex[1], item.vertex[2]) ||
-						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[0], item.vertex[1]) ||
-						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[1], item.vertex[2]) ||
-						IsPointOnEdge(hitPoint, sphereRadius, item.vertex[2], item.vertex[0])) {
 
-						// 最も近い衝突点を更新
-						float currentDistance = (hitPoint - spherePos).Length();
-						if (currentDistance < closestDistance)
-						{
-							info.isHit = true;
-							closestHitPos = hitPoint;
-							closestNormal = n;
-							closestDistance = currentDistance;
-						}
-					}
-				}
+				//球と線分の最近接点の距離が球の半径以下ならHIT
+				info.isHit= nearPoint.Length()<= sphereRadius;
+				//ローカル座標からワールド座標系に戻し、ローカル座標の軸になったMidPoint分平行移動
+				info.hitPos = RotateVector(nearPoint, LocalToWorldMat)+ MidPoint;
 
-				// 三角形の頂点が球に接触しているか
-				for (int i = 0; i < 3; i++)
-				{
-					if ((spherePos - item.vertex[i]).Length() <= sphereRadius)
-					{
-						Vec3 hitPoint = item.vertex[i];
-
-						// 最も近い頂点衝突点を更新
-						float currentDistance = (hitPoint - spherePos).Length();
-						if (currentDistance < closestDistance) {
-							info.isHit = true;
-							closestHitPos = hitPoint;
-							closestNormal = (spherePos - hitPoint).GetNormalized();  // 頂点と球の中心から法線方向を計算
-							closestDistance = currentDistance;
-						}
-					}
-				}
+				info.Norm = item.Normal();
 			}
 
 			// 最も近い衝突点が見つかった場合
