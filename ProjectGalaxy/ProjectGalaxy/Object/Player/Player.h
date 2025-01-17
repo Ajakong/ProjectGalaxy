@@ -199,8 +199,17 @@ private:
 	void AvoidUpdate();
 
 	void SetShotDir();
+	/// <summary>
+	/// 弾の削除処理
+	/// </summary>
 	void DeleteManage();
+
 	template <typename T>
+	/// <summary>
+	/// 配列の削除処理
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="objects"></param>
 	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
 	Vec3 GetCameraToPlayer()const;
 

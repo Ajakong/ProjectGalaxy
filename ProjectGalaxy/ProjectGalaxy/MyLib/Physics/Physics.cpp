@@ -595,9 +595,6 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 
 			info.hitPos = closestHitPos;  // 常に最も近い点を格納
 			info.Norm = (spherePos-info.hitPos).GetNormalized(); // 最近接点からsphereへの向き
-
-			// デバッグ用表示
-			DrawSphere3D(info.hitPos.VGet(), 8, 8, isCollision ? 0xff0000 : 0x00ff00, 0x00ff00, false);
 		}
 		if (kindB == ColliderBase::Kind::Line)
 		{
@@ -733,9 +730,6 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		info.hitPos = closestHitPos;  // 常に最も近い点を格納
 
 		info.Norm = (spherePos - info.hitPos).GetNormalized(); //最近接点からsphereへの向き
-
-		// デバッグ用表示
-		DrawSphere3D(info.hitPos.VGet(), 8, 8, isCollision ? 0xff0000 : 0x00ff00, 0x00ff00, false);
 	}
 	if (kindA == ColliderBase::Kind::Line && kindB == ColliderBase::Kind::Sphere)
 	{
@@ -822,7 +816,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 		if (secondaryKind == ColliderBase::Kind::Polygons)
 		{
 			//今回のプロジェクトではポリゴンの当たり判定を持っているオブジェクトは動かさないので割愛
-			int a = 0;
+			assert(0&&"ポリゴンモデルが衝突相手として入っています");
 		}
 	}
 	//primaryKind=立方体の位置補正
