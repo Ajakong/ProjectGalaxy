@@ -127,7 +127,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(IntDir)</AdditionalUsingDirectories>

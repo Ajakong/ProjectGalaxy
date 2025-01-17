@@ -37,7 +37,7 @@ float GetVec2Angle(Vec3 a, Vec3 b)
 	float cos = Dot(a.GetNormalized(), b.GetNormalized());//ない席は180度まで
 	float rad = acos(cos);
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	DrawFormatString(0, 125, 0xffffff, "rad(%f),deg(%f)", rad, rad * 180 / DX_PI_F);
 #endif
 
@@ -56,8 +56,7 @@ m_stanCount(0)
 		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
 		m_bodyCol->radius = kRadius;
 	}
-	
-#ifdef _DEBUG
+
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::one);
 		auto item = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
@@ -65,6 +64,8 @@ m_stanCount(0)
 		item->m_isTrigger = true;
 		m_searchCol = item;
 	}
+#ifdef DEBUG
+	
 #endif
 	m_moveUpdate = &Kuribo::SearchUpdate;
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kModelFileName);
@@ -122,7 +123,7 @@ void Kuribo::SetMatrix()
 	//printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	//回転軸のデバッグ表示(紫)
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
 
@@ -158,9 +159,10 @@ void Kuribo::Draw()
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 100);
 	DrawSphere3D(m_rigid->GetPos().VGet(),m_searchCol->radius, 8, 0xffaa00, 0xffffff, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-#endif
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_attackDir * 30).VGet(), 0x00ff00);
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_upVec * 30).VGet(), 0xff0000);
+#endif
+	
 }
 
 void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)

@@ -4,13 +4,14 @@
 #include"SoundManager.h"
 #include"ModelManager.h"
 
+
 namespace
 {
 	constexpr float kCollisionRadius = 50.f;
 
 	/// <summary>
-		/// 最大HP
-		/// </summary>
+	/// 最大HP
+	/// </summary>
 	constexpr int kHp = 20;
 
 	constexpr int kStartPosX = 200;
@@ -27,8 +28,8 @@ namespace
 	/// </summary>
 	constexpr int kIdleSpeed = 20;
 	/// <summary>
-/// 球の生成間隔
-/// </summary>
+	/// 球の生成間隔
+	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
 	/// <summary>
 	/// 再攻撃までのクールタイム
@@ -99,7 +100,7 @@ void Gorori::SetMatrix()
 	//printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
 
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	//回転軸のデバッグ表示(紫)
 	DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + axis * 100).VGet(), 0xff00ff);
 

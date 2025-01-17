@@ -75,7 +75,7 @@ DebugGalaxy::DebugGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerP
 {
 	m_ui = make_shared<UI>();
 	player = playerPointer;
-
+	//m_planet.push_back(make_shared<SpherePlanet>(Vec3(0, -50, 0),0x00ff00, 1, 1));
 	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan.mv1"), Vec3(0, -400, 0), 1, 1, 10.f));
 	//takobo.push_back(make_shared<Takobo>(Vec3(0, 0, -30),player));
 
@@ -197,7 +197,7 @@ void DebugGalaxy::Draw()
 	}
 
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
-#ifdef _DEBUG
+#ifdef DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);

@@ -59,7 +59,7 @@ namespace MyEngine
 
 			float rad = acos(cos);
 
-#ifdef _DEBUG
+#ifdef DEBUG
 			DrawFormatString(0, 125, 0xffffff, "rad(%f),deg(%f)", rad, rad * 180 / DX_PI_F);
 #endif
 

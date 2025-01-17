@@ -113,8 +113,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//その他オブジェクトの配置
 	m_creater->ObjectCreate(player);
 
-	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan.mv1"), Vec3(0, 500, 200), 1, 1, 5.f));
-#ifdef _DEBUG
+	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan.mv1"), Vec3(0, -500, 200), 1, 0.8f, 5.f));
+#ifdef DEBUG
 
 	//オブジェクトやギミックの配置(のちのちUnityのデータを読み込んで配置するので今は仮配置)
 
@@ -365,7 +365,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	m_ui->Draw(player->GetHp());
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
-#ifdef _DEBUG
+#ifdef DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);

@@ -87,6 +87,8 @@ namespace MyEngine
 		/// オブジェクトに重力をかける
 		/// </summary>
 		void Gravity();
+		//摩擦をかける
+		void Friction();
 
 		void MoveNextPos() const;
 		/// <summary>

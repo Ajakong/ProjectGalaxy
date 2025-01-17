@@ -98,7 +98,7 @@ Vec3 PolygonModelPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 	//重力のみ
 	GravityDir = GravityDir * kGravityPower;
 
-	
+
 	return GravityDir;
 }
 

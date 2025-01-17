@@ -1157,7 +1157,7 @@ void Player::SetShotDir()
 	directY = -directY;
 
 	m_shotDir = m_sideVec*static_cast<float>(directX) * 0.0001f;
-	m_shotDir = m_shotDir+(m_upVec*static_cast<float>(directY) * 0.0005f);
+	m_shotDir = m_shotDir+(m_upVec*static_cast<float>(directY) * 0.0001f);
 	m_shotDir = m_shotDir + m_frontVec;
 	m_shotDir = m_shotDir.GetNormalized();
 }

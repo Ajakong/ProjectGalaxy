@@ -153,7 +153,7 @@ void Takobo::Draw()
 	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(m_modelHandle);
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	DrawLine3D(m_rigid->GetPos().VGet(), (m_rigid->GetPos() + m_attackDir * 1000).VGet(), 0xff0000);
 
 	DrawSphere3D(m_strikePoint.VGet(), 6, 8, 0xff0000, 0x000000, true);

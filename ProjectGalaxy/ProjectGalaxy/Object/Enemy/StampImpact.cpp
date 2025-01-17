@@ -3,7 +3,7 @@
 
 namespace
 {
-	constexpr float kSegment = 20;
+	constexpr float kSegment = 200;
 	constexpr int kLifeTimeMax = 100;
 }
 using namespace MyEngine;
@@ -82,7 +82,7 @@ void StampImpact::Draw3DCircle(Vec3 center, float radius, int num_segments)
 		line->line.end = center + (tangent1 * cosf(theta2) + tangent2 * sinf(theta2)) * rad;
 
 		// 3D空間に円を描画
-		DrawLine3D(line->line.start.VGet(), line->line.end.VGet(), GetColor(50, 50, 250)); // 青色で円周を描画
+		DrawLine3D(line->line.start.VGet(), line->line.end.VGet(), GetColor(250, 50, 50)); // 青色で円周を描画
 		i++;
 	}
 }

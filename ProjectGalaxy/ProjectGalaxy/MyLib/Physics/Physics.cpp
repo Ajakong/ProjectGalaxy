@@ -90,6 +90,7 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 
 void Physics::Update()
 {
+	
 	std::reverse_iterator<std::vector<int>::iterator> rit;
 	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(),m_collidables.rend()))//途中で要素を削除してもいいように逆順
 	{
@@ -103,7 +104,6 @@ void Physics::Update()
 	m_preTirrigerInfo = m_newTirrigerInfo;
 	m_newTirrigerInfo.clear();
 
-	
 	// 次の移動先を仮決定
 	MoveNextPos();
 	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(), m_collidables.rend()))//途中で要素を削除してもいいように逆順
@@ -113,9 +113,10 @@ void Physics::Update()
 			col->col->SetOnHitResult(false);
 		}
 	}
+	//次の位置を決定した後ではないと補正されて衝突していなくなる
 	Gravity();
+	Friction();
 
-	
 	// 判定確認
 	CheckCollide();
 	// 通知リストを確認
@@ -204,6 +205,73 @@ void MyEngine::Physics::Gravity()
 					}
 					else
 					{
+						////摩擦力は触れている面積が多いほど強くなるため、そのオブジェクトの当たり判定が多く当たっているほどさらに上乗せする
+						//colB->col->SetOnHitResult(true);
+						//printf("Planetの地面と");
+						//if (object->GetTag() == ObjectTag::Player)
+						//{
+						//	printf("Player");
+						//	if (colB->tag == ColideTag::Foot)
+						//	{
+						//		printf("の足");
+						//	}
+						//}
+						//else
+						//{
+						//	printf("なにか");
+						//}
+						//printf("が当たりました\n");
+						//auto planet = dynamic_cast<Planet*>(stage.get());
+						//object->m_rigid->SetVelocity(planet->FrictionEffect(object));
+
+						//continue;
+					}
+				}
+
+			}
+			
+		}
+	}
+}
+
+void MyEngine::Physics::Friction()
+{
+	// 判定リストはペアになっているので半分の数だけ繰り返す
+	for (auto& stage : m_stageCollidables)
+	{
+		// それぞれが持つ判定全てを比較
+		for (auto& object : m_collidables)
+		{
+			if (object->IsAntiGravity())continue;
+			for (auto& col : object->m_colliders)
+			{
+				//Stage同士なら無視
+				if (object->GetTag() == ObjectTag::Stage)continue;
+				//距離が離れすぎているオブジェクトも無視
+				if ((object->GetRigidbody()->GetPos() - stage->GetRigidbody()->GetPos()).Length() > 500)continue;
+				for (auto stageCol : stage->m_colliders)
+				{
+					auto& colA = stageCol;
+					auto& colB = col;
+
+					// 判定
+					auto collideHitInfo = IsCollide(stage->m_rigid, object->m_rigid, colA, colB);
+					// 当たっていなければ次の判定に
+					if (!collideHitInfo.isHit) continue;
+
+					// 通過オブジェクト確認
+					auto throughA = stage->m_throughTags;
+					auto throughB = object->m_throughTags;
+					bool isThrough = std::find(throughA.begin(), throughA.end(), object->GetTag()) != throughA.end()
+						|| std::find(throughB.begin(), throughB.end(), stage->GetTag()) != throughB.end();
+					// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
+					bool isTrigger = colA->col->m_isTrigger || colB->col->m_isTrigger || isThrough;
+					if (isTrigger)
+					{
+			
+					}
+					else
+					{
 						//摩擦力は触れている面積が多いほど強くなるため、そのオブジェクトの当たり判定が多く当たっているほどさらに上乗せする
 						colB->col->SetOnHitResult(true);
 						printf("Planetの地面と");
@@ -222,13 +290,13 @@ void MyEngine::Physics::Gravity()
 						printf("が当たりました\n");
 						auto planet = dynamic_cast<Planet*>(stage.get());
 						object->m_rigid->SetVelocity(planet->FrictionEffect(object));
-						
+
 						continue;
 					}
 				}
 
 			}
-			
+
 		}
 	}
 }
@@ -256,7 +324,7 @@ void MyEngine::Physics::MoveNextPos() const
 		//次フレームの位置を設定
 		rigid->SetNextPos(nextPos);
 
-#ifdef _DEBUG
+#ifdef DEBUG
 		auto& debug = DebugDraw::GetInstance();
 
 		for (const auto& collider : item->m_colliders)
@@ -450,8 +518,8 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			auto SphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
 			auto BoxB = dynamic_pointer_cast<ColliderBox>(colliderB->col);
 
-			auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
-			auto boxPos = rigidB->GetPos() + colliderB->col->GetShift();
+			auto spherePos = rigidA->GetNextPos() + colliderA->col->GetShift();
+			auto boxPos = rigidB->GetNextPos() + colliderB->col->GetShift();
 
 			// ボックスの中心から円の中心までのベクトルを作成
 			auto boxToSphere = spherePos - boxPos;
@@ -472,7 +540,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 
 			auto sphereA = dynamic_pointer_cast<ColliderSphere>(colliderA->col);
 			auto polygonB = dynamic_pointer_cast<ColliderPolygonModel>(colliderB->col);
-			auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
+			auto spherePos = rigidA->GetNextPos() + colliderA->col->GetShift();
 			float sphereRadius = sphereA->radius;
 
 			Vec3 closestHitPos;   // 球から最も近いポリゴンの最近接点
@@ -524,6 +592,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 
 			// 衝突結果を設定
 			info.isHit = isCollision || isInside;  // 衝突または内部判定が真なら衝突
+
 			info.hitPos = closestHitPos;  // 常に最も近い点を格納
 			info.Norm = (spherePos-info.hitPos).GetNormalized(); // 最近接点からsphereへの向き
 
@@ -536,7 +605,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			auto LineB = dynamic_pointer_cast<ColliderLine3D>(colliderB->col);
 
 			// 球の中心位置
-			auto spherePos = rigidA->GetPos() + colliderA->col->GetShift();
+			auto spherePos = rigidA->GetNextPos() + colliderA->col->GetShift();
 			float sphereRadius = sphereA->radius;
 
 			// 線分の始点と終点
@@ -559,7 +628,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			// 線分上の最短点
 			Vec3 closestPoint = lineStart + lineDir * (t * lineLength);
 
-#ifdef _DEBUG
+#ifdef DEBUG
 			// デバッグ用に最短点を描画
 			DrawSphere3D(closestPoint.VGet(), 5, 5, 0xff0000, 0xff0000, false);
 
@@ -586,8 +655,8 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			auto BoxA = dynamic_pointer_cast<ColliderBox>(colliderA->col);
 			auto SphareB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
 
-			auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
-			auto boxPos = rigidA->GetPos() + colliderA->col->GetShift();
+			auto spherePos = rigidB->GetNextPos() + colliderB->col->GetShift();
+			auto boxPos = rigidA->GetNextPos() + colliderA->col->GetShift();
 
 			// ボックスの中心から円の中心までのベクトルを作成
 			auto boxToSphere = spherePos - boxPos;
@@ -609,7 +678,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 	{
 		auto polygonA = dynamic_pointer_cast<ColliderPolygonModel>(colliderA->col);
 		auto sphereB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
-		auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
+		auto spherePos = rigidB->GetNextPos() + colliderB->col->GetShift();
 		float sphereRadius = sphereB->radius;
 
 		Vec3 closestHitPos;   // 球から最も近いポリゴンの最近接点
@@ -673,7 +742,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		auto LineA = dynamic_pointer_cast<ColliderLine3D>(colliderA->col);
 		auto sphereB = dynamic_pointer_cast<ColliderSphere>(colliderB->col);
 		// 球の中心位置
-		auto spherePos = rigidB->GetPos() + colliderB->col->GetShift();
+		auto spherePos = rigidB->GetNextPos() + colliderB->col->GetShift();
 		float sphereRadius = sphereB->radius;
 
 		// 線分の始点と終点
@@ -696,7 +765,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		// 線分上の最短点
 		Vec3 closestPoint = lineStart + lineDir * (t * lineLength);
 
-#ifdef _DEBUG
+#ifdef DEBUG
 		// デバッグ用に最短点を描画
 		DrawSphere3D(closestPoint.VGet(), 5, 5, 0xff0000, 0xff0000, false);
 
@@ -736,7 +805,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			auto primaryToSecondary = (secondaryRigid->GetNextPos() + secondaryCollider->col->GetShift()) -
 				(primaryRigid->GetNextPos() + primaryCollider->col->GetShift());
 			// そのままだとちょうど当たる位置になるので少し余分に離す
-			float  awayDist = primarySphere->radius + secondarySphere->radius ;
+			float  awayDist =( primarySphere->radius + secondarySphere->radius+0.0001f) ;
 			// 長さを調整
 			primaryToSecondary = primaryToSecondary.GetNormalized() * awayDist;
 			// primaryからベクトル方向に押す
@@ -748,7 +817,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			dir.Normalize();
 			auto sphereCol = dynamic_pointer_cast<ColliderSphere>(primaryCollider->col);
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
-			fixedPos = info.hitPos + dir * (sphereCol->radius);
+			fixedPos = info.hitPos + dir * (sphereCol->radius+0.0001f);
 		}
 		if (secondaryKind == ColliderBase::Kind::Polygons)
 		{
@@ -766,7 +835,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			dir.Normalize();
 			auto sphereCol = dynamic_pointer_cast<ColliderSphere>(secondaryCollider->col);
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
-			fixedPos = info.hitPos + dir * (sphereCol->radius);
+			fixedPos = info.hitPos + dir * (sphereCol->radius+0.0001f);
 		}
 	}
 	if (primaryKind == ColliderBase::Kind::Polygons) {
@@ -798,11 +867,11 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 				// 法線方向に補正距離分だけ移動
 				if (Reverce)
 				{
-					fixedPos = info.hitPos + (info.Norm*-1) * secondarySphere->GetRadius() - secondaryCollider->col->GetShift();
+					fixedPos = info.hitPos + (info.Norm*-1) * (secondarySphere->GetRadius()+0.001f) - secondaryCollider->col->GetShift();
 				}
 				else
 				{
-					fixedPos = info.hitPos + info.Norm *secondarySphere->GetRadius() - secondaryCollider->col->GetShift();
+					fixedPos = info.hitPos + info.Norm *(secondarySphere->GetRadius() + 0.001f) - secondaryCollider->col->GetShift();
 				}
 				
 			}
@@ -941,7 +1010,7 @@ void Physics::FixPos() const
 
 		rigid->SetPos(rigid->GetNextPos());
 
-#ifdef _DEBUG
+#ifdef DEBUG
 		auto& debug = DebugDraw::GetInstance();
 		for (const auto& collider : item->m_colliders)
 		{

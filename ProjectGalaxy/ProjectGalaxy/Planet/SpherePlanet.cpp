@@ -54,8 +54,9 @@ void SpherePlanet::Update()
 
 void SpherePlanet::Draw()
 {
-
-	//DrawSphere3D(m_rigid->GetPos().VGet(), kGravityRange*m_scale, 10, 0xddddff, 0x0000ff, false);
+#ifdef DEBUG
+	DrawSphere3D(m_rigid->GetPos().VGet(), kGravityRange*m_scale, 10, 0xddddff, 0x0000ff, false);
+#endif
 	if (m_isSearch)
 	{
 		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius*m_scale, 50, m_color, 0x0000ff, false);

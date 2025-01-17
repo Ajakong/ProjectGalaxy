@@ -63,7 +63,7 @@ void StarCapture::Draw()
 {
 	MV1DrawModel(m_modelhandle);
 	
-#ifdef _DEBUG
+#ifdef DEBUG
 	for (auto& col : m_colliders)
 	{
 		int color = 0x0000ff*65000*(m_recastTime/kRecastTimeMax);
