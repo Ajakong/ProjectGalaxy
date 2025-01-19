@@ -35,7 +35,7 @@ Camera::Camera():
 	// FOV(視野角)を60度に
 	SetupCamera_Perspective(kCameraFOV * (static_cast<float>(DX_PI_F) / 180.0f));
 
-	m_pos = { 0.0f,100.0f, -200.0f };
+	m_pos = { 100.0f,200.0f, 300.0f };
 	m_playerToCameraVec = { 0.f,100.f,-200.f };
 	m_postLookPointPos = { 0,0,0 };
 	m_fowardVec = { 0.f,0.f,0.1f };

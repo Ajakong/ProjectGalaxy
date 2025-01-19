@@ -594,7 +594,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			info.isHit = isCollision || isInside;  // 衝突または内部判定が真なら衝突
 
 			info.hitPos = closestHitPos;  // 常に最も近い点を格納
-			info.Norm = (spherePos-info.hitPos).GetNormalized(); // 最近接点からsphereへの向き
+			info.Norm = closestNormal; // 最近接点からsphereへの向き
 		}
 		if (kindB == ColliderBase::Kind::Line)
 		{
@@ -729,7 +729,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		info.isHit = isCollision || isInside;  // 衝突または内部判定が真なら衝突
 		info.hitPos = closestHitPos;  // 常に最も近い点を格納
 
-		info.Norm = (spherePos - info.hitPos).GetNormalized(); //最近接点からsphereへの向き
+		info.Norm = closestNormal; //最近接点からsphereへの向き
 	}
 	if (kindA == ColliderBase::Kind::Line && kindB == ColliderBase::Kind::Sphere)
 	{

@@ -93,8 +93,8 @@ m_postUpVec(Vec3::Up()),
 m_shotDir(Vec3::Front()),
 m_moveDir(Vec3::Front()),
 m_frontVec(Vec3::Front()),
-m_playerUpdate(&Player::NeutralUpdate),
-m_prevUpdate(&Player::NeutralUpdate),
+m_playerUpdate(&Player::StartUpdate),
+m_prevUpdate(&Player::StartUpdate),
 m_hp(kPlayerHPMax),
 m_radius(kNeutralRadius),
 m_damageFrame(0),
@@ -114,7 +114,8 @@ m_landingStanFrame(0),
 m_modelBodyRotate(m_frontVec),
 m_inputVec(Vec3::Front()*-1),
 m_postMoveDir(Vec3::Front()),
-m_modelDirAngle(0)
+m_modelDirAngle(0),
+m_currentOxygen(0)
 {
 	m_postUpVec = m_upVec;
 	m_rigid->SetPos(Vec3(0, 0, 0));
@@ -677,8 +678,9 @@ void Player::ChangeAnim(int animIndex, float speed)
 void Player::StartUpdate()
 {
 	m_state = "Start";
-
-	m_playerUpdate = &Player::NeutralUpdate;
+	ChangeAnim(AnimNum::AnimationNumJumpAttack);
+	m_rigid->SetVelocity(Vec3::Zero());
+	m_playerUpdate = &Player::DropAttackUpdate;
 	m_regeneRange += 0.01f;
 	if (m_regeneRange > 2)
 	{

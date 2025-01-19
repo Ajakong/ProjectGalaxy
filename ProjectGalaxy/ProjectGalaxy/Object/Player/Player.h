@@ -239,6 +239,7 @@ private:
 	float m_hp;
 	float m_speed = 1.f;
 	float m_cameraEasingSpeed;
+	float m_currentOxygen;
 
 	/// <summary>
 	/// 行動のフレームを管理する
