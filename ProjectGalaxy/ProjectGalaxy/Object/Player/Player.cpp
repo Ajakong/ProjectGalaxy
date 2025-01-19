@@ -186,6 +186,7 @@ void Player::Update()
 		}
 		else
 		{
+			m_shotDir = m_frontVec;
 			m_isAimFlag = true;
 		}
 	}
@@ -1154,14 +1155,45 @@ void Player::AvoidUpdate()
 
 void Player::SetShotDir()
 {
+	// 入力された左スティック方向
 	int directX = 0, directY = 0;
 	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
-	directY = -directY;
+	directY = -directY; // Y軸反転
 
-	m_shotDir = m_sideVec*static_cast<float>(directX) * 0.0001f;
-	m_shotDir = m_shotDir+(m_upVec*static_cast<float>(directY) * 0.0001f);
-	m_shotDir = m_shotDir + m_frontVec;
-	m_shotDir = m_shotDir.GetNormalized();
+	// 左スティック方向をベクトルに変換
+	Vec3 inputDir = m_sideVec * static_cast<float>(directX) * 0.001f;
+	inputDir = inputDir + (m_upVec * static_cast<float>(directY) * 0.001f);
+
+	// 入力された方向ベクトルの正規化
+	if (inputDir.Length() > 1e-6f)
+	{
+		inputDir = inputDir.GetNormalized();
+	}
+	else
+	{
+		inputDir = m_frontVec; // 初期値として前方ベクトルを使用
+	}
+
+	// 入力の強度を計算（0～1の範囲）
+	float inputStrength = sqrt(static_cast<float>(directX * directX + directY * directY)) * 0.001f;
+	inputStrength = std::clamp(inputStrength, 0.0f, 1.0f); // 範囲を制限
+
+	// `m_frontVec`との角度を計算
+	float dotProduct = Dot(m_frontVec, inputDir);
+	dotProduct = std::clamp(dotProduct, -1.0f, 1.0f); // 範囲を制限
+	float angle = acos(dotProduct); // 安全な角度計算
+
+	// 60度（ラジアンで計算）を超えないように制限
+	float maxAngle = 60.0f * (3.14159f / 180.0f); // 60度をラジアンに変換
+	if (angle > maxAngle) {
+		Vec3 clampedDir = m_frontVec * cos(maxAngle) + (inputDir - m_frontVec * dotProduct).GetNormalized() * sin(maxAngle);
+		inputDir = clampedDir.GetNormalized();
+	}
+
+	// `m_shotDir`を入力方向に徐々に向かせる
+	float lerpSpeed = 0.1f * inputStrength; // 入力強度に応じて補間速度を変化
+	m_shotDir = m_shotDir * (1.0f - lerpSpeed) + inputDir * lerpSpeed;
+	m_shotDir = m_shotDir.GetNormalized(); // 正規化
 }
 
 void Player::DeleteManage()

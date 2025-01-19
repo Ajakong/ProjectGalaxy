@@ -179,6 +179,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	//m_boss.push_back(make_shared<Boss>(Vec3(300, 250, 100)));
 	//MyEngine::Physics::GetInstance().Entry(m_boss.back());
+	m_enemies.push_back(std::make_shared<Gorori>(Vec3(0, 20, 30),player));
+	MyEngine::Physics::GetInstance().Entry(m_enemies.back());
 
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
@@ -365,7 +367,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	m_ui->Draw(player->GetHp());
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
-#ifdef DEBUG
+#ifdef _DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);

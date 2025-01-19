@@ -50,8 +50,6 @@ void PlayerStickSphere::Init()
 
 void PlayerStickSphere::Update()
 {
-	
-
 	m_startPos = m_player->GetLeftHandPos();
 	(this->*m_moveUpdate)();
 }
@@ -122,6 +120,7 @@ void PlayerStickSphere::StickUpdate()
 {
 	SetAntiGravity(true);
 	m_rigid->SetVelocity(Vec3::Zero());
+	m_rigid->SetPos(m_contactedCollidable->GetRigidbody()->GetPos() + m_collidableContactPosition);
 	if ((m_rigid->GetPos() - m_startPos).Length() <= 5.0f)
 	{
 		m_player->SetIsOperation(false);
@@ -141,7 +140,6 @@ void PlayerStickSphere::ComeBackUpdate()
 
 void PlayerStickSphere::ComeBackWithObjectUpdate()
 {
-
 	m_rigid->SetVelocity((m_startPos - m_rigid->GetPos()).GetNormalized() * 3);
 	m_contactedCollidable->GetRigidbody()->SetPos(m_rigid->GetPos()+m_collidableContactPosition);
 	if ((m_rigid->GetPos() - m_startPos).Length() <= 1.2f)

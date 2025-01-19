@@ -76,8 +76,8 @@ Vec3 PolygonModelPlanet::GravityEffect(std::shared_ptr<Collidable> obj)
 	Vec3 objPos = obj->PlanetOnlyGetRigid()->GetNextPos();
 	Vec3 toObj = objPos - m_rigid->GetPos();
 	toObj = toObj.GetNormalized();
-	Vec3 GravityDir = toObj * -1;
-	obj->SetUpVec(GetNormVec(objPos));
+	Vec3 GravityDir = GetNormVec(objPos) * -1;
+	obj->SetUpVec(GravityDir*-1);
 
 	if (obj->IsAntiGravity())
 	{

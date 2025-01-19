@@ -51,6 +51,7 @@ public:
 	Vec3 GetPostUpVec() const{ return m_postUpVec; }
 	Vec3 GetPostMoveDir()const{ return m_postMoveDir; }
 	Vec3 GetInputVec()const { return m_inputVec; }
+	Vec3 GetInputRightVec()const { return m_inputRightVec; }
 	Vec3 GetShotDir()const { return m_shotDir; }
 	Vec3 GetLookPoint() const{ return m_lookPoint; }
 	float GetRegenerationRange() const{ return m_regeneRange; }
@@ -284,6 +285,7 @@ private:
 	Vec3 m_postMoveDir;
 	Vec3 m_nowVec;
 	Vec3 m_inputVec;
+	Vec3 m_inputRightVec;
 
 	Vec3 m_frontVec;
 	Vec3 m_sideVec;
