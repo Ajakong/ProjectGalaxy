@@ -1160,27 +1160,30 @@ void Player::SetShotDir()
 	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
 	directY = -directY; // Y軸反転
 
+	// 静的変数で入力時間を記録
+	static float inputDuration = 0.0f; // 入力が続いた時間（秒）
+	static const float deltaTime = 0.016f; // フレーム時間（例: 60FPS）
+
 	// 左スティック方向をベクトルに変換
 	Vec3 inputDir = m_sideVec * static_cast<float>(directX) * 0.001f;
-	inputDir = inputDir + (m_upVec * static_cast<float>(directY) * 0.001f);
+	inputDir += m_upVec * static_cast<float>(directY) * 0.001f;
 
-	// 入力された方向ベクトルの正規化
-	if (inputDir.Length() > 1e-6f)
-	{
+	// 入力された方向ベクトルの正規化と入力時間の管理
+	if (inputDir.Length() > 1e-6f) {
 		inputDir = inputDir.GetNormalized();
+		inputDuration += deltaTime; // 入力がある間、時間を加算
 	}
-	else
-	{
+	else {
 		inputDir = m_frontVec; // 初期値として前方ベクトルを使用
+		inputDuration = 0.0f; // 入力がない場合、時間をリセット
 	}
 
 	// 入力の強度を計算（0～1の範囲）
-	float inputStrength = sqrt(static_cast<float>(directX * directX + directY * directY)) * 0.001f;
-	inputStrength = std::clamp(inputStrength, 0.0f, 1.0f); // 範囲を制限
+	float inputStrength = std::clamp(
+		sqrt(static_cast<float>(directX * directX + directY * directY)) * 0.001f,0.0f, 1.0f);
 
 	// m_frontVecとの角度を計算
-	float dotProduct = Dot(m_frontVec, inputDir);
-	dotProduct = std::clamp(dotProduct, -1.0f, 1.0f); // 範囲を制限
+	float dotProduct = std::clamp(Dot(m_frontVec, inputDir), -1.0f, 1.0f);
 	float angle = acos(dotProduct); // 安全な角度計算
 
 	// 60度（ラジアンで計算）を超えないように制限
@@ -1192,8 +1195,11 @@ void Player::SetShotDir()
 
 	// `m_shotDir`を入力方向に徐々に向かせる
 	float lerpSpeed = 0.1f * inputStrength; // 入力強度に応じて補間速度を変化
+
+	// 短時間入力時の速度調整
+	lerpSpeed *= std::clamp(inputDuration / 0.5f, 0.0f, 1.0f); // 0.5秒以内の入力で速度を抑制
+
 	m_shotDir = m_shotDir * (1.0f - lerpSpeed) + inputDir * lerpSpeed;
-	m_shotDir = m_shotDir.GetNormalized(); // 正規化
 }
 
 void Player::DeleteManage()

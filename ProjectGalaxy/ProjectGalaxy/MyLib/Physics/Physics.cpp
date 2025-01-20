@@ -62,7 +62,7 @@ void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 	// 登録済みなら無視
 	else
 	{
-		assert(false);
+		//assert(false);
 	}
 	collidable->Init();
 }
