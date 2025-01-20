@@ -56,8 +56,11 @@ void PlayerStickSphere::Update()
 
 void PlayerStickSphere::Draw()
 {
+
 	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, false);
-	DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff);
+
+	//m_stickFlagがtrueの時に赤くなる
+	DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff-(0x00ffff*m_stickFlag));
 }
 
 void PlayerStickSphere::Effect()
@@ -69,6 +72,7 @@ void PlayerStickSphere::Effect()
 	}
 	if (m_stickFlag)
 	{
+		
 		if (m_isMoving)
 		{
 			m_moveUpdate = &PlayerStickSphere::ComeBackWithObjectUpdate;
@@ -120,7 +124,7 @@ void PlayerStickSphere::StickUpdate()
 {
 	SetAntiGravity(true);
 	m_rigid->SetVelocity(Vec3::Zero());
-	m_rigid->SetPos(m_contactedCollidable->GetRigidbody()->GetPos() + m_collidableContactPosition);
+	//m_rigid->SetPos(m_contactedCollidable->GetRigidbody()->GetPos() + m_collidableContactPosition);
 	if ((m_rigid->GetPos() - m_startPos).Length() <= 5.0f)
 	{
 		m_player->SetIsOperation(false);

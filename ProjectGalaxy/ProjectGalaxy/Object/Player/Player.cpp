@@ -1178,7 +1178,7 @@ void Player::SetShotDir()
 	float inputStrength = sqrt(static_cast<float>(directX * directX + directY * directY)) * 0.001f;
 	inputStrength = std::clamp(inputStrength, 0.0f, 1.0f); // 範囲を制限
 
-	// `m_frontVec`との角度を計算
+	// m_frontVecとの角度を計算
 	float dotProduct = Dot(m_frontVec, inputDir);
 	dotProduct = std::clamp(dotProduct, -1.0f, 1.0f); // 範囲を制限
 	float angle = acos(dotProduct); // 安全な角度計算

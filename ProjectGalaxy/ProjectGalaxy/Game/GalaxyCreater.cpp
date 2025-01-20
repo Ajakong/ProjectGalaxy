@@ -3,9 +3,13 @@
 #include"SpherePlanet.h"
 #include"SeekerLine.h"
 #include"Physics.h"
+#include"FullPowerDropItem.h"
+#include"StickStarItem.h"
+#include"Coin.h"
 #include"ModelManager.h"
 #include"Takobo.h"
 #include"Kuribo.h"
+#include"Gorori.h"
 #include"Boss.h"
 
 GalaxyCreater::GalaxyCreater(std::string galaxyname)
@@ -59,6 +63,23 @@ void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 		{
 			player->GetRigidbody()->SetPos(loc.pos);
 		}
+		else if (loc.tag == "Coin")
+		{
+			auto coin = std::make_shared<Coin>(loc.pos,true);
+			MyEngine::Physics::GetInstance().Entry(coin);
+		}
+		else if (loc.tag == "FullPowerDropItem")
+		{
+			auto fullPowerDropItem = std::make_shared<FullPowerDropItem>(loc.pos, true);
+			MyEngine::Physics::GetInstance().Entry(fullPowerDropItem);
+		}
+		else if (loc.tag == "StickStarItem")
+		{
+			auto stickStarItem = std::make_shared<StickStarItem>(loc.pos, true);
+			MyEngine::Physics::GetInstance().Entry(stickStarItem);
+		}
+
+		
 	}
 	FileRead_close(handle);
 
@@ -198,6 +219,10 @@ std::vector<std::shared_ptr<Enemy>> GalaxyCreater::EnemyCreate(std::shared_ptr<P
 		else if (loc.tag == "Boss")
 		{
 			enemies.push_back(std::make_shared<Boss>(loc.pos));
+		}
+		else if (loc.tag == "Gorori")
+		{
+			enemies.push_back(std::make_shared<Gorori>(loc.pos, player));
 		}
 		MyEngine::Physics::GetInstance().Entry(enemies.back());
 	}
