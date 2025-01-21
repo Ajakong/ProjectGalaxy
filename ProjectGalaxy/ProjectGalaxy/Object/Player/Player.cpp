@@ -158,6 +158,7 @@ m_currentOxygen(0)
 
 	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
 	m_dropAttackUpdate = &Player::NormalDropAttackUpdate;
+	m_spinAttackUpdate = &Player::RollingAttackUpdate;
 }
 
 Player::~Player()
@@ -628,6 +629,29 @@ Vec3 Player::GetCameraToPlayer() const
 	return m_cameraToPlayer;
 }
 
+void Player::InitDush()
+{
+	ChangeAnim(AnimNum::AnimationNumRun, kDashMag);
+	m_playerUpdate = &Player::DashUpdate;
+}
+
+void Player::TitleDush()
+{
+
+}
+
+void Player::InitJump()
+{
+	ChangeAnim(AnimNum::AnimationNumJump);
+	m_isJumpFlag = true;
+	m_playerUpdate = &Player::JumpingUpdate;
+}
+
+void Player::TitleJump()
+{
+
+}
+
 bool Player::UpdateAnim(int attachNo)
 {
 	//アニメーションが設定されていないので終了
@@ -713,9 +737,8 @@ void Player::NeutralUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(AnimNum::AnimationNumSpin,5.f);
-		m_attackRadius = kNeutralSpinRadius;
 		m_isSpinFlag = true;
-		m_playerUpdate = &Player::SpiningUpdate;
+		m_playerUpdate = &Player::SpinActionUpdate;
 	}
 
 	m_rigid->AddVelocity(move);
@@ -757,7 +780,7 @@ void Player::WalkingUpdate()
 	{
 		ChangeAnim(AnimNum::AnimationNumSpin,5.f);
 		m_isSpinFlag = true;
-		m_playerUpdate = &Player::SpiningUpdate;
+		m_playerUpdate = &Player::SpinActionUpdate;
 	}
 
 	m_rigid->AddVelocity(ans);
@@ -808,9 +831,8 @@ void Player::DashUpdate()
 	{
 		m_cameraEasingSpeed = 15.f;
 		ChangeAnim(AnimNum::AnimationNumSpin, 5.f);
-		m_attackRadius =kNeutralSpinRadius;
 		m_isSpinFlag = true;
-		m_playerUpdate = &Player::SpiningUpdate;
+		m_playerUpdate = &Player::SpinActionUpdate;
 	}
 
 	m_rigid->AddVelocity(ans*kDashMag);
@@ -962,7 +984,7 @@ void Player::AimingUpdate()
 		ChangeAnim(AnimNum::AnimationNumSpin);
 		m_isSpinFlag = true;
 		ChangeAnim(AnimNum::AnimationNumSpin);
-		m_playerUpdate = &Player::SpiningUpdate;
+		m_playerUpdate = &Player::SpinActionUpdate;
 	}
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
@@ -972,6 +994,11 @@ void Player::AimingUpdate()
 	
 	m_rigid->AddVelocity(move);
 	
+}
+
+void Player::SpinActionUpdate()
+{
+	(this->*m_spinAttackUpdate)();
 }
 
 void Player::SpiningUpdate()
@@ -993,6 +1020,19 @@ void Player::SpiningUpdate()
 		m_isSpinFlag = false;
 		m_playerUpdate = &Player::NeutralUpdate;
 		m_spinAngle = 0;
+	}
+}
+
+void Player::RollingAttackUpdate()
+{
+	m_frontVec = Cross(m_sideVec, m_upVec);
+	m_rigid->SetVelocity(m_frontVec);
+	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
+	{
+		m_cameraEasingSpeed = 15.f;
+		ChangeAnim(AnimNum::AnimationNumIdle);
+		m_isSpinFlag = true;
+		m_playerUpdate = &Player::NeutralUpdate;
 	}
 }
 
@@ -1071,7 +1111,7 @@ Vec3 Player::Move()
 	// アナログスティックの入力を反映
 	m_sideVec = GetCameraRightVector();
 	m_frontVec = Cross(m_sideVec, m_upVec).GetNormalized();
-
+	m_sideVec = Cross(m_upVec, m_frontVec).GetNormalized();
 	ans = m_frontVec * static_cast<float>(analogY);
 	ans += m_sideVec * static_cast<float>(analogX);
 	modelDir = m_frontVec * static_cast<float>(analogY);

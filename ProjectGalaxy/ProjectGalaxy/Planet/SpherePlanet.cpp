@@ -64,7 +64,7 @@ void SpherePlanet::Draw()
 	else
 	{
 		MV1DrawModel(m_modelHandle);
-		DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius * m_scale, 50, m_color, 0x0000ff, true);
+		//DrawSphere3D(m_rigid->GetPos().VGet(), kGroundRadius * m_scale, 50, m_color, 0x0000ff, true);
 	}
 }
 

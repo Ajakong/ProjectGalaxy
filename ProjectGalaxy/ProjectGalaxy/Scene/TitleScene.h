@@ -5,6 +5,9 @@
 #include <map>
 
 class SceneMain;
+class Player;
+class Planet;
+class Camera;
 
 
 class TitleScene : public Scene
@@ -29,6 +32,19 @@ private:
     int m_selectNum = 0;
 
     bool m_isGamePlaying = false;
+
+    int m_titleHandle = 0;
+    int m_titleBGMHandle;
+    int m_gameStartSEHandle;
+    int m_modelHandle[10] = { 0 };
+    int m_model_dance = 0;
+    int m_attach_move[10] = { 0 };
+    int m_gamePlayingBgmHandle;
+    int m_frameHandle = 0;
+
+    std::shared_ptr<Player> player;
+	std::shared_ptr<Planet> planet;
+	std::shared_ptr<Camera> camera;
 
     // メンバ関数ポインタの宣言
     using UpdateFunc_t = void (TitleScene::*)();

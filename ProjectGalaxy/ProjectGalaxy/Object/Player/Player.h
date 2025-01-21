@@ -15,16 +15,21 @@ class Player : public MyEngine::Collidable
 public:
 	enum AnimNum : int
 	{
-		AnimationNumJump,
-		AnimationNumRun,
-		AnimationNumSpin,
+		
+		
+		AnimationNumEmpty,
 		AnimationNumTpose,
-		AnimationNumIdle,
-		AnimationNumHit,
 		AnimationNumDeath,
+		AnimationNumRun,
 		AnimationNumFall,
-		AnimationNumRolling,
+		AnimationNumSpin,
+		AnimationNumHit,
+		AnimationNumIdle,
+		AnimationNumJump,
 		AnimationNumJumpAttack,
+		AnimationNumJumpDive,
+		AnimationNumRolling,
+		AnimationNumRollingAttack,
 	};
 
 	Player(int modelhandle);
@@ -79,7 +84,10 @@ public:
 	//int GetSearchRemainTime() { return m_searchRemainTime; }
 	bool GetJumpFlag() const { return m_isJumpFlag; }
 
-	
+	void InitDush();
+	void TitleDush();
+	void InitJump();
+	void TitleJump();
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
@@ -106,6 +114,10 @@ public:
 	/// ジャンプ中の落下攻撃
 	/// </summary>
 	playerState_t m_dropAttackUpdate;
+	/// <summary>
+	/// スピンの更新処理
+	/// </summary>
+	playerState_t m_spinAttackUpdate;
 
 	void CommandJump();
 	void BoostUpdate();
@@ -141,10 +153,20 @@ private:
 	/// 走り
 	/// </summary>
 	void DashUpdate();
+	//スピンアクション
+	/// <summary>
+	/// スピンアクション統括
+	/// </summary>
+	void SpinActionUpdate();
 	/// <summary>
 	/// スピン攻撃
 	/// </summary>
 	void SpiningUpdate();
+	/// <summary>
+	/// ローリングアタック
+	/// </summary>
+	void RollingAttackUpdate();
+
 	/// <summary>
 	/// ジャンプ中
 	/// </summary>
@@ -213,6 +235,9 @@ private:
 	/// <param name="objects"></param>
 	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
 	Vec3 GetCameraToPlayer()const;
+
+	
+
 
 private:
 	struct UserData
