@@ -21,7 +21,7 @@ public:
 	void Update();
 	
 	
-	void Draw(float m_hp);
+	void Draw(float m_hp=0);
 	
 	void InText(const std::string text);
 	/// <summary>
@@ -29,21 +29,29 @@ public:
 	/// </summary>
 	void DeleteText();
 
+	void CanWeJustTalk();
+	int TextRemaining();
+
 	using UIstate_t = void(UI::*)();
 	UIstate_t m_uiUpdate;
 	UIstate_t m_uiDraw;
 
 private:
+	
 	void NormalUpdate();
-
+	
 	void AppaerUpdate();
 	void TextBoxUpdate();
 	void FadeOutUpdate();
 
 	void NormalDraw();
 
+	void CanWeTalkAppaerUpdate();
+
 	void FadeDraw();
 	void TextBoxDraw();
+	void CanWeTalkAppaerDraw();
+
 	/// <summary>
 	/// テキストデータ群に表示したいテキストをぶち込む
 	/// </summary>

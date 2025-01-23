@@ -57,6 +57,7 @@ private:
 	std::shared_ptr<SpherePlanet> planet;
     std::shared_ptr<SpherePlanet> nextPlanet;
     std::shared_ptr<SpherePlanet> emeraldPlanet;
+    std::shared_ptr<SpherePlanet> redPlanet;
 	std::shared_ptr<Camera> camera;
 
     Vec3 positioningPlayerToCamera;

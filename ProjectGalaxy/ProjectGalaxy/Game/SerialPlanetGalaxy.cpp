@@ -207,12 +207,18 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
 	std::list<std::string> m_texts;
 	
-	UI::GetInstance().InText("あばばばばｂ");
-	UI::GetInstance().InText("どうもタカアンドトシの髙﨑です");
-	UI::GetInstance().InText("敵をせん滅してください");
-	UI::GetInstance().InText("敵をせん滅してください");
-	UI::GetInstance().InText("敵をせん滅してください");
-	UI::GetInstance().InText("へげへげへげへげげへげｈげへげえっげ");
+	/*UI::GetInstance().InText("隊長！Astro Seeker　諜報部隊が入手した情報によると");
+	UI::GetInstance().InText("宇宙帝国の軍勢が我々の拠点に迫っているとのことです");
+	UI::GetInstance().InText("我々の拠点を守るためには宇宙帝国の軍勢を撃退する必要があります");
+	
+	UI::GetInstance().InText("ともに");
+	UI::GetInstance().InText("宇宙帝国の軍勢を撃退しましょう");*/
+
+	UI::GetInstance().Init();
+	UI::GetInstance().InText("どうも、やめてよダーリンです");
+	UI::GetInstance().InText("最近デスクワークが多くて体がなまっていませんか？");
+
+	
 
 
 }

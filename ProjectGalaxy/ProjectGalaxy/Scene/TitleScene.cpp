@@ -14,7 +14,7 @@
 #include "Physics.h"
 #include "SpherePlanet.h"
 #include "Camera.h"
-
+#include"UI.h"
 namespace
 {
     constexpr int kFadeFrameMax = 60;
@@ -37,6 +37,7 @@ namespace
     const char* kPlanetModelName = "GoldenBall";
     const char* kNextPlanetModelName = "Moon";
 	const char* kEmeraldPlanetModelName = "GreenMoon";
+    const char* kRedPlanetModelName = "RedMoon";
     const char* kSkyboxModelName = "Skybox";
 
     constexpr float kCameraNear = 10.0f;
@@ -68,7 +69,8 @@ TitleScene::TitleScene(SceneManager& manager) :
     player(std::make_shared<TitlePlayer>(ModelManager::GetInstance().GetModelData(kPlayerModelName))),
     planet(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kPlanetModelName), 1.0f, 1)),
     nextPlanet(std::make_shared<SpherePlanet>(Vec3(-300, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kNextPlanetModelName), 1.0f, 1)),
-	emeraldPlanet(std::make_shared<SpherePlanet>(Vec3(200, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kEmeraldPlanetModelName), 1.0f, 1)),
+	emeraldPlanet(std::make_shared<SpherePlanet>(Vec3(400, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kEmeraldPlanetModelName), 1.0f, 1)),
+    redPlanet(std::make_shared<SpherePlanet>(Vec3(200, -150,350), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kRedPlanetModelName), 1.0f, 1)),
 	camera(std::make_shared<Camera>(VGet(-200, -45, 80))),
     m_skyDomeH(0),
     m_skyDomeRotationAngle(0),
@@ -84,6 +86,7 @@ TitleScene::TitleScene(SceneManager& manager) :
     MyEngine::Physics::GetInstance().Entry(planet);
     MyEngine::Physics::GetInstance().Entry(nextPlanet);
     MyEngine::Physics::GetInstance().Entry(emeraldPlanet);
+    MyEngine::Physics::GetInstance().Entry(redPlanet);
     MyEngine::Physics::GetInstance().Entry(player);
 
     m_updateFunc = &TitleScene::NormalUpdate;
@@ -92,6 +95,16 @@ TitleScene::TitleScene(SceneManager& manager) :
     m_skyDomeH = ModelManager::GetInstance().GetModelData(kSkyboxModelName);
     MV1SetPosition(m_skyDomeH, VGet(0, 0, 0));
     MV1SetScale(m_skyDomeH, VGet(kSkyDomeScale, kSkyDomeScale, kSkyDomeScale));
+
+    UI::GetInstance().Init();
+    UI::GetInstance().InText("どうも、やめてよダーリンです");
+    UI::GetInstance().InText("Astro Seeker第一部隊隊長である君に宇宙の存亡をかけた超重要任務を授けます");
+    UI::GetInstance().InText("諜報部隊が入手した情報によると宇宙最大のエネルギー持つ物体スーパースターが何者かに盗まれました");
+    UI::GetInstance().InText("この宇宙を守るためにはスーパースターを取り戻す必要があります");
+    UI::GetInstance().InText("この任務は数々の死線を乗り越えたあなたにしか成し遂げられないことです");
+    UI::GetInstance().InText("スーパースターを取り戻し、宇宙帝国の軍勢を撃退し、全宇宙の平和を取り戻してください");
+    UI::GetInstance().InText("君には全宇宙の未来がかかっています");
+    UI::GetInstance().InText("さあ、Astro Seeker第一部隊隊長として宇宙の未来を切り開いてください");
 }
 
 TitleScene::~TitleScene()
@@ -113,6 +126,7 @@ void TitleScene::Update()
     planet->ModelRotation();
 	nextPlanet->ModelRotation();
 	emeraldPlanet->ModelRotation();
+    redPlanet->ModelRotation();
     MyEngine::Physics::GetInstance().Update();
     player->SetMatrix();
     (this->*m_updateFunc)();
@@ -223,8 +237,12 @@ void TitleScene::LoadingUpdate()
         camera->SetEasingSpeed(15.f);
         camera->SetCameraPoint(player->GetPos() + positioningPlayerToCamera * 10);
         player->DoNotMove();
-        m_updateFunc = &TitleScene::FadeOutUpdate;
-        m_drawFunc = &TitleScene::FadeDraw;
+        UI::GetInstance().Update();
+        if (UI::GetInstance().TextRemaining() == 0)
+        {
+            m_updateFunc = &TitleScene::FadeOutUpdate;
+            m_drawFunc = &TitleScene::FadeDraw;
+        }
     }
     
 }
@@ -238,9 +256,22 @@ void TitleScene::ChangeScene(std::shared_ptr<Scene> next)
 void TitleScene::FadeDraw()
 {
     int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
+    if (!(m_updateFunc == &TitleScene::FadeOutUpdate))
+    {
+        int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
 
-    DrawExtendGraph(kTitleGraphX, kTitleGraphY, kTitleGraphWidth, kTitleGraphHeight, m_titleHandle, true);
-    DrawFormatString(kTitleTextX, kTitleTextY, 0xffffff, "Push A to Start");
+        DrawExtendGraph(kTitleGraphX, kTitleGraphY, kTitleGraphWidth, kTitleGraphHeight, m_titleHandle, true);
+        int btnalpha = static_cast<int>(255 * (static_cast<float>(m_btnFrame) / kFadeFrameMax));
+        SetDrawBlendMode(DX_BLENDMODE_ADD, btnalpha);
+
+        DrawFormatString(kTitleTextX, kTitleTextY, 0xffffff, "Push A to Start");
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+        SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
+        DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
+        DrawBox(0, 0, m_frame * kLineX, kFadeBoxWidth, kFadeBoxColor, true);
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+    }
 
     SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
     DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
@@ -256,22 +287,31 @@ void TitleScene::FadeDraw()
 
 void TitleScene::NormalDraw()
 {
-    int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
+    if (!(m_updateFunc == &TitleScene::LoadingUpdate))
+    {
+        int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
 
-    DrawExtendGraph(kTitleGraphX, kTitleGraphY, kTitleGraphWidth, kTitleGraphHeight, m_titleHandle, true);
-    int btnalpha = static_cast<int>(255 * (static_cast<float>(m_btnFrame) / kFadeFrameMax));
-    SetDrawBlendMode(DX_BLENDMODE_ADD, btnalpha);
+        DrawExtendGraph(kTitleGraphX, kTitleGraphY, kTitleGraphWidth, kTitleGraphHeight, m_titleHandle, true);
+        int btnalpha = static_cast<int>(255 * (static_cast<float>(m_btnFrame) / kFadeFrameMax));
+        SetDrawBlendMode(DX_BLENDMODE_ADD, btnalpha);
 
-    DrawFormatString(kTitleTextX, kTitleTextY, 0xffffff, "Push A to Start");
-    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-    SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
-    DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
-    DrawBox(0, 0, m_frame * kLineX, kFadeBoxWidth, kFadeBoxColor, true);
-    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+        DrawFormatString(kTitleTextX, kTitleTextY, 0xffffff, "Push A to Start");
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+        SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
+        DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
+        DrawBox(0, 0, m_frame * kLineX, kFadeBoxWidth, kFadeBoxColor, true);
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
+    }
+    
     if (m_isGamePlaying)
     {
         ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
     }
     DrawLine(m_frame * kLineX, 0, m_frame * kLineX, kLineY, kLineColor);
+    if(m_count > 70)
+    {
+        UI::GetInstance().Draw();
+
+    }
 }
