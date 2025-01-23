@@ -3,7 +3,6 @@
 #include<memory>
 class TextManager;
 
-
 class UI
 {
 	
@@ -17,14 +16,14 @@ public:
 	};
 	UI();
 	virtual ~UI();
-
+	static UI& GetInstance();
 	void Init();
 	void Update();
 	
 	
 	void Draw(float m_hp);
 	
-	void InText(const std::wstring text);
+	void InText(const std::string text);
 	/// <summary>
 	/// 入力を受け付けたら表示しているテキストを削除して次のテキストに移る
 	/// </summary>

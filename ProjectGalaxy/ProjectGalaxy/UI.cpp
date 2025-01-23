@@ -28,6 +28,12 @@ UI::~UI()
 {
 }
 
+UI& UI::GetInstance()
+{
+	static UI info;
+	return info;
+}
+
 void UI::Init()
 {
 }
@@ -115,8 +121,10 @@ void UI::FadeDraw()
 #endif
 	/*DrawRectRotaGraph( Game::kScreenWidth-kWindowScreenUIInfo.width / 2, kWindowScreenUIInfo.height / 2, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 1, 0, m_uiAssetHandle, true);*/
 	
-	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame*9, 90, Game::kScreenWidth / 2 + m_textBoxFrame*9, 440,0x004444,true);
-	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x444444, false);
+	SetDrawBlendMode(DX_BLENDMODE_MULA, 150);
+	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x00ffff, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0xffffff, false);
 
 	
 }
@@ -131,13 +139,15 @@ void UI::TextBoxDraw()
 	DrawRectRotaGraph(Game::kScreenWidth - kIdemBoxUIInfo.width / 2 - 170, kIdemBoxUIInfo.height / 2 + 50, kIdemBoxUIInfo.x, kIdemBoxUIInfo.y, kIdemBoxUIInfo.width, kIdemBoxUIInfo.height, 1, 0, m_uiAssetHandle, true);
 #endif
 	/*DrawRectRotaGraph( Game::kScreenWidth-kWindowScreenUIInfo.width / 2, kWindowScreenUIInfo.height / 2, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 1, 0, m_uiAssetHandle, true);*/
-	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x004444, true);
-	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x444444, false);
+	SetDrawBlendMode(DX_BLENDMODE_MULA, 150);
+	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x00ffff, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0xffffff, false);
 
 	m_textManager->Draw();
 }
 
-void UI::InText(const std::wstring text)
+void UI::InText(const std::string text)
 {
 	m_textManager->InText(text);
 }

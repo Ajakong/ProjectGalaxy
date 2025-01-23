@@ -86,9 +86,9 @@ namespace
 	constexpr int kUiTimeCount_PosY = 90;
 
 	//カメラ
-	constexpr float kCameraDistanceFront = 40.f;
+	constexpr float kCameraDistanceFront = 20.f;
 	constexpr float kCameraDistanceAddFrontInJump = 15.f;
-	constexpr float kCameraDistanceUp = 25.f;
+	constexpr float kCameraDistanceUp = 20.f;
 
 	const char* kModelScreenName = "ModelScreen";
 
@@ -152,7 +152,6 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 #endif
 
 	m_camera = make_shared<Camera>();
-	m_ui = make_shared<UI>();
 
 	/*m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("GoldenBall.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-100, 50, 400), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1"),4));
@@ -208,12 +207,12 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
 	std::list<std::string> m_texts;
 	
-	m_ui->InText(L"あばばばばｂ");
-	m_ui->InText(L"どうもタカアンドトシの髙﨑です");
-	m_ui->InText(L"敵をせん滅してください");
-	m_ui->InText(L"敵をせん滅してください");
-	m_ui->InText(L"敵をせん滅してください");
-	m_ui->InText(L"へげへげへげへげげへげｈげへげえっげ");
+	UI::GetInstance().InText("あばばばばｂ");
+	UI::GetInstance().InText("どうもタカアンドトシの髙﨑です");
+	UI::GetInstance().InText("敵をせん滅してください");
+	UI::GetInstance().InText("敵をせん滅してください");
+	UI::GetInstance().InText("敵をせん滅してください");
+	UI::GetInstance().InText("へげへげへげへげげへげｈげへげえっげ");
 
 
 }
@@ -253,7 +252,7 @@ void SerialPlanetGalaxy::Init()
 void SerialPlanetGalaxy::Update()
 {
 	(this->*m_managerUpdate)();
-	m_ui->Update();
+	UI::GetInstance().Update();
 }
 
 void SerialPlanetGalaxy::Draw()
@@ -376,7 +375,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
-	m_ui->Draw(player->GetHp());
+	UI::GetInstance().Draw((player->GetHp()));
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG
@@ -397,7 +396,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatString(0, 25 * 0, 0xffffff, "HP:%f", player->GetHp());
+	/*DrawFormatString(0, 25 * 0, 0xffffff, "HP:%f", player->GetHp());
 
 	DrawFormatString(0, 25*1, 0xffffff, "UpVec(%f,%f,%f)", player->GetUpVec().x, player->GetUpVec().y, player->GetUpVec().z);
 	
@@ -413,7 +412,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*8, 0xffffff, player->GetState().c_str());
 	DrawFormatString(0, 25*9, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
 	DrawFormatString(0, 25 * 10, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
-	DrawFormatString(0, 25 * 11, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
+	DrawFormatString(0, 25 * 11, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());*/
 #endif
 
 	if (player->OnAiming())m_camera->SetDebugCameraPoint();

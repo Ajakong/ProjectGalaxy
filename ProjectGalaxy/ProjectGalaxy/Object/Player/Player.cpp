@@ -11,7 +11,7 @@
 #include"ModelManager.h"
 #include"GraphManager.h"
 #include"Planet.h"
-
+#include"UI.h"
 #include"Easing.h"
 
 #include"Physics.h"
@@ -339,7 +339,7 @@ void Player::SetMatrix()
 	m_bodyCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 2 + m_bodyCol->GetRadius()));
 	m_footCol->SetShiftPosNum(m_upVec * m_footCol->GetRadius());
 	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
-	m_lookPoint = m_rigid->GetPos();
+	m_lookPoint = m_rigid->GetPos()+m_upVec*10;
 
 	
 }
@@ -756,6 +756,7 @@ void Player::NeutralUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
 		ChangeAnim(AnimNum::AnimationNumJump);
+		UI::GetInstance().InText("今ジャンプしましたね");
 		m_isJumpFlag = true;
 		move += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
