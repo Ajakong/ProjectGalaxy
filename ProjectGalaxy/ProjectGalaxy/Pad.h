@@ -1,17 +1,30 @@
-#pragma once
+ï»¿#pragma once
+#include<string>
 namespace Pad
 {
-	// ƒpƒbƒh‚ÌXVˆ— 1ƒtƒŒ[ƒ€‚É1‰ñs‚¤
+	// ãƒ‘ãƒƒãƒ‰ã®æ›´æ–°å‡¦ç† 1ãƒ•ãƒ¬ãƒ¼ãƒ ã«1å›è¡Œã†
 	void Update();
 
-	// ‰Ÿ‚³‚ê‚Ä‚¢‚é‚©‚ğæ“¾
+	/// <summary>
+	/// çŠ¶æ…‹ã®è¨­å®š: UIã¯ãƒ†ã‚­ã‚¹ãƒˆãŒçµ‚äº†ã—ãŸã‚‰PlayerInputã«æˆ»ã—ã¦ãã ã•ã„
+	/// </summary>
+	/// <param name="statement">PlayerInput/TextInput</param>
+	void SetState(std::string statement);
+	/// <summary>
+	/// ã‚¹ãƒ†ãƒ¼ãƒˆãŒåˆè‡´ã—ã¦ã„ã‚‹ã‹ã‚’å–å¾—
+	/// </summary>
+	/// <param name="statement">PlayerState/InputState</param>
+	/// <returns>çµæœ</returns>
+	bool IsState(std::string statement);
+	// æŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹ã‚’å–å¾—
 	bool IsPress(int key);
-	// ‰Ÿ‚µ‚½uŠÔ‚ğæ“¾
+	// æŠ¼ã—ãŸç¬é–“ã‚’å–å¾—
 	bool IsTrigger(int key);
-	// —£‚µ‚½uŠÔ‚ğæ“¾
+	// é›¢ã—ãŸç¬é–“ã‚’å–å¾—
 	bool IsRelase(int key);
-	//ƒXƒeƒBƒbƒN“ü—Í
+	//ã‚¹ãƒ†ã‚£ãƒƒã‚¯å…¥åŠ›
 
-	// ƒŠƒs[ƒgˆ— (‚±‚ê‚Í¡ŒãÁ‚·or•ÏX‚·‚é—\’è‚ ‚è)
+	// ãƒªãƒ”ãƒ¼ãƒˆå‡¦ç† (ã“ã‚Œã¯ä»Šå¾Œæ¶ˆã™orå¤‰æ›´ã™ã‚‹äºˆå®šã‚ã‚Š)
 	bool IsRepeat(int key, int& frame, int RepeatFrame);
+
 }

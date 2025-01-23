@@ -210,6 +210,7 @@
     <ClCompile Include="Object\Player\Player.cpp" />
     <ClCompile Include="Object\Player\PlayerSphere.cpp" />
     <ClCompile Include="Object\Player\PlayerStickSphere.cpp" />
+    <ClCompile Include="Object\Player\TitlePlayer.cpp" />
     <ClCompile Include="Object\WarpGate\Booster.cpp" />
     <ClCompile Include="Object\WarpGate\WarpGate.cpp" />
     <ClCompile Include="Pad.cpp" />
@@ -226,6 +227,7 @@
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -290,6 +292,7 @@
     <ClInclude Include="Object\Player\Player.h" />
     <ClInclude Include="Object\Player\PlayerSphere.h" />
     <ClInclude Include="Object\Player\PlayerStickSphere.h" />
+    <ClInclude Include="Object\Player\TitlePlayer.h" />
     <ClInclude Include="Object\WarpGate\Booster.h" />
     <ClInclude Include="Object\WarpGate\WarpGate.h" />
     <ClInclude Include="Pad.h" />
@@ -307,6 +310,7 @@
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="TextManager.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>
   <ItemGroup>

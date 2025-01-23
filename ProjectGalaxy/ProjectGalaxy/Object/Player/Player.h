@@ -129,7 +129,7 @@ public:
 
 	void MoveToTargetWithStickStar(Vec3 targetPos);
 
-private:
+protected:
 	Vec3 Move();
 
 	void ShotTheStar();
@@ -233,6 +233,8 @@ private:
 	/// 弾の削除処理
 	/// </summary>
 	void DeleteManage();
+
+	void TalkingUpdate();
 	
 	
 
@@ -248,7 +250,7 @@ private:
 	
 
 
-private:
+protected:
 	struct UserData
 	{
 		float dissolveY;	// ディゾルヴしたい高さ

@@ -179,6 +179,11 @@ void Player::Update()
 	m_isSearchFlag = false;
 	m_radius = 0;
 	
+	if (!Pad::IsState("PlayerInput"))
+	{
+		ChangeAnim(AnimNum::AnimationNumIdle);
+		m_playerUpdate = &Player::TalkingUpdate;
+	}
 	(this->*m_playerUpdate)();
 
 
@@ -737,6 +742,7 @@ void Player::NeutralUpdate()
 {
 	m_state = "Neutral";
 
+	
 	//アナログスティックを使って移動
 
 	Vec3 move = Move();
@@ -1281,6 +1287,15 @@ void Player::DeleteManage()
 		int a = 0;
 	}
 	m_sphere.erase(result, m_sphere.end());
+}
+
+void Player::TalkingUpdate()
+{
+	m_state = "Talking";
+	if (Pad::IsState("PlayerInput"))
+	{
+		m_playerUpdate = &Player::NeutralUpdate;
+	}
 }
 
 void Player::MoveToTargetWithStickStar(Vec3 targetPos)

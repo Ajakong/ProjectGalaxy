@@ -10,7 +10,7 @@
 #include "GraphManager.h"
 #include "SoundManager.h"
 #include "ModelManager.h"
-#include "Player.h"
+#include "TitlePlayer.h"
 #include "Physics.h"
 #include "SpherePlanet.h"
 #include "Camera.h"
@@ -36,6 +36,7 @@ namespace
     const char* kPlayerModelName = "SpaceHarrier";
     const char* kPlanetModelName = "GoldenBall";
     const char* kNextPlanetModelName = "Moon";
+	const char* kEmeraldPlanetModelName = "GreenMoon";
     const char* kSkyboxModelName = "Skybox";
 
     constexpr float kCameraNear = 10.0f;
@@ -64,19 +65,27 @@ TitleScene::TitleScene(SceneManager& manager) :
     m_btnFrame(0),
     m_fadeSpeed(1),
     m_titleHandle(GraphManager::GetInstance().GetGraphData(kTitleGraphName)),
-    player(std::make_shared<Player>(ModelManager::GetInstance().GetModelData(kPlayerModelName),Vec3(0,300,300))),
+    player(std::make_shared<TitlePlayer>(ModelManager::GetInstance().GetModelData(kPlayerModelName))),
     planet(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kPlanetModelName), 1.0f, 1)),
     nextPlanet(std::make_shared<SpherePlanet>(Vec3(-300, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kNextPlanetModelName), 1.0f, 1)),
+	emeraldPlanet(std::make_shared<SpherePlanet>(Vec3(200, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kEmeraldPlanetModelName), 1.0f, 1)),
+	camera(std::make_shared<Camera>(VGet(-200, -45, 80))),
     m_skyDomeH(0),
-    m_skyDomeRotationAngle(0)
+    m_skyDomeRotationAngle(0),
+	m_count(0)
 {
+    
+    camera->Update(VGet(0, -45, 80));
+
     PlaySoundMem(m_titleBGMHandle, DX_PLAYTYPE_LOOP);
-    SetCameraPositionAndTarget_UpVecY(VGet(-200, -45, 80), VGet(0, -45, 80));
-    SetCameraNearFar(kCameraNear, kCameraFar);
+    //SetCameraPositionAndTarget_UpVecY(VGet(-200, -45, 80), VGet(0, -45, 80));
+    //SetCameraNearFar(kCameraNear, kCameraFar);
 
     MyEngine::Physics::GetInstance().Entry(planet);
     MyEngine::Physics::GetInstance().Entry(nextPlanet);
+    MyEngine::Physics::GetInstance().Entry(emeraldPlanet);
     MyEngine::Physics::GetInstance().Entry(player);
+
     m_updateFunc = &TitleScene::NormalUpdate;
     m_drawFunc = &TitleScene::NormalDraw;
 
@@ -103,6 +112,9 @@ void TitleScene::Update()
 
     planet->ModelRotation();
 	nextPlanet->ModelRotation();
+	emeraldPlanet->ModelRotation();
+    MyEngine::Physics::GetInstance().Update();
+    player->SetMatrix();
     (this->*m_updateFunc)();
     m_skyDomeRotationAngle += kSkyDomeRotationSpeed;
     MV1SetRotationXYZ(m_skyDomeH, VGet(0, m_skyDomeRotationAngle, 0));
@@ -142,7 +154,6 @@ void TitleScene::Draw()
 void TitleScene::FadeInUpdate()
 {
     m_fps = GetFPS();
-    MyEngine::Physics::GetInstance().Update();
     m_frame--;
     if (m_frame <= 0)
     {
@@ -156,28 +167,15 @@ void TitleScene::NormalUpdate()
     m_fps = GetFPS();
 
    
-    MyEngine::Physics::GetInstance().Update();
-    if(player->GetTitleMoveNum()==0)player->MoveToTargetWithStickStar(Vec3(0,0, 0));
-	
-    if (player->GetTitleMoveNum() == 1)
-    {
-        PlaySoundMem(m_stickOSTHandle, DX_PLAYTYPE_BACK);;
-    }
+   
     player->SetMatrix();
     if (Pad::IsTrigger(PAD_INPUT_1))
     {
-		player->MoveToTargetWithStickStar(nextPlanet->GetRigidbody()->GetPos());
+        player->MoveToTargetPosWithSticker(nextPlanet->GetRigidbody()->GetPos());
+        m_updateFunc = &TitleScene::DirectionUpdate;
     }
 
-    if (player->GetTitleMoveNum() == 2)
-    {
-        if (player->GetOnPlanetPos() == nextPlanet->GetRigidbody()->GetPos())
-        {
-            PlaySoundMem(m_gameStartSEHandle, DX_PLAYTYPE_BACK);
-            m_updateFunc = &TitleScene::FadeOutUpdate;
-            m_drawFunc = &TitleScene::FadeDraw;
-        }
-    }
+   
     
 
     m_btnFrame += m_fadeSpeed;
@@ -187,14 +185,48 @@ void TitleScene::NormalUpdate()
 
 void TitleScene::FadeOutUpdate()
 {
-     player->MoveToTargetWithStickStar(Vec3(0, 0, 0));
+    camera->Update(player->GetRigidbody()->GetPos());
+    camera->SetCameraPoint(player->GetPos() + positioningPlayerToCamera * 10);
+    player->MoveToTargetWithStickStar(Vec3(0, 0, 0));
     m_fps = GetFPS();
-    MyEngine::Physics::GetInstance().Update();
     m_frame++;
    
     if (m_frame >= kStandByFrame) {
         m_isGamePlaying = true;
     }
+}
+
+void TitleScene::DirectionUpdate()
+{
+   
+    bool moveFlag = player->MoveToTargetPosWithSticker(nextPlanet->GetRigidbody()->GetPos());
+    if (moveFlag)
+    {
+        m_updateFunc = &TitleScene::LoadingUpdate;
+        //m_drawFunc = &TitleScene::FadeDraw;
+    }
+}
+
+void TitleScene::LoadingUpdate()
+{
+    m_count++;
+    camera->Update(player->GetRigidbody()->GetPos());
+
+    if (m_count == 70)
+    {
+        positioningPlayerToCamera = camera->GetPos() - player->GetPos();
+        positioningPlayerToCamera.Normalize();
+    }
+
+    if (m_count > 70)
+    {
+        camera->SetEasingSpeed(15.f);
+        camera->SetCameraPoint(player->GetPos() + positioningPlayerToCamera * 10);
+        player->DoNotMove();
+        m_updateFunc = &TitleScene::FadeOutUpdate;
+        m_drawFunc = &TitleScene::FadeDraw;
+    }
+    
 }
 
 void TitleScene::ChangeScene(std::shared_ptr<Scene> next)

@@ -206,6 +206,15 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	MyEngine::Physics::GetInstance().Update();
 
 	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
+	std::list<std::string> m_texts;
+	
+	m_ui->InText(L"あばばばばｂ");
+	m_ui->InText(L"どうもタカアンドトシの髙﨑です");
+	m_ui->InText(L"敵をせん滅してください");
+	m_ui->InText(L"敵をせん滅してください");
+	m_ui->InText(L"敵をせん滅してください");
+	m_ui->InText(L"へげへげへげへげげへげｈげへげえっげ");
+
 
 }
 
@@ -244,6 +253,7 @@ void SerialPlanetGalaxy::Init()
 void SerialPlanetGalaxy::Update()
 {
 	(this->*m_managerUpdate)();
+	m_ui->Update();
 }
 
 void SerialPlanetGalaxy::Draw()
