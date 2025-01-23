@@ -1,6 +1,7 @@
-﻿#include"MyLib/Physics/ColliderSphere.h"
+﻿#include"ColliderSphere.h"
 #include "SpherePlanet.h"
 #include"ModelManager.h"
+#include"Quaternion.h"
 
 namespace
 {
@@ -17,15 +18,27 @@ namespace
 
 SpherePlanet::SpherePlanet(Vec3 pos,int color,float gravity,int modelHandle,float coefficientOfFriction,float scale) :Planet(),
 m_enemyCount(3),
-m_modelHandle(modelHandle)
+m_modelHandle(modelHandle),
+m_rotationAngle(0)
 {
+	
+	auto ref=MV1GetReferenceMesh(m_modelHandle,-1,true);
+	auto size = VScale(VSub(ref.MaxPosition,ref.MinPosition),0.5f);
+
+	//惑星の基本的な大きさで割る
+	auto num = size.x / kGroundRadius;
+	//取得した値を2で割る
+	auto mag = num / scale;
+	MV1SetScale(m_modelHandle, VGet(1/mag, 1/mag, 1/mag));
+
+
+	
 	m_scale = scale;
 	m_coefficientOfFriction = coefficientOfFriction;
 	m_color = color;
 	m_rigid->SetPos(pos);
 	gravityPower = gravity;
-	m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 50.0f, 0.0f, 0.0002f, 0.0f);
-	MV1SetScale(m_modelHandle, VGet(0.5f, 0.5f, 0.5f));
+	//m_pointLightHandle = CreatePointLightHandle(m_rigid->GetPos().VGet(), 50.0f, 0.0f, 0.0002f, 0.0f);
 	MV1SetPosition(m_modelHandle,m_rigid->GetPos().VGet());
 
 	//当たり判定の追加
@@ -50,6 +63,7 @@ void SpherePlanet::Init()
 
 void SpherePlanet::Update()
 {
+	m_rotationAngle += 0.001f;
 }
 
 void SpherePlanet::Draw()
@@ -92,7 +106,11 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	{
 		return GravityDir * kGravityPower + objVelocity;
 	}
-
+	/*
+	Quaternion q ;
+	q.SetQuaternion(obj->GetRigidbody()->GetPos());
+	q=AngleAxis(m_rotationAngle, Vec3::Right());
+	obj->GetRigidbody()->SetPos(q.ToVec3());*/
 	
 	//重力のみ
 	GravityDir = GravityDir * kGravityPower;
@@ -130,4 +148,16 @@ void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider,ColideTag o
 	{
 		clearFlag = true;
 	}
+}
+
+void SpherePlanet::ModelRotation()
+{
+	MV1SetRotationXYZ(m_modelHandle, VGet(m_rotationAngle, 0, 0));
+
+}
+
+void SpherePlanet::IntroPlanet()
+{
+	auto velocity = Vec3(0.f, m_rotationAngle, 0.f);
+	m_rigid->SetVelocity(velocity);
 }

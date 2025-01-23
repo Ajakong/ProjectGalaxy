@@ -9,7 +9,7 @@ namespace
 	constexpr float kCameraHeight = 32;
 
 	constexpr float kCameraNear = 1.f;
-	constexpr float kCameraFar =100000.0f;
+	constexpr float kCameraFar =30000.0f;
 
 	//constexpr VECTOR kFirstPos=VGet(300, 300, -200);
 
@@ -46,6 +46,8 @@ Camera::Camera():
 		0.0f,
 		0.002f,
 		0.0f);*/
+
+	SetCameraNearFar(kCameraNear, kCameraFar);
 }
 
 Camera::~Camera()
@@ -68,7 +70,7 @@ void Camera::Update(Vec3 LookPoint)
 		SetupCamera_Perspective(kCameraFOV * (static_cast<float>(DX_PI_F) / 180.0f));
 
 	}
-	SetCameraNearFar(kCameraNear, kCameraFar);
+	
 	(this->*m_cameraUpdate)(LookPoint);
 
 	//オーディオリスナーの位置の更新

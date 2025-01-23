@@ -67,7 +67,7 @@ namespace
 
 	const char* kGetSearchSEName = "Search.mp3";
 	const char* name = "Player";
-	const char* kFileName = "SpaceHarrier.mv1";
+	const char* kFileName = "SpaceHarrier";
 
 	//照準
 	const char* kAimGraphFileName = "Elements_pro.png";
@@ -82,7 +82,7 @@ void MTransCopy(MATRIX& in, const MATRIX& src) {
 }
 
 
-Player::Player(int modelhandle) : Collidable(Priority::High, ObjectTag::Player),
+Player::Player(int modelhandle, Vec3 pos) : Collidable(Priority::High, ObjectTag::Player),
 m_modelHandle(MV1DuplicateModel(ModelManager::GetInstance().GetModelData(kFileName))),
 m_parrySEHandle(SoundManager::GetInstance().GetSoundData(kOnParrySEName)),
 m_getItemHandle(SoundManager::GetInstance().GetSoundData(kGetItemSEName)),
@@ -115,10 +115,13 @@ m_modelBodyRotate(m_frontVec),
 m_inputVec(Vec3::Front()*-1),
 m_postMoveDir(Vec3::Front()),
 m_modelDirAngle(0),
-m_currentOxygen(0)
+m_currentOxygen(0),
+m_shotAnimCount(0),
+m_shotAnimFlag(false),
+m_titleUpdateNum(0)
 {
 	m_postUpVec = m_upVec;
-	m_rigid->SetPos(Vec3(0, 0, 0));
+	m_rigid->SetPos(pos);
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Head);
 		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
@@ -205,7 +208,20 @@ void Player::Update()
 
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
+		m_shotAnimFlag = true;
+		m_rigid->SetVelocity(Vec3::Zero());
+		ChangeAnim(AnimNum::AnimationNumShotPose);
 		(this->*m_shotUpdate)();
+	}
+	if (m_shotAnimFlag)
+	{
+		m_shotAnimCount++;
+		if (m_shotAnimCount > 10)
+		{
+			m_shotAnimFlag = false;
+			m_shotAnimCount = 0;
+			ChangeAnim(MV1GetAttachAnim(m_modelHandle, m_prevAnimNo));
+		}
 	}
 
 	for (auto& item : m_sphere)
@@ -320,7 +336,7 @@ void Player::SetMatrix()
 	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
 	m_lookPoint = m_rigid->GetPos();
 
-	m_postPos = m_rigid->GetPos();
+	
 }
 
 void Player::Draw()
@@ -700,6 +716,10 @@ void Player::ChangeAnim(int animIndex, float speed)
 	DxLib::MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 }
 
+void Player::TitleUpdate()
+{
+}
+
 void Player::StartUpdate()
 {
 	m_state = "Start";
@@ -870,6 +890,7 @@ void Player::JumpingUpdate()
 
 	if (m_footCol->OnHit())
 	{
+		m_moveDir = Cross(m_upVec,GetCameraRightVector());
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
@@ -1088,6 +1109,7 @@ void Player::OperationUpdate()
 	m_state = "NowControl";
 	m_moveDir = m_rigid->GetPos() - m_postPos;
 	m_moveDir.Normalize();
+	m_postPos = m_rigid->GetPos();
 	m_sideVec = Cross(m_upVec, m_moveDir);
 	if (!m_isOperationFlag)
 	{
@@ -1214,7 +1236,7 @@ void Player::SetShotDir()
 		inputDuration += deltaTime; // 入力がある間、時間を加算
 	}
 	else {
-		inputDir = m_frontVec; // 初期値として前方ベクトルを使用
+		inputDir = m_moveDir; // 初期値として前方ベクトルを使用
 		inputDuration = 0.0f; // 入力がない場合、時間をリセット
 	}
 
@@ -1223,13 +1245,13 @@ void Player::SetShotDir()
 		sqrt(static_cast<float>(directX * directX + directY * directY)) * 0.001f,0.0f, 1.0f);
 
 	// m_frontVecとの角度を計算
-	float dotProduct = std::clamp(Dot(m_frontVec, inputDir), -1.0f, 1.0f);
+	float dotProduct = std::clamp(Dot(m_moveDir, inputDir), -1.0f, 1.0f);
 	float angle = acos(dotProduct); // 安全な角度計算
 
 	// 60度（ラジアンで計算）を超えないように制限
 	float maxAngle = 60.0f * (3.14159f / 180.0f); // 60度をラジアンに変換
 	if (angle > maxAngle) {
-		Vec3 clampedDir = m_frontVec * cos(maxAngle) + (inputDir - m_frontVec * dotProduct).GetNormalized() * sin(maxAngle);
+		Vec3 clampedDir = m_moveDir * cos(maxAngle) + (inputDir - m_moveDir * dotProduct).GetNormalized() * sin(maxAngle);
 		inputDir = clampedDir.GetNormalized();
 	}
 
@@ -1259,5 +1281,63 @@ void Player::DeleteManage()
 		int a = 0;
 	}
 	m_sphere.erase(result, m_sphere.end());
+}
+
+void Player::MoveToTargetWithStickStar(Vec3 targetPos)
+{
+	if (m_titleUpdateNum == 1)
+	{
+		if (m_sphere.size() == 0)
+		{
+			Vec3 targetVec = (targetPos - m_rigid->GetPos()).GetNormalized();
+			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+			m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, targetVec, m_sideVec, 1, 0xff0000));
+			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+			m_sphere.back()->Init();
+
+			m_playerUpdate = &Player::NeutralUpdate;
+		}
+		else
+		{
+			auto colidFlag = m_sphere.back()->GetStickFlag();
+			if (colidFlag)
+			{
+				m_titleUpdateNum = 2;
+				m_sphere.back()->Effect();
+
+			}
+		}
+
+	}
+	
+	if (m_titleUpdateNum == 0)
+	{
+		if (m_sphere.size() == 0)
+		{
+			Vec3 targetVec = (targetPos - m_rigid->GetPos()).GetNormalized();
+			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+			m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, targetVec, m_sideVec, 1, 0xff0000));
+			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+			m_sphere.back()->Init();
+
+			MV1SetScale(m_modelHandle, VGet(0.01f, 0.01f, 0.01f));
+			m_moveDir = Cross(GetCameraRightVector(), m_upVec);
+			ChangeAnim(AnimNum::AnimationNumIdle);
+			m_playerUpdate = &Player::NeutralUpdate;
+		}
+		else
+		{
+
+			auto colidFlag = m_sphere.back()->GetStickFlag();
+			if (colidFlag)
+			{
+				m_titleUpdateNum = 1;
+				m_sphere.back()->Effect();
+
+			}
+		}
+	}
+	
+
 }
 

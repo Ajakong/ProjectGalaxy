@@ -23,7 +23,7 @@ namespace
 	constexpr int kChaseMaxFrame = 200;
 
 	constexpr float kAwayStrength = 0.6f;
-	const char* kModelFileName = "Kuribo.mv1";
+	const char* kModelFileName = "Kuribo";
 
 	constexpr float kScaleMag = 0.03f;
 

@@ -113,7 +113,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//その他オブジェクトの配置
 	m_creater->ObjectCreate(player);
 
-	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan.mv1"), Vec3(0, -1000, 200), 1, 1.0f, 5.f));
+	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan"), Vec3(0, -1000, 200), 1, 1.0f, 5.f));
 #ifdef DEBUG
 
 	//オブジェクトやギミックの配置(のちのちUnityのデータを読み込んで配置するので今は仮配置)
@@ -165,7 +165,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
 	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
 
-	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox.mv1");
+	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox");
 
 	////エネミー
 	//m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 30)));
@@ -344,16 +344,18 @@ void SerialPlanetGalaxy::BossBattleUpdate()
 
 void SerialPlanetGalaxy::GamePlayingDraw()
 {
-	if (player->OnAiming())m_camera->SetDebugCameraPoint();
-	Vec3 pos = MV1GetPosition(m_skyDomeH);
+	
+	
 	DxLib::MV1DrawModel(m_skyDomeH);
+
+	MyEngine::Physics::GetInstance().Draw();
+
 
 	for (auto& item : m_planet)
 	{
 		item->SetIsSearch(player->IsSearch());
 	}
 
-	MyEngine::Physics::GetInstance().Draw();
 	
 	if (player->IsSearch())
 	{
@@ -393,20 +395,26 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*3, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
 	DrawFormatString(0, 25*4, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
 	DrawFormatString(0, 25*5, 0xffffff, "Camera(%f,%f,%f),Length(%f)",m_camera->GetPos().x, m_camera->GetPos().y, m_camera->GetPos().z,(m_camera->GetPos() - player->GetPos()).Length());
+	auto cameraNear = GetCameraNear();
+	auto cameraFar = GetCameraFar();
+	DrawFormatString(0, 25 * 6, 0xffffff, "CameraNearFar(%f,%f)", cameraNear, cameraFar);
 	
-	DrawFormatString(0, 25*6, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
-	DrawFormatString(0, 25*7, 0xffffff, player->GetState().c_str());
-	DrawFormatString(0, 25*8, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
-	DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
-	DrawFormatString(0, 25 * 10, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
+	DrawFormatString(0, 25*7, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
+	DrawFormatString(0, 25*8, 0xffffff, player->GetState().c_str());
+	DrawFormatString(0, 25*9, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
+	DrawFormatString(0, 25 * 10, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
+	DrawFormatString(0, 25 * 11, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
 #endif
+
+	if (player->OnAiming())m_camera->SetDebugCameraPoint();
 	SetDrawScreen(m_modelScreenHandle);
 
-	SetCameraNearFar(1.f, 10000.f);
+
 	SetCameraPositionAndTarget_UpVecY((player->GetPos() + Vec3::Left() * -10+Vec3::Front()*-10+Vec3::Up()*10).VGet(), (player->GetPos()).VGet());
 	ClearDrawScreen();
 	//player->Draw();
 	SetDrawScreen(DX_SCREEN_BACK);
+	SetCameraNearFar(1.0f, 30000.0f);
 	//
 	//SetScreenFlipTargetWindow(NULL);
 

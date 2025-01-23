@@ -23,7 +23,7 @@ PlayerStickSphere::PlayerStickSphere(MyEngine::Collidable::Priority priority, Ob
 m_player(std::dynamic_pointer_cast<Player>(player)),
 m_sideVec(sideVec),
 m_lifeTime(0),
-m_stickFlag(false)
+m_pushCount(0)
 {
 	/*m_rigid->SetVelocity(VGet(m_velocity.x * 2, m_velocity.y * 2, m_velocity.z * 2));
 	m_rigid->SetPos(pos);
@@ -41,6 +41,7 @@ m_stickFlag(false)
 
 PlayerStickSphere::~PlayerStickSphere()
 {
+	int a = 0;
 }
 
 void PlayerStickSphere::Init()
@@ -65,11 +66,11 @@ void PlayerStickSphere::Draw()
 
 void PlayerStickSphere::Effect()
 {
-	if (m_player->GetOperationFlag())
+	/*if (m_player->GetOperationFlag())
 	{
 		m_player->SetIsOperation(false);
 		m_isDestroyFlag = true;
-	}
+	}*/
 	if (m_stickFlag)
 	{
 		
@@ -83,8 +84,9 @@ void PlayerStickSphere::Effect()
 		}
 		else
 		{
+			m_pushCount++;
 			m_player->SetIsOperation(true);
-			m_player->SetVelocity((m_rigid->GetPos() - m_player->GetPos()).GetNormalized() * 3);
+			m_player->SetVelocity((m_rigid->GetPos() - m_player->GetPos()).GetNormalized() * 3*m_pushCount);
 		}
 		
 	}

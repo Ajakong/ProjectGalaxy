@@ -6,7 +6,7 @@
 
 class SceneMain;
 class Player;
-class Planet;
+class SpherePlanet;
 class Camera;
 
 
@@ -42,8 +42,15 @@ private:
     int m_gamePlayingBgmHandle;
     int m_frameHandle = 0;
 
+	int m_stickOSTHandle = 0;
+
+    //ハンドル集
+    int m_skyDomeH;
+    float m_skyDomeRotationAngle;
+
     std::shared_ptr<Player> player;
-	std::shared_ptr<Planet> planet;
+	std::shared_ptr<SpherePlanet> planet;
+    std::shared_ptr<SpherePlanet> nextPlanet;
 	std::shared_ptr<Camera> camera;
 
     // メンバ関数ポインタの宣言

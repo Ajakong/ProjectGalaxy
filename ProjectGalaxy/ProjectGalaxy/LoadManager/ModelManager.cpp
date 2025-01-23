@@ -43,7 +43,6 @@ int ModelManager::GetModelData(const char* modelname)
 
 void ModelManager::DeleteModelData(const char* modelname)
 {
-	string fileName = "Data/Model/";
 	DxLib::DeleteGraph(m_pathAndModelInfoes[modelname].handle);
 	m_pathAndModelInfoes.erase(modelname);
 }

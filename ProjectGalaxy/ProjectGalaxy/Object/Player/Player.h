@@ -4,6 +4,7 @@
 #include"Quaternion.h"
 #include"ColliderSphere.h"
 #include"StampImpact.h"
+#include"Planet.h"
 #include<string>
 
 class Camera;
@@ -30,9 +31,10 @@ public:
 		AnimationNumJumpDive,
 		AnimationNumRolling,
 		AnimationNumRollingAttack,
+		AnimationNumShotPose
 	};
 
-	Player(int modelhandle);
+	Player(int modelhandle,Vec3 pos=Vec3::Zero());
 	~Player();
 
 	void Init();
@@ -48,6 +50,7 @@ public:
 	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
 	
 	void SetCameraToPlayer(Vec3 cameraToPlayer);
+	Vec3 GetOnPlanetPos() { return m_nowPlanet->GetRigidbody()->GetPos(); }
 	Vec3 GetVelocity() const { return m_rigid->GetVelocity(); }
 	Vec3 GetMoveDir() const{ return m_moveDir; }
 	Vec3 GetNormVec() const { return m_upVec.GetNormalized(); }
@@ -77,6 +80,7 @@ public:
 	void SetFrontVec(Vec3 front) { m_frontVec = front; }
 	void IsWarp() { m_isJumpFlag = true;}
 	int GetPlayerModelhandle() const { return m_modelHandle; }
+	int GetTitleMoveNum() { return m_titleUpdateNum; }
 	bool IsSearch() { return m_isSearchFlag; }
 	bool OnDamage() { return m_playerUpdate==&Player::DamegeUpdate; }
 	bool IsClear() { return m_isClearFlag; }
@@ -123,6 +127,8 @@ public:
 	void BoostUpdate();
 	void OperationUpdate();
 
+	void MoveToTargetWithStickStar(Vec3 targetPos);
+
 private:
 	Vec3 Move();
 
@@ -137,6 +143,7 @@ private:
 
 	//状態別関数(ポインタで呼び出す)
 	/*m_playerUpdateで使う*/
+	void TitleUpdate();
 	/// <summary>
 	/// 開始直後に呼ばれる
 	/// </summary>
@@ -226,6 +233,8 @@ private:
 	/// 弾の削除処理
 	/// </summary>
 	void DeleteManage();
+	
+	
 
 	template <typename T>
 	/// <summary>
@@ -258,6 +267,7 @@ private:
 	int m_modelHandle = 0;
 	int m_aimGraphHandle = 0;
 	int m_handFrameIndex;
+	int m_shotAnimCount;
 
 	int m_landingStanFrame;
 	//プレイヤーのステータス
@@ -278,6 +288,12 @@ private:
 	int m_getItemHandle;
 	int m_color;
 	int m_spinCount;
+
+	bool m_shotAnimFlag;
+	/// <summary>
+	/// タイトル画面で今している行動の番号
+	/// </summary>
+	int m_titleUpdateNum;
 
 	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
 	std::vector<std::shared_ptr<StampImpact>> m_impacts;
@@ -347,7 +363,7 @@ private:
 	bool m_isAimFlag = false;
 	bool m_isClearFlag=false;
 
-	int m_visibleCount = 0;
+	int m_visibleCount;
 
 	int m_hitCount = 0;
 };
