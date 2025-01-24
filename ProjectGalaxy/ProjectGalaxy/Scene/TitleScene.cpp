@@ -42,7 +42,7 @@ namespace
 
     constexpr float kCameraNear = 10.0f;
     constexpr float kCameraFar = 3000.0f;
-    constexpr float kSkyDomeScale = 0.3f;
+    constexpr float kSkyDomeScale = 0.8f;
     constexpr float kSkyDomeRotationSpeed = 0.001f;
 
     constexpr int kTitleGraphX = 0;
@@ -57,6 +57,10 @@ namespace
     constexpr int kLineColor = 0x44ffff;
     constexpr int kLineX = 30;
     constexpr int kLineY = 900;
+
+    const Vec3 cameraFirstPosition = {-60,0,0};
+    const Vec3 cameraSecondPosition = { -200,-45,80 };
+
 }
 
 TitleScene::TitleScene(SceneManager& manager) :
@@ -71,13 +75,13 @@ TitleScene::TitleScene(SceneManager& manager) :
     nextPlanet(std::make_shared<SpherePlanet>(Vec3(-300, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kNextPlanetModelName), 1.0f, 1)),
 	emeraldPlanet(std::make_shared<SpherePlanet>(Vec3(400, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kEmeraldPlanetModelName), 1.0f, 1)),
     redPlanet(std::make_shared<SpherePlanet>(Vec3(200, -150,350), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kRedPlanetModelName), 1.0f, 1)),
-	camera(std::make_shared<Camera>(VGet(-200, -45, 80))),
+	camera(std::make_shared<Camera>(cameraFirstPosition)),
     m_skyDomeH(0),
     m_skyDomeRotationAngle(0),
 	m_count(0)
 {
     
-    camera->Update(VGet(0, -45, 80));
+    camera->Update(VGet(0, 0, 50));
 
     PlaySoundMem(m_titleBGMHandle, DX_PLAYTYPE_LOOP);
     //SetCameraPositionAndTarget_UpVecY(VGet(-200, -45, 80), VGet(0, -45, 80));
@@ -93,18 +97,23 @@ TitleScene::TitleScene(SceneManager& manager) :
     m_drawFunc = &TitleScene::NormalDraw;
 
     m_skyDomeH = ModelManager::GetInstance().GetModelData(kSkyboxModelName);
+    MV1SetPosition(m_skyDomeH, Vec3::Zero().VGet());
     MV1SetPosition(m_skyDomeH, VGet(0, 0, 0));
     MV1SetScale(m_skyDomeH, VGet(kSkyDomeScale, kSkyDomeScale, kSkyDomeScale));
 
     UI::GetInstance().Init();
-    UI::GetInstance().InText("どうも、やめてよダーリンです");
-    UI::GetInstance().InText("Astro Seeker第一部隊隊長である君に宇宙の存亡をかけた超重要任務を授けます");
-    UI::GetInstance().InText("諜報部隊が入手した情報によると宇宙最大のエネルギー持つ物体スーパースターが何者かに盗まれました");
-    UI::GetInstance().InText("この宇宙を守るためにはスーパースターを取り戻す必要があります");
-    UI::GetInstance().InText("この任務は数々の死線を乗り越えたあなたにしか成し遂げられないことです");
-    UI::GetInstance().InText("スーパースターを取り戻し、宇宙帝国の軍勢を撃退し、全宇宙の平和を取り戻してください");
-    UI::GetInstance().InText("君には全宇宙の未来がかかっています");
-    UI::GetInstance().InText("さあ、Astro Seeker第一部隊隊長として宇宙の未来を切り開いてください");
+    UI::GetInstance().InText("私はタカサキ大佐だ");
+    UI::GetInstance().InText("この通信が届いていたらAボタンで応答してくれ");
+    UI::GetInstance().InText("Astro Seeker第一部隊隊長である君に宇宙の存亡をかけた超重要任務を授ける");
+    UI::GetInstance().InText("諜報部隊が入手した情報によると宇宙最大のエネルギー持つ物体スーパースターが何者かに盗まれた");
+    UI::GetInstance().InText("この宇宙を守るためにはスーパースターを取り戻す必要がある");
+    UI::GetInstance().InText("この任務は数々の死線を乗り越えた君にしか成し遂げられないことだと判断した");
+    UI::GetInstance().InText("スーパースターを取り戻し、宇宙帝国の軍勢を撃退し、全宇宙の平和を取り戻してくれ");
+    UI::GetInstance().InText("君には全宇宙の未来がかかっている");
+    UI::GetInstance().InText("さあ、Astro Seeker第一部隊隊長として宇宙の未来を切り開け！");
+
+
+    camera->SetEasingSpeed(15.f);
 }
 
 TitleScene::~TitleScene()
@@ -185,6 +194,8 @@ void TitleScene::NormalUpdate()
     player->SetMatrix();
     if (Pad::IsTrigger(PAD_INPUT_1))
     {
+        
+        camera->SetCameraPoint(cameraSecondPosition);
         player->MoveToTargetPosWithSticker(nextPlanet->GetRigidbody()->GetPos());
         m_updateFunc = &TitleScene::DirectionUpdate;
     }
@@ -212,7 +223,7 @@ void TitleScene::FadeOutUpdate()
 
 void TitleScene::DirectionUpdate()
 {
-   
+    camera->Update(player->GetRigidbody()->GetPos());
     bool moveFlag = player->MoveToTargetPosWithSticker(nextPlanet->GetRigidbody()->GetPos());
     if (moveFlag)
     {
@@ -234,7 +245,7 @@ void TitleScene::LoadingUpdate()
 
     if (m_count > 70)
     {
-        camera->SetEasingSpeed(15.f);
+        
         camera->SetCameraPoint(player->GetPos() + positioningPlayerToCamera * 10);
         player->DoNotMove();
         UI::GetInstance().Update();

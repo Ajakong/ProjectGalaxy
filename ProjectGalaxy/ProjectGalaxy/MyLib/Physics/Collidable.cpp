@@ -18,6 +18,7 @@ Collidable::Collidable(Priority priority, ObjectTag tag) :
 	m_cbuffH = CreateShaderConstantBuffer(sizeof(UserData));
 	m_userData= static_cast<UserData*>(GetBufferShaderConstantBuffer(m_cbuffH));
 	m_userData->dissolveY = 1.0f;
+	m_isActive = true;
 }
 
 MyEngine::Collidable::Collidable(std::shared_ptr<Collidable> col) :

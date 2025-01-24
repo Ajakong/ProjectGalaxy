@@ -102,7 +102,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>プロジェクトに追加すべきファイル_VC用;$(ProjectDir);$(ProjectDir)Scene;$(ProjectDir)Planet;$(ProjectDir)LoadManager;$(ProjectDir)Object;$(ProjectDir)Object\Camera;$(ProjectDir)Object\Player;$(ProjectDir)Object\WarpGate;$(ProjectDir)Object\ClearObject;$(ProjectDir)Object\Item;$(ProjectDir)Object\Enemy;$(ProjectDir)Object\Base;$(ProjectDir)Object\Gimmick;$(ProjectDir)MyLib;$(ProjectDir)MyLib\Physics;$(ProjectDir)Game</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(IntDir)</AdditionalUsingDirectories>
@@ -185,6 +185,7 @@
     <ClCompile Include="Object\Base\SphereBase.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
     <ClCompile Include="Object\ClearObject\ClearObject.cpp" />
+    <ClCompile Include="Object\Enemy\BigKuribo.cpp" />
     <ClCompile Include="Object\Enemy\Boss.cpp" />
     <ClCompile Include="Object\Enemy\Enemy.cpp" />
     <ClCompile Include="Object\Enemy\EnemyManager.cpp" />
@@ -205,6 +206,7 @@
     <ClCompile Include="Object\Item\Coin.cpp" />
     <ClCompile Include="Object\Item\FullPowerDropItem.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
+    <ClCompile Include="Object\Item\Key.cpp" />
     <ClCompile Include="Object\Item\StickStarItem.cpp" />
     <ClCompile Include="Object\ObjectManager.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
@@ -268,6 +270,7 @@
     <ClInclude Include="Object\Base\SphereBase.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
     <ClInclude Include="Object\ClearObject\ClearObject.h" />
+    <ClInclude Include="Object\Enemy\BigKuribo.h" />
     <ClInclude Include="Object\Enemy\Boss.h" />
     <ClInclude Include="Object\Enemy\Enemy.h" />
     <ClInclude Include="Object\Enemy\EnemyManager.h" />
@@ -287,6 +290,7 @@
     <ClInclude Include="Object\Item\Coin.h" />
     <ClInclude Include="Object\Item\FullPowerDropItem.h" />
     <ClInclude Include="Object\Item\Item.h" />
+    <ClInclude Include="Object\Item\Key.h" />
     <ClInclude Include="Object\Item\StickStarItem.h" />
     <ClInclude Include="Object\ObjectManager.h" />
     <ClInclude Include="Object\Player\Player.h" />

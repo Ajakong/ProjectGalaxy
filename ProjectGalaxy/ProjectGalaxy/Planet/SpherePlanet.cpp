@@ -132,10 +132,10 @@ Vec3 SpherePlanet::GetNormVec(Vec3 pos)
 
 void SpherePlanet::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
-	/*if (colider->GetTag() == ObjectTag::Takobo)
+	if (colider->GetTag() == ObjectTag::Takobo)
 	{
 		m_enemyCount++;
-	}*/
+	}
 }
 
 void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)

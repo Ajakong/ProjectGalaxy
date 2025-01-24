@@ -24,6 +24,7 @@
 #include"StickStarItem.h"
 #include"FullPowerDropItem.h"
 #include"Coin.h"
+#include"Key.h"
 #include"ClearObject.h"
 #include<cassert>
 #include"Pad.h"
@@ -102,19 +103,20 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 {
 	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 	
-	//Unityで設定したデータでオブジェクトを配置
-	m_creater = std::make_shared<GalaxyCreater>("SerialPlanetGalaxy");
 	//惑星の配置
-	m_creater->PlanetCreate();
+	GalaxyCreater::GetInstance().PlanetCreate();
 	//ギミックの配置
-	m_creater->SeekerLineCreate();
+	GalaxyCreater::GetInstance().SeekerLineCreate();
 	//敵の配置
-	m_enemies=m_creater->EnemyCreate(player);
+	m_enemies=GalaxyCreater::GetInstance().EnemyCreate(player);
 	//その他オブジェクトの配置
-	m_creater->ObjectCreate(player);
+	GalaxyCreater::GetInstance().ObjectCreate(player);
+	//その他オブジェクトの配置
+	GalaxyCreater::GetInstance().LockedObjectCreate();
+	GalaxyCreater::GetInstance().KeyLockObjectCreate();
 
 	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan"), Vec3(0, -1000, 200), 1, 1.0f, 5.f));
-#ifdef DEBUG
+#ifdef _DEBUG
 
 	//オブジェクトやギミックの配置(のちのちUnityのデータを読み込んで配置するので今は仮配置)
 
@@ -188,6 +190,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	MyEngine::Physics::GetInstance().Entry(m_coin.back());
 	m_item.push_back(make_shared<StickStarItem>(Vec3(0, 450, 0),true));
 	m_item.push_back(make_shared <FullPowerDropItem>(Vec3(-550, 300, 0),true));
+	
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
@@ -229,6 +232,8 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 	m_enemies.clear();
 	m_poworStone.clear();
 	m_warpGate.clear();
+
+	GalaxyCreater::GetInstance().Clear();
 }
 
 void SerialPlanetGalaxy::Init()
@@ -342,7 +347,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	
 	//敵の削除管理
 	DeleteObject(m_enemies);
-
+	DeleteObject(m_item);
 	/*for (auto& item : m_kuribo) { item->SetMatrix(); }
 	for (auto& item : m_takobo) { item->SetMatrix(); }
 	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
@@ -359,8 +364,6 @@ void SerialPlanetGalaxy::BossBattleUpdate()
 
 void SerialPlanetGalaxy::GamePlayingDraw()
 {
-	
-	
 	DxLib::MV1DrawModel(m_skyDomeH);
 
 	MyEngine::Physics::GetInstance().Draw();
@@ -370,7 +373,6 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	{
 		item->SetIsSearch(player->IsSearch());
 	}
-
 	
 	if (player->IsSearch())
 	{
@@ -420,6 +422,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25 * 10, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
 	DrawFormatString(0, 25 * 11, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());*/
 #endif
+	
 
 	if (player->OnAiming())m_camera->SetDebugCameraPoint();
 	SetDrawScreen(m_modelScreenHandle);
@@ -456,11 +459,11 @@ void SerialPlanetGalaxy::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
 	auto result = remove_if(objects.begin(), objects.end(), [this](const auto& object)
 		{
 			auto flag= object->IsDestroy();
-	if (flag)
+	/*if (flag)
 	{
 		auto collidable = std::static_pointer_cast<MyEngine::Collidable>(object);
 		MyEngine::Physics::GetInstance().Exit(collidable);
-	}
+	}*/
 	return  flag;// IsDestroy() が true の場合削除
 		});
 	objects.erase(result, objects.end());

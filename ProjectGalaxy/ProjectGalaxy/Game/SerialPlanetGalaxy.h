@@ -92,7 +92,6 @@ private:
 	UserData* userData = static_cast<UserData*>(GetBufferShaderConstantBuffer(cbuffH));
 
 	std::shared_ptr<Camera> m_camera;
-	std::shared_ptr<GalaxyCreater> m_creater;
 	//ステージ
 	std::vector<std::shared_ptr<Planet>> m_planet;
 	//アイテム

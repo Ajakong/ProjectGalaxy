@@ -19,6 +19,7 @@ enum class ObjectTag
 	FullPowerDropItem,
 	StickStarItem,
 	Coin,
+	Key,
 	ClearObject,
 	StarCapture,
 	SeekerLine,

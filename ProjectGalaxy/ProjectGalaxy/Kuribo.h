@@ -78,7 +78,7 @@ private:
 	template <typename T>
 	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
 
-private:
+protected:
 	Vec3 m_vec;
 	Vec3 m_attackDir;
 	Vec3 m_moveShaftPos;

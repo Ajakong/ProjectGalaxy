@@ -36,12 +36,14 @@ m_pushCount(0)
 	{
 		m_moveUpdate = &PlayerStickSphere::StraightUpdate;
 	}
+
+	SetAntiGravity(true);
 }
 
 
 PlayerStickSphere::~PlayerStickSphere()
 {
-	int a = 0;
+	
 }
 
 void PlayerStickSphere::Init()
@@ -86,7 +88,7 @@ void PlayerStickSphere::Effect()
 		{
 			m_pushCount++;
 			m_player->SetIsOperation(true);
-			m_player->SetVelocity((m_rigid->GetPos() - m_player->GetPos()).GetNormalized() * 3*m_pushCount);
+			m_player->SetVelocity((m_rigid->GetPos() - m_player->GetPos()).GetNormalized() * 3 * m_pushCount);
 		}
 		
 	}

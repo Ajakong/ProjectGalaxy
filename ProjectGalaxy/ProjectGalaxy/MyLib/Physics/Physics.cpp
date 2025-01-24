@@ -23,8 +23,6 @@ namespace
 	constexpr float CHECK_COLLIDE_SQ_LENDGHT = CHECK_COLLIDE_LENDGHT * CHECK_COLLIDE_LENDGHT*10;
 }
 
-Vec3 closestPointOnCubeAndSphere(const Vec3& cubeCenter, Vec3 size, const Vec3& sphereCenter, double sphereRadius);
-
 Physics::Physics()
 {
 }
@@ -94,8 +92,11 @@ void Physics::Update()
 	std::reverse_iterator<std::vector<int>::iterator> rit;
 	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(),m_collidables.rend()))//途中で要素を削除してもいいように逆順
 	{
+		if (!item->GetIsActive())continue;
 		item->Update();
+		if (item->IsDestroy())Exit(item);
 	}
+
 
 	// 通知リストのクリア・更新
 	m_onCollideInfo.clear();
@@ -136,6 +137,7 @@ void MyEngine::Physics::Draw()
 {
 	for (const auto& obj : m_collidables)
 	{
+		if (!obj->GetIsActive())continue;
 		obj->Draw();
 	}
 }
@@ -160,6 +162,7 @@ void MyEngine::Physics::Gravity()
 		// それぞれが持つ判定全てを比較
 		for (auto& object : m_collidables)
 		{
+			if (!object->GetIsActive())continue;
 			if (object->IsAntiGravity())continue;
 			for (auto& col : object->m_colliders)
 			{
@@ -242,6 +245,7 @@ void MyEngine::Physics::Friction()
 		// それぞれが持つ判定全てを比較
 		for (auto& object : m_collidables)
 		{
+			if (!object->GetIsActive())continue;
 			if (object->IsAntiGravity())continue;
 			for (auto& col : object->m_colliders)
 			{
@@ -401,6 +405,7 @@ void MyEngine::Physics::CheckCollide()
 		auto objA = colVec[i * 2];
 		auto objB = colVec[i * 2 + 1];
 
+		if (!objA->GetIsActive()||!objB->GetIsActive())continue;
 		// それぞれが持つ判定全てを比較
 		for (int i = 0; i < objA->m_colliders.size(); ++i)
 		{
