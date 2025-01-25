@@ -102,8 +102,10 @@ TitleScene::TitleScene(SceneManager& manager) :
     MV1SetScale(m_skyDomeH, VGet(kSkyDomeScale, kSkyDomeScale, kSkyDomeScale));
 
     UI::GetInstance().Init();
-    UI::GetInstance().InText("私はタカサキ大佐だ");
-    UI::GetInstance().InText("この通信が届いていたらAボタンで応答してくれ");
+    std::list<string> ImTakasaki;
+    ImTakasaki.push_back( "私はタカサキ大佐だ");
+    ImTakasaki.push_back("この通信が届いていたらAボタンで応答してくれ");
+    UI::GetInstance().InTexts(ImTakasaki);
     UI::GetInstance().InText("Astro Seeker第一部隊隊長である君に宇宙の存亡をかけた超重要任務を授ける");
     UI::GetInstance().InText("諜報部隊が入手した情報によると宇宙最大のエネルギー持つ物体スーパースターが何者かに盗まれた");
     UI::GetInstance().InText("この宇宙を守るためにはスーパースターを取り戻す必要がある");
@@ -302,7 +304,7 @@ void TitleScene::NormalDraw()
     {
         int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
 
-        DrawExtendGraph(kTitleGraphX, kTitleGraphY, kTitleGraphWidth, kTitleGraphHeight, m_titleHandle, true);
+        DrawRotaGraph2(400, 375, 615, 350,0.5f,0, m_titleHandle, true);
         int btnalpha = static_cast<int>(255 * (static_cast<float>(m_btnFrame) / kFadeFrameMax));
         SetDrawBlendMode(DX_BLENDMODE_ADD, btnalpha);
 

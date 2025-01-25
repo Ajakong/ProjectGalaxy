@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include<string>
 #include<memory>
+#include<list>
 class TextManager;
 
 class UI
@@ -23,7 +24,13 @@ public:
 	
 	void Draw(float m_hp=0);
 	
+	/// <summary>
+	/// 新しいテキスト群をぶち込む
+	/// </summary>
+	/// <param name="text"></param>
 	void InText(const std::string text);
+	
+	void InTexts(const std::list<std::string> texts);
 	/// <summary>
 	/// 入力を受け付けたら表示しているテキストを削除して次のテキストに移る
 	/// </summary>

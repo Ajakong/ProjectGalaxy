@@ -19,6 +19,8 @@ public:
 	/// </summary>
 	/// <param name="text">表示したいテキスト</param>
 	void InText(const std::string text);
+	void InTexts(const std::list<std::string> text);
+
 	/// <summary>
 	/// 入力を受け付けたら表示しているテキストを削除して次のテキストに移る
 	/// </summary>
@@ -35,7 +37,10 @@ private:
 	int m_fontHandle;
 	int m_drawTextLength;
 	int m_drawTextFrame;
-	std::list<std::string> m_texts;
+	/// <summary>
+	/// 一つ目のリストがテキストボックス。二つ目が行ごとに分けられる
+	/// </summary>
+	std::list<std::list<std::string>> m_texts;
 
 };
 

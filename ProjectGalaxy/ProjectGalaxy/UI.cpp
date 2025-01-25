@@ -134,7 +134,7 @@ void UI::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 150);
 	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x111111, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x00ffff, false);
+	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x0000ff, false);
 
 	
 }
@@ -157,8 +157,9 @@ void UI::TextBoxDraw()
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 150);
 	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x111111, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x00ffff, false);
+	DrawBox(Game::kScreenWidth / 2 - m_textBoxFrame * 9, 90, Game::kScreenWidth / 2 + m_textBoxFrame * 9, 440, 0x0000ff, false);
 
+	DrawRectRotaGraph(static_cast<int>(kWindowScreenUIInfo.width / 2)+950, static_cast<int>(kWindowScreenUIInfo.height / 2)+50, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 0.7f, 0, m_uiAssetHandle, true);
 	m_textManager->Draw();
 }
 
@@ -169,6 +170,11 @@ void UI::CanWeTalkAppaerDraw()
 void UI::InText(const std::string text)
 {
 	m_textManager->InText(text);
+}
+
+void UI::InTexts(const std::list<std::string> texts)
+{
+	m_textManager->InTexts(texts);
 }
 
 void UI::DeleteText()
