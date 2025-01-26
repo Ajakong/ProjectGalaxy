@@ -10,6 +10,7 @@ public:
 	static GameStopManager& GetInstance();
 
 	void SetGameManager(std::shared_ptr<GameManager> manager);
+	void SetStopFrame(int stopFrame);
 private:
 	GameStopManager();
 	

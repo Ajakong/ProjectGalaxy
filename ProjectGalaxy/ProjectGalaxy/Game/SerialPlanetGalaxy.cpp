@@ -263,7 +263,7 @@ void SerialPlanetGalaxy::Init()
 void SerialPlanetGalaxy::Update()
 {
 	(this->*m_managerUpdate)();
-	UI::GetInstance().Update();
+	
 }
 
 void SerialPlanetGalaxy::Draw()
@@ -383,7 +383,6 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
-	UI::GetInstance().Draw((player->GetHp()));
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
 #ifdef _DEBUG
@@ -422,16 +421,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25 * 10, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
 	DrawFormatString(0, 25 * 11, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());*/
 #endif
-	
 
-	if (player->OnAiming())m_camera->SetDebugCameraPoint();
-	SetDrawScreen(m_modelScreenHandle);
-
-
-	SetCameraPositionAndTarget_UpVecY((player->GetPos() + Vec3::Left() * -10+Vec3::Front()*-10+Vec3::Up()*10).VGet(), (player->GetPos()).VGet());
-	ClearDrawScreen();
-	//player->Draw();
-	SetDrawScreen(DX_SCREEN_BACK);
 	SetCameraNearFar(1.0f, 30000.0f);
 	//
 	//SetScreenFlipTargetWindow(NULL);

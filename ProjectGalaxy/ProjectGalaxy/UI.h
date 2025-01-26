@@ -39,16 +39,19 @@ public:
 	void CanWeJustTalk();
 	int TextRemaining();
 
+
 	using UIstate_t = void(UI::*)();
 	UIstate_t m_uiUpdate;
 	UIstate_t m_uiDraw;
+	
+	UIstate_t GetState() { return m_uiUpdate; }
+	void TextBoxUpdate();
 
 private:
 	
 	void NormalUpdate();
 	
 	void AppaerUpdate();
-	void TextBoxUpdate();
 	void FadeOutUpdate();
 
 	void NormalDraw();

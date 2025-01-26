@@ -5,6 +5,7 @@
 #include"Player.h"
 #include"ModelManager.h"
 #include"GameStopManager.h"
+#include"UI.h"
 using namespace MyEngine;
 
 namespace
@@ -33,11 +34,12 @@ void GameManager::Init()
 void GameManager::Update()
 {
 	m_updateStopFrame--;
-	if (m_updateStopFrame < 0)
+	if (m_updateStopFrame < 0&&UI::GetInstance().GetState()!=&UI::TextBoxUpdate)
 	{
 		galaxy.back()->Update();
 
 	}
+	UI::GetInstance().Update();
 	if (galaxy.back()->GetGameOver())
 	{
 		m_isGameOverFlag = true;
@@ -59,6 +61,8 @@ void GameManager::Update()
 void GameManager::Draw()
 {
 	galaxy.back()->Draw();
+
+	UI::GetInstance().Draw((player->GetHp()));
 }
 
 void GameManager::IntroUpdate()

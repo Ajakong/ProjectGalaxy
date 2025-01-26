@@ -3,6 +3,7 @@
 #include"Game.h"
 #include"TextManager.h"
 #include"Pad.h"
+#include"GameStopManager.h"
 namespace
 {
 	const char* kGraphUIAssetName = "Designer_ui.png";
