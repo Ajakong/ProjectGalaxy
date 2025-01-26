@@ -5,6 +5,7 @@
 namespace
 {
 	constexpr int kFontSize = 20;
+    constexpr int kTextHeightDistance = 5;
 }
 
 TextManager::TextManager()
@@ -83,7 +84,7 @@ void TextManager::Draw()
     // テキストを描画
     for (auto text = drawText.begin(); text != drawText.end();)
     {
-        DrawFormatStringFToHandle(300, 200 + listIndex * kFontSize, 0xffffff, m_fontHandle, text->c_str());
+        DrawFormatStringFToHandle(300, 200 + listIndex * (kFontSize+ kTextHeightDistance), 0xffffff, m_fontHandle, text->c_str());
         listIndex++;
         text++;
     }

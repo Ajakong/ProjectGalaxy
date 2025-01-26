@@ -387,6 +387,9 @@
     <ClCompile Include="Object\Enemy\BigKuribo.cpp">
       <Filter>ソース ファイル\Object\Enemy\Kuribo</Filter>
     </ClCompile>
+    <ClCompile Include="util\GameStopManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -637,6 +640,9 @@
     </ClInclude>
     <ClInclude Include="Object\Enemy\BigKuribo.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="util\GameStopManager.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
