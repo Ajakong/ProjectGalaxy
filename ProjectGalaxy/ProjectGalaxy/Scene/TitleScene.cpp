@@ -106,10 +106,12 @@ TitleScene::TitleScene(SceneManager& manager) :
     ImTakasaki.push_back( "私はタカサキ大佐だ");
     ImTakasaki.push_back("この通信が届いていたらAボタンで応答してくれ");
     UI::GetInstance().InTexts(ImTakasaki);
+
     std::list<string> mainMessage;
-    mainMessage.push_back("よし、届いてるみたいだな！");
+    mainMessage.push_back("よし、届いてるみたいだな");
     mainMessage.push_back("では本題に移ろう");
     UI::GetInstance().InTexts(mainMessage);
+
     UI::GetInstance().InText("Astro Seeker第一部隊隊長である君に宇宙の存亡をかけた超重要任務を授ける");
     UI::GetInstance().InText("諜報部隊が入手した情報によると宇宙最大のエネルギー持つ物体スーパースターが何者かに盗まれた");
     UI::GetInstance().InText("この宇宙を守るためにはスーパースターを取り戻す必要がある");
