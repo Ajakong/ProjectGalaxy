@@ -196,10 +196,7 @@ void Player::Update()
 		else
 		{
 			m_shotDir = m_frontVec;
-			if (m_inputVec.Length() != 0)
-			{
-				m_shotDir = m_inputVec;
-			}
+			
 			m_isAimFlag = true;
 		}
 	}
