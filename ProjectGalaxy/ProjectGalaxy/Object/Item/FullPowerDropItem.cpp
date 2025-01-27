@@ -9,14 +9,6 @@ FullPowerDropItem::~FullPowerDropItem()
 {
 }
 
-void FullPowerDropItem::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
-{
-	if (colider->GetTag() == ObjectTag::Player)
-	{
-		int a = 0;
-	}
-}
-
 void FullPowerDropItem::Draw()
 {
 	Vec3 zero = { 0,0,0 };

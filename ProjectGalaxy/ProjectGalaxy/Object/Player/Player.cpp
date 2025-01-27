@@ -161,7 +161,7 @@ m_titleUpdateNum(0)
 
 	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
 	m_dropAttackUpdate = &Player::NormalDropAttackUpdate;
-	m_spinAttackUpdate = &Player::RollingAttackUpdate;
+	m_spinAttackUpdate = &Player::SpiningUpdate;
 }
 
 Player::~Player()
@@ -433,6 +433,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		printf("Stage\n");
 		m_spinCount = 0;
 		m_isOperationFlag = false;
+		m_isJumpFlag = false;
 		if (m_playerUpdate == &Player::DropAttackUpdate)
 		{
 			PlaySoundMem(SoundManager::GetInstance().GetSoundData(kJumpDropGroundSEName), DX_PLAYTYPE_BACK);

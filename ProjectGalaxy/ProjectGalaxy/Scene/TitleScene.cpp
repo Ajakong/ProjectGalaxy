@@ -157,10 +157,7 @@ void TitleScene::Draw()
 {
     // 画面とZバッファのクリア
     ClearDrawScreen();
-   
-    // Zバッファの有効化
-    SetUseZBuffer3D(TRUE);
-    SetWriteZBuffer3D(TRUE);
+
 
     // スカイドームの描画
     DxLib::MV1DrawModel(m_skyDomeH);
@@ -171,9 +168,7 @@ void TitleScene::Draw()
 
    
 
-    // Zバッファの無効化
-    SetUseZBuffer3D(FALSE);
-    SetWriteZBuffer3D(FALSE);
+
 
     //// 2D描画
     //DrawFormatString(0, 25 * 6, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);

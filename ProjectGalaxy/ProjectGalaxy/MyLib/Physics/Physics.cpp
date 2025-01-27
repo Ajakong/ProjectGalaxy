@@ -94,7 +94,6 @@ void Physics::Update()
 	{
 		if (!item->GetIsActive())continue;
 		item->Update();
-		if (item->IsDestroy())Exit(item);
 	}
 
 
@@ -131,6 +130,10 @@ void Physics::Update()
 		OnCollideInfo(item.own, item.send, item.ownTag,item.sendTag, item.hitPos, item.kind);
 	}
 	
+	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(), m_collidables.rend()))//途中で要素を削除してもいいように逆順
+	{
+		if (item->IsDestroy())Exit(item);
+	}
 }
 
 void MyEngine::Physics::Draw()

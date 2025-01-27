@@ -87,7 +87,7 @@ namespace
 	constexpr int kUiTimeCount_PosY = 90;
 
 	//カメラ
-	constexpr float kCameraDistanceFront = 15.f;
+	constexpr float kCameraDistanceFront = 30.f;
 	constexpr float kCameraDistanceAddFrontInJump = 15.f;
 	constexpr float kCameraDistanceUp = 30.f;
 
@@ -217,9 +217,17 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	UI::GetInstance().InText("宇宙帝国の軍勢を撃退しましょう");*/
 
 	UI::GetInstance().Init();
-	UI::GetInstance().InText("赤いヤツがキーを持ってる");
+	UI::GetInstance().InText("そういえば久しぶりの実働任務になるな");
+	UI::GetInstance().InText("体がなまってるんじゃないか？");
+
+	std::list<std::string> mission;
+	mission.push_back("目の前に謎の金色の球があるだろう");
+	mission.push_back("道順においてあるはずだから順にとってみろ");
+	UI::GetInstance().InTexts(mission);
+
+	/*UI::GetInstance().InText("赤いヤツがキーを持ってる");
 	UI::GetInstance().InText("Aでジャンプしてヤツを踏みつけてキーを奪い取れ");
-	UI::GetInstance().InText("加速装置が見えるようになるはずだ");
+	UI::GetInstance().InText("加速装置が見えるようになるはずだ");*/
 
 }
 
@@ -319,10 +327,15 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	}
 	else
 	{
+		Vec3 upVec = player->GetNormVec().GetNormalized();
 		if (player->OnAiming())
 		{
 			m_camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -5 + player->GetNormVec() * 8 + player->GetSideVec() * 2);
 		}
+		/*if (!player->GetJumpFlag())
+		{
+			m_camera->SetCameraPoint(player->GetPos() + upVec * kCameraDistanceUp - front * kCameraDistanceFront);
+		}*/
 		else
 		{
 			m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
@@ -409,8 +422,10 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25*3, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
 	DrawFormatString(0, 25*4, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
 	DrawFormatString(0, 25*5, 0xffffff, "Camera(%f,%f,%f),Length(%f)",m_camera->GetPos().x, m_camera->GetPos().y, m_camera->GetPos().z,(m_camera->GetPos() - player->GetPos()).Length());
+
 	auto cameraNear = GetCameraNear();
 	auto cameraFar = GetCameraFar();
+	
 	DrawFormatString(0, 25 * 6, 0xffffff, "CameraNearFar(%f,%f)", cameraNear, cameraFar);
 	
 	DrawFormatString(0, 25*7, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
@@ -420,6 +435,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25 * 11, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
 
 	DrawFormatString(0, 25 * 12, 0xffffff, "size(%d)",GalaxyCreater::GetInstance().GetSize());
+	DrawFormatString(0, 25 * 13, 0xffffff, "JumpFlag:%d", player->GetJumpFlag());
 #endif
 
 	SetCameraNearFar(1.0f, 30000.0f);
