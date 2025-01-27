@@ -150,9 +150,9 @@ void SpherePlanet::OnTriggerExit(std::shared_ptr<Collidable> colider,ColideTag o
 	}
 }
 
-void SpherePlanet::ModelRotation()
+void SpherePlanet::ModelRotation(int dir)
 {
-	MV1SetRotationXYZ(m_modelHandle, VGet(m_rotationAngle, 0, 0));
+	MV1SetRotationXYZ(m_modelHandle, VGet(m_rotationAngle*dir, 0, 0));
 
 }
 

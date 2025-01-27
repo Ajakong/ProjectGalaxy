@@ -16,7 +16,7 @@ public:
 	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 	virtual void OnTriggerExit(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 	
-	void ModelRotation();
+	void ModelRotation(int dir=1);
 	void IntroPlanet();
 protected:
 

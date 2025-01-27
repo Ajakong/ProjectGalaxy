@@ -19,6 +19,7 @@
 
 TitlePlayer::TitlePlayer(int modelhandle) : Player(modelhandle)
 {
+	ChangeAnim(AnimationNumRun);
 	m_titlePlayerUpdate = &TitlePlayer::IdleUpdate;
 }
 

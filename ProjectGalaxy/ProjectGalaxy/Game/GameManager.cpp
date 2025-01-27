@@ -15,7 +15,7 @@ namespace
 
 GameManager::GameManager() : 
 	m_updateStopFrame(0),
-	player(std::make_shared<Player>(ModelManager::GetInstance().GetModelData(kPlayerFileName)))
+	player(std::make_shared<Player>(ModelManager::GetInstance().GetModelData(kPlayerFileName),Vec3(0,20,0)))
 {
 	galaxy.push_back(std::make_shared<SerialPlanetGalaxy>(player));
 	

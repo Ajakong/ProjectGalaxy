@@ -140,7 +140,7 @@ void TitleScene::Update()
 {
    
 
-    planet->ModelRotation();
+    planet->ModelRotation(-1);
 	nextPlanet->ModelRotation();
 	emeraldPlanet->ModelRotation();
     redPlanet->ModelRotation();
@@ -269,6 +269,7 @@ void TitleScene::LoadingUpdate()
 void TitleScene::ChangeScene(std::shared_ptr<Scene> next)
 {
     StopSoundMem(m_titleBGMHandle);
+    SetCameraPositionAndTarget_UpVecY(VGet(0, 0, 0), VGet(0, 0, 1));
     m_manager.ChangeScene(next);
 }
 
@@ -315,6 +316,7 @@ void TitleScene::NormalDraw()
         SetDrawBlendMode(DX_BLENDMODE_ADD, btnalpha);
 
         DrawFormatString(kTitleTextX, kTitleTextY, 0xffffff, "Push A to Start");
+        
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
         SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
         DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);

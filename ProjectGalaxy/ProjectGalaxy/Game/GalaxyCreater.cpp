@@ -13,6 +13,7 @@
 #include"Gorori.h"
 #include"Booster.h"
 #include"Boss.h"
+#include<cassert>
 
 GalaxyCreater::GalaxyCreater()
 {
@@ -290,7 +291,7 @@ void GalaxyCreater::LockedObjectCreate()
 			//飛ばす力
 			FileRead_read(&power, sizeof(power), handle);
 			m_lockedObjects.push_back(std::make_shared<Booster>(loc.pos, dir, -1,power));
-			MyEngine::Physics::GetInstance().Entry(m_lockedObjects.back());
+			
 		}
 		if (loc.tag == "SeekerLine")
 		{
@@ -313,17 +314,18 @@ void GalaxyCreater::LockedObjectCreate()
 				info.points.push_back(pos);
 
 			}
-			auto seekerLine = std::make_shared<SeekerLine>(info.points, info.color);
-			MyEngine::Physics::GetInstance().Entry(seekerLine);
-			FileRead_close(handle);
+			m_lockedObjects.push_back(std::make_shared<SeekerLine>(info.points, info.color));
+			
 		}
+		MyEngine::Physics::GetInstance().Entry(m_lockedObjects.back());
 	}
+
 	FileRead_close(handle);
 }
 
-void GalaxyCreater::KeyLockObjectCreate()
+std::vector<std::shared_ptr<Enemy>> GalaxyCreater::KeyLockObjectCreate()
 {
-	std::string fileName = "Data/Info/KeyLockObject.loc";
+	std::string fileName = "Data/Info/KeyLockedObjects.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
@@ -332,6 +334,8 @@ void GalaxyCreater::KeyLockObjectCreate()
 	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
 	//読み込むオブジェクト数分の配列に変更する
 	m_keyLockObjectData.resize(dataCnt);
+
+	std::vector<std::shared_ptr<Enemy>> enemies;
 	//配列の数分回す
 	for (auto& loc : m_keyLockObjectData)
 	{
@@ -358,13 +362,13 @@ void GalaxyCreater::KeyLockObjectCreate()
 
 		if (loc.tag == "BigKuribo")
 		{
-			auto obj=std::make_shared<BigKuribo>(loc.pos,loc.connectObjectNumber);
-			MyEngine::Physics::GetInstance().Entry(obj);
+			enemies.push_back(std::make_shared<BigKuribo>(loc.pos,loc.connectObjectNumber));
+			MyEngine::Physics::GetInstance().Entry(enemies.back());
 		}
 		
 	}
 	FileRead_close(handle);
-
+	return enemies;
 }
 
 void GalaxyCreater::Clear()

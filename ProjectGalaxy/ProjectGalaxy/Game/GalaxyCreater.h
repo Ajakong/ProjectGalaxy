@@ -67,9 +67,9 @@ public:
 	void PlanetCreate();
 	std::vector<std::shared_ptr<Enemy>> EnemyCreate(std::shared_ptr<Player>player);
 	void LockedObjectCreate();
-	void KeyLockObjectCreate();
+	std::vector<std::shared_ptr<Enemy>> KeyLockObjectCreate();
 	void Clear();
-
+	int GetSize() { return m_lockedObjects.size(); }
 	std::shared_ptr<MyEngine::Collidable> GetCollidable(int connectNumber) { return m_lockedObjects[connectNumber]; }
 	
 private:

@@ -106,7 +106,7 @@ private:
 	std::vector<std::shared_ptr<Item>> m_poworStone;
 	//エネミー
 	std::vector<std::shared_ptr<Enemy>> m_enemies;
-
+	std::vector<std::shared_ptr<Enemy>> m_keyLockEnemies;
 	/*std::vector<std::shared_ptr<Takobo>> m_takobo;
 	std::vector<std::shared_ptr<KillerTheSeeker>> m_killerTheSeeker;
 	std::vector<std::shared_ptr<Gorori>> m_gorori;

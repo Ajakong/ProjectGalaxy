@@ -147,7 +147,7 @@ m_titleUpdateNum(0)
 
 	m_shotUpdate = &Player::ShotTheStickStar;
 
-	m_cameraEasingSpeed = 15.f;
+	m_cameraEasingSpeed = 5.f;
 	
 	AddThroughTag(ObjectTag::PlayerBullet);
 
@@ -181,9 +181,10 @@ void Player::Update()
 	
 	if (!Pad::IsState("PlayerInput"))
 	{
-		ChangeAnim(AnimNum::AnimationNumIdle);
+		//ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::TalkingUpdate;
 	}
+	
 	(this->*m_playerUpdate)();
 
 
@@ -436,6 +437,11 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 		{
 			PlaySoundMem(SoundManager::GetInstance().GetSoundData(kJumpDropGroundSEName), DX_PLAYTYPE_BACK);
 		}
+		if (m_playerUpdate == &Player::BoostUpdate)
+		{
+			ChangeAnim(AnimationNumIdle);
+			m_playerUpdate = &Player::JumpingUpdate;
+		}
 	}
 	if (colider->GetTag() == ObjectTag::Crystal)
 	{
@@ -595,7 +601,11 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	printf("TriggerEnter\n");
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
-		
+		if (m_playerUpdate == &Player::BoostUpdate)
+		{
+			ChangeAnim(AnimationNumIdle);
+			m_playerUpdate = &Player::JumpingUpdate;
+		}
 		m_nowPlanet = std::dynamic_pointer_cast<Planet>(colider);
 		
 	}
@@ -757,7 +767,6 @@ void Player::NeutralUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
 		ChangeAnim(AnimNum::AnimationNumJump);
-		UI::GetInstance().InText("今ジャンプしましたね");
 		m_isJumpFlag = true;
 		move += m_upVec.GetNormalized() * kJumpPower;
 		m_playerUpdate = &Player::JumpingUpdate;
@@ -1296,7 +1305,7 @@ void Player::TalkingUpdate()
 	m_state = "Talking";
 	if (Pad::IsState("PlayerInput"))
 	{
-		m_playerUpdate = &Player::NeutralUpdate;
+		m_playerUpdate = m_prevUpdate;
 	}
 }
 
