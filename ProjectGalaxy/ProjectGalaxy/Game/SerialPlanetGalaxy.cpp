@@ -39,6 +39,7 @@
 #include"TalkObject.h"
 #include"DekaHead_Red.h"
 #include"DekaHead_Blue.h"
+#include"DekaHead_Green.h"
 
 
 using namespace std;
@@ -160,9 +161,14 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 
 #endif
 	
-	m_talkObjects.push_back(std::make_shared<DekaHead_Blue>(Vec3(0, 0, 50)));
+	m_talkObjects.push_back(std::make_shared<DekaHead_Red>(Vec3(-10, 0, 50)));
 	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());
 
+	m_talkObjects.push_back(std::make_shared<DekaHead_Green>(Vec3(0, -300, 50)));
+	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());
+
+	m_talkObjects.push_back(std::make_shared<DekaHead_Blue>(Vec3(-123, 481, 1463)));
+	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());
 
 	m_camera = make_shared<Camera>();
 	m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - player->GetFrontVec() * (kCameraDistanceFront));
@@ -410,7 +416,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
-#ifdef _DEBUG
+#ifdef DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);

@@ -1,11 +1,18 @@
 ﻿#include "Mission.h"
 
-Mission::Mission()
+Mission::Mission() : 
+	m_missionFlag(false)
 {
 }
 
 Mission::~Mission()
 {
+}
+
+Mission& Mission::GetInstance()
+{
+	static Mission info;
+	return info;
 }
 
 void Mission::UpDate()

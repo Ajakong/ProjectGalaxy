@@ -8,5 +8,7 @@ public:
 	virtual ~DekaHead_Green();
 
 	virtual std::list<std::list<std::string>> GetTexts();
+
+	bool m_useFlag;
 };
 

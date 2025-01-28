@@ -18,10 +18,11 @@ DekaHead_Yellow::~DekaHead_Yellow()
 
 std::list<std::list<std::string>> DekaHead_Yellow::GetTexts()
 {
+	std::list<std::list<std::string>> talkText;
 	std::list<std::string> one;
 	one.push_back("隊長じゃん！元気？");
-	m_talkTexts.push_back(one);
+	talkText.push_back(one);
 
 	
-	return m_talkTexts;
+	return talkText;
 }

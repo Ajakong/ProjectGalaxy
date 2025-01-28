@@ -58,7 +58,7 @@ namespace
     constexpr int kLineX = 30;
     constexpr int kLineY = 900;
 
-    const Vec3 cameraFirstPosition = {-60,0,0};
+    const Vec3 cameraFirstPosition = { -200,-45,120 };
     const Vec3 cameraSecondPosition = { -200,-45,80 };
 
 }
@@ -81,7 +81,7 @@ TitleScene::TitleScene(SceneManager& manager) :
 	m_count(0)
 {
     
-    camera->Update(VGet(0, 0, 50));
+    camera->Update(VGet(0, 0, 150));
 
     PlaySoundMem(m_titleBGMHandle, DX_PLAYTYPE_LOOP);
     //SetCameraPositionAndTarget_UpVecY(VGet(-200, -45, 80), VGet(0, -45, 80));
@@ -116,11 +116,11 @@ TitleScene::TitleScene(SceneManager& manager) :
 
     std::list<string> yabai;
     yabai.push_back("諜報部隊が入手した情報によると");
-    yabai.push_back("宇宙最大のエネルギー持つ物体スーパースターが何者かに盗まれた");
+    yabai.push_back("宇宙最大のエネルギー持つ物体スーパーマテリアルが何者かに盗まれた");
     UI::GetInstance().InTexts(yabai);
-    UI::GetInstance().InText("この宇宙を守るためにはスーパースターを取り戻す必要がある");
-    UI::GetInstance().InText("この任務は数々の死線を乗り越えた君にしか成し遂げられないことだと判断した");
-    UI::GetInstance().InText("スーパースターを取り戻し、全宇宙の平和を取り戻してくれ");
+    UI::GetInstance().InText("この宇宙を守るためにはスーパーマテリアルを取り戻す必要がある");
+    UI::GetInstance().InText("この任務は死線を乗り越えた君にしか成し遂げられないことだと判断した");
+    UI::GetInstance().InText("スーパーマテリアルを取り戻し、全宇宙の平和を取り戻してくれ");
     UI::GetInstance().InText("君には全宇宙の未来がかかっている");
     UI::GetInstance().InText("さあ、Astro Seeker第一部隊隊長として宇宙の未来を切り開け！");
 
@@ -147,7 +147,7 @@ void TitleScene::Update()
 {
    
 
-    planet->ModelRotation(-1);
+    //planet->ModelRotation(-1);
 	nextPlanet->ModelRotation();
 	emeraldPlanet->ModelRotation();
     redPlanet->ModelRotation();

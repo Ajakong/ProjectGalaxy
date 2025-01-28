@@ -130,7 +130,7 @@ void TalkObject::WaitingUpdate()
 void TalkObject::NormalDraw()
 {
 	//DrawSphere3D(m_rigid->GetPos().VGet(), kRadius, 7, 0x00ff00, 0xffffff, true);
-	DrawSphere3D(m_rigid->GetPos().VGet(), kTalkingRadius, 7, 0x00ff00, 0xffffff, false);
+	//DrawSphere3D(m_rigid->GetPos().VGet(), kTalkingRadius, 7, 0x00ff00, 0xffffff, false);
 	MV1DrawModel(m_modelHandle);
 }
 

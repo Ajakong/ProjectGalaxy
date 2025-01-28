@@ -35,7 +35,8 @@ void GameOverScene::Update()
 void GameOverScene::Draw()
 {
 	(this->*m_drawFunc)();
-	if (Pad::IsTrigger(PAD_INPUT_1))
+
+	if (Pad::IsTrigger(PAD_INPUT_1)&&Pad::GetState()=="PlayerInput")
 	{
 		
 		ChangeScene(std::make_shared<GamePlayingScene>(m_manager));

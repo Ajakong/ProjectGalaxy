@@ -18,11 +18,12 @@ DekaHead_White::~DekaHead_White()
 
 std::list<std::list<std::string>> DekaHead_White::GetTexts()
 {
+	std::list<std::list<std::string>> talkText;
 	std::list<std::string> one;
 	one.push_back("みんな死ぬ");
 	one.push_back("");
 	one.push_back("すべて無に帰す");
-	m_talkTexts.push_back(one);
+	talkText.push_back(one);
 
-	return m_talkTexts;
+	return talkText;
 }

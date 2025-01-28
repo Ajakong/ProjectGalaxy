@@ -152,7 +152,7 @@ m_titleUpdateNum(0)
 	AddThroughTag(ObjectTag::PlayerBullet);
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
-	ChangeAnim(AnimNum::AnimationNumIdle);
+	//ChangeAnim(AnimNum::AnimationNumIdle);
 
 	SetMatrix();
 	m_initMat = MV1GetLocalWorldMatrix(m_modelHandle);

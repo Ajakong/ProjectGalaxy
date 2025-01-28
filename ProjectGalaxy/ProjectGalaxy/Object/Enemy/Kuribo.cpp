@@ -304,6 +304,8 @@ void Kuribo::CrushUpdate()
 
 void Kuribo::DeathUpdate()
 {
+	SetAntiGravity(true);
+	m_bodyCol->radius = -1;
 	m_state = "Death";
 	m_userData->dissolveY -= 0.01f;
 	float animFrame = MV1GetAttachAnimTime(m_modelHandle,m_currentAnimNo);

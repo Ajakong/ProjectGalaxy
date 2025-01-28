@@ -2,6 +2,7 @@
 #include"GalaxyCreater.h"
 #include"Physics.h"
 #include"ModelManager.h"
+#include"Mission.h"
 Key::Key(Vec3 pos, int connectObjectNumber, bool antigravity) : Item(pos,ObjectTag::Key,antigravity)
 {
 	m_connectObjectNumber = connectObjectNumber;
@@ -28,5 +29,6 @@ void Key::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, 
 		obj->SetIsActive(true);
 		MyEngine::Physics::GetInstance().Entry(obj);
 		m_isDestroyFlag = true;
+		Mission::GetInstance().MissionClear();
 	}
 }

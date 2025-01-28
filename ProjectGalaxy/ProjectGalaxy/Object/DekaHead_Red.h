@@ -7,5 +7,7 @@ public:
 	virtual ~DekaHead_Red();
 
 	virtual std::list<std::list<std::string>> GetTexts();
+
+	bool m_useFlag;
 };
 
