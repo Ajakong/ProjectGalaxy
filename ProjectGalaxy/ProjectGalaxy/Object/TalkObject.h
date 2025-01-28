@@ -2,18 +2,22 @@
 #include"Collidable.h"
 #include<list>
 #include<string>
+#include"Quaternion.h"
+
+class Quaternion;
 
 class TalkObject : public MyEngine::Collidable
 {
 public:
-	TalkObject(Vec3 pos);
+	TalkObject(Vec3 pos,int modelHandle,int graphHandle);
 	virtual ~TalkObject();
 
 	virtual void Init();
 	virtual void Update();
 	virtual void Draw();
+	virtual void SetMatrix();
 
-	std::list<std::list<std::string>> GetTexts() { return m_talkTexts; }
+	virtual std::list<std::list<std::string>> GetTexts();
 	
 	using talkObjectState_t = void(TalkObject::*)();
 
@@ -28,9 +32,12 @@ public:
 	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 	virtual void OnTriggerExit(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 
-private:
+protected:
 	std::list<std::list<std::string>> m_talkTexts;
 
+	Quaternion m_myQ;
+	int m_modelHandle;
+	int m_graphHandle;
 	bool m_canTalk;
 };
 

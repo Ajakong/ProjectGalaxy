@@ -54,6 +54,7 @@ void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 	}
 	else if (!isFound)
 	{
+	
 		m_stageCollidables.emplace_back(collidable);
 		m_collidables.emplace_back(collidable);
 	}
@@ -68,6 +69,19 @@ void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 {
 	auto it = std::find(m_collidables.begin(), m_collidables.end(), collidable);
+	auto stageit = std::find(m_stageCollidables.begin(), m_stageCollidables.end(), collidable);
+
+	if (stageit != m_stageCollidables.end())
+	{
+		int index = static_cast<int>(std::distance(m_stageCollidables.begin(), stageit));
+		auto iterater = m_stageCollidables.begin();
+		for (int i = 0; i < index; i++)
+		{
+			iterater++;
+		}
+		m_stageCollidables.erase(iterater);
+	}
+
 	// 登録済みなら削除
 	if (it != m_collidables.end())
 	{

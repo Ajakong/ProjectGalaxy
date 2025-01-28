@@ -37,6 +37,9 @@
 #include"Game.h"
 
 #include"TalkObject.h"
+#include"DekaHead_Red.h"
+#include"DekaHead_Blue.h"
+
 
 using namespace std;
 
@@ -156,8 +159,10 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//MyEngine::Physics::GetInstance().Entry(m_crystal.back());
 
 #endif
-	m_talkObjects.push_back(std::make_shared<TalkObject>(Vec3(0, 0, 50)));
+	
+	m_talkObjects.push_back(std::make_shared<DekaHead_Blue>(Vec3(0, 0, 50)));
 	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());
+
 
 	m_camera = make_shared<Camera>();
 	m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - player->GetFrontVec() * (kCameraDistanceFront));
@@ -200,10 +205,10 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
-	for (auto& item : m_planet)
-	{
-		MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
-	}
+	//for (auto& item : m_planet)
+	//{
+	//	MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
+	//}
 	for (auto& item : m_item)
 	{
 		MyEngine::Physics::GetInstance().Entry(item);
@@ -364,6 +369,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	player->SetMatrix();//行列を反映
 	for (auto& item : m_enemies) { item->SetMatrix(); }
 	for (auto& item : m_keyLockEnemies) { item->SetMatrix(); }
+	for (auto& item : m_talkObjects) { item->SetMatrix(); }
 	//敵の削除管理
 	DeleteObject(m_enemies);
 	DeleteObject(m_item);

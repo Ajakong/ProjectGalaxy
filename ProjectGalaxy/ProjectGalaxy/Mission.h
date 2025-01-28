@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include<vector>
+
 class Mission
 {
 public:
@@ -15,6 +17,8 @@ public:
 	using missionState_t = void(Mission::*)();
 	missionState_t m_missionUpdate;
 	missionState_t m_missionDraw;
+
+	
 
 };
 

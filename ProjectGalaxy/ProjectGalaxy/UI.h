@@ -32,7 +32,7 @@ public:
 	
 	void InTexts(const std::list<std::string> texts);
 
-	void WannaTalk(std::shared_ptr<TalkObject> obj);
+	void WannaTalk(std::shared_ptr<TalkObject> obj, int graphHandle);
 	void TalkExit();
 	/// <summary>
 	/// 入力を受け付けたら表示しているテキストを削除して次のテキストに移る
@@ -80,6 +80,8 @@ private:
 
 	int m_fadeSpeed;
 
+	int m_talkingCharaHandle;
+	int m_takasakiTaisaHandle;
 
 	int m_uiAssetHandle;
 	int m_uiInputAHandle;

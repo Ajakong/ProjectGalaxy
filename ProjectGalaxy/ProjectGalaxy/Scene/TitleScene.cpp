@@ -113,7 +113,11 @@ TitleScene::TitleScene(SceneManager& manager) :
     UI::GetInstance().InTexts(mainMessage);
 
     UI::GetInstance().InText("Astro Seeker第一部隊隊長である君に宇宙の存亡をかけた超重要任務を授ける");
-    UI::GetInstance().InText("諜報部隊が入手した情報によると宇宙最大のエネルギー持つ物体スーパースターが何者かに盗まれた");
+
+    std::list<string> yabai;
+    yabai.push_back("諜報部隊が入手した情報によると");
+    yabai.push_back("宇宙最大のエネルギー持つ物体スーパースターが何者かに盗まれた");
+    UI::GetInstance().InTexts(yabai);
     UI::GetInstance().InText("この宇宙を守るためにはスーパースターを取り戻す必要がある");
     UI::GetInstance().InText("この任務は数々の死線を乗り越えた君にしか成し遂げられないことだと判断した");
     UI::GetInstance().InText("スーパースターを取り戻し、全宇宙の平和を取り戻してくれ");
@@ -126,9 +130,12 @@ TitleScene::TitleScene(SceneManager& manager) :
 
 TitleScene::~TitleScene()
 {
+   
     MyEngine::Physics::GetInstance().Exit(player);
     MyEngine::Physics::GetInstance().Exit(planet);
     MyEngine::Physics::GetInstance().Exit(nextPlanet);
+    MyEngine::Physics::GetInstance().Exit(emeraldPlanet);
+    MyEngine::Physics::GetInstance().Exit(redPlanet);
 
 }
 
@@ -295,6 +302,7 @@ void TitleScene::FadeDraw()
 
     if (m_isGamePlaying)
     {
+        ModelManager::GetInstance().Clear();
         UI::GetInstance().Init();
         Pad::Init();
         ChangeScene(std::make_shared<GamePlayingScene>(m_manager));

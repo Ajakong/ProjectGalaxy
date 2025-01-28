@@ -186,6 +186,11 @@
     <ClCompile Include="Object\Base\SphereBase.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
     <ClCompile Include="Object\ClearObject\ClearObject.cpp" />
+    <ClCompile Include="Object\DekaHead_Blue.cpp" />
+    <ClCompile Include="Object\DekaHead_Green.cpp" />
+    <ClCompile Include="Object\DekaHead_Red.cpp" />
+    <ClCompile Include="Object\DekaHead_White.cpp" />
+    <ClCompile Include="Object\DekaHead_Yellow.cpp" />
     <ClCompile Include="Object\Enemy\BigKuribo.cpp" />
     <ClCompile Include="Object\Enemy\Boss.cpp" />
     <ClCompile Include="Object\Enemy\Enemy.cpp" />
@@ -274,6 +279,11 @@
     <ClInclude Include="Object\Base\SphereBase.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
     <ClInclude Include="Object\ClearObject\ClearObject.h" />
+    <ClInclude Include="Object\DekaHead_Blue.h" />
+    <ClInclude Include="Object\DekaHead_Green.h" />
+    <ClInclude Include="Object\DekaHead_Red.h" />
+    <ClInclude Include="Object\DekaHead_White.h" />
+    <ClInclude Include="Object\DekaHead_Yellow.h" />
     <ClInclude Include="Object\Enemy\BigKuribo.h" />
     <ClInclude Include="Object\Enemy\Boss.h" />
     <ClInclude Include="Object\Enemy\Enemy.h" />
