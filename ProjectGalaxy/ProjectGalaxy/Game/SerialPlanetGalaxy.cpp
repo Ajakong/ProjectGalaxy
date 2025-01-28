@@ -36,6 +36,8 @@
 #include"GalaxyCreater.h"
 #include"Game.h"
 
+#include"TalkObject.h"
+
 using namespace std;
 
 namespace
@@ -135,6 +137,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//スターキャプチャー
 	m_starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
 	MyEngine::Physics::GetInstance().Entry(m_starCapture.back());
+
 	////シーカーライン
 	//std::vector<Vec3>seekerLine1Points;
 	//seekerLine1Points.push_back(Vec3(-50, -25,0));
@@ -153,6 +156,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	//MyEngine::Physics::GetInstance().Entry(m_crystal.back());
 
 #endif
+	m_talkObjects.push_back(std::make_shared<TalkObject>(Vec3(0, 0, 50)));
+	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());
 
 	m_camera = make_shared<Camera>();
 	m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - player->GetFrontVec() * (kCameraDistanceFront));
@@ -229,6 +234,8 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	UI::GetInstance().InText("Aでジャンプしてヤツを踏みつけてキーを奪い取れ");
 	UI::GetInstance().InText("加速装置が見えるようになるはずだ");*/
 
+	
+
 }
 
 SerialPlanetGalaxy::~SerialPlanetGalaxy()
@@ -238,6 +245,7 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 	m_keyLockEnemies.clear();
 	m_poworStone.clear();
 	m_warpGate.clear();
+	m_talkObjects.clear();
 
 	GalaxyCreater::GetInstance().Clear();
 }
@@ -404,8 +412,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + player->GetRigidbody()->GetVelocity() * 20).VGet(), 0x00ffff);
 
 	DrawCircle(200, 500, 100, 0xffff00,0);
-	DrawLine(200, 500, static_cast < int>( 200 + player->GetInputVec().x * 70), static_cast < int>( 500 + player->GetInputVec().z * 70), 0xff0000);
-	DrawLine(200, 500, static_cast < int>(200 + player->GetPostMoveDir().x * 70), static_cast < int>( 500 + player->GetPostMoveDir().z * 70), 0x0000ff);
+	DrawLine(200, 500, static_cast <int>( 200 + player->GetInputVec().x * 70), static_cast < int>( 500 + player->GetInputVec().z * 70), 0xff0000);
+	DrawLine(200, 500, static_cast <int>( 200 + player->GetPostMoveDir().x * 70), static_cast < int>( 500 + player->GetPostMoveDir().z * 70), 0x0000ff);
 	DrawCircle(static_cast < int>(200 + player->GetInputVec().x *((player->GetInputVec().Length()*70.f))), static_cast < int>(500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f))), 30, 0xffff00, 0);
 
 
@@ -436,6 +444,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	DrawFormatString(0, 25 * 12, 0xffffff, "size(%d)",GalaxyCreater::GetInstance().GetSize());
 	DrawFormatString(0, 25 * 13, 0xffffff, "JumpFlag:%d", player->GetJumpFlag());
+
+	DrawFormatString(0, 25 * 14, 0xffffff, Pad::GetState().c_str());
 #endif
 
 	SetCameraNearFar(1.0f, 30000.0f);

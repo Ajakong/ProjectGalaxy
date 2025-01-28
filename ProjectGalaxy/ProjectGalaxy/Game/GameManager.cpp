@@ -33,13 +33,14 @@ void GameManager::Init()
 
 void GameManager::Update()
 {
+	UI::GetInstance().Update();
 	m_updateStopFrame--;
 	if (m_updateStopFrame < 0&&UI::GetInstance().GetState()!=&UI::TextBoxUpdate)
 	{
 		galaxy.back()->Update();
 
 	}
-	UI::GetInstance().Update();
+	
 	if (galaxy.back()->GetGameOver())
 	{
 		m_isGameOverFlag = true;

@@ -27,6 +27,7 @@ class Gorori;
 class Kuribo;
 class SpaceEmperor;
 class Boss;
+class TalkObject;
 
 class SerialPlanetGalaxy :public Galaxy//GameManagerが管理,惑星やオブジェクトの情報を持っている
 {
@@ -113,6 +114,8 @@ private:
 	std::vector<std::shared_ptr<Kuribo>> m_kuribo;
 	std::vector<std::shared_ptr<SpaceEmperor>> m_spaceEmperor;
 	std::vector<std::shared_ptr<Boss>>m_boss;*/
+
+	std::vector<std::shared_ptr<TalkObject>> m_talkObjects;
 
 	Vec3 m_cameraUpVec;
 

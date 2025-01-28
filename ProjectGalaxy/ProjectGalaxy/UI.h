@@ -3,7 +3,7 @@
 #include<memory>
 #include<list>
 class TextManager;
-
+class TalkObject;
 class UI
 {
 	
@@ -31,12 +31,14 @@ public:
 	void InText(const std::string text);
 	
 	void InTexts(const std::list<std::string> texts);
+
+	void WannaTalk(std::shared_ptr<TalkObject> obj);
+	void TalkExit();
 	/// <summary>
 	/// 入力を受け付けたら表示しているテキストを削除して次のテキストに移る
 	/// </summary>
 	void DeleteText();
 
-	void CanWeJustTalk();
 	int TextRemaining();
 
 
@@ -46,21 +48,27 @@ public:
 	
 	UIstate_t GetState() { return m_uiUpdate; }
 	void TextBoxUpdate();
+	void InputAUpdate();
 
 private:
 	
 	void NormalUpdate();
+
+
 	
 	void AppaerUpdate();
 	void FadeOutUpdate();
 
 	void NormalDraw();
 
-	void CanWeTalkAppaerUpdate();
+	//Aボタンで会話
+	void InputAFadeDraw();
+	void InputADraw();
 
-	void FadeDraw();
+	
+	void TextBoxFadeDraw();
 	void TextBoxDraw();
-	void CanWeTalkAppaerDraw();
+
 
 	/// <summary>
 	/// テキストデータ群に表示したいテキストをぶち込む
@@ -68,12 +76,15 @@ private:
 	/// <param name="text">表示したいテキスト</param>
 	float m_playerHp;
 
-	int m_textBoxFrame;
+	int m_appearFrame;
 
+	int m_fadeSpeed;
 
 
 	int m_uiAssetHandle;
+	int m_uiInputAHandle;
 	std::shared_ptr<TextManager> m_textManager;
+	std::shared_ptr<TalkObject> m_nowTalkObject;
 
 };
 

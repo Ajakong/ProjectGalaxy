@@ -295,6 +295,8 @@ void TitleScene::FadeDraw()
 
     if (m_isGamePlaying)
     {
+        UI::GetInstance().Init();
+        Pad::Init();
         ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
     }
     DrawLine(m_frame * kLineX, 0, m_frame * kLineX, kLineY, kLineColor);
@@ -319,11 +321,7 @@ void TitleScene::NormalDraw()
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
     }
-    
-    if (m_isGamePlaying)
-    {
-        ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
-    }
+   
     DrawLine(m_frame * kLineX, 0, m_frame * kLineX, kLineY, kLineColor);
     if(m_count > 70)
     {

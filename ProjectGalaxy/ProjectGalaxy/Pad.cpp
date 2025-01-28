@@ -13,7 +13,15 @@ namespace
 
 namespace Pad
 {
+	void Pad::Init()
+	{
+		// 前のフレームのパッド押し下げ状態
+		lastPad = 0;
+		// 個のフレームのパッド押し下げ状態
+		nowPad = 0;
 
+		state = "PlayerInput";
+	}
 	void Pad::Update()
 	{
 		// 前のフレームに取得したパッド情報を一つ古い情報にする
@@ -26,6 +34,11 @@ namespace Pad
 	void SetState(std::string statement)
 	{
 		state = statement;
+	}
+
+	std::string GetState()
+	{
+		return state;
 	}
 
 	bool IsState(std::string statement)

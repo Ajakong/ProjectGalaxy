@@ -21,6 +21,8 @@ public:
 	void InText(const std::string text);
 	void InTexts(const std::list<std::string> text);
 
+	void SetTexts(const std::list<std::list<std::string>> texts) { m_texts = texts; }
+
 	/// <summary>
 	/// 入力を受け付けたら表示しているテキストを削除して次のテキストに移る
 	/// </summary>

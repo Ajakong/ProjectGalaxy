@@ -165,6 +165,7 @@
     <ClCompile Include="LoadManager\ScreenManager.cpp" />
     <ClCompile Include="LoadManager\SoundManager.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mission.cpp" />
     <ClCompile Include="MyLib\ColideTag.cpp" />
     <ClCompile Include="MyLib\DebugDraw.cpp" />
     <ClCompile Include="MyLib\Easing.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="Object\Player\PlayerSphere.cpp" />
     <ClCompile Include="Object\Player\PlayerStickSphere.cpp" />
     <ClCompile Include="Object\Player\TitlePlayer.cpp" />
+    <ClCompile Include="Object\TalkObject.cpp" />
     <ClCompile Include="Object\WarpGate\Booster.cpp" />
     <ClCompile Include="Object\WarpGate\WarpGate.cpp" />
     <ClCompile Include="Pad.cpp" />
@@ -250,6 +252,7 @@
     <ClInclude Include="LoadManager\ModelManager.h" />
     <ClInclude Include="LoadManager\ScreenManager.h" />
     <ClInclude Include="LoadManager\SoundManager.h" />
+    <ClInclude Include="Mission.h" />
     <ClInclude Include="MyLib\ColideTag.h" />
     <ClInclude Include="MyLib\DebugDraw.h" />
     <ClInclude Include="MyLib\Easing.h" />
@@ -298,6 +301,7 @@
     <ClInclude Include="Object\Player\PlayerSphere.h" />
     <ClInclude Include="Object\Player\PlayerStickSphere.h" />
     <ClInclude Include="Object\Player\TitlePlayer.h" />
+    <ClInclude Include="Object\TalkObject.h" />
     <ClInclude Include="Object\WarpGate\Booster.h" />
     <ClInclude Include="Object\WarpGate\WarpGate.h" />
     <ClInclude Include="Pad.h" />

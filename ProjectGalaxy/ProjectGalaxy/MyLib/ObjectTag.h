@@ -11,6 +11,7 @@ enum class ObjectTag
 	Gorori,
 	KillerTheSeeker,
 	SpaceEmperor,
+	TalkObject,
 	EnemyAttack,
 	PlayerBullet,
 	PlayerImpact,

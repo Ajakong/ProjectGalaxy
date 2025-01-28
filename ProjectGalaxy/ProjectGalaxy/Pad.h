@@ -2,6 +2,7 @@
 #include<string>
 namespace Pad
 {
+	void Init();
 	// パッドの更新処理 1フレームに1回行う
 	void Update();
 
@@ -10,6 +11,8 @@ namespace Pad
 	/// </summary>
 	/// <param name="statement">PlayerInput/TextInput</param>
 	void SetState(std::string statement);
+
+	std::string GetState();
 	/// <summary>
 	/// ステートが合致しているかを取得
 	/// </summary>
