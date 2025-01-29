@@ -34,6 +34,8 @@ public:
 		AnimationNumShotPose
 	};
 
+	
+
 	Player(int modelhandle,Vec3 pos=Vec3::Zero());
 	~Player();
 
@@ -56,8 +58,8 @@ public:
 	
 	void InitDush();
 	void InitJump();
-	void TitleDush();
-	void TitleJump();
+
+	void Landing(int recast=15);
 
 
 	Vec3 GetPos() const { return  m_rigid->GetPos(); }
@@ -147,7 +149,6 @@ protected:
 
 	//状態別関数(ポインタで呼び出す)
 	/*m_playerUpdateで使う*/
-	void TitleUpdate();
 	/// <summary>
 	/// 開始直後に呼ばれる
 	/// </summary>

@@ -82,7 +82,8 @@ void TitlePlayer::Update()
 
 void TitlePlayer::IdleUpdate()
 {
-	m_state = "Idle";
+	m_stateName = "Idle";
+	m_state = State::Neutral;
 
 }
 
