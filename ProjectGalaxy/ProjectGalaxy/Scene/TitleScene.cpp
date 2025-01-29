@@ -31,7 +31,7 @@ namespace
     const char* kTitleBGMName = "Title.mp3";
 
     const char* kStickName = "parry.mp3";
-    const char* kGameStartSEName = "StartGame2.mp3";
+    const char* kGameStartSEName = "StartGame_SE.mp3";
     const char* kGameBGMName = "GamePlaying.mp3";
     const char* kPlayerModelName = "SpaceHarrier";
     const char* kPlanetModelName = "GoldenBall";
@@ -173,15 +173,6 @@ void TitleScene::Draw()
     // シーン固有の描画
     (this->*m_drawFunc)();
 
-   
-
-
-
-    //// 2D描画
-    //DrawFormatString(0, 25 * 6, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
-    //DrawFormatString(0, 25 * 7, 0xffffff, player->GetState().c_str());
-    //DrawFormatString(0, 25 * 9, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
-    //DrawFormatString(0, 25 * 10, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity().x, player->GetRigidbody()->GetVelocity().y, player->GetRigidbody()->GetVelocity().z);
 }
 
 void TitleScene::FadeInUpdate()
@@ -261,6 +252,7 @@ void TitleScene::LoadingUpdate()
         UI::GetInstance().Update();
         if (UI::GetInstance().TextRemaining() == 0)
         {
+            PlaySoundMem(m_gameStartSEHandle,DX_PLAYTYPE_BACK);
             m_updateFunc = &TitleScene::FadeOutUpdate;
             m_drawFunc = &TitleScene::FadeDraw;
         }

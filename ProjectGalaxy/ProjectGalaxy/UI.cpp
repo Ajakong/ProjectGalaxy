@@ -1,5 +1,6 @@
 ﻿#include "UI.h"
 #include"GraphManager.h"
+#include"SoundManager.h"
 #include"Game.h"
 #include"TextManager.h"
 #include"Pad.h"
@@ -10,24 +11,28 @@ namespace
 	const char* kGraphUIAssetName = "Designer_ui.png";
 	const char* kInputAUIName = "PushAbottonForTalk.png";
 	const char* kTakasakiTaisaGraphName = "TakasakiTaisa_talk.png";
+
+	const char* kTextBoxIntroSEName = "Mission.mp3";
 	
 	const UI::UIinfo kIdemBoxUIInfo{ 0,0,255,255 };
 	const UI::UIinfo kHPBarUIInfo { 125,730,820,140 };
 	const UI::UIinfo kWindowScreenUIInfo{ 620,15,400,500 };
-	const UI::UIinfo kInputAUIInfo{ 265,275,470,470 };
+	const UI::UIinfo kInputAUIInfo{ 200,105,620,695 };
 	const UI::UIinfo kTalkingCharaGraph{ 0,0,775,890 };
 
 	constexpr float kHpDecreaseSpeed = 0.3f;
 
-	constexpr int lTextBoxDrawInterval = 60;
+	/// <summary>
+	/// フェード時の描画インターバル
+	/// </summary>
+	constexpr int kDrawInterval = 60;
 }
 
 UI::UI():
 	m_fadeSpeed(1),
 	m_appearFrame(0)
 {
-	m_takasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
-	m_textManager = std::make_shared<TextManager>();
+	
 }
 
 UI::~UI()
@@ -44,9 +49,12 @@ void UI::Init()
 {
 	m_uiAssetHandle = GraphManager::GetInstance().GetGraphData(kGraphUIAssetName);
 	m_uiInputAHandle = GraphManager::GetInstance().GetGraphData(kInputAUIName);
-	m_uiUpdate = &UI::NormalUpdate;
-	m_uiDraw = &UI::NormalDraw;
+	m_takasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
+	m_textBoxSEHandle = SoundManager::GetInstance().GetSoundData(kTextBoxIntroSEName);
+	m_textManager = std::make_shared<TextManager>();
+	NormalMode();
 	m_appearFrame = 0;
+	m_fadeSpeed = 1;
 }
 
 void UI::Update()
@@ -56,15 +64,20 @@ void UI::Update()
 
 }
 
+void UI::NormalMode()
+{
+	Pad::Init();
+	m_uiUpdate = &UI::NormalUpdate;
+	m_uiDraw = &UI::NormalDraw;
+}
+
 void UI::NormalUpdate()
 {
+	//テキストデータがぶち込まれていたら表示する
 	if (m_textManager->GetTextDataSize() != 0)
 	{
 		m_talkingCharaHandle = m_takasakiTaisaHandle;
-		m_fadeSpeed = 1;
-		Pad::SetState("TextInput");
-		m_uiUpdate = &UI::AppaerUpdate;
-		m_uiDraw = &UI::TextBoxFadeDraw;
+		TextMode();
 	}
 	
 }
@@ -73,13 +86,15 @@ void UI::AppaerUpdate()
 {
 	m_appearFrame+=m_fadeSpeed;
 
-	if (m_appearFrame >= lTextBoxDrawInterval&&m_uiDraw==&UI::TextBoxFadeDraw)
+	//テキストモードに移行
+	if (m_appearFrame >= kDrawInterval &&m_uiDraw==&UI::TextBoxFadeDraw)
 	{
 		
 		m_uiUpdate = &UI::TextBoxUpdate;
 		m_uiDraw = &UI::TextBoxDraw;
 	}
-	if (m_appearFrame >= 60 && m_uiDraw == &UI::InputAFadeDraw)
+	//Aボタン表示モードに移行
+	if (m_appearFrame >= kDrawInterval && m_uiDraw == &UI::InputAFadeDraw)
 	{
 		
 		m_uiUpdate = &UI::InputAUpdate;
@@ -109,21 +124,55 @@ void UI::InputAUpdate()
 	{
 		Pad::SetState("TextInput");
 		m_textManager->SetTexts(m_nowTalkObject->GetTexts());
-		m_appearFrame = 0;
-		m_uiUpdate = &UI::AppaerUpdate;
-		m_uiDraw = &UI::TextBoxFadeDraw;
+		m_uiUpdate = &UI::FadeOutUpdate;
+		m_uiDraw = &UI::InputAFadeDraw;
 	}
 }
+
+void UI::TextMode()
+{
+	PlaySoundMem(m_textBoxSEHandle,DX_PLAYTYPE_BACK);
+	m_fadeSpeed = 5;
+	Pad::SetState("TextInput");
+	m_uiUpdate = &UI::AppaerUpdate;
+	m_uiDraw = &UI::TextBoxFadeDraw;
+}
+
+void UI::InputAMode()
+{
+	m_fadeSpeed = 20;
+	
+	m_uiUpdate = &UI::AppaerUpdate;
+	m_uiDraw = &UI::InputAFadeDraw;
+}
+
 
 void UI::FadeOutUpdate()
 {
 	m_appearFrame-=m_fadeSpeed;
-	if (m_appearFrame <= 0)
+
+	//Aボタン表示モードなら
+	if (m_uiDraw == &UI::InputAFadeDraw)
 	{
-		Pad::SetState("PlayerInput");
-		m_uiUpdate = &UI::NormalUpdate;
-		m_uiDraw = &UI::NormalDraw;
+		//フェード終了時
+		if (m_appearFrame <= 0)
+		{
+			//テキストデータがあればテキストモード
+			if (m_textManager->GetTextDataSize() != 0)TextMode();
+			//なければ通常UIモード
+			else NormalMode();
+		}
 	}
+	//テキストモードなら
+	else
+	{
+		//フェード終了時
+		if (m_appearFrame <= 0)
+		{
+			NormalMode();
+		}
+	}
+	
 }
 
 void UI::Draw(float m_hp)
@@ -205,18 +254,23 @@ void UI::InTexts(const std::list<std::string> texts)
 
 void UI::WannaTalk(std::shared_ptr<TalkObject> obj,int graphHandle)
 {
-	m_fadeSpeed = 20;
 	m_nowTalkObject = obj;
 	m_talkingCharaHandle = graphHandle;
-	m_uiUpdate = &UI::AppaerUpdate;
-	m_uiDraw = &UI::InputAFadeDraw;
+	InputAMode();
 }
 
 void UI::TalkExit()
 {
-	//テキストボックスのフェードアウトヘ以降
-	m_uiUpdate = &UI::FadeOutUpdate;
-	m_uiDraw = &UI::InputAFadeDraw;
+	if (m_appearFrame <= 0)
+	{
+		NormalMode();
+	}
+	else
+	{
+		//テキストボックスのフェードアウトヘ以降
+		m_uiUpdate = &UI::FadeOutUpdate;
+		m_uiDraw = &UI::InputAFadeDraw;
+	}
 }
 
 void UI::DeleteText()

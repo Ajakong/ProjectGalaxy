@@ -37,14 +37,8 @@ private:
     int m_titleHandle = 0;
     int m_titleBGMHandle;
     int m_gameStartSEHandle;
-    int m_modelHandle[10] = { 0 };
-    int m_model_dance = 0;
-    int m_attach_move[10] = { 0 };
-    int m_gamePlayingBgmHandle;
-    int m_frameHandle = 0;
-
+    
 	int m_stickOSTHandle = 0;
-
     int m_count;
 
 

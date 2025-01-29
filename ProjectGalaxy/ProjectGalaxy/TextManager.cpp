@@ -1,19 +1,25 @@
 ﻿#include "TextManager.h"
 #include"FontManager.h"
+#include"SoundManager.h"
 #include<tchar.h>
 
 namespace
 {
 	constexpr int kFontSize = 20;
     constexpr int kTextHeightDistance = 5;
+
+    const char* InputTextSEName = "InputText.mp3";
 }
 
 TextManager::TextManager()
 	:m_fontHandle(FontManager::GetInstance().GetFontData("SF_font.ttf","廻想体 ネクスト UP B",20)),
 	m_drawTextLength(0),
-	m_drawTextFrame(0)
+	m_drawTextFrame(0),
+    m_inputTextSEHandle(SoundManager::GetInstance().GetSoundData(InputTextSEName)),
+    m_postFrameTextSize(0)
 {
-	
+    ChangeVolumeSoundMem(100, m_inputTextSEHandle);
+
 }
 
 TextManager::~TextManager()
@@ -88,6 +94,15 @@ void TextManager::Draw()
         listIndex++;
         text++;
     }
+
+    //前のフレームより表示するテキストの数が増えていたらテキストが入力された
+    if (m_postFrameTextSize < m_drawTextLength)
+    {
+        //SEを流す
+        PlaySoundMem(m_inputTextSEHandle, DX_PLAYTYPE_BACK);
+    }
+    m_postFrameTextSize = m_drawTextLength;
+   
 	
 }
 
@@ -106,6 +121,7 @@ void TextManager::InTexts(const std::list<std::string> text)
 void TextManager::DeleteText()
 {
 	m_drawTextLength = 0;
+    m_postFrameTextSize = 0;
 	m_texts.pop_front();
 }
 

@@ -1306,7 +1306,7 @@ void Player::TalkingUpdate()
 	m_state = "Talking";
 	if (Pad::IsState("PlayerInput"))
 	{
-		m_playerUpdate = m_prevUpdate;
+		m_playerUpdate = &Player::JumpingUpdate;
 	}
 }
 

@@ -110,7 +110,7 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 
-	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
+	
 	
 	//惑星の配置
 	GalaxyCreater::GetInstance().PlanetCreate();
@@ -181,8 +181,6 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
 	*/
 
-	m_warpGate.push_back(std::make_shared<WarpGate>(Vec3(0, -50, 100), Vec3(300, 200, 100), -1));
-	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
 
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox");
 
@@ -263,6 +261,8 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 
 void SerialPlanetGalaxy::Init()
 {
+	ChangeVolumeSoundMem(100, m_bgmHandle);
+	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
 	SetGlobalAmbientLight(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 
 	player->SetMatrix();//モデルに行列を反映
