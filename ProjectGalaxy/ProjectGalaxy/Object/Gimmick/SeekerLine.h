@@ -17,7 +17,7 @@ public:
 
 private:
 	std::vector<Vec3> m_points;
-	std::shared_ptr<Player> m_player;
+	std::weak_ptr<Player> m_player;
 	Vec3 m_playerStartPos;
 	Vec3 m_velocity;
 

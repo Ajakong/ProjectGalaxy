@@ -31,7 +31,7 @@ std::list<std::list<std::string>> DekaHead_Green::GetTexts()
 	{
 		std::list<std::string> one;
 		one.push_back("あの赤いヤツに僕のカードキーを奪われたんだ");
-		one.push_back("だから来たくなかったのに。。。どうしよう");
+		one.push_back("カードキーの管理者が狙われてるみたい。。。どうしよう");
 		talkText.push_back(one);
 
 		std::list<std::string> two;
@@ -52,6 +52,7 @@ std::list<std::list<std::string>> DekaHead_Green::GetTexts()
 		std::list<std::string> three;
 		three.push_back("よし、これで加速装置が設置されたはずだよ！");
 		three.push_back("バーン君の近くにあるはず。。。");
+		three.push_back("ほかの惑星の人たちも困ってるだろうから、助けてあげて！");
 		talkText.push_back(three);
 
 		m_useFlag = true;

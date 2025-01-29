@@ -132,6 +132,7 @@ TitleScene::~TitleScene()
 {
    
     MyEngine::Physics::GetInstance().Exit(player);
+    int a=player.use_count();
     MyEngine::Physics::GetInstance().Exit(planet);
     MyEngine::Physics::GetInstance().Exit(nextPlanet);
     MyEngine::Physics::GetInstance().Exit(emeraldPlanet);

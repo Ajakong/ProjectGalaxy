@@ -96,11 +96,23 @@ m_centerToEnemyAngle(0)
 
 Takobo::~Takobo()
 {
-	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
+	{
+		auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
 		{
 			return true;
 		});
-	m_sphere.erase(result, m_sphere.end());
+		m_sphere.erase(result, m_sphere.end());
+
+	}
+
+	{
+		auto result = remove_if(m_killer.begin(), m_killer.end(), [this](const auto& sphere)
+		{
+			return true;
+		});
+		m_killer.erase(result, m_killer.end());
+	}
+	
 }
 
 void Takobo::Init()
@@ -134,18 +146,36 @@ void Takobo::SetMatrix()
 
 void Takobo::DeleteManage()
 {
-	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
+	{
+		auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
 		{
 			bool isOut = sphere->IsDestroy() == true;
-	if (isOut == true)
-	{
-		m_sphereNum--;
-		sphere->OnDestroy();
-		MyEngine::Physics::GetInstance().Exit(sphere);
-	}
-	return isOut;
+			if (isOut == true)
+			{
+				m_sphereNum--;
+				sphere->OnDestroy();
+				MyEngine::Physics::GetInstance().Exit(sphere);
+			}
+			return isOut;
 		});
-	m_sphere.erase(result, m_sphere.end());
+		m_sphere.erase(result, m_sphere.end());
+	}
+
+	{
+		auto result = remove_if(m_killer.begin(), m_killer.end(), [this](const auto& sphere)
+		{
+			bool isOut = sphere->IsDestroy() == true;
+			if (isOut == true)
+			{
+				m_sphereNum--;
+				sphere->OnDestroy();
+				MyEngine::Physics::GetInstance().Exit(sphere);
+			}
+			return isOut;
+		});
+		m_killer.erase(result, m_killer.end());
+	}
+	
 }
 
 void Takobo::Draw()
@@ -168,14 +198,12 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,Colide
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		if (targetTag == ColideTag::Foot)
+		auto player = std::dynamic_pointer_cast<Player>(colider);
+		//スピンを食らえばお前は死ぬ！
+		if (player->GetSpinFlag())
 		{
-			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
-			
-			m_enemyUpdate = &Takobo::DeathUpdate;
+			Death();
 		}
-		m_hp -= 20;
-
 	}
 	if (colider->GetTag() == ObjectTag::EnemyAttack)
 	{
@@ -220,6 +248,11 @@ Vec3 Takobo::GetHeadPos() const
 void Takobo::SetTarget(std::shared_ptr<MyEngine::Collidable> target)
 {
 	m_target = target;
+}
+
+void Takobo::Death()
+{
+	m_enemyUpdate = &Takobo::DeathUpdate;
 }
 
 bool Takobo::UpdateAnim(int attachNo)
@@ -335,8 +368,13 @@ void Takobo::AttackSphereUpdate()
 			//攻撃方向の確定
 			m_attackDir = toVec.GetNormalized();
 			m_shotUpVec = m_target->GetUpVec();
-			m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), headPos, (m_attackDir*(toVec.Length()/ kTimeToStrike) + m_shotUpVec * 3), m_target->GetRigidbody()->GetPos(), 1, 0xff0000, kTimeToStrike));
-			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+
+			Vec3 dir = m_attackDir + m_upVec * 2;
+			dir.Normalize();
+			m_killer.push_back(std::make_shared<Killer>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), m_target, headPos, dir, 1, 0xff0000));
+			MyEngine::Physics::GetInstance().Entry(m_killer.back());
+		/*m_sphere.push_back(std::make_shared<EnemySphere>(Priority::Low, ObjectTag::EnemyAttack, shared_from_this(), headPos, (m_attackDir*(toVec.Length()/ kTimeToStrike) + m_shotUpVec * 3), m_target->GetRigidbody()->GetPos(), 1, 0xff0000, kTimeToStrike));
+			MyEngine::Physics::GetInstance().Entry(m_sphere.back());*/
 			m_sphereNum++;
 			m_createFrameCount = 1;
 		}

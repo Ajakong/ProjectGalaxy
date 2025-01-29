@@ -21,10 +21,16 @@ TitlePlayer::TitlePlayer(int modelhandle) : Player(modelhandle)
 {
 	//ChangeAnim(AnimationNumRun);
 	m_titlePlayerUpdate = &TitlePlayer::IdleUpdate;
+	m_shotUpdate = &Player::ShotTheStickStar;
 }
 
 TitlePlayer::~TitlePlayer()
 {
+	for (auto& item : m_sphere)
+	{
+		MyEngine::Physics::GetInstance().Exit(item);
+	}
+	m_sphere.clear();
 }
 
 bool TitlePlayer::MoveToTargetPosWithSticker(Vec3 targetPos)

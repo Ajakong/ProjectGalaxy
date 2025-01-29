@@ -12,10 +12,12 @@ DekaHead_Red::DekaHead_Red(Vec3 pos) :
 	TalkObject(pos,ModelManager::GetInstance().GetModelData(kModelName),GraphManager::GetInstance().GetGraphData(kGraphName)),
 	m_useFlag(false)
 {
+
 }
 
 DekaHead_Red::~DekaHead_Red()
 {
+
 }
 
 std::list<std::list<std::string>> DekaHead_Red::GetTexts()

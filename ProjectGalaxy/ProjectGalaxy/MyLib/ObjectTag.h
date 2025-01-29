@@ -13,6 +13,7 @@ enum class ObjectTag
 	SpaceEmperor,
 	TalkObject,
 	EnemyAttack,
+	Killer,
 	PlayerBullet,
 	PlayerImpact,
 	EnemyBullet,

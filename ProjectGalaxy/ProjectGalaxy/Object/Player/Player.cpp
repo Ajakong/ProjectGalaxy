@@ -353,10 +353,10 @@ void Player::Draw()
 		//MV1DrawModel(m_modelHandle);
 	}
 	MV1DrawModel(m_modelHandle);
-	m_headCol->DebugDraw(m_rigid->GetPos());
+	/*m_headCol->DebugDraw(m_rigid->GetPos());
 	m_bodyCol->DebugDraw(m_rigid->GetPos());
-	m_footCol->DebugDraw(m_rigid->GetPos());
-	//m_spinCol->DebugDraw(m_rigid->GetPos());
+	m_footCol->DebugDraw(m_rigid->GetPos());*/
+	m_spinCol->DebugDraw(m_rigid->GetPos());
 	
 #if DEBUG
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
@@ -485,10 +485,13 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	if (colider->GetTag() == ObjectTag::Takobo)
 	{
 		printf("Takobo\n");
+		//スピンを当てたら
 		if (m_isSpinFlag)
 		{
+			//ぶっ飛ばす
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
 			colider->GetRigidbody()->SetVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * -3);
+
 		}
 		else
 		{
@@ -718,11 +721,17 @@ void Player::ChangeAnim(int animIndex, float speed)
 		MV1DetachAnim(m_modelHandle, m_prevAnimNo);
 	}
 
-	//現在再生中の待機アニメーションは変更前のアニメーション扱いに
-	m_prevAnimNo = m_currentAnimNo;
+	int nextAnimNo = MV1AttachAnim(m_modelHandle, animIndex, -1, false);
 
+	if (m_currentAnimNo != nextAnimNo)
+	{
+		//現在再生中の待機アニメーションは変更前のアニメーション扱いに
+		m_prevAnimNo = m_currentAnimNo;
+
+	}
+	
 	//変更後のアニメーションとして攻撃アニメーションを改めて設定する
-	m_currentAnimNo = MV1AttachAnim(m_modelHandle, animIndex, -1, false);
+	m_currentAnimNo =nextAnimNo;
 
 	//切り替えの瞬間は変更前のアニメーションが再生される状態にする
 	m_animBlendRate = 0.0f;
@@ -775,7 +784,7 @@ void Player::NeutralUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(AnimNum::AnimationNumSpin,5.f);
-		m_isSpinFlag = true;
+		
 		m_playerUpdate = &Player::SpinActionUpdate;
 	}
 
@@ -817,7 +826,6 @@ void Player::WalkingUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(AnimNum::AnimationNumSpin,5.f);
-		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpinActionUpdate;
 	}
 
@@ -869,7 +877,6 @@ void Player::DashUpdate()
 	{
 		m_cameraEasingSpeed = 15.f;
 		ChangeAnim(AnimNum::AnimationNumSpin, 5.f);
-		m_isSpinFlag = true;
 		m_playerUpdate = &Player::SpinActionUpdate;
 	}
 
@@ -1021,7 +1028,7 @@ void Player::AimingUpdate()
 	if (Pad::IsTrigger(PAD_INPUT_B))//XBoxの
 	{
 		ChangeAnim(AnimNum::AnimationNumSpin);
-		m_isSpinFlag = true;
+	
 		ChangeAnim(AnimNum::AnimationNumSpin);
 		m_playerUpdate = &Player::SpinActionUpdate;
 	}
@@ -1037,6 +1044,7 @@ void Player::AimingUpdate()
 
 void Player::SpinActionUpdate()
 {
+	m_isSpinFlag = true;
 	(this->*m_spinAttackUpdate)();
 }
 
@@ -1070,7 +1078,7 @@ void Player::RollingAttackUpdate()
 	{
 		m_cameraEasingSpeed = 15.f;
 		ChangeAnim(AnimNum::AnimationNumIdle);
-		m_isSpinFlag = true;
+		m_isSpinFlag = false;
 		m_playerUpdate = &Player::NeutralUpdate;
 	}
 }

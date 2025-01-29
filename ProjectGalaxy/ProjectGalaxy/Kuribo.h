@@ -86,6 +86,7 @@ protected:
 	Vec3 m_nowPlanetPos;
 	Vec3 m_comebackPoint;
 	Vec3 m_targetPoint;
+
 	std::shared_ptr<Collidable> m_player;
 	std::shared_ptr<ColliderSphere> m_bodyCol;
 	std::shared_ptr<ColliderSphere> m_searchCol;

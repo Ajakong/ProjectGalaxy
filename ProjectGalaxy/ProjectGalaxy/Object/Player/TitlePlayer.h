@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Player.h"
-class TitlePlayer :
-    public Player
+class TitlePlayer : public Player
 {
 public:
     TitlePlayer(int modelhandle);

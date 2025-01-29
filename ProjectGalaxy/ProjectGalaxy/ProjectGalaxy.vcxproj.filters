@@ -417,6 +417,9 @@
     <ClCompile Include="Object\DekaHead_White.cpp">
       <Filter>ソース ファイル\Object\TalkingHead</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Enemy\TalkEnemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -691,6 +694,9 @@
     </ClInclude>
     <ClInclude Include="Object\DekaHead_White.h">
       <Filter>ヘッダー ファイル\Object\TalkObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Enemy\TalkEnemy.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,13 +6,23 @@
 #include"FullPowerDropItem.h"
 #include"StickStarItem.h"
 #include"Coin.h"
+
+
 #include"ModelManager.h"
+#include"GraphManager.h"
+
 #include"Takobo.h"
 #include"Kuribo.h"
 #include"BigKuribo.h"
 #include"Gorori.h"
 #include"Booster.h"
 #include"Boss.h"
+#include"DekaHead_Red.h"
+#include"DekaHead_Blue.h"
+#include"DekaHead_Green.h"
+#include"DekaHead_Yellow.h"
+#include"DekaHead_White.h"
+
 #include<cassert>
 
 GalaxyCreater::GalaxyCreater()
@@ -178,6 +188,89 @@ void GalaxyCreater::PlanetCreate()
 		m_planetModelData.push_back(ModelManager::GetInstance().GetModelData(loc.modelName.c_str()));
 		auto planet = std::make_shared<SpherePlanet>(loc.pos, loc.color, loc.gravityPower, m_planetModelData.back(), loc.coefficientOfFriction, loc.scale);
 		MyEngine::Physics::GetInstance().Entry(planet);
+	}
+	FileRead_close(handle);
+
+}
+
+
+void GalaxyCreater::TalkObjectCreate()
+{
+	std::vector<TalkObject> objects;
+	std::string fileName = "Data/Info/TalkObject.loc";
+	//開くファイルのハンドルを取得
+	int handle = FileRead_open(fileName.c_str());
+
+	//読み込むオブジェクト数が何個あるか取得
+	int dataCnt = 0;
+	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
+	//読み込むオブジェクト数分の配列に変更する
+	objects.resize(dataCnt);
+	
+	//配列の数分回す
+	for (auto& loc : objects)
+	{
+		//名前のバイト数を取得する
+		byte nameCnt = 0;
+		FileRead_read(&nameCnt, sizeof(nameCnt), handle);
+		//名前のサイズを変更する
+		loc.name.resize(nameCnt);
+		//名前を取得する
+		FileRead_read(loc.name.data(), sizeof(char) * static_cast<int>(loc.name.size()), handle);
+		//タグのバイト数を取得する
+		byte tagCnt = 0;
+		FileRead_read(&tagCnt, sizeof(tagCnt), handle);
+		//タグのサイズを変更する
+		loc.tag.resize(tagCnt);
+		//タグを取得する
+		FileRead_read(loc.tag.data(), sizeof(char) * static_cast<int>(loc.tag.size()), handle);
+		//座標を取得する
+		FileRead_read(&loc.pos, sizeof(loc.pos), handle);
+
+
+		////モデル名のバイト数を取得
+		//byte modelNameCnt = 0;
+		//FileRead_read(&modelNameCnt, sizeof(modelNameCnt), handle);
+		//loc.modelName.resize(modelNameCnt);
+		////モデル名を取得する
+		////取得したモデル名を利用し、後々ハンドルを受け取る
+		//FileRead_read(loc.modelName.data(), sizeof(char) * static_cast<int>(loc.modelName.size()), handle);
+		////画像名のバイト数を取得
+		//byte graphNameCnt = 0;
+		//FileRead_read(&graphNameCnt, sizeof(graphNameCnt), handle);
+		//loc.modelName.resize(graphNameCnt);
+		////モデル名を取得する
+		////取得したモデル名を利用し、後々ハンドルを受け取る
+		//FileRead_read(loc.graphName.data(), sizeof(char) * static_cast<int>(loc.graphName.size()), handle);
+
+		//int ModelHandle = ModelManager::GetInstance().GetModelData(loc.modelName.c_str());
+		//int graphHandle = GraphManager::GetInstance().GetGraphData(loc.graphName.c_str());
+		
+		if (loc.tag == "DekaHead_Red")
+		{
+			auto talkObject=std::make_shared<DekaHead_Red>(loc.pos);
+			MyEngine::Physics::GetInstance().Entry(talkObject);
+		}
+		if (loc.tag == "DekaHead_Blue")
+		{
+			auto talkObject = std::make_shared<DekaHead_Blue>(loc.pos);
+			MyEngine::Physics::GetInstance().Entry(talkObject);
+		}
+		if (loc.tag == "DekaHead_Green")
+		{
+			auto talkObject = std::make_shared<DekaHead_Green>(loc.pos);
+			MyEngine::Physics::GetInstance().Entry(talkObject);
+		}
+		if (loc.tag == "DekaHead_Yellow")
+		{
+			auto talkObject = std::make_shared<DekaHead_Yellow>(loc.pos);
+			MyEngine::Physics::GetInstance().Entry(talkObject);
+		}
+		if (loc.tag == "DekaHead_White")
+		{
+			auto talkObject = std::make_shared<DekaHead_White>(loc.pos);
+			MyEngine::Physics::GetInstance().Entry(talkObject);
+		}
 	}
 	FileRead_close(handle);
 

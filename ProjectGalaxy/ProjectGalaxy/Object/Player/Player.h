@@ -42,14 +42,27 @@ public:
 	void Update();
 	void SetMatrix();
 	void Draw();
+	void SetVelocity(Vec3 pos) { m_velocity = pos; m_rigid->SetVelocity(pos); }
+	void AddVelocity(Vec3 pos) { m_rigid->AddVelocity(pos); }
+	void SetSideVec(Vec3 right) { m_sideVec = right; }
+	void SetFrontVec(Vec3 front) { m_frontVec = front; }
+	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
+	void SetCameraToPlayer(Vec3 cameraToPlayer);
+	/// <param name="sideVec">加速させる方向の横ベクトル</param>
+	void SetBoost(Vec3 sideVec);
+	void SetIsOperation(bool flag);
+	void SetCameraAngle(float cameraAngle);
+	void IsWarp() { m_isJumpFlag = true; }
+	
+	void InitDush();
+	void InitJump();
+	void TitleDush();
+	void TitleJump();
+
 
 	Vec3 GetPos() const { return  m_rigid->GetPos(); }
 	Vec3 GetLeftHandPos() { return Vec3(MV1GetFramePosition(m_modelHandle, m_handFrameIndex)); }
-	void SetVelocity(Vec3 pos) { m_velocity = pos; m_rigid->SetVelocity(pos); }
-	void AddVelocity(Vec3 pos) { m_rigid->AddVelocity(pos); }
-	void SetPos(Vec3 pos) { m_rigid->SetPos(pos); }
 	
-	void SetCameraToPlayer(Vec3 cameraToPlayer);
 	Vec3 GetOnPlanetPos() { return m_nowPlanet->GetRigidbody()->GetPos(); }
 	Vec3 GetVelocity() const { return m_rigid->GetVelocity(); }
 	Vec3 GetMoveDir() const{ return m_moveDir; }
@@ -62,36 +75,25 @@ public:
 	Vec3 GetInputRightVec()const { return m_inputRightVec; }
 	Vec3 GetShotDir()const { return m_shotDir; }
 	Vec3 GetLookPoint() const{ return m_lookPoint; }
+	
 	float GetRegenerationRange() const{ return m_regeneRange; }
 	float GetCameraEasingSpeed()const { return m_cameraEasingSpeed; }
-	int WatchHp()const { return static_cast<int>(m_hp); }
 	float GetHp() { return m_hp; }
+	
 	bool GetOperationFlag()const { return m_playerUpdate==&Player::OperationUpdate; }
 	bool GetBoostFlag() const{ return m_playerUpdate==&Player::BoostUpdate; }
 	bool OnAiming() { return m_isAimFlag; }
 	bool GetFootOnHit() { return m_footCol->OnHit(); }
-	//bool GetNowFootOnHit() { return m_footCol->NowOnHit(); }
-	//bool GetPreFootOnHit() { return m_footCol->PreOnHit(); }
-	/// <param name="sideVec">加速させる方向の横ベクトル</param>
-	void SetBoost(Vec3 sideVec);
-	void SetIsOperation(bool flag);
-	void SetCameraAngle(float cameraAngle);
-	void SetSideVec(Vec3 right) { m_sideVec = right; }
-	void SetFrontVec(Vec3 front) { m_frontVec = front; }
-	void IsWarp() { m_isJumpFlag = true;}
+	bool IsSearch() { return m_isSearchFlag; }
+	bool OnDamage() { return m_playerUpdate == &Player::DamegeUpdate; }
+	bool IsClear() { return m_isClearFlag; }
+	bool GetJumpFlag() const { return m_isJumpFlag; }
+	bool GetSpinFlag() const { return m_isSpinFlag; }
+	
+	int WatchHp()const { return static_cast<int>(m_hp); }
 	int GetPlayerModelhandle() const { return m_modelHandle; }
 	int GetTitleMoveNum() { return m_titleUpdateNum; }
-	bool IsSearch() { return m_isSearchFlag; }
-	bool OnDamage() { return m_playerUpdate==&Player::DamegeUpdate; }
-	bool IsClear() { return m_isClearFlag; }
 	int GetDamageFrame() const { return m_damageFrame; }
-	//int GetSearchRemainTime() { return m_searchRemainTime; }
-	bool GetJumpFlag() const { return m_isJumpFlag; }
-
-	void InitDush();
-	void TitleDush();
-	void InitJump();
-	void TitleJump();
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
@@ -126,14 +128,16 @@ public:
 	void CommandJump();
 	void BoostUpdate();
 	void OperationUpdate();
-
 	void MoveToTargetWithStickStar(Vec3 targetPos);
+
+	//TitlePlayerからポインタを通してアクセスするためPublic
+	void ShotTheStar();
+	void ShotTheStickStar();
 
 protected:
 	Vec3 Move();
 
-	void ShotTheStar();
-	void ShotTheStickStar();
+	
 
 	//アニメーションの進行
 	//ループしたかどうかを返す
@@ -317,6 +321,7 @@ protected:
 
 	Quaternion m_myQ;
 	Quaternion m_rotateYQ;
+
 	MATRIX m_initMat;
 	Vec3 m_cameraToPlayer;
 	Vec3 m_cameraPos;
