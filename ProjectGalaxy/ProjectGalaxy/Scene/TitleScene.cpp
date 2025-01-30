@@ -154,6 +154,7 @@ void TitleScene::Update()
     redPlanet->ModelRotation();
     MyEngine::Physics::GetInstance().Update();
     player->SetMatrix();
+    camera->Setting(player->GetBoostFlag(), player->GetIsAiming());
     (this->*m_updateFunc)();
     m_skyDomeRotationAngle += kSkyDomeRotationSpeed;
     MV1SetRotationXYZ(m_skyDomeH, VGet(0, m_skyDomeRotationAngle, 0));
@@ -173,6 +174,8 @@ void TitleScene::Draw()
     MyEngine::Physics::GetInstance().Draw();
     // シーン固有の描画
     (this->*m_drawFunc)();
+
+  
 
 }
 

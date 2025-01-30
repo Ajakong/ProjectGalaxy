@@ -6,7 +6,7 @@
 
 using namespace std;
 
-WatchGalaxy::WatchGalaxy(std::shared_ptr<Player> playerPointer):Galaxy(playerPointer),
+WatchGalaxy::WatchGalaxy(std::shared_ptr<Player> playerPointer): World::Galaxy(playerPointer),
 m_managerUpdate(nullptr),
 m_managerDraw(nullptr)
 {

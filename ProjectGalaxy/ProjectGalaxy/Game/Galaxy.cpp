@@ -2,6 +2,7 @@
 #include"ScreenManager.h"
 #include"Game.h"
 
+using namespace World;
 
 namespace
 {

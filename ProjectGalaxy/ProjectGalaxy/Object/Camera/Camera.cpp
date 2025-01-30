@@ -26,6 +26,7 @@ Camera::Camera(Vec3 pos):
 	m_watchCount(0),
 	m_isFirstPerson(0),
 	m_isBoost(false),
+	m_isAim(false),
 	m_upVec(Vec3(0,1,0)),
 	m_easingSpeed(-1)
 {
@@ -59,6 +60,8 @@ Camera::~Camera()
 
 void Camera::Update(Vec3 LookPoint)
 {
+	
+
 	if (m_isBoost)
 	{
 		// FOV(視野角)を60度に
@@ -73,7 +76,7 @@ void Camera::Update(Vec3 LookPoint)
 	}
 	
 	(this->*m_cameraUpdate)(LookPoint);
-
+	
 	//オーディオリスナーの位置の更新
 	Set3DSoundListenerPosAndFrontPosAndUpVec(m_pos.VGet(), Vec3(m_pos + GetCameraFrontVector()).VGet(), m_upVec.VGet());
 }
@@ -131,7 +134,7 @@ void Camera::SetCameraPos(Vec3 LookPoint)
 
 void Camera::NeutralUpdate(Vec3 LookPoint)
 {
-	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxコントローラーのL
+	if (m_isAim)//XBoxコントローラーのL
 	{
 		m_cameraUpdate = &Camera::AimingUpdate;
 	}
@@ -140,7 +143,7 @@ void Camera::NeutralUpdate(Vec3 LookPoint)
 
 void Camera::AimingUpdate(Vec3 LookPoint)
 {
-	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxコントローラーのL
+	if (!m_isAim)//XBoxコントローラーのL
 	{
 		m_cameraUpdate = &Camera::NeutralUpdate;
 	}
@@ -174,7 +177,7 @@ void Camera::SetCameraFirstPersonPos(Vec3 LookPoint)
 	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 12).VGet());
 	SetLightDirectionHandle(m_lightHandle, (m_upVec * -1).VGet());
 
-	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxコントローラーのL
+	if (m_isAim)
 	{
 		m_cameraUpdate = &Camera::NeutralUpdate;
 	}
@@ -188,6 +191,12 @@ void Camera::SetCameraThirdPersonPos(Vec3 LookPoint)
 	SetLightDirectionHandle(m_lightHandle, m_upVec.VGet());*/
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), LookPoint.VGet(), m_upVec.VGet());
+}
+
+void Camera::Setting(bool boost, bool aim)
+{
+	m_isBoost = boost;
+	m_isAim = aim;
 }
 
 void Camera::WatchThis(Vec3 lookpoint, Vec3 cameraPos, Vec3 upVec)

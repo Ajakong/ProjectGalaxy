@@ -905,7 +905,7 @@ void Player::JumpingUpdate()
 
 	if (m_footCol->OnHit())
 	{
-		m_moveDir = Cross(m_upVec,GetCameraRightVector());
+		m_moveDir = Cross(GetCameraRightVector(), m_upVec);
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
 	}

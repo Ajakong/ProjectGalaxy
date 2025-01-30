@@ -320,7 +320,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 	//player->SetUpVec(planetToPlayer);
 
-	m_camera->SetBoost(player->GetBoostFlag());
+	m_camera->Setting(player->GetBoostFlag(), player->GetIsAiming());
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
 	m_camera->SetUpVec(player->GetNormVec());
 

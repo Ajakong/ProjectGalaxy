@@ -29,7 +29,7 @@ class SpaceEmperor;
 class Boss;
 class TalkObject;
 
-class SerialPlanetGalaxy :public Galaxy//GameManagerが管理,惑星やオブジェクトの情報を持っている
+class SerialPlanetGalaxy :public World::Galaxy//GameManagerが管理,惑星やオブジェクトの情報を持っている
 {
 public:
 	SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer);

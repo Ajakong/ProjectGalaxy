@@ -171,7 +171,7 @@ void Application::Run()
     {// スコープを強制的に作っている
 
         SceneManager sceneManager;
-        sceneManager.ChangeScene(std::make_shared<TitleScene>(sceneManager));
+        sceneManager.ChangeScene(std::make_shared<GamePlayingScene>(sceneManager));
 
         m_screenHandle = MakeScreen(Game::kScreenWidth, Game::kScreenHeight, true);
 

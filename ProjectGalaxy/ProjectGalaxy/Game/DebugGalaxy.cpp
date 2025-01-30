@@ -13,6 +13,7 @@
 #include"ModelManager.h"
 
 using namespace std;
+using namespace World;
 
 namespace
 {
@@ -135,7 +136,7 @@ void DebugGalaxy::Update()
 
 	//相対的な軸ベクトルの設定
 
-	camera->SetBoost(player->GetBoostFlag());
+	camera->Setting(player->GetBoostFlag(),player->GetIsAiming());
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
 	camera->SetUpVec(player->GetNormVec());
 

@@ -64,8 +64,10 @@ void GameManager::Update()
 void GameManager::Draw()
 {
 	m_galaxy.back()->Draw();
+	float hp = m_player->GetHp();
+	bool aim = m_player->GetIsAiming();
 
-	UI::GetInstance().Draw((m_player->GetHp(),m_player->GetIsAiming()));
+	UI::GetInstance().Draw(hp, aim);
 }
 
 void GameManager::IntroUpdate()

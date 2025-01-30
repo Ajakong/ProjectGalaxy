@@ -38,7 +38,7 @@ private:
 
 private:
 
-	std::vector<std::shared_ptr<SerialPlanetGalaxy>> m_galaxy;
+	std::vector<std::shared_ptr<World::Galaxy>> m_galaxy;
 	std::shared_ptr<Player> m_player;
 
 	int m_updateStopFrame;

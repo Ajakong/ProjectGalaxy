@@ -155,8 +155,7 @@ void GalaxyCreater::PlanetCreate()
 	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
 	//読み込むオブジェクト数分の配列に変更する
 	m_planetData.resize(dataCnt);
-	m_planetModelData.resize(dataCnt);
-
+	
 	//配列の数分回す
 	for (auto& loc : m_planetData)
 	{
@@ -196,7 +195,7 @@ void GalaxyCreater::PlanetCreate()
 
 void GalaxyCreater::TalkObjectCreate()
 {
-	std::vector<TalkObject> objects;
+	std::list<TalkObject> objects;
 	std::string fileName = "Data/Info/TalkObject.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
@@ -206,6 +205,7 @@ void GalaxyCreater::TalkObjectCreate()
 	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
 	//読み込むオブジェクト数分の配列に変更する
 	objects.resize(dataCnt);
+	
 	
 	//配列の数分回す
 	for (auto& loc : objects)

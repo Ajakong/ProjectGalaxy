@@ -22,7 +22,7 @@ public:
 	void Update();
 	
 	
-	void Draw(float hp=0,bool aimFlag=false);
+	void Draw(float hp=50.f,bool aimFlag=false);
 	
 	/// <summary>
 	/// 新しいテキストをぶち込む

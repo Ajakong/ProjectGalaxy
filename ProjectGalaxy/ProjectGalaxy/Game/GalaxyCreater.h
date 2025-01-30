@@ -24,17 +24,17 @@ class GalaxyCreater
 	{
 		std::string name;
 		Vec3 pos;
-		int color=0;
-		float gravityPower=0;
+		int color;
+		float gravityPower;
 		std::string modelName;
 		float coefficientOfFriction=1;
-		float scale=0.f;
+		float scale;
 	};
 	struct LocationSeekerLine
 	{
 		std::string name;
 		std::vector<Vec3> points;
-		int color=0;
+		int color;
 	};
 	struct StandardObject
 	{
@@ -61,8 +61,6 @@ class GalaxyCreater
 		std::string name;
 		std::string tag;
 		Vec3 pos;
-		std::string modelName;
-		std::string graphName;
 	};
 public:
 	GalaxyCreater();

@@ -25,9 +25,9 @@ int EffectManager::GetEffectData(const char* effectname)
 	{
 		EffectInfo m = EffectInfo();
 		string fileName = "Effect/";
-		/*SetUseASyncLoadFlag(false);
+//		SetUseASyncLoadFlag(false);
 		m.handle = LoadEffekseerEffect((fileName + (string)effectname).c_str());
-		SetUseASyncLoadFlag(true);*/
+//		SetUseASyncLoadFlag(true);
 		m.used = false;
 		m_pathAndEffectInfoes[effectname] = m;
 		return m.handle;
