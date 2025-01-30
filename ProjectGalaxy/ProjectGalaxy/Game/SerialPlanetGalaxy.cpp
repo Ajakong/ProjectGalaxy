@@ -196,10 +196,10 @@ m_warpEffectHandle(-1)
 	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	//m_takobo.push_back(make_shared<Takobo>(Vec3(60, 500, -10), player));
 	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	//m_boss.push_back(make_shared<Boss>(Vec3(300, 250, 100)));
-	//MyEngine::Physics::GetInstance().Entry(m_boss.back());
-	m_cannon.push_back(std::make_shared<Cannon>(Vec3(0, 0, 0), ObjectTag::EnemyBullet, 0xff0000));
-	MyEngine::Physics::GetInstance().Entry(m_cannon.back());
+	auto boss=(make_shared<Boss>(Vec3(0, 0, 0),player));
+	MyEngine::Physics::GetInstance().Entry(boss);
+	/*m_cannon.push_back(std::make_shared<Cannon>(Vec3(0, 0, 0), ObjectTag::EnemyBullet, 0xff0000));
+	MyEngine::Physics::GetInstance().Entry(m_cannon.back());*/
 
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 

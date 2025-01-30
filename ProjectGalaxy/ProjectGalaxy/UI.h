@@ -22,7 +22,7 @@ public:
 	void Update();
 	
 	
-	void Draw(float hp=50.f,bool aimFlag=false);
+	void Draw(float hp=0.f,bool aimFlag=false);
 	
 	/// <summary>
 	/// 新しいテキストをぶち込む
@@ -101,6 +101,8 @@ private:
 
 	int m_fadeSpeed;
 
+	int m_HPColor;
+
 	/// <summary>
 	/// 今話している人の顔画像ハンドル
 	/// </summary>
@@ -132,6 +134,10 @@ private:
 	/// 会話UI出現音
 	/// </summary>
 	int m_chatAppearSEHandle;
+	/// <summary>
+	/// HPが少ないことを知らせる音
+	/// </summary>
+	int m_hpLowerSEHandle;
 
 
 	std::shared_ptr<TextManager> m_textManager;

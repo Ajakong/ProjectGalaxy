@@ -1,6 +1,8 @@
 ﻿#include "Boss.h"
 #include"Planet.h"
+#include"Player.h"
 #include"Physics.h"
+#include"SoundManager.h"
 #include"Easing.h"
 namespace
 {
@@ -15,15 +17,34 @@ namespace
 	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
 
 	constexpr float kFrameParSecond = 60.0f;
+	constexpr float kRunningSpeed = 3.0f;
 
+
+	constexpr int kTackleMaxChargeFrame = 60.f;
+	constexpr int kRunningFrameMax = 400.f;
 	constexpr int kActionFrame = 100;
+
+	constexpr int kTackleTime = 20;
+	constexpr int kTackleSpeed = 5;
+
+	constexpr int kTackleLength = kTackleSpeed *kTackleTime;
+
+	const char* kDamageSEName = "Parry.mp3";
+	const char* kCriticalHitSEName = "CounterHit.mp3";
+
 }
-Boss::Boss(Vec3 pos):Enemy(Priority::Boss,ObjectTag::Enemy),
+Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectTag::Boss),
 	m_jumpCount(0),
 	m_actionFrame(0),
+	m_tackleChargeFrame(0),
 	m_isHit(false),
-	m_knockBackFrame(0)
+	m_onColStage(false),
+	m_knockBackFrame(0),
+	m_runningFrame(0),
+	m_damageSoundHandle(SoundManager::GetInstance().GetSoundData(kDamageSEName)),
+	m_criticalHandle(SoundManager::GetInstance().GetSoundData(kCriticalHitSEName))
 {
+	m_player = player;
 	m_hp = kHPFull;
 	m_rigid->SetPos(pos);
 	AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
@@ -32,6 +53,7 @@ Boss::Boss(Vec3 pos):Enemy(Priority::Boss,ObjectTag::Enemy),
 
 	m_color = 0xff00ff;
 	m_bossUpdate = &Boss::NeutralUpdate;
+	m_phaseUpdate = &Boss::PhaseTwoUpdate;
 }
 
 Boss::~Boss()
@@ -64,6 +86,8 @@ void Boss::Update()
 		m_isDestroyFlag = true;
 	}
 	DeleteObject(m_impacts);
+
+	m_onColStage = false;
 }
 
 void Boss::Draw()
@@ -72,16 +96,7 @@ void Boss::Draw()
 	
 }
 
-void Boss::InitUpdate()
-{
-}
-
-void Boss::RestUpdate()
-{
-
-}
-
-void Boss::NeutralUpdate()
+void Boss::PhaseOneUpdate()
 {
 	m_actionFrame++;
 	if (m_actionFrame < kActionFrame)return;
@@ -97,7 +112,62 @@ void Boss::NeutralUpdate()
 		m_bossUpdate = &Boss::FullpowerJumpUpdate;
 		break;
 	}
+
+}
+
+void Boss::PhaseTwoUpdate()
+{
+	m_actionFrame++;
+	if (m_actionFrame < kActionFrame)return;
+	m_actionFrame = 0;
+	Vec3 ToTargetVec = (m_player->GetPos() - m_rigid->GetPos());
+	if (ToTargetVec.Length() < kTackleLength)
+	{
+		switch (GetRand(1))
+		{
+		case(0):
+			m_bossUpdate = &Boss::TackleUpdate;
+			break;
+		case(1):
+			m_runningDir=ToTargetVec.GetNormalized();
+			m_bossUpdate = &Boss::RunningUpdate;
+			break;
+		}
+	}
+	else
+	{
+		switch (GetRand(1))
+		{
+		case(0):
+			m_rigid->AddVelocity(m_upVec * 2);
+			m_bossUpdate = &Boss::JumpingUpdate;
+			break;
+		case(1):
+			m_rigid->AddVelocity(m_upVec * 4);
+			m_bossUpdate = &Boss::FullpowerJumpUpdate;
+			break;
+		}
+	}
 	
+
+}
+
+void Boss::PhaseThreeUpdate()
+{
+}
+
+void Boss::InitUpdate()
+{
+}
+
+void Boss::RestUpdate()
+{
+
+}
+
+void Boss::NeutralUpdate()
+{
+	(this->*m_phaseUpdate)();
 }
 
 void Boss::AnglyUpdate()
@@ -110,7 +180,8 @@ void Boss::DestroyPlanetUpdate()
 
 void Boss::KnockBackUpdate()
 {
-	m_color = 0xff0000;
+	m_color = 0xffff00;
+	m_state = State::Attack;
 	m_knockBackFrame++;
 	if (m_knockBackFrame > kKnockBackFrameMax)
 	{
@@ -122,8 +193,9 @@ void Boss::KnockBackUpdate()
 
 void Boss::JumpingUpdate()
 {
-	
-	if (m_collision->OnHit())
+	m_color = 0xffff00;
+	m_state = State::Attack;
+	if (m_onColStage)
 	{
 		if (m_jumpCount > 2)
 		{
@@ -143,7 +215,7 @@ void Boss::JumpingUpdate()
 		else
 		{
 			m_jumpCount++;
-			m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::EnemyAttack));
+			m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::Electronic));
 			MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 			m_rigid->AddVelocity(m_upVec * 2);
 		}
@@ -154,9 +226,11 @@ void Boss::JumpingUpdate()
 
 void Boss::FullpowerJumpUpdate()
 {
-	if (m_collision->OnHit())
+	m_color = 0xffff00;
+	m_state = State::Attack;
+	if (m_onColStage)
 	{
-		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::EnemyAttack,2.f));
+		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::Electronic,2.f));
 		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 
 		//HPが少ないほど隙がなくなる
@@ -166,13 +240,60 @@ void Boss::FullpowerJumpUpdate()
 	}
 }
 
+void Boss::TackleUpdate()
+{
+	m_color = 0xffff00;
+	m_state = State::Tackle;
+
+	Vec3 targetDir = m_player->GetPos() - m_rigid->GetPos();
+	targetDir.Normalize();
+
+	m_tackleChargeFrame++;
+	m_rigid->SetVelocity(m_upVec * 0.5f);
+	if (m_tackleChargeFrame > kTackleMaxChargeFrame)
+	{
+		
+		m_rigid->SetVelocity(targetDir * kTackleSpeed);
+		if (m_tackleChargeFrame - kTackleMaxChargeFrame > kTackleTime)
+		{
+			m_tackleChargeFrame = 0;
+			//HPが少ないほど隙がなくなる
+			m_actionFrame = -m_hp;
+			m_bossUpdate = &Boss::LandingUpdate;
+		}
+	}
+}
+
+void Boss::RunningUpdate()
+{
+	m_color = 0xffff00;
+	m_state = State::Running;
+
+	m_sideVec = Cross(m_upVec, m_runningDir);
+	m_rigid->SetVelocity(m_sideVec*kRunningSpeed);
+
+	m_runningFrame++;
+	if (m_runningFrame > kRunningFrameMax / 2)
+	{
+		m_rigid->SetVelocity(m_rigid->GetVelocity() * -1);
+	}
+	if (m_runningFrame > kRunningFrameMax)
+	{
+		m_runningFrame = 0;
+		//HPが少ないほど隙がなくなる
+		m_actionFrame = -m_hp;
+		m_bossUpdate = &Boss::LandingUpdate;
+	}
+
+}
+
 void Boss::LandingUpdate()
 {
-	m_actionFrame++;
 	m_color = 0x00ff00;
+	m_actionFrame++;
 	if (m_actionFrame > 0)
 	{
-		m_color = 0xff00ff;;
+		m_color = 0xff00ff;
 		m_bossUpdate = &Boss::NeutralUpdate;
 	}
 }
@@ -228,9 +349,32 @@ void Boss::ChangeAnim(int animIndex, int speed)
 
 void Boss::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
-	if (colider->GetTag() == ObjectTag::PlayerBullet)
+	if (colider->GetTag() == ObjectTag::Stage)
 	{
-		m_isHit = true;
+		m_onColStage = true;
+	}
+	if (m_bossUpdate == &Boss::LandingUpdate)
+	{
+		if (colider->GetTag() == ObjectTag::PlayerBullet)
+		{
+			m_isHit = true;
+			PlaySoundMem(m_damageSoundHandle, DX_PLAYTYPE_BACK);
+			m_hp -= 5;
+		}
+	}
+	if (colider->GetTag() == ObjectTag::Player)
+	{
+		auto state = GetState();
+		if ((state == State::Running || state == State::Tackle) && colider->GetState() == State::Spin)
+		{
+			PlaySoundMem(m_criticalHandle, DX_PLAYTYPE_BACK);
+			Vec3 dir = colider->GetRigidbody()->GetPos();
+			dir.Normalize();
+			m_rigid->SetVelocity((dir + m_upVec) * 2);
+			//HPが少ないほど隙がなくなる
+			m_actionFrame = -m_hp-200;
+			m_bossUpdate = &Boss::LandingUpdate;
+		}
 	}
 }
 
@@ -245,14 +389,12 @@ void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 		if (colider->GetTag() == ObjectTag::PlayerImpact)
 		{
 			m_rigid->AddVelocity(m_upVec * 4);
-			m_bossUpdate = &Boss::KnockBackUpdate;
 			m_hp -= 20;
+			PlaySoundMem(m_criticalHandle, DX_PLAYTYPE_BACK);
 		}
 		if (colider->GetTag() == ObjectTag::PlayerBullet)
 		{
-			m_knockBackFrame = 44;
-			m_bossUpdate = &Boss::KnockBackUpdate;
-			m_hp -= 2;
+			m_hp -= 1;
 		}
 	}
 }

@@ -289,6 +289,7 @@ protected:
 	int m_actionFrame = 0;
 	int m_pointLightHandle = -1;
 	int m_hitSEHandle;
+	int m_elecSEHandle;
 	int m_parrySEHandle;
 	int m_searchSEHandle;
 	int m_getItemHandle;

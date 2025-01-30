@@ -15,6 +15,8 @@ namespace
 
 	const char* kTextBoxIntroSEName = "Mission.mp3";
 	const char* kChatAppearSEName = "ChatAppear.mp3";
+	const char* kHPLowerSEName = "HPLower.mp3";
+
 	
 	const UI::UIinfo kIdemBoxUIInfo{ 0,0,255,255 };
 	const UI::UIinfo kHPBarUIInfo { 125,730,820,140 };
@@ -55,7 +57,8 @@ UI::UI():
 	m_uiTalkingCharaHandle(-1),
 	m_textBoxSEHandle(-1),
 	m_chatAppearSEHandle(-1),
-	m_playerHp(-1)
+	m_hpLowerSEHandle(-1),
+	m_playerHp(0)
 {
 	
 }
@@ -78,15 +81,25 @@ void UI::Init()
 	m_uiAimGraphHandle = GraphManager::GetInstance().GetGraphData(kAimGraphName);
 	m_textBoxSEHandle = SoundManager::GetInstance().GetSoundData(kTextBoxIntroSEName);
 	m_chatAppearSEHandle = SoundManager::GetInstance().GetSoundData(kChatAppearSEName);
+	m_hpLowerSEHandle = SoundManager::GetInstance().GetSoundData(kHPLowerSEName);
 	m_textManager = std::make_shared<TextManager>();
 	NormalMode();
 	m_appearFrame = 0;
 	m_fadeSpeed = 1;
+	m_HPColor = 0x00044ff;
 }
 
 void UI::Update()
 {
-	
+	if (m_HPColor == 0x00044ff && m_playerHp <= 20&&m_playerHp!=0)
+	{
+		PlaySoundMem(m_hpLowerSEHandle, DX_PLAYTYPE_BACK);
+		m_HPColor = 0xff0000;
+	}
+	else if (m_HPColor == 0xff0000 && m_playerHp > 20)
+	{
+		m_HPColor = 0x00044ff;
+	}
 	(this->*m_uiUpdate)();
 
 }
@@ -210,7 +223,8 @@ void UI::Draw(float hp, bool aimFlag)
 	if (m_playerHp > 0)
 	{
 		DrawBox(40, 40, 780, static_cast<int>(kHPBarUIInfo.height / 2 + 10), 0x0000044, true);
-		DrawBox(40, 40, 40 + 15 * static_cast<int>(m_playerHp), kHPBarUIInfo.height / 2 + 10, 0x00044ff, true);
+		
+		DrawBox(40, 40, 40 + 15 * static_cast<int>(m_playerHp), kHPBarUIInfo.height / 2 + 10, m_HPColor, true);
 
 		DrawRectRotaGraphF(static_cast<float>(kHPBarUIInfo.width / 2), static_cast<float>(kHPBarUIInfo.height / 2), kHPBarUIInfo.x, kHPBarUIInfo.y, kHPBarUIInfo.width, kHPBarUIInfo.height, 1, 0, m_uiAssetHandle, true);
 #ifdef DEBUG

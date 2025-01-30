@@ -120,7 +120,10 @@ TitleScene::TitleScene(SceneManager& manager) :
     UI::GetInstance().InTexts(yabai);
     UI::GetInstance().InText("この宇宙を守るためにはスーパーマテリアルを取り戻す必要がある");
     UI::GetInstance().InText("この任務は死線を乗り越えた君にしか成し遂げられないことだと判断した");
-    UI::GetInstance().InText("スーパーマテリアルを取り戻し、全宇宙の平和を取り戻してくれ");
+    std::list < std::string > mission;
+    mission.push_back("スーパーマテリアルを取り戻し、全宇宙の平和を取り戻してくれ");
+    mission.push_back("私は君の動向を追いながら適時サポートしよう");
+    UI::GetInstance().InTexts(mission);
     UI::GetInstance().InText("君には全宇宙の未来がかかっている");
     UI::GetInstance().InText("さあ、Astro Seeker第一部隊隊長として宇宙の未来を切り開け！");
 

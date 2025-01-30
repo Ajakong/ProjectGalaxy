@@ -27,7 +27,7 @@ namespace
 
 	constexpr float kScaleMag = 0.03f;
 
-	constexpr int kStanCountMax = 1000;
+	constexpr int kStanCountMax = 200;
 	constexpr int kDeathCountMax = 200;
 
 }
@@ -47,7 +47,8 @@ float GetVec2Angle(Vec3 a, Vec3 b)
 Kuribo::Kuribo(Vec3 pos) :Enemy(Priority::Low, ObjectTag::Kuribo),
 m_attackDir(0,0,1),
 m_chaseFrameCount(0),
-m_stanCount(0)
+m_stanCount(0),
+m_speed(1)
 {
 	m_comebackPoint = pos;
 	m_rigid->SetPos(pos);
@@ -165,6 +166,12 @@ void Kuribo::Draw()
 	
 }
 
+void Kuribo::Stan(int stanCount)
+{
+	m_moveUpdate = &Kuribo::StanUpdate;
+	m_stanCount = stanCount;
+}
+
 void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)
@@ -177,17 +184,8 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	}
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		if (m_moveUpdate == &Kuribo::StanUpdate)
-		{
-			ChangeAnim(AnimNum::AnimationNumRoar);
-			m_moveUpdate = &Kuribo::DeathUpdate;
-		}
-		if (targetTag == ColideTag::Spin)
-		{
-			m_rigid->SetVelocity(m_attackDir * -kAwayStrength + m_upVec * kAwayStrength * 1.5f);
-			m_moveUpdate = &Kuribo::StanUpdate;
-		}
-		else if (targetTag == ColideTag::Foot)
+		
+		if (targetTag == ColideTag::Foot)
 		{
 			MV1SetScale(m_modelHandle, VGet(kScaleMag, 0, kScaleMag));
 			ChangeAnim(AnimNum::AnimationNumRoar);
@@ -255,7 +253,7 @@ void Kuribo::ChaseUpdate()
 	m_sideVec = Cross(m_attackDir, m_upVec).GetNormalized();
 	m_attackDir = Cross(m_upVec, m_sideVec).GetNormalized();
 	m_frontVec = m_attackDir;
-	m_rigid->SetVelocity(m_attackDir * kChaseSpeed);
+	m_rigid->SetVelocity(m_attackDir * kChaseSpeed*m_speed);
 	if (m_chaseFrameCount > kChaseMaxFrame)
 	{
 		m_chaseFrameCount = 0;

@@ -302,7 +302,7 @@ std::vector<std::shared_ptr<Enemy>> GalaxyCreater::EnemyCreate(std::shared_ptr<P
 		
 		else if (loc.tag == "Boss")
 		{
-			enemies.push_back(std::make_shared<Boss>(loc.pos));
+			enemies.push_back(std::make_shared<Boss>(loc.pos,player));
 		}
 		else if (loc.tag == "Gorori")
 		{

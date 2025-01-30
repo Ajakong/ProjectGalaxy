@@ -31,6 +31,8 @@ public:
 	virtual void SetMatrix();
 	virtual void Draw();
 
+	virtual void Stan(int stanCount);
+
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
 	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
@@ -98,6 +100,8 @@ protected:
 
 	float m_animationSpeed;
 	int m_stanCount;
+
+	int m_speed;
 	
 	//0.0f:prevが再生
 	//1.0:currentが再生
