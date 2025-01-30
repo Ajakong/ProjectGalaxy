@@ -134,7 +134,7 @@ void Camera::SetCameraPos(Vec3 LookPoint)
 
 void Camera::NeutralUpdate(Vec3 LookPoint)
 {
-	if (m_isAim)//XBoxコントローラーのL
+	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxコントローラーのL
 	{
 		m_cameraUpdate = &Camera::AimingUpdate;
 	}
@@ -143,7 +143,7 @@ void Camera::NeutralUpdate(Vec3 LookPoint)
 
 void Camera::AimingUpdate(Vec3 LookPoint)
 {
-	if (!m_isAim)//XBoxコントローラーのL
+	if (Pad::IsTrigger(PAD_INPUT_Y))//XBoxコントローラーのL
 	{
 		m_cameraUpdate = &Camera::NeutralUpdate;
 	}
@@ -177,7 +177,7 @@ void Camera::SetCameraFirstPersonPos(Vec3 LookPoint)
 	SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 12).VGet());
 	SetLightDirectionHandle(m_lightHandle, (m_upVec * -1).VGet());
 
-	if (m_isAim)
+	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
 		m_cameraUpdate = &Camera::NeutralUpdate;
 	}

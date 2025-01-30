@@ -128,6 +128,11 @@ private:
 	/// </summary>
 	int m_textBoxSEHandle;
 
+	/// <summary>
+	/// 会話UI出現音
+	/// </summary>
+	int m_chatAppearSEHandle;
+
 
 	std::shared_ptr<TextManager> m_textManager;
 	std::shared_ptr<TalkObject> m_nowTalkObject;

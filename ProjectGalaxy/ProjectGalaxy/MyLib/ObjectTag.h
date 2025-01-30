@@ -15,6 +15,7 @@ enum class ObjectTag
 	EnemyAttack,
 	Killer,
 	PlayerBullet,
+	Cannon,
 	PlayerImpact,
 	EnemyBullet,
 	WarpGate,

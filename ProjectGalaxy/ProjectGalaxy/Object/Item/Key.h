@@ -12,5 +12,7 @@ public:
 private:
 	int m_connectObjectNumber;
 	int m_modelHandle;
+
+	int m_getSoundEffectHandle;
 };
 

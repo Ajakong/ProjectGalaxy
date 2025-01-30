@@ -14,6 +14,7 @@ namespace
 	const char* kAimGraphName = "Elements_pro.png";
 
 	const char* kTextBoxIntroSEName = "Mission.mp3";
+	const char* kChatAppearSEName = "ChatAppear.mp3";
 	
 	const UI::UIinfo kIdemBoxUIInfo{ 0,0,255,255 };
 	const UI::UIinfo kHPBarUIInfo { 125,730,820,140 };
@@ -25,10 +26,21 @@ namespace
 
 	constexpr float kHpDecreaseSpeed = 0.3f;
 
+
 	/// <summary>
 	/// フェード時の描画インターバル
 	/// </summary>
 	constexpr int kDrawInterval = 60;
+
+
+	/// <summary>
+	/// テキストボックスのフェード速度
+	/// </summary>
+	constexpr int kTextBoxFadeFrameSpeed = 5.f;
+	/// <summary>
+	/// Aボタンのフェード速度
+	/// </summary>
+	constexpr int kInputAFadeFrameSpeed = 20.f;
 }
 
 UI::UI():
@@ -42,6 +54,7 @@ UI::UI():
 	m_uiTakasakiTaisaHandle(-1),
 	m_uiTalkingCharaHandle(-1),
 	m_textBoxSEHandle(-1),
+	m_chatAppearSEHandle(-1),
 	m_playerHp(-1)
 {
 	
@@ -62,8 +75,9 @@ void UI::Init()
 	m_uiAssetHandle = GraphManager::GetInstance().GetGraphData(kGraphUIAssetName);
 	m_uiInputAHandle = GraphManager::GetInstance().GetGraphData(kInputAUIName);
 	m_uiTakasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
-	m_textBoxSEHandle = SoundManager::GetInstance().GetSoundData(kTextBoxIntroSEName);
 	m_uiAimGraphHandle = GraphManager::GetInstance().GetGraphData(kAimGraphName);
+	m_textBoxSEHandle = SoundManager::GetInstance().GetSoundData(kTextBoxIntroSEName);
+	m_chatAppearSEHandle = SoundManager::GetInstance().GetSoundData(kChatAppearSEName);
 	m_textManager = std::make_shared<TextManager>();
 	NormalMode();
 	m_appearFrame = 0;
@@ -145,7 +159,7 @@ void UI::InputAUpdate()
 void UI::TextMode()
 {
 	PlaySoundMem(m_textBoxSEHandle,DX_PLAYTYPE_BACK);
-	m_fadeSpeed = 5;
+	m_fadeSpeed = kTextBoxFadeFrameSpeed;
 	Pad::SetState("TextInput");
 	m_uiUpdate = &UI::AppaerUpdate;
 	m_uiDraw = &UI::TextBoxFadeDraw;
@@ -153,7 +167,8 @@ void UI::TextMode()
 
 void UI::InputAMode()
 {
-	m_fadeSpeed = 20;
+	PlaySoundMem(m_chatAppearSEHandle, DX_PLAYTYPE_BACK);
+	m_fadeSpeed = kInputAFadeFrameSpeed;
 	
 	m_uiUpdate = &UI::AppaerUpdate;
 	m_uiDraw = &UI::InputAFadeDraw;

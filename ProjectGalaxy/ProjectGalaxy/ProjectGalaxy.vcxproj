@@ -185,6 +185,8 @@
     <ClCompile Include="MyLib\Vec3.cpp" />
     <ClCompile Include="Object\Base\SphereBase.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
+    <ClCompile Include="Object\Cannon.cpp" />
+    <ClCompile Include="Object\CannonSphere.cpp" />
     <ClCompile Include="Object\ClearObject\ClearObject.cpp" />
     <ClCompile Include="Object\DekaHead_Blue.cpp" />
     <ClCompile Include="Object\DekaHead_Green.cpp" />
@@ -279,6 +281,8 @@
     <ClInclude Include="MyLib\Vec3.h" />
     <ClInclude Include="Object\Base\SphereBase.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
+    <ClInclude Include="Object\Cannon.h" />
+    <ClInclude Include="Object\CannonSphere.h" />
     <ClInclude Include="Object\ClearObject\ClearObject.h" />
     <ClInclude Include="Object\DekaHead_Blue.h" />
     <ClInclude Include="Object\DekaHead_Green.h" />

@@ -21,6 +21,7 @@
 #include"Gorori.h"
 #include"Kuribo.h"
 #include"Item.h"
+#include"Cannon.h"
 #include"StickStarItem.h"
 #include"FullPowerDropItem.h"
 #include"Coin.h"
@@ -197,7 +198,8 @@ m_warpEffectHandle(-1)
 	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	//m_boss.push_back(make_shared<Boss>(Vec3(300, 250, 100)));
 	//MyEngine::Physics::GetInstance().Entry(m_boss.back());
-	
+	m_cannon.push_back(std::make_shared<Cannon>(Vec3(0, 0, 0), ObjectTag::EnemyBullet, 0xff0000));
+	MyEngine::Physics::GetInstance().Entry(m_cannon.back());
 
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
@@ -308,7 +310,6 @@ void SerialPlanetGalaxy::IntroDraw()
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
 	m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
-	
 	if (player->GetIsAiming())m_camera->Update(player->GetShotDir());
 	else m_camera->Update(player->GetLookPoint());
 
@@ -377,6 +378,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	for (auto& item : m_enemies) { item->SetMatrix(); }
 	for (auto& item : m_keyLockEnemies) { item->SetMatrix(); }
 	for (auto& item : m_talkObjects) { item->SetMatrix(); }
+	for (auto& item : m_cannon) { item->SetMatrix(); }
 	//敵の削除管理
 	DeleteObject(m_enemies);
 	DeleteObject(m_item);
