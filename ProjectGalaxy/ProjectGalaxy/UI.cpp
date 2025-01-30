@@ -11,6 +11,7 @@ namespace
 	const char* kGraphUIAssetName = "Designer_ui.png";
 	const char* kInputAUIName = "PushAbottonForTalk.png";
 	const char* kTakasakiTaisaGraphName = "TakasakiTaisa_talk.png";
+	const char* kAimGraphName = "Elements_pro.png";
 
 	const char* kTextBoxIntroSEName = "Mission.mp3";
 	
@@ -19,6 +20,8 @@ namespace
 	const UI::UIinfo kWindowScreenUIInfo{ 620,15,400,500 };
 	const UI::UIinfo kInputAUIInfo{ 200,105,620,695 };
 	const UI::UIinfo kTalkingCharaGraph{ 0,0,775,890 };
+
+	const UI::UIinfo kAimGraph{ 3140 ,200,400,370 };
 
 	constexpr float kHpDecreaseSpeed = 0.3f;
 
@@ -30,7 +33,16 @@ namespace
 
 UI::UI():
 	m_fadeSpeed(1),
-	m_appearFrame(0)
+	m_appearFrame(0),
+	m_uiUpdate(&UI::NormalUpdate),
+	m_uiDraw(&UI::NormalDraw),
+	m_uiAssetHandle(-1),
+	m_uiInputAHandle(-1),
+	m_uiAimGraphHandle(-1),
+	m_uiTakasakiTaisaHandle(-1),
+	m_uiTalkingCharaHandle(-1),
+	m_textBoxSEHandle(-1),
+	m_playerHp(-1)
 {
 	
 }
@@ -49,8 +61,9 @@ void UI::Init()
 {
 	m_uiAssetHandle = GraphManager::GetInstance().GetGraphData(kGraphUIAssetName);
 	m_uiInputAHandle = GraphManager::GetInstance().GetGraphData(kInputAUIName);
-	m_takasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
+	m_uiTakasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
 	m_textBoxSEHandle = SoundManager::GetInstance().GetSoundData(kTextBoxIntroSEName);
+	m_uiAimGraphHandle = GraphManager::GetInstance().GetGraphData(kAimGraphName);
 	m_textManager = std::make_shared<TextManager>();
 	NormalMode();
 	m_appearFrame = 0;
@@ -76,7 +89,7 @@ void UI::NormalUpdate()
 	//テキストデータがぶち込まれていたら表示する
 	if (m_textManager->GetTextDataSize() != 0)
 	{
-		m_talkingCharaHandle = m_takasakiTaisaHandle;
+		m_uiTalkingCharaHandle = m_uiTakasakiTaisaHandle;
 		TextMode();
 	}
 	
@@ -175,23 +188,24 @@ void UI::FadeOutUpdate()
 	
 }
 
-void UI::Draw(float m_hp)
+void UI::Draw(float hp, bool aimFlag)
 {
-	m_playerHp = m_hp;
+	m_playerHp = hp;
 
 	if (m_playerHp > 0)
 	{
-		DrawBox(40, 40, 780, kHPBarUIInfo.height / 2 + 10, 0x0000044, true);
-		DrawBox(40, 40, 40.f + 15.f * static_cast<int>(m_playerHp), kHPBarUIInfo.height / 2 + 10, 0x00044ff, true);
+		DrawBox(40, 40, 780, static_cast<int>(kHPBarUIInfo.height / 2 + 10), 0x0000044, true);
+		DrawBox(40, 40, 40 + 15 * static_cast<int>(m_playerHp), kHPBarUIInfo.height / 2 + 10, 0x00044ff, true);
 
-		DrawRectRotaGraph(static_cast<int>(kHPBarUIInfo.width / 2), static_cast<int>(kHPBarUIInfo.height / 2), kHPBarUIInfo.x, kHPBarUIInfo.y, kHPBarUIInfo.width, kHPBarUIInfo.height, 1, 0, m_uiAssetHandle, true);
+		DrawRectRotaGraphF(static_cast<float>(kHPBarUIInfo.width / 2), static_cast<float>(kHPBarUIInfo.height / 2), kHPBarUIInfo.x, kHPBarUIInfo.y, kHPBarUIInfo.width, kHPBarUIInfo.height, 1, 0, m_uiAssetHandle, true);
 #ifdef DEBUG
 		DrawRectRotaGraph(Game::kScreenWidth - kIdemBoxUIInfo.width / 2 - 170, kIdemBoxUIInfo.height / 2 + 50, kIdemBoxUIInfo.x, kIdemBoxUIInfo.y, kIdemBoxUIInfo.width, kIdemBoxUIInfo.height, 1, 0, m_uiAssetHandle, true);
 #endif
 
 	}
 	(this->*m_uiDraw)();
-	
+
+	if (aimFlag)DrawRectRotaGraph(800, 450, kAimGraph.x, kAimGraph.y, kAimGraph.width, kAimGraph.height, 0.3, 0, m_uiAimGraphHandle, true);
 }
 
 void UI::NormalDraw()
@@ -206,12 +220,12 @@ void UI::NormalDraw()
 
 void UI::InputAFadeDraw()
 {
-	DrawRectRotaGraph(Game::kScreenWidth/2,Game::kScreenHeight/2, kInputAUIInfo.x, kInputAUIInfo.y, kInputAUIInfo.width, kInputAUIInfo.height, m_appearFrame*0.002f, 0, m_uiInputAHandle, true);
+	DrawRectRotaGraphF(static_cast<float>(Game::kScreenWidth/2), static_cast<float>(Game::kScreenHeight/2), kInputAUIInfo.x, kInputAUIInfo.y, kInputAUIInfo.width, kInputAUIInfo.height, m_appearFrame*0.002f, 0, m_uiInputAHandle, true);
 }
 
 void UI::InputADraw()
 {
-	DrawRectRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, kInputAUIInfo.x, kInputAUIInfo.y, kInputAUIInfo.width, kInputAUIInfo.height, m_appearFrame * 0.002f, 0, m_uiInputAHandle, true);
+	DrawRectRotaGraphF(static_cast<float>(Game::kScreenWidth / 2), static_cast<float>(Game::kScreenHeight / 2), kInputAUIInfo.x, kInputAUIInfo.y, kInputAUIInfo.width, kInputAUIInfo.height, m_appearFrame * 0.002f, 0, m_uiInputAHandle, true);
 }
 
 void UI::TextBoxFadeDraw()
@@ -236,9 +250,9 @@ void UI::TextBoxDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * 9, 90, Game::kScreenWidth / 2 + m_appearFrame * 9, 440, 0x0000ff, false);
 
-	DrawRectRotaGraph(static_cast<int>(kWindowScreenUIInfo.width / 2) + 950, static_cast<int>(kWindowScreenUIInfo.height / 2)+20, kTalkingCharaGraph.x, kTalkingCharaGraph.y, kTalkingCharaGraph.width, kTalkingCharaGraph.height, 0.3f, 0, m_talkingCharaHandle, true);
+	DrawRectRotaGraph((kWindowScreenUIInfo.width / 2) + 950, (kWindowScreenUIInfo.height / 2)+20, kTalkingCharaGraph.x, kTalkingCharaGraph.y, kTalkingCharaGraph.width, kTalkingCharaGraph.height, 0.3f, 0, m_uiTalkingCharaHandle, true);
 
-	DrawRectRotaGraph(static_cast<int>(kWindowScreenUIInfo.width / 2)+950, static_cast<int>(kWindowScreenUIInfo.height / 2)+50, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 0.7f, 0, m_uiAssetHandle, true);
+	DrawRectRotaGraph((kWindowScreenUIInfo.width / 2)+950, (kWindowScreenUIInfo.height / 2)+50, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 0.7f, 0, m_uiAssetHandle, true);
 	m_textManager->Draw();
 }
 
@@ -255,7 +269,7 @@ void UI::InTexts(const std::list<std::string> texts)
 void UI::WannaTalk(std::shared_ptr<TalkObject> obj,int graphHandle)
 {
 	m_nowTalkObject = obj;
-	m_talkingCharaHandle = graphHandle;
+	m_uiTalkingCharaHandle = graphHandle;
 	InputAMode();
 }
 

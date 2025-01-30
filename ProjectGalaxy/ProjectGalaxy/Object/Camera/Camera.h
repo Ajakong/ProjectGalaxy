@@ -16,7 +16,6 @@ public:
 	void SetCamera(Vec3 LookPoint);
 	void Set();
 	void SetAimCamera(Vec3 LookPoint);
-	void SetDebugCameraPoint();
 	void DebagDraw();
 	Vec3 cameraToPlayer(const Vec3& targetPos);
 	

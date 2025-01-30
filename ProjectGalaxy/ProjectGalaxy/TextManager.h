@@ -39,7 +39,7 @@ public:
 	/// 入ってるテキストデータの残量
 	/// </summary>
 	/// <returns></returns>
-	int GetTextDataSize() { return m_texts.size(); }
+	int GetTextDataSize() { return static_cast<int>(m_texts.size()); }
 
 
 private:

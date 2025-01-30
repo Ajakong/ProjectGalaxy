@@ -26,7 +26,8 @@ Camera::Camera(Vec3 pos):
 	m_watchCount(0),
 	m_isFirstPerson(0),
 	m_isBoost(false),
-	m_upVec(Vec3(0,1,0))
+	m_upVec(Vec3(0,1,0)),
+	m_easingSpeed(-1)
 {
 	
 	m_cameraUpdate = &Camera::NeutralUpdate;
@@ -187,11 +188,6 @@ void Camera::SetCameraThirdPersonPos(Vec3 LookPoint)
 	SetLightDirectionHandle(m_lightHandle, m_upVec.VGet());*/
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), LookPoint.VGet(), m_upVec.VGet());
-}
-
-void Camera::SetDebugCameraPoint()
-{
-	//SetCameraPositionAndTargetAndUpVec(VGet(0, 400, -500), VGet(0, 0, 0), m_upVec.VGet());
 }
 
 void Camera::WatchThis(Vec3 lookpoint, Vec3 cameraPos, Vec3 upVec)

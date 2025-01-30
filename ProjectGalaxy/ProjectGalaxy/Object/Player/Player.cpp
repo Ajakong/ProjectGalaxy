@@ -69,12 +69,7 @@ namespace
 	const char* name = "Player";
 	const char* kFileName = "SpaceHarrier";
 
-	//照準
-	const char* kAimGraphFileName = "Elements_pro.png";
-	constexpr int kAimGraphSrkX = 3140;
-	constexpr int kAimGraphSrkY = 200;
-	constexpr int kAimGraphWidth = 400;
-	constexpr int kAimGraphHeight = 370;
+	
 }
 
 void MTransCopy(MATRIX& in, const MATRIX& src) {
@@ -82,13 +77,12 @@ void MTransCopy(MATRIX& in, const MATRIX& src) {
 }
 
 
-Player::Player(int modelhandle, Vec3 pos) : Collidable(Priority::High, ObjectTag::Player),
+Player::Player(Vec3 pos) : Collidable(Priority::High, ObjectTag::Player),
 m_modelHandle(MV1DuplicateModel(ModelManager::GetInstance().GetModelData(kFileName))),
 m_parrySEHandle(SoundManager::GetInstance().GetSoundData(kOnParrySEName)),
 m_getItemHandle(SoundManager::GetInstance().GetSoundData(kGetItemSEName)),
 m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
 m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
-m_aimGraphHandle(GraphManager::GetInstance().GetGraphData(kAimGraphFileName)),
 m_postUpVec(Vec3::Up()),
 m_shotDir(Vec3::Front()),
 m_moveDir(Vec3::Front()),
@@ -385,7 +379,7 @@ void Player::Draw()
 #endif 
 	
 #endif
-	if(m_isAimFlag)DrawRectRotaGraph(800, 450, kAimGraphSrkX, kAimGraphSrkY, kAimGraphWidth, kAimGraphHeight, 0.3, 0, m_aimGraphHandle, true);
+	
 }
 
 void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
@@ -683,7 +677,7 @@ void Player::Landing(int recast)
 {
 	ChangeAnim(AnimNum::AnimationNumJumpAttack);
 	//57:着地アニメーションの終了時間
-	MV1SetAttachAnimTime(m_modelHandle, m_currentAnimNo,57-recast);
+	MV1SetAttachAnimTime(m_modelHandle, m_currentAnimNo,static_cast<float>(57-recast));
 	m_playerUpdate = &Player::LandingUpdate;
 }
 
@@ -1065,7 +1059,7 @@ void Player::SpiningUpdate()
 {
 	m_radius = kNeutralSpinRadius;
 	m_stateName = "Spining";
-	m_state == State::Spin;
+	m_state = State::Spin;
 	Vec3 move;
 
 	move = Move();

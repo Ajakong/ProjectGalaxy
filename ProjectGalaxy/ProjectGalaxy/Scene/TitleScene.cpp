@@ -70,7 +70,7 @@ TitleScene::TitleScene(SceneManager& manager) :
     m_btnFrame(0),
     m_fadeSpeed(1),
     m_titleHandle(GraphManager::GetInstance().GetGraphData(kTitleGraphName)),
-    player(std::make_shared<TitlePlayer>(ModelManager::GetInstance().GetModelData(kPlayerModelName))),
+    player(std::make_shared<TitlePlayer>()),
     planet(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kPlanetModelName), 1.0f, 1)),
     nextPlanet(std::make_shared<SpherePlanet>(Vec3(-300, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kNextPlanetModelName), 1.0f, 1)),
 	emeraldPlanet(std::make_shared<SpherePlanet>(Vec3(400, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kEmeraldPlanetModelName), 1.0f, 1)),

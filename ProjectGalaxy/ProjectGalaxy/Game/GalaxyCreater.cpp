@@ -226,25 +226,6 @@ void GalaxyCreater::TalkObjectCreate()
 		FileRead_read(loc.tag.data(), sizeof(char) * static_cast<int>(loc.tag.size()), handle);
 		//座標を取得する
 		FileRead_read(&loc.pos, sizeof(loc.pos), handle);
-
-
-		////モデル名のバイト数を取得
-		//byte modelNameCnt = 0;
-		//FileRead_read(&modelNameCnt, sizeof(modelNameCnt), handle);
-		//loc.modelName.resize(modelNameCnt);
-		////モデル名を取得する
-		////取得したモデル名を利用し、後々ハンドルを受け取る
-		//FileRead_read(loc.modelName.data(), sizeof(char) * static_cast<int>(loc.modelName.size()), handle);
-		////画像名のバイト数を取得
-		//byte graphNameCnt = 0;
-		//FileRead_read(&graphNameCnt, sizeof(graphNameCnt), handle);
-		//loc.modelName.resize(graphNameCnt);
-		////モデル名を取得する
-		////取得したモデル名を利用し、後々ハンドルを受け取る
-		//FileRead_read(loc.graphName.data(), sizeof(char) * static_cast<int>(loc.graphName.size()), handle);
-
-		//int ModelHandle = ModelManager::GetInstance().GetModelData(loc.modelName.c_str());
-		//int graphHandle = GraphManager::GetInstance().GetGraphData(loc.graphName.c_str());
 		
 		if (loc.tag == "DekaHead_Red")
 		{

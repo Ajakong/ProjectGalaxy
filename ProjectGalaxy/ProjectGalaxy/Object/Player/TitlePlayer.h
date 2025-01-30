@@ -3,7 +3,7 @@
 class TitlePlayer : public Player
 {
 public:
-    TitlePlayer(int modelhandle);
+    TitlePlayer();
     virtual ~TitlePlayer();
 
 

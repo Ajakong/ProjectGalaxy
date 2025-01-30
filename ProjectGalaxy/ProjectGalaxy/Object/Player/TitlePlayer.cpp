@@ -17,7 +17,7 @@
 #include"Physics.h"
 
 
-TitlePlayer::TitlePlayer(int modelhandle) : Player(modelhandle)
+TitlePlayer::TitlePlayer() : Player()
 {
 	//ChangeAnim(AnimationNumRun);
 	m_titlePlayerUpdate = &TitlePlayer::IdleUpdate;

@@ -24,17 +24,17 @@ class GalaxyCreater
 	{
 		std::string name;
 		Vec3 pos;
-		int color;
-		float gravityPower;
+		int color=0;
+		float gravityPower=0;
 		std::string modelName;
-		float coefficientOfFriction;
-		float scale;
+		float coefficientOfFriction=1;
+		float scale=0.f;
 	};
 	struct LocationSeekerLine
 	{
 		std::string name;
 		std::vector<Vec3> points;
-		int color;
+		int color=0;
 	};
 	struct StandardObject
 	{
@@ -47,7 +47,7 @@ class GalaxyCreater
 		std::string name;
 		std::string tag;
 		Vec3 pos;
-		int connectObjectNumber;
+		int connectObjectNumber=-1;
 	};
 	struct LockedObject
 	{
@@ -81,7 +81,7 @@ public:
 	std::vector<std::shared_ptr<Enemy>> KeyLockObjectCreate();
 	
 	void Clear();
-	int GetSize() { return m_lockedObjects.size(); }
+	int GetSize() { return static_cast<int>(m_lockedObjects.size()); }
 	std::shared_ptr<MyEngine::Collidable> GetCollidable(int connectNumber) { return m_lockedObjects[connectNumber]; }
 	
 private:

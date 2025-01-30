@@ -105,7 +105,8 @@ namespace
 
 SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer),
 m_bgmHandle(SoundManager::GetInstance().GetSoundData("WarOfAstron_Intro.mp3")),
-m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_battle.mp3"))
+m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_battle.mp3")),
+m_warpEffectHandle(-1)
 {
 
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
@@ -123,7 +124,6 @@ m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_bat
 	m_keyLockEnemies=GalaxyCreater::GetInstance().KeyLockObjectCreate();
 	GalaxyCreater::GetInstance().TalkObjectCreate();
 
-	m_planet.push_back(make_shared<PolygonModelPlanet>(ModelManager::GetInstance().GetModelData("UFO_GreenMan"), Vec3(0, -1000, 200), 1, 1.0f, 5.f));
 #ifdef _DEBUG
 
 	//オブジェクトやギミックの配置(のちのちUnityのデータを読み込んで配置するので今は仮配置)
@@ -309,7 +309,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 {
 	m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
 	
-	if (player->OnAiming())m_camera->Update(player->GetShotDir());
+	if (player->GetIsAiming())m_camera->Update(player->GetShotDir());
 	else m_camera->Update(player->GetLookPoint());
 
 	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
@@ -348,7 +348,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	else
 	{
 		Vec3 upVec = player->GetNormVec().GetNormalized();
-		if (player->OnAiming())
+		if (player->GetIsAiming())
 		{
 			m_camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -5 + player->GetNormVec() * 8 + player->GetSideVec() * 2);
 		}
@@ -460,8 +460,6 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	DrawFormatString(0, 25 * 14, 0xffffff, Pad::GetState().c_str());
 #endif
-
-	SetCameraNearFar(1.0f, 30000.0f);
 	//
 	//SetScreenFlipTargetWindow(NULL);
 

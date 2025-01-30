@@ -10,10 +10,10 @@ class UI
 public:
 	struct UIinfo
 	{
-		float x;
-		float y;
-		float width;
-		float height;
+		int x;
+		int y;
+		int width;
+		int height;
 	};
 	UI();
 	virtual ~UI();
@@ -22,7 +22,7 @@ public:
 	void Update();
 	
 	
-	void Draw(float m_hp=0);
+	void Draw(float hp=0,bool aimFlag=false);
 	
 	/// <summary>
 	/// 新しいテキストをぶち込む
@@ -101,13 +101,33 @@ private:
 
 	int m_fadeSpeed;
 
-	int m_talkingCharaHandle;
-	int m_takasakiTaisaHandle;
+	/// <summary>
+	/// 今話している人の顔画像ハンドル
+	/// </summary>
+	int m_uiTalkingCharaHandle;
+	/// <summary>
+	/// 大佐の顔画像ハンドル
+	/// </summary>
+	int m_uiTakasakiTaisaHandle;
 
+	/// <summary>
+	/// 常駐UIアセットハンドル
+	/// </summary>
 	int m_uiAssetHandle;
+	/// <summary>
+	/// Aボタン画像ハンドル
+	/// </summary>
 	int m_uiInputAHandle;
+	/// <summary>
+	/// 照準画像ハンドル
+	/// </summary>
+	int m_uiAimGraphHandle;
 
+	/// <summary>
+	/// テキストボックス出現音
+	/// </summary>
 	int m_textBoxSEHandle;
+
 
 	std::shared_ptr<TextManager> m_textManager;
 	std::shared_ptr<TalkObject> m_nowTalkObject;

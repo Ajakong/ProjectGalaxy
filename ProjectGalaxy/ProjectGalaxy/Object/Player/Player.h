@@ -36,7 +36,7 @@ public:
 
 	
 
-	Player(int modelhandle,Vec3 pos=Vec3::Zero());
+	Player(Vec3 pos=Vec3::Zero());
 	~Player();
 
 	void Init();
@@ -84,7 +84,7 @@ public:
 	
 	bool GetOperationFlag()const { return m_playerUpdate==&Player::OperationUpdate; }
 	bool GetBoostFlag() const{ return m_playerUpdate==&Player::BoostUpdate; }
-	bool OnAiming() { return m_isAimFlag; }
+	bool GetIsAiming() { return m_isAimFlag; }
 	bool GetFootOnHit() { return m_footCol->OnHit(); }
 	bool IsSearch() { return m_isSearchFlag; }
 	bool OnDamage() { return m_playerUpdate == &Player::DamegeUpdate; }
@@ -272,7 +272,6 @@ protected:
 	std::shared_ptr<MyEngine::ColliderSphere> m_bodyCol;
 	
 	int m_modelHandle = 0;
-	int m_aimGraphHandle = 0;
 	int m_handFrameIndex;
 	int m_shotAnimCount;
 
