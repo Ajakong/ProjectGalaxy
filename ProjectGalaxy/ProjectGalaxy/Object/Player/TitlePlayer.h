@@ -14,6 +14,9 @@ public:
     /// <returns>移動開始フラグ</returns>
     bool MoveToTargetPosWithSticker(Vec3 targetPos);
 
+    void SetShot();
+
+    float GetAnimBlendRate() { return m_animBlendRate; }
 
     void Update();
     /// <summary>

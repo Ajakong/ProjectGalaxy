@@ -19,7 +19,7 @@
 
 TitlePlayer::TitlePlayer() : Player()
 {
-	//ChangeAnim(AnimationNumRun);
+	ChangeAnim(AnimNum::AnimationNumIdle);
 	m_titlePlayerUpdate = &TitlePlayer::IdleUpdate;
 	m_shotUpdate = &Player::ShotTheStickStar;
 }
@@ -44,6 +44,15 @@ bool TitlePlayer::MoveToTargetPosWithSticker(Vec3 targetPos)
 		return true;
 	}
 	return false;
+}
+
+void TitlePlayer::SetShot()
+{
+	if (MV1GetAttachAnimTotalTime(m_modelHandle, m_currentAnimNo) != 120)
+	{
+		ChangeAnim(AnimNum::AnimationNumShotPose);
+	}
+	
 }
 
 void TitlePlayer::Update()

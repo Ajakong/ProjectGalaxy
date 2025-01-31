@@ -47,14 +47,15 @@ void BigKuribo::DeathUpdate()
 	float animFrame = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);
 	if (m_userData->dissolveY < 0)
 	{
-		auto obj = std::make_shared<Key>(m_rigid->GetPos(), m_connectObjectNumber);
+		auto obj = std::make_shared<Key>(m_rigid->GetPos(), m_upVec * 2, m_connectObjectNumber,false);
 		Physics::GetInstance().Entry(obj);
 		m_isDestroyFlag = true;
 	}
 	if (animFrame > 60)
 	{
 		
-		auto obj = std::make_shared<Key>(m_rigid->GetPos(), m_connectObjectNumber);
+
+		auto obj = std::make_shared<Key>(m_rigid->GetPos(),m_upVec*2, m_connectObjectNumber,false);
 		Physics::GetInstance().Entry(obj);
 		m_isDestroyFlag = true;
 	}

@@ -154,6 +154,37 @@ void Boss::PhaseTwoUpdate()
 
 void Boss::PhaseThreeUpdate()
 {
+	m_actionFrame++;
+	if (m_actionFrame < kActionFrame)return;
+	m_actionFrame = 0;
+	Vec3 ToTargetVec = (m_player->GetPos() - m_rigid->GetPos());
+	if (ToTargetVec.Length() < kTackleLength)
+	{
+		switch (GetRand(1))
+		{
+		case(0):
+			m_bossUpdate = &Boss::TackleUpdate;
+			break;
+		case(1):
+			m_runningDir = ToTargetVec.GetNormalized();
+			m_bossUpdate = &Boss::RunningUpdate;
+			break;
+		}
+	}
+	else
+	{
+		switch (GetRand(1))
+		{
+		case(0):
+			m_rigid->AddVelocity(m_upVec * 2);
+			m_bossUpdate = &Boss::JumpingUpdate;
+			break;
+		case(1):
+			m_rigid->AddVelocity(m_upVec * 4);
+			m_bossUpdate = &Boss::FullpowerJumpUpdate;
+			break;
+		}
+	}
 }
 
 void Boss::InitUpdate()

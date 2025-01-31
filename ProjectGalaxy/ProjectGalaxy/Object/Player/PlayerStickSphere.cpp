@@ -89,7 +89,7 @@ void PlayerStickSphere::Effect()
 		}
 		else
 		{
-			PlaySoundMem(m_operationHandle,DX_PLAYTYPE_BACK);
+			//PlaySoundMem(m_operationHandle,DX_PLAYTYPE_BACK);
 			m_pushCount++;
 			m_player.lock()->SetIsOperation(true);
 			m_player.lock()->SetVelocity((m_rigid->GetPos() - m_player.lock()->GetPos()).GetNormalized() * 3 * m_pushCount);

@@ -168,6 +168,7 @@ void Kuribo::Draw()
 
 void Kuribo::Stan(int stanCount)
 {
+	ChangeAnim(AnimNum::AnimationNumSleep);
 	m_moveUpdate = &Kuribo::StanUpdate;
 	m_stanCount = stanCount;
 }

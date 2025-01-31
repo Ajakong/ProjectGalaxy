@@ -5,14 +5,14 @@
 
 namespace
 {
-	constexpr int kFontSize = 20;
-    constexpr int kTextHeightDistance = 5;
+	constexpr int kFontSize = 28;
+    constexpr int kTextHeightDistance = 16;
 
     const char* InputTextSEName = "InputText.mp3";
 }
 
 TextManager::TextManager()
-	:m_fontHandle(FontManager::GetInstance().GetFontData("SF_font.ttf","廻想体 ネクスト UP B",20)),
+	:m_fontHandle(FontManager::GetInstance().GetFontData("SF_font.ttf","廻想体 ネクスト UP B",kFontSize)),
 	m_drawTextLength(0),
 	m_drawTextFrame(0),
     m_inputTextSEHandle(SoundManager::GetInstance().GetSoundData(InputTextSEName)),

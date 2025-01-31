@@ -292,6 +292,7 @@ protected:
 	int m_elecSEHandle;
 	int m_parrySEHandle;
 	int m_searchSEHandle;
+	int m_shotStickStarSEHandle;
 	int m_getItemHandle;
 	int m_color;
 	int m_spinCount;

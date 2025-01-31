@@ -64,7 +64,7 @@ namespace
 
 	const char* kGororiHitSEName = "Hit.mp3";
 	const char* kElectroSEName = "Electro.mp3";
-
+	const char* kShotStickSEName = "ShotSound.mp3";
 	const char* kGetItemSEName = "GetItemSE.mp3";
 	const char* kOnParrySEName = "Parry.mp3";
 	const char* kJumpDropGroundSEName = "JumpDrop_ground.mp3";
@@ -88,6 +88,7 @@ m_getItemHandle(SoundManager::GetInstance().GetSoundData(kGetItemSEName)),
 m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
 m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
 m_elecSEHandle(SoundManager::GetInstance().GetSoundData(kElectroSEName)),
+m_shotStickStarSEHandle(SoundManager::GetInstance().GetSoundData(kShotStickSEName)),
 m_postUpVec(Vec3::Up()),
 m_shotDir(Vec3::Front()),
 m_moveDir(Vec3::Front()),
@@ -145,7 +146,7 @@ m_titleUpdateNum(0)
 	}
 
 
-	m_shotUpdate = &Player::ShotTheStar;
+	m_shotUpdate = &Player::ShotTheStickStar;
 
 	m_cameraEasingSpeed = 5.f;
 
@@ -1262,6 +1263,7 @@ void Player::ShotTheStickStar()
 {
 	if (m_sphere.size() == 0)
 	{
+		PlaySoundMem(m_shotStickStarSEHandle, DX_PLAYTYPE_BACK);
 		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
 		m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
 		MyEngine::Physics::GetInstance().Entry(m_sphere.back());

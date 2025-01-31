@@ -58,8 +58,9 @@ namespace
     constexpr int kLineX = 30;
     constexpr int kLineY = 900;
 
-    const Vec3 cameraFirstPosition = { -100,0,200 };
-    const Vec3 cameraSecondPosition = { -200,-45,80 };
+    const Vec3 cameraFirstPosition = { -50,0,200 };
+    const Vec3 cameraSecondPosition = { -5,10,10 };
+    const Vec3 cameraThirdPosition = { -200,-45,80 };
 
 }
 
@@ -73,8 +74,8 @@ TitleScene::TitleScene(SceneManager& manager) :
     player(std::make_shared<TitlePlayer>()),
     planet(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kPlanetModelName), 1.0f, 1)),
     nextPlanet(std::make_shared<SpherePlanet>(Vec3(-300, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kNextPlanetModelName), 1.0f, 1)),
-	emeraldPlanet(std::make_shared<SpherePlanet>(Vec3(400, -50, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kEmeraldPlanetModelName), 1.0f, 1)),
-    redPlanet(std::make_shared<SpherePlanet>(Vec3(200, -150,350), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kRedPlanetModelName), 1.0f, 1)),
+	emeraldPlanet(std::make_shared<SpherePlanet>(Vec3(200, 100, 200), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kEmeraldPlanetModelName), 1.0f, 1)),
+    redPlanet(std::make_shared<SpherePlanet>(Vec3(50, -50,300), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData(kRedPlanetModelName), 1.0f, 1)),
 	camera(std::make_shared<Camera>(cameraFirstPosition)),
     m_skyDomeH(0),
     m_skyDomeRotationAngle(0),
@@ -104,8 +105,8 @@ TitleScene::TitleScene(SceneManager& manager) :
 
     UI::GetInstance().Init();
     std::list<string> ImTakasaki;
-    ImTakasaki.push_back( "私はタカサキ大佐だ");
-    ImTakasaki.push_back("この通信が届いていたらAボタンで応答してくれ");
+    ImTakasaki.push_back( "聞こえるか、ドレイク！　私だ、ニジェール大佐だ。");
+    ImTakasaki.push_back("聞こえていたらAボタンを押してくれ。");
     UI::GetInstance().InTexts(ImTakasaki);
 
     std::list<string> mainMessage;
@@ -129,9 +130,9 @@ TitleScene::TitleScene(SceneManager& manager) :
     UI::GetInstance().InText("さあ、Astro Seeker第一部隊隊長として宇宙の未来を切り開け！");
 
 
-    camera->SetEasingSpeed(15.f);
+    camera->SetEasingSpeed(35.f);
 
-    m_cameraRotateAngle = 0.05f;
+    m_cameraRotateAngle = 0.02f;
 }
 
 TitleScene::~TitleScene()
@@ -140,8 +141,7 @@ TitleScene::~TitleScene()
     MyEngine::Physics::GetInstance().Exit(player);
     MyEngine::Physics::GetInstance().Exit(planet);
     MyEngine::Physics::GetInstance().Exit(nextPlanet);
-    MyEngine::Physics::GetInstance().Exit(emeraldPlanet);
-    MyEngine::Physics::GetInstance().Exit(redPlanet);
+    
 
 }
 
@@ -184,6 +184,7 @@ void TitleScene::Draw()
 
 }
 
+
 void TitleScene::FadeInUpdate()
 {
     m_fps = GetFPS();
@@ -212,12 +213,47 @@ void TitleScene::NormalUpdate()
     {
         
         camera->SetCameraPoint(cameraSecondPosition);
-        player->MoveToTargetPosWithSticker(nextPlanet->GetRigidbody()->GetPos());
-        m_updateFunc = &TitleScene::DirectionUpdate;
+        //player->MoveToTargetPosWithSticker(nextPlanet->GetRigidbody()->GetPos());
+        m_updateFunc = &TitleScene::WatchPlayerUpdate;
     }
 
    
     
+
+    m_btnFrame += m_fadeSpeed;
+    if (m_btnFrame > kFadeFrameMax)m_fadeSpeed *= -1;
+    if (m_btnFrame < 0)m_fadeSpeed *= -1;
+}
+
+void TitleScene::WatchPlayerUpdate()
+{
+    m_fps = GetFPS();
+
+    player->SetMatrix();
+    Quaternion q;
+   
+
+    q.SetQuaternion(camera->GetPos());
+    q.SetMove(m_cameraRotateAngle, Vec3::Up());
+
+    //camera->SetCameraPoint(q.Move(camera->GetPos(), Vec3::Zero()));
+    camera->Update(player->GetRigidbody()->GetPos());
+    if ((camera->GetPos()-camera->GetCameraPoint()).Length()<=5.f)
+    {
+        player->SetShot();
+        if (player->GetAnimBlendRate() >= 1.f)
+        {
+            MyEngine::Physics::GetInstance().Exit(emeraldPlanet);
+            MyEngine::Physics::GetInstance().Exit(redPlanet);
+            camera->SetCameraPoint(cameraThirdPosition);
+            player->MoveToTargetPosWithSticker(nextPlanet->GetRigidbody()->GetPos());
+            m_updateFunc = &TitleScene::DirectionUpdate;
+        }
+        
+    }
+
+
+
 
     m_btnFrame += m_fadeSpeed;
     if (m_btnFrame > kFadeFrameMax)m_fadeSpeed *= -1;
@@ -322,14 +358,18 @@ void TitleScene::NormalDraw()
     if (!(m_updateFunc == &TitleScene::LoadingUpdate))
     {
         int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
+        if (m_updateFunc == &TitleScene::NormalUpdate)
+        {
+            DrawRotaGraph2(600, 375, 615, 350, 1.f, 0, m_titleHandle, true);
 
-        DrawRotaGraph2(400, 375, 615, 350,0.5f,0, m_titleHandle, true);
-        int btnalpha = static_cast<int>(255 * (static_cast<float>(m_btnFrame) / kFadeFrameMax));
-        SetDrawBlendMode(DX_BLENDMODE_ADD, btnalpha);
 
-        DrawFormatString(kTitleTextX, kTitleTextY, 0xffffff, "Push A to Start");
-        
-        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+            int btnalpha = static_cast<int>(255 * (static_cast<float>(m_btnFrame) / kFadeFrameMax));
+            SetDrawBlendMode(DX_BLENDMODE_ADD, btnalpha);
+
+            DrawFormatString(kTitleTextX, kTitleTextY, 0xffffff, "Push A to Start");
+
+            SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+        }
         SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
         DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
         DrawBox(0, 0, m_frame * kLineX, kFadeBoxWidth, kFadeBoxColor, true);

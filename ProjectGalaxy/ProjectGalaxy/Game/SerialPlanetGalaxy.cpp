@@ -370,7 +370,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	//敵の削除管理
 	DeleteObject(m_enemies);
 	DeleteObject(m_item);
-	/*for (auto& item : m_kuribo) { item->SetMatrix(); }
+    /*for (auto& item : m_kuribo) { item->SetMatrix(); }
 	for (auto& item : m_takobo) { item->SetMatrix(); }
 	for (auto& item : m_spaceEmperor) { item->SetMatrix(); }
 	DeleteObject(m_kuribo);

@@ -20,6 +20,7 @@ public:
     void Update();
     void Draw();
 
+
     void getSlectNumber(int a) { m_selectNum = a; }
 
 private:
@@ -57,6 +58,8 @@ private:
 
     Vec3 positioningPlayerToCamera;
 
+    Vec3 rotationCenterPos;
+
     // メンバ関数ポインタの宣言
     using UpdateFunc_t = void (TitleScene::*)();
     using DrawFunc_t = void (TitleScene::*)();
@@ -68,6 +71,7 @@ private:
     // 更新関数
     void FadeInUpdate();
     void NormalUpdate();
+    void WatchPlayerUpdate();
     void FadeOutUpdate();
     void DirectionUpdate();
     void LoadingUpdate();
