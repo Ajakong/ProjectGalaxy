@@ -45,7 +45,7 @@ void CannonSphere::Draw()
 	DrawSphere3D(m_rigid->GetPos().VGet(), m_radius, 7, m_color, m_color, true);
 }
 
-void CannonSphere::SetRadius(int radius)
+void CannonSphere::SetRadius(float radius)
 {
 	m_radius = radius;
 }

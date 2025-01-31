@@ -35,7 +35,7 @@ namespace
     const char* kGameBGMName = "GamePlaying.mp3";
     const char* kPlayerModelName = "SpaceHarrier";
     const char* kPlanetModelName = "GoldenBall";
-    const char* kNextPlanetModelName = "Moon";
+    const char* kNextPlanetModelName = "Neptune";
 	const char* kEmeraldPlanetModelName = "GreenMoon";
     const char* kRedPlanetModelName = "RedMoon";
     const char* kSkyboxModelName = "Skybox";
@@ -58,7 +58,7 @@ namespace
     constexpr int kLineX = 30;
     constexpr int kLineY = 900;
 
-    const Vec3 cameraFirstPosition = { -200,-45,120 };
+    const Vec3 cameraFirstPosition = { -100,0,200 };
     const Vec3 cameraSecondPosition = { -200,-45,80 };
 
 }
@@ -78,7 +78,8 @@ TitleScene::TitleScene(SceneManager& manager) :
 	camera(std::make_shared<Camera>(cameraFirstPosition)),
     m_skyDomeH(0),
     m_skyDomeRotationAngle(0),
-	m_count(0)
+	m_count(0),
+    m_cameraRotateAngle(0)
 {
     
     camera->Update(VGet(0, 0, 150));
@@ -129,13 +130,14 @@ TitleScene::TitleScene(SceneManager& manager) :
 
 
     camera->SetEasingSpeed(15.f);
+
+    m_cameraRotateAngle = 0.05f;
 }
 
 TitleScene::~TitleScene()
 {
    
     MyEngine::Physics::GetInstance().Exit(player);
-    int a=player.use_count();
     MyEngine::Physics::GetInstance().Exit(planet);
     MyEngine::Physics::GetInstance().Exit(nextPlanet);
     MyEngine::Physics::GetInstance().Exit(emeraldPlanet);
@@ -198,8 +200,14 @@ void TitleScene::NormalUpdate()
     m_fps = GetFPS();
 
    
-   
+    
     player->SetMatrix();
+    Quaternion q;
+    q.SetQuaternion(camera->GetPos());
+    q.SetMove(m_cameraRotateAngle, Vec3::Up());
+   
+    camera->SetCameraPoint(q.Move(camera->GetPos(), Vec3::Zero()));
+    camera->Update(VGet(0, 0, 150));
     if (Pad::IsTrigger(PAD_INPUT_1))
     {
         

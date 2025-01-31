@@ -41,6 +41,7 @@ private:
 	int m_stickOSTHandle = 0;
     int m_count;
 
+    float m_cameraRotateAngle;
 
 
     //ハンドル集

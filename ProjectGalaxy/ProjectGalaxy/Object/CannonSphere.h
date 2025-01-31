@@ -10,7 +10,7 @@ public:
 	void Update();
 	void Draw();
 
-	void SetRadius(int radius);
+	void SetRadius(float radius);
 	void Shot();
 
 	int GetRadius() { return m_radius; }

@@ -32,6 +32,7 @@ public:
 	void Setting(bool boost,bool aim);
 	void SetBoost(bool boost) { m_isBoost = boost; }
 	void SetCameraPoint(Vec3 pos) { if (m_watchCount == 0)m_cameraPoint = pos; }
+	Vec3 GetCameraPoint() { return m_cameraPoint; }
 	void SetEasingSpeed(float speed) { m_easingSpeed = speed; }
 
 	/// <summary>

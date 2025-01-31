@@ -196,8 +196,8 @@ m_warpEffectHandle(-1)
 	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	//m_takobo.push_back(make_shared<Takobo>(Vec3(60, 500, -10), player));
 	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	auto boss=(make_shared<Boss>(Vec3(0, 0, 0),player));
-	MyEngine::Physics::GetInstance().Entry(boss);
+	/*auto boss=(make_shared<Boss>(Vec3(0, 0, 0),player));
+	MyEngine::Physics::GetInstance().Entry(boss);*/
 	/*m_cannon.push_back(std::make_shared<Cannon>(Vec3(0, 0, 0), ObjectTag::EnemyBullet, 0xff0000));
 	MyEngine::Physics::GetInstance().Entry(m_cannon.back());*/
 
@@ -325,18 +325,6 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
 	m_camera->SetUpVec(player->GetNormVec());
 
-	////エネミー
-	//for (auto& item : m_kuribo) { item->Update(); }
-
-
-	//for (auto& item : planet)item->Update();//ステージの更新
-	////位置固定ギミック
-	//for (auto& item : m_booster) { item->Update(); }
-	//for (auto& item : m_starCapture) { item->Update(); }
-	//for (auto& item : m_seekerLine) { item->Update(); }
-	//for (auto& item : m_crystal) { item->Update();}
-	//for (auto& item : m_coin)item->Update();
-
 	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 
 	
@@ -419,7 +407,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
-#ifdef _DEBUG
+#ifdef DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);

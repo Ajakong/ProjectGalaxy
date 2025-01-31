@@ -20,8 +20,8 @@ namespace
 	constexpr float kRunningSpeed = 3.0f;
 
 
-	constexpr int kTackleMaxChargeFrame = 60.f;
-	constexpr int kRunningFrameMax = 400.f;
+	constexpr int kTackleMaxChargeFrame = 60;
+	constexpr int kRunningFrameMax = 400;
 	constexpr int kActionFrame = 100;
 
 	constexpr int kTackleTime = 20;
