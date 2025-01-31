@@ -195,6 +195,7 @@
     <ClCompile Include="Object\DekaHead_Yellow.cpp" />
     <ClCompile Include="Object\Enemy\BigKuribo.cpp" />
     <ClCompile Include="Object\Enemy\Boss.cpp" />
+    <ClCompile Include="Object\Enemy\DecoyBoss.cpp" />
     <ClCompile Include="Object\Enemy\Enemy.cpp" />
     <ClCompile Include="Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Object\Enemy\EnemySphere.cpp" />
@@ -291,6 +292,7 @@
     <ClInclude Include="Object\DekaHead_Yellow.h" />
     <ClInclude Include="Object\Enemy\BigKuribo.h" />
     <ClInclude Include="Object\Enemy\Boss.h" />
+    <ClInclude Include="Object\Enemy\DecoyBoss.h" />
     <ClInclude Include="Object\Enemy\Enemy.h" />
     <ClInclude Include="Object\Enemy\EnemyManager.h" />
     <ClInclude Include="Object\Enemy\EnemySphere.h" />

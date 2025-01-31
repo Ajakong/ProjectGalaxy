@@ -105,29 +105,27 @@ TitleScene::TitleScene(SceneManager& manager) :
 
     UI::GetInstance().Init();
     std::list<string> ImTakasaki;
-    ImTakasaki.push_back( "聞こえるか、ドレイク！　私だ、ニジェール大佐だ。");
+    ImTakasaki.push_back( "聞こえるか、ドレイク！　私だ、タカサキ大佐だ。");
     ImTakasaki.push_back("聞こえていたらAボタンを押してくれ。");
     UI::GetInstance().InTexts(ImTakasaki);
 
     std::list<string> mainMessage;
-    mainMessage.push_back("よし、届いてるみたいだな");
-    mainMessage.push_back("では本題に移ろう");
+    mainMessage.push_back("よし、届いてるみたいだな。");
+    mainMessage.push_back("では本題に移ろう。");
     UI::GetInstance().InTexts(mainMessage);
 
-    UI::GetInstance().InText("Astro Seeker第一部隊隊長である君に宇宙の存亡をかけた超重要任務を授ける");
+
 
     std::list<string> yabai;
-    yabai.push_back("諜報部隊が入手した情報によると");
-    yabai.push_back("宇宙最大のエネルギー持つ物体スーパーマテリアルが何者かに盗まれた");
+    yabai.push_back("宇宙最大のエネルギー持つ物体、");
+    yabai.push_back("スーパーマテリアルが何者かに盗まれた。");
     UI::GetInstance().InTexts(yabai);
-    UI::GetInstance().InText("この宇宙を守るためにはスーパーマテリアルを取り戻す必要がある");
-    UI::GetInstance().InText("この任務は死線を乗り越えた君にしか成し遂げられないことだと判断した");
+    UI::GetInstance().InText("スーパーマテリアルはこの宇宙の安定には必須のものだ。");
     std::list < std::string > mission;
-    mission.push_back("スーパーマテリアルを取り戻し、全宇宙の平和を取り戻してくれ");
-    mission.push_back("私は君の動向を追いながら適時サポートしよう");
+    mission.push_back("頼む、ドレイク。");
+    mission.push_back("スーパーマテリアルを取り戻してくれ！");
     UI::GetInstance().InTexts(mission);
-    UI::GetInstance().InText("君には全宇宙の未来がかかっている");
-    UI::GetInstance().InText("さあ、Astro Seeker第一部隊隊長として宇宙の未来を切り開け！");
+
 
 
     camera->SetEasingSpeed(35.f);

@@ -146,7 +146,7 @@ m_titleUpdateNum(0)
 	}
 
 
-	m_shotUpdate = &Player::ShotTheStickStar;
+	m_shotUpdate = &Player::ShotTheStar;
 
 	m_cameraEasingSpeed = 5.f;
 

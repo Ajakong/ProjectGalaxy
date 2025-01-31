@@ -196,8 +196,10 @@ m_warpEffectHandle(-1)
 	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
 	//m_takobo.push_back(make_shared<Takobo>(Vec3(60, 500, -10), player));
 	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
+
 	/*auto boss=(make_shared<Boss>(Vec3(0, 0, 0),player));
 	MyEngine::Physics::GetInstance().Entry(boss);*/
+	
 	/*m_cannon.push_back(std::make_shared<Cannon>(Vec3(0, 0, 0), ObjectTag::EnemyBullet, 0xff0000));
 	MyEngine::Physics::GetInstance().Entry(m_cannon.back());*/
 
@@ -226,25 +228,28 @@ m_warpEffectHandle(-1)
 	m_modelScreenHandle = ScreenManager::GetInstance().GetScreenData(kModelScreenName, Game::kScreenWidth, Game::kScreenHeight);
 	std::list<std::string> m_texts;
 	
-	/*UI::GetInstance().InText("隊長！Astro Seeker　諜報部隊が入手した情報によると");
-	UI::GetInstance().InText("宇宙帝国の軍勢が我々の拠点に迫っているとのことです");
-	UI::GetInstance().InText("我々の拠点を守るためには宇宙帝国の軍勢を撃退する必要があります");
-	
-	UI::GetInstance().InText("ともに");
-	UI::GetInstance().InText("宇宙帝国の軍勢を撃退しましょう");*/
 
 	UI::GetInstance().Init();
-	UI::GetInstance().InText("そういえば久しぶりの実働任務になるな");
-	UI::GetInstance().InText("体がなまってるんじゃないか？");
+	UI::GetInstance().InText("よし、現地に着いたようだな。ドレイク");
+	
+	std::list<std::string> texts1;
+	texts1.push_back("そういえばドレイク、貴様は軍から抜けて長い。");
+	texts1.push_back("体がなまってるんじゃないか？");
+
+
+	UI::GetInstance().InTexts(texts1);
 
 	std::list<std::string> mission;
-	mission.push_back("目の前に謎の金色の球があるだろう");
-	mission.push_back("道順においてあるはずだから順にとってみろ");
+	mission.push_back("鍛えなおしてやると言いたいところだが、");
+	mission.push_back("私も忙しい。");
 	UI::GetInstance().InTexts(mission);
 
-	/*UI::GetInstance().InText("赤いヤツがキーを持ってる");
-	UI::GetInstance().InText("Aでジャンプしてヤツを踏みつけてキーを奪い取れ");
-	UI::GetInstance().InText("加速装置が見えるようになるはずだ");*/
+	std::list<std::string> panparn;
+	panparn.push_back("パンパーンを現地に置いてきた。");
+	panparn.push_back("あとは奴らから話を聞くといい。さらばだ！");
+	UI::GetInstance().InTexts(panparn);
+
+
 
 	
 

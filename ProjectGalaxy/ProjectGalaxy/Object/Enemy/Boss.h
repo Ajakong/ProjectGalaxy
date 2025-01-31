@@ -6,6 +6,8 @@
 
 class Planet;
 class Player;
+class Killer;
+
 class Boss : public Enemy
 {
 public:
@@ -33,16 +35,47 @@ private:
 
 
 	void InitUpdate();
+	/// <summary>
+	/// 休憩
+	/// </summary>
 	void RestUpdate();
 	void NeutralUpdate();
+	/// <summary>
+	/// 怒り
+	/// </summary>
 	void AnglyUpdate();
+	/// <summary>
+	/// 惑星破壊
+	/// </summary>
 	void DestroyPlanetUpdate();
+	/// <summary>
+	/// のけぞり
+	/// </summary>
 	void KnockBackUpdate();
+	/// <summary>
+	/// 衝撃波
+	/// </summary>
 	void JumpingUpdate();
+	/// <summary>
+	/// フルパワー衝撃波
+	/// </summary>
 	void FullpowerJumpUpdate();
+	//第2フェーズで追加される攻撃
+	
+	/// <summary>
+	/// 突進
+	/// </summary>
 	void TackleUpdate();
+	/// <summary>
+	/// 直進
+	/// </summary>
 	void RunningUpdate();
+	/// <summary>
+	/// 着地
+	/// </summary>
 	void LandingUpdate();
+	
+	void BallAttackUpdate();
 
 	//アニメーションの進行
 	//ループしたかどうかを返す
@@ -89,6 +122,8 @@ private:
 	/// </summary>
 	int m_runningFrame;
 	int m_color;
+
+	int m_shotCreateFrame;
 	
 
 	bool m_isHit;
@@ -98,6 +133,7 @@ private:
 	std::shared_ptr<Planet> m_nowPlanet;
 	std::shared_ptr<MyEngine::ColliderSphere> m_collision;
 	std::vector<std::shared_ptr<StampImpact>> m_impacts;
+	std::vector<std::shared_ptr<Killer>> m_killer;
 	std::shared_ptr<ClearObject>m_dropItem;
 };
 

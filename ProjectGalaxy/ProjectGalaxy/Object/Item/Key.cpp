@@ -47,7 +47,6 @@ void Key::Draw()
 
 void Key::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
-
 	if (colider->GetTag() == ObjectTag::Player)
 	{
 		PlaySoundMem(m_getSoundEffectHandle, DX_PLAYTYPE_BACK);

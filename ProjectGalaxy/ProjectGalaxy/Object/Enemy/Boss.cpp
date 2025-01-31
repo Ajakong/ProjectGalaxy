@@ -22,6 +22,7 @@ namespace
 
 	constexpr int kTackleMaxChargeFrame = 60;
 	constexpr int kRunningFrameMax = 400;
+	constexpr int kCreateShotFrame = 60;
 	constexpr int kActionFrame = 100;
 
 	constexpr int kTackleTime = 20;
@@ -42,7 +43,8 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	m_knockBackFrame(0),
 	m_runningFrame(0),
 	m_damageSoundHandle(SoundManager::GetInstance().GetSoundData(kDamageSEName)),
-	m_criticalHandle(SoundManager::GetInstance().GetSoundData(kCriticalHitSEName))
+	m_criticalHandle(SoundManager::GetInstance().GetSoundData(kCriticalHitSEName)),
+	m_shotCreateFrame(0)
 {
 	m_player = player;
 	m_hp = kHPFull;
@@ -309,8 +311,8 @@ void Boss::RunningUpdate()
 		m_rigid->SetVelocity(m_rigid->GetVelocity() * -1);
 	}
 	if (m_runningFrame > kRunningFrameMax)
-	{
 		m_runningFrame = 0;
+	{
 		//HPが少ないほど隙がなくなる
 		m_actionFrame = -m_hp;
 		m_bossUpdate = &Boss::LandingUpdate;
@@ -327,6 +329,16 @@ void Boss::LandingUpdate()
 		m_color = 0xff00ff;
 		m_bossUpdate = &Boss::NeutralUpdate;
 	}
+}
+
+void Boss::BallAttackUpdate()
+{
+	m_color = 0xffff00;
+	m_state = State::Attack;
+
+	m_shotCreateFrame++;
+
+	//if(m_shotCreateFrame>)
 }
 
 
