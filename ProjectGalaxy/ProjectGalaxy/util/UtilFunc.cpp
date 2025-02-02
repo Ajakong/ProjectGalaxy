@@ -1,7 +1,7 @@
 ﻿#include "UtilFunc.h"
 #include"DxLib.h"
 #include<cmath>
-void UtilFunc::DrawPlane(const Vec3& center, const Vec3& normal, float size, unsigned int color, int GrHandle)
+void UtilFunc::DrawTriangle(const Vec3& center, const Vec3& normal, float size, unsigned int color, int GrHandle)
 {
     {
         // 法線ベクトルを基に、平面の基準となるベクトルを作成
@@ -22,8 +22,8 @@ void UtilFunc::DrawPlane(const Vec3& center, const Vec3& normal, float size, uns
         VERTEX3D vertices[4] = {
             { VGet(p1.x, p1.y, p1.z), VGet(normal.x, normal.y, normal.z), color },
             { VGet(p2.x, p2.y, p2.z), VGet(normal.x, normal.y, normal.z), color },
-            { VGet(p3.x, p3.y, p3.z), VGet(normal.x, normal.y, normal.z), color }
-           /*{ VGet(p4.x, p4.y, p4.z), VGet(normal.x, normal.y, normal.z), color }*/
+            { VGet(p3.x, p3.y, p3.z), VGet(normal.x, normal.y, normal.z), color },
+            { VGet(p4.x, p4.y, p4.z), VGet(normal.x, normal.y, normal.z), color }
         };
 
         // 三角形の描画

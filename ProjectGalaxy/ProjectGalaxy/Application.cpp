@@ -176,7 +176,7 @@ void Application::Run()
         m_screenHandle = MakeScreen(Game::kScreenWidth, Game::kScreenHeight, true);
 
         LONGLONG time;
-#ifdef DEBUG
+#ifdef _DEBUG
         LONGLONG updateTime;
         LONGLONG drawTime;
 #endif
@@ -198,7 +198,7 @@ void Application::Run()
                 ChangeWindowMode(true);
             }
 
-#ifdef DEBUG
+#ifdef _DEBUG
             updateTime = GetNowHiPerformanceCount();
 #endif
 
@@ -208,7 +208,7 @@ void Application::Run()
 
             UpdateEffekseer3D();
 
-#ifdef DEBUG
+#ifdef _DEBUG
             drawTime = GetNowHiPerformanceCount();
             updateTime = drawTime - updateTime;
 #endif
@@ -216,7 +216,7 @@ void Application::Run()
             sceneManager.Draw();
             DrawEffekseer3D();
 
-#ifdef DEBUG
+#ifdef _DEBUG
             drawTime = GetNowHiPerformanceCount() - drawTime;
 
             DrawFormatString(16, 48, 0xff00ff, "FPS : %.2f", GetFPS());

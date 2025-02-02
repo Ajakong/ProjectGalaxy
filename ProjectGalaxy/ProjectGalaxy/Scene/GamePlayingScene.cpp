@@ -60,7 +60,7 @@ void GamePlayingScene::Update()
 	}
 	else if (m_isClear)
 	{
-
+		UI::GetInstance().Init();
 		ChangeScene(std::make_shared<ClearScene>(m_manager));
 	}
 	Pad::Update();
@@ -73,6 +73,7 @@ void GamePlayingScene::Draw()
 
 	if (m_isTitle)
 	{
+
 		ChangeScene(std::make_shared<TitleScene>(m_manager));
 	}
 	else if (m_isContinue)ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
@@ -114,7 +115,7 @@ void GamePlayingScene::FadeOutUpdate()
 
 void GamePlayingScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 {
-	UI::GetInstance().Init();
+	
 	m_manager.ChangeScene(nextScene);
 	MyEngine::Physics::GetInstance().Clear();
 }

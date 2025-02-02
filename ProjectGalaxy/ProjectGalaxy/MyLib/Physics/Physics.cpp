@@ -25,7 +25,7 @@ namespace
 	constexpr int CHECK_COUNT_MAX = 100;
 
 
-	constexpr float CHECK_COLLIDE_LENDGHT = 100.0f;
+	constexpr float CHECK_COLLIDE_LENDGHT = 50.0f;
 	constexpr float CHECK_COLLIDE_SQ_LENDGHT = CHECK_COLLIDE_LENDGHT * CHECK_COLLIDE_LENDGHT * 10;
 
 	const char* kShadowGraphName = "TakasakiTaisa_talk.png";
@@ -319,16 +319,7 @@ void MyEngine::Physics::Gravity()
 						Vec3 hitPosition = collisionResult.HitPosition;
 
 						UtilFunc::DrawTriangle(hitPosition+direction*-1, direction*-1, 3, 0x000000,m_shadowHandle);
-						//// 影の描画
-						//DrawBillboard3D(
-						//	hitPosition,          // 影の位置
-						//	0.5f,                 // 影の幅
-						//	0.5f,                 // 影の高さ
-						//	5.0f,                 // 距離減衰
-						//	0.0f,                 // 回転角度
-						//	m_shadowHandle,       // 影のテクスチャハンドル
-						//	TRUE                  // ビルボードフラグ
-						//);
+						
 					}
 
 

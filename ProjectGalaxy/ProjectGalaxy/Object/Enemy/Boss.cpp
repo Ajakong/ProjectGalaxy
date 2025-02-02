@@ -124,17 +124,26 @@ void Boss::PhaseTwoUpdate()
 	Vec3 ToTargetVec = (m_player->GetPos() - m_rigid->GetPos());
 	if (ToTargetVec.Length() < kTackleLength)
 	{
-		m_bossUpdate = &Boss::TackleUpdate;
-		/*switch (GetRand(1))
+		//m_bossUpdate = &Boss::TackleUpdate;
+		switch (GetRand(3))
 		{
 		case(0):
 			m_bossUpdate = &Boss::TackleUpdate;
 			break;
 		case(1):
-			m_runningDir=ToTargetVec.GetNormalized();
-			m_bossUpdate = &Boss::RunningUpdate;
+			/*m_runningDir=ToTargetVec.GetNormalized();
+			m_bossUpdate = &Boss::RunningUpdate;*/
+			m_bossUpdate = &Boss::TackleUpdate;
 			break;
-		}*/
+		case(2):
+			m_rigid->AddVelocity(m_upVec * 2);
+			m_bossUpdate = &Boss::JumpingUpdate;
+			break;
+		case(3):
+			m_rigid->AddVelocity(m_upVec * 4);
+			m_bossUpdate = &Boss::FullpowerJumpUpdate;
+			break;
+		}
 	}
 	else
 	{
@@ -276,7 +285,7 @@ void Boss::FullpowerJumpUpdate()
 		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 
 		//HPが少ないほど隙がなくなる
-		m_actionFrame = -m_hp;
+		m_actionFrame = -m_hp-20;
 		m_bossUpdate = &Boss::LandingUpdate;
 
 	}
