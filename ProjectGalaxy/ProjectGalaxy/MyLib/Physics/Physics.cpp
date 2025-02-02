@@ -115,7 +115,7 @@ void Physics::Update()
 	std::reverse_iterator<std::vector<int>::iterator> rit;
 	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(), m_collidables.rend()))//途中で要素を削除してもいいように逆順
 	{
-
+		item->SetNextUpVec(item->GetNextUpVec().GetNormalized());
 		item->SetUpVec(Slerp(item->GetUpVec(), item->GetNextUpVec(), 0.1f));
 		if (!item->GetIsActive())continue;
 		item->Update();

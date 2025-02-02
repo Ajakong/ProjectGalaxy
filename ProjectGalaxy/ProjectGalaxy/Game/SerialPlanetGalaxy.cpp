@@ -37,6 +37,8 @@
 #include"GalaxyCreater.h"
 #include"Game.h"
 
+#include"Mission.h"
+
 #include"TalkObject.h"
 #include"DekaHead_Red.h"
 #include"DekaHead_Blue.h"
@@ -233,20 +235,19 @@ m_warpEffectHandle(-1)
 	UI::GetInstance().InText("よし、現地に着いたようだな。ドレイク");
 	
 	std::list<std::string> texts1;
-	texts1.push_back("そういえばドレイク、貴様は軍から抜けて長い。");
+	texts1.push_back("そういえばドレイク、貴様は軍から抜けて長いだろう");
 	texts1.push_back("体がなまってるんじゃないか？");
 
 
 	UI::GetInstance().InTexts(texts1);
 
 	std::list<std::string> mission;
-	mission.push_back("鍛えなおしてやると言いたいところだが、");
-	mission.push_back("私も忙しい。");
+	mission.push_back("鍛えなおしてやる");
+	mission.push_back("まずは左スティックを動かして歩いてみろ");
 	UI::GetInstance().InTexts(mission);
 
 	std::list<std::string> panparn;
-	panparn.push_back("パンパーンを現地に置いてきた。");
-	panparn.push_back("あとは奴らから話を聞くといい。さらばだ！");
+	panparn.push_back("赤いパンパーンには都合上、まだ話しかけるなよ");
 	UI::GetInstance().InTexts(panparn);
 
 
@@ -270,7 +271,7 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 void SerialPlanetGalaxy::Init()
 {
 	ChangeVolumeSoundMem(100, m_bgmHandle);
-	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
+	//PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
 	SetGlobalAmbientLight(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 
 	player->SetMatrix();//モデルに行列を反映
@@ -295,6 +296,7 @@ void SerialPlanetGalaxy::Init()
 
 void SerialPlanetGalaxy::Update()
 {
+	Mission::GetInstance().UpDate();
 	(this->*m_managerUpdate)();
 	
 }
@@ -363,7 +365,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 	
 
-	if (player->GetHp()<=0)
+	if (player->GetDeathFlag())
 	{
 		m_isGameOverFlag = true;
 	}
@@ -461,6 +463,8 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	DrawFormatString(0, 25 * 14, 0xffffff, Pad::GetState().c_str());
 	DrawFormatString(0, 25 * 15, 0xffffff, "CameraPoint(%f,%f,%f)", m_camera->GetCameraPoint().x, m_camera->GetCameraPoint().y, m_camera->GetCameraPoint().z);
+	DrawFormatString(0, 25 * 17, 0xffffff, "state:%d", player->GetPostState());
+
 #endif
 	//
 	//SetScreenFlipTargetWindow(NULL);

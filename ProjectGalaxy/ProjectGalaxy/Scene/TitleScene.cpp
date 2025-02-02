@@ -28,7 +28,7 @@ namespace
 
     const char* kTitleGraphName = "galaxy_titleLogo_pro.png";
     const char* kFrameName = "Frame.png";
-    const char* kTitleBGMName = "Title.mp3";
+    const char* kTitleBGMName = "AstroSeeker_Theme.mp3";
 
     const char* kStickName = "parry.mp3";
     const char* kGameStartSEName = "StartGame_SE.mp3";
@@ -312,7 +312,7 @@ void TitleScene::LoadingUpdate()
 
 void TitleScene::ChangeScene(std::shared_ptr<Scene> next)
 {
-    StopSoundMem(m_titleBGMHandle);
+    //StopSoundMem(m_titleBGMHandle);
     SetCameraPositionAndTarget_UpVecY(VGet(0, 0, 0), VGet(0, 0, 1));
     m_manager.ChangeScene(next);
 }

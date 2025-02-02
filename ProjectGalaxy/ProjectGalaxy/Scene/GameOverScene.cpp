@@ -5,10 +5,17 @@
 #include"Pad.h"
 #include"DxLib.h"
 #include"UI.h"
+#include"SoundManager.h"
+
+namespace
+{
+	const char* kAstroSeekerThemeName = "AstroSeeker_Theme.mp3";
+}
 
 GameOverScene::GameOverScene(SceneManager& mgr) :
 	Scene(mgr)
 {
+	m_themeHandle = SoundManager::GetInstance().GetSoundData(kAstroSeekerThemeName);
 	Vec3 centerPos = Vec3(800, 450, 0);
 	m_updateFunc = &GameOverScene::FadeInUpdate;
 	m_drawFunc = &GameOverScene::FadeDraw;
@@ -70,6 +77,7 @@ void GameOverScene::FadeOutUpdate()
 
 void GameOverScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 {
+	StopSoundMem(m_themeHandle);
 	m_manager.ChangeScene(nextScene);
 }
 

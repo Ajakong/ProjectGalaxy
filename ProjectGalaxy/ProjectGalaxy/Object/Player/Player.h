@@ -17,7 +17,6 @@ public:
 	enum AnimNum : int
 	{
 		
-		
 		AnimationNumEmpty,
 		AnimationNumTpose,
 		AnimationNumDeath,
@@ -91,6 +90,7 @@ public:
 	bool IsClear() { return m_isClearFlag; }
 	bool GetJumpFlag() const { return m_isJumpFlag; }
 	bool GetSpinFlag() const { return m_isSpinFlag; }
+	bool GetDeathFlag() const { return m_isDeathFlag; }
 	
 	int WatchHp()const { return static_cast<int>(m_hp); }
 	int GetPlayerModelhandle() const { return m_modelHandle; }
@@ -104,6 +104,7 @@ public:
 	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
+	playerState_t m_postUpdate;
 	playerState_t m_playerUpdate;
 
 	playerState_t m_prevUpdate;
@@ -183,6 +184,10 @@ protected:
 	/// ジャンプ中
 	/// </summary>
 	void JumpingUpdate();
+	/// <summary>
+	/// ダッシュジャンプ中
+	/// </summary>
+	void DashJumpUpdate();
 	
 	//ジャンプ中の特殊アクション
 	/*m_jumpActionUpdateで使う*/
@@ -233,6 +238,10 @@ protected:
 	/// </summary>
 	void AvoidUpdate();
 
+	/// <summary>
+	/// 死亡
+	/// </summary>
+	void DeathUpdate();
 	void SetShotDir();
 	/// <summary>
 	/// 弾の削除処理
@@ -311,6 +320,7 @@ protected:
 
 	bool m_isOnDamageFlag;
 	bool m_isSpinFlag;
+	bool m_isDeathFlag;
 
 	float m_regeneRange;
 	float m_angle;

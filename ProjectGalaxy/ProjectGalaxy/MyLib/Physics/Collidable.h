@@ -52,8 +52,9 @@ namespace MyEngine
 			Intro,
 			Neutral,
 			Walk,
-			Dush,
+			Dash,
 			Jump,
+			DashJump,
 			JumpBoost,
 			Spin,
 			Roll,
@@ -71,6 +72,7 @@ namespace MyEngine
 			Running,
 			Stan,
 			Death,
+			Talk,
 			End,
 		};
 	public:
@@ -132,12 +134,14 @@ namespace MyEngine
 		ObjectTag GetTag() const { return m_tag; }
 		Priority GetPriority() const { return m_priority; }
 		State GetState()const { return m_state; }
+		State GetPostState() const { return m_postState; }
 		std::string GetStateName() const { return m_stateName; }
 		void SetObjectTag(ObjectTag tag) { m_tag = tag; }
 		bool IsAntiGravity() { return m_isAntiGravity; }
 		void SetIsActive(bool flag) { m_isActive = flag; }
 		bool GetIsActive() { return m_isActive; }
 		void SetNextUpVec(Vec3 vel) { m_nextUpVec = vel; }
+		void AddNextUpVec(Vec3 vel) { m_nextUpVec += vel; }
 		void SetUpVec(Vec3 vel) { m_upVec = vel; }
 		Vec3 GetUpVec() { return m_upVec; }
 		Vec3 GetNextUpVec() { return m_nextUpVec; }
@@ -176,6 +180,7 @@ namespace MyEngine
 		Vec3 m_sideVec;
 
 		State m_state;
+		State m_postState;
 		std::string m_stateName;
 
 

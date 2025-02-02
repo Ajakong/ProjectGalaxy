@@ -70,7 +70,7 @@ void Killer::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	}
 	else
 	{
-		m_isDestroyFlag = true;
+		//m_isDestroyFlag = true;
 	}
 }
 
