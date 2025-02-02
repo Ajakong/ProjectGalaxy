@@ -275,8 +275,12 @@ void Player::Update()
 	{
 		m_visibleCount = 0;
 		m_isVisibleFlag = true;
-		ChangeAnim(AnimNum::AnimationNumDeath);
-		m_playerUpdate = &Player::DeathUpdate;
+		if (m_playerUpdate != &Player::DeathUpdate)
+		{
+			ChangeAnim(AnimNum::AnimationNumDeath);
+			m_playerUpdate = &Player::DeathUpdate;
+		}
+		
 	}
 
 	UpdateAnim(m_currentAnimNo);
@@ -1378,8 +1382,16 @@ void Player::DamegeUpdate()
 		if (m_prevUpdate != m_playerUpdate)
 		{
 			ChangeAnim(AnimNum::AnimationNumRun);
-			//ダメージアニメーションのみ
-			m_playerUpdate = m_prevUpdate;
+			if (m_prevUpdate == &Player::TalkingUpdate)
+			{
+				m_playerUpdate = &Player::NeutralUpdate;
+			}
+			else
+			{
+				//ダメージアニメーションのみ
+				m_playerUpdate = m_prevUpdate;
+			}
+			
 		}
 		else
 		{
@@ -1408,10 +1420,14 @@ void Player::DeathUpdate()
 	m_stateName = "Death";
 	m_state = State::Death;
 
+	float animTime = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);
+	float totalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_currentAnimNo);
 	
-	
-	if (MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo) >= MV1GetAttachAnimTotalTime(m_modelHandle, m_currentAnimNo))
+	if (animTime >= totalTime-2)
 	{
+		UI::GetInstance().InText("ドレイク？");
+		UI::GetInstance().InText("ドレイィィィィク！！！！！");
+
 		m_isDeathFlag = true;
 	}
 }

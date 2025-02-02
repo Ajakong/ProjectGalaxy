@@ -14,6 +14,7 @@
 #include"ModelManager.h"
 #include"GraphManager.h"
 #include"UI.h"
+#include"GalaxyCreater.h"
 
 #include"GameManager.h"
 
@@ -55,11 +56,13 @@ void GamePlayingScene::Update()
 
 	if (m_isGameOver)
 	{
+		GalaxyCreater::GetInstance().Clear();
 		auto gameover = std::make_shared<GameOverScene>(m_manager);
 		ChangeScene(gameover);
 	}
 	else if (m_isClear)
 	{
+		GalaxyCreater::GetInstance().Clear();
 		UI::GetInstance().Init();
 		ChangeScene(std::make_shared<ClearScene>(m_manager));
 	}

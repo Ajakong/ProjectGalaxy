@@ -10,6 +10,7 @@
 namespace
 {
 	const char* kAstroSeekerThemeName = "AstroSeeker_Theme.mp3";
+	//const char* kAstroSeekerRevivalBGMName=""
 }
 
 GameOverScene::GameOverScene(SceneManager& mgr) :
@@ -58,7 +59,9 @@ void GameOverScene::FadeInUpdate()
 
 	if (m_frame <= 0)
 	{
-		UI::GetInstance().InText("おぉ死んでしまうとはなさけない");
+		UI::GetInstance().InText("そう簡単に死なれちゃ困るぜ");
+		UI::GetInstance().InText("もう一度立ち上がってくれるかい。");
+
 		m_updateFunc = &GameOverScene::NormalUpdate;
 		m_drawFunc = &GameOverScene::NormalDraw;
 	}
@@ -77,7 +80,7 @@ void GameOverScene::FadeOutUpdate()
 
 void GameOverScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 {
-	StopSoundMem(m_themeHandle);
+	//StopSoundMem(m_themeHandle);
 	m_manager.ChangeScene(nextScene);
 }
 

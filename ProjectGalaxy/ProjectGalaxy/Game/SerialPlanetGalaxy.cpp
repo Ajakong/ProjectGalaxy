@@ -265,7 +265,7 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 	m_warpGate.clear();
 	m_talkObjects.clear();
 
-	GalaxyCreater::GetInstance().Clear();
+	
 }
 
 void SerialPlanetGalaxy::Init()
