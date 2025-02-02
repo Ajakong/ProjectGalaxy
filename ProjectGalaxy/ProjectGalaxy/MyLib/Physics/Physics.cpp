@@ -270,7 +270,6 @@ void MyEngine::Physics::Gravity()
 		for (auto& object : m_collidables)
 		{
 			if (!object->GetIsActive())continue;
-
 			for (auto& col : object->m_colliders)
 			{
 				//Stage同士なら無視
@@ -287,10 +286,7 @@ void MyEngine::Physics::Gravity()
 
 					// 当たっていなければ次の判定に
 					if (!collideHitInfo.isHit) continue;
-					if (object->GetTag() == ObjectTag::Coin)
-					{
-						int a = 0;
-					}
+					
 					auto planet = std::dynamic_pointer_cast<Planet>(stage);
 
 					Vec3 planetPos = stage->GetRigidbody()->GetPos();
