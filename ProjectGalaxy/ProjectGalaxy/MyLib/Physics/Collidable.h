@@ -137,8 +137,10 @@ namespace MyEngine
 		bool IsAntiGravity() { return m_isAntiGravity; }
 		void SetIsActive(bool flag) { m_isActive = flag; }
 		bool GetIsActive() { return m_isActive; }
-		void SetUpVec(Vec3 vel) { m_nextUpVec = vel; }
+		void SetNextUpVec(Vec3 vel) { m_nextUpVec = vel; }
+		void SetUpVec(Vec3 vel) { m_upVec = vel; }
 		Vec3 GetUpVec() { return m_upVec; }
+		Vec3 GetNextUpVec() { return m_nextUpVec; }
 		Vec3 GetFrontVec() { return m_frontVec; }
 		// 当たり判定を無視（スルー）するタグの追加/削除
 		void AddThroughTag(ObjectTag tag);

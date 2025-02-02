@@ -7,7 +7,7 @@
 namespace
 {
 	constexpr int kHPFull = 60;
-	constexpr float kBodyRadiusSize = 20.f;
+	constexpr float kBodyRadiusSize = 10.f;
 	constexpr int kKnockBackFrameMax = 50;
 
 	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
@@ -20,13 +20,13 @@ namespace
 	constexpr float kRunningSpeed = 3.0f;
 
 
-	constexpr int kTackleMaxChargeFrame = 60;
+	constexpr int kTackleMaxChargeFrame = 80;
 	constexpr int kRunningFrameMax = 400;
 	constexpr int kCreateShotFrame = 60;
 	constexpr int kActionFrame = 100;
 
-	constexpr int kTackleTime = 20;
-	constexpr int kTackleSpeed = 5;
+	constexpr int kTackleTime = 50;
+	constexpr int kTackleSpeed = 2;
 
 	constexpr int kTackleLength = kTackleSpeed *kTackleTime;
 
@@ -69,7 +69,7 @@ void Boss::Init()
 void Boss::Update()
 {
 	//上方向ベクトルをいい感じに線形保管
-	m_upVec = Slerp(m_upVec, m_nextUpVec, 1.f);
+	//m_upVec = Slerp(m_upVec, m_nextUpVec, 1.f);
 	(this->*m_bossUpdate)();
 	if (m_isHit)
 	{
@@ -79,7 +79,6 @@ void Boss::Update()
 	if (m_knockBackFrame > 30)
 	{
 		m_isHit = false;
-		m_color = 0xff00ff;
 	}
 	if (m_hp <= 0)
 	{
@@ -125,7 +124,8 @@ void Boss::PhaseTwoUpdate()
 	Vec3 ToTargetVec = (m_player->GetPos() - m_rigid->GetPos());
 	if (ToTargetVec.Length() < kTackleLength)
 	{
-		switch (GetRand(1))
+		m_bossUpdate = &Boss::TackleUpdate;
+		/*switch (GetRand(1))
 		{
 		case(0):
 			m_bossUpdate = &Boss::TackleUpdate;
@@ -134,7 +134,7 @@ void Boss::PhaseTwoUpdate()
 			m_runningDir=ToTargetVec.GetNormalized();
 			m_bossUpdate = &Boss::RunningUpdate;
 			break;
-		}
+		}*/
 	}
 	else
 	{
@@ -162,14 +162,23 @@ void Boss::PhaseThreeUpdate()
 	Vec3 ToTargetVec = (m_player->GetPos() - m_rigid->GetPos());
 	if (ToTargetVec.Length() < kTackleLength)
 	{
-		switch (GetRand(1))
+		switch (GetRand(3))
 		{
 		case(0):
 			m_bossUpdate = &Boss::TackleUpdate;
 			break;
 		case(1):
-			m_runningDir = ToTargetVec.GetNormalized();
-			m_bossUpdate = &Boss::RunningUpdate;
+			/*m_runningDir = ToTargetVec.GetNormalized();
+			m_bossUpdate = &Boss::RunningUpdate;*/
+			m_bossUpdate = &Boss::TackleUpdate;
+			break;
+		case(2):
+			m_rigid->AddVelocity(m_upVec * 2);
+			m_bossUpdate = &Boss::JumpingUpdate;
+			break;
+		case(3):
+			m_rigid->AddVelocity(m_upVec * 4);
+			m_bossUpdate = &Boss::FullpowerJumpUpdate;
 			break;
 		}
 	}
@@ -323,6 +332,9 @@ void Boss::RunningUpdate()
 void Boss::LandingUpdate()
 {
 	m_color = 0x00ff00;
+	m_state = State::Land;
+
+
 	m_actionFrame++;
 	if (m_actionFrame > 0)
 	{
@@ -402,7 +414,7 @@ void Boss::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 		{
 			m_isHit = true;
 			PlaySoundMem(m_damageSoundHandle, DX_PLAYTYPE_BACK);
-			m_hp -= 5;
+			m_hp -= 1;
 		}
 	}
 	if (colider->GetTag() == ObjectTag::Player)
@@ -433,6 +445,8 @@ void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 		{
 			m_rigid->AddVelocity(m_upVec * 4);
 			m_hp -= 20;
+			m_color = 0xff00ff;
+			m_bossUpdate = &Boss::NeutralUpdate;
 			PlaySoundMem(m_criticalHandle, DX_PLAYTYPE_BACK);
 		}
 		if (colider->GetTag() == ObjectTag::PlayerBullet)

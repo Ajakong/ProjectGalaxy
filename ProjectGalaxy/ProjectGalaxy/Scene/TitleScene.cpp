@@ -104,19 +104,19 @@ TitleScene::TitleScene(SceneManager& manager) :
     MV1SetScale(m_skyDomeH, VGet(kSkyDomeScale, kSkyDomeScale, kSkyDomeScale));
 
     UI::GetInstance().Init();
-    std::list<string> ImTakasaki;
+    std::list<std::string> ImTakasaki;
     ImTakasaki.push_back( "聞こえるか、ドレイク！　私だ、タカサキ大佐だ。");
     ImTakasaki.push_back("聞こえていたらAボタンを押してくれ。");
     UI::GetInstance().InTexts(ImTakasaki);
 
-    std::list<string> mainMessage;
+    std::list<std::string> mainMessage;
     mainMessage.push_back("よし、届いてるみたいだな。");
     mainMessage.push_back("では本題に移ろう。");
     UI::GetInstance().InTexts(mainMessage);
 
 
 
-    std::list<string> yabai;
+    std::list<std::string> yabai;
     yabai.push_back("宇宙最大のエネルギー持つ物体、");
     yabai.push_back("スーパーマテリアルが何者かに盗まれた。");
     UI::GetInstance().InTexts(yabai);
@@ -177,7 +177,7 @@ void TitleScene::Draw()
     MyEngine::Physics::GetInstance().Draw();
     // シーン固有の描画
     (this->*m_drawFunc)();
-
+  
   
 
 }
@@ -260,8 +260,8 @@ void TitleScene::WatchPlayerUpdate()
 
 void TitleScene::FadeOutUpdate()
 {
-    camera->Update(player->GetRigidbody()->GetPos());
-    camera->SetCameraPoint(player->GetPos() + positioningPlayerToCamera * 10);
+    /*camera->Update(player->GetRigidbody()->GetPos());
+    camera->SetCameraPoint(player->GetPos() + positioningPlayerToCamera * 10);*/
     player->MoveToTargetWithStickStar(Vec3(0, 0, 0));
     m_fps = GetFPS();
     m_frame++;
@@ -301,6 +301,7 @@ void TitleScene::LoadingUpdate()
         UI::GetInstance().Update();
         if (UI::GetInstance().TextRemaining() == 0)
         {
+            player->Move();
             PlaySoundMem(m_gameStartSEHandle,DX_PLAYTYPE_BACK);
             m_updateFunc = &TitleScene::FadeOutUpdate;
             m_drawFunc = &TitleScene::FadeDraw;

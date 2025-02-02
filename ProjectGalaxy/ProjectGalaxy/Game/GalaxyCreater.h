@@ -8,7 +8,9 @@
 #include"Collidable.h"
 #include"Enemy.h"
 
+class Camera;
 class Player;
+
 
 class GalaxyCreater
 {
@@ -68,6 +70,7 @@ public:
 
 	static GalaxyCreater& GetInstance();
 
+	void SetCamera(std::shared_ptr<Camera>camera) { m_camera = camera; };
 	void ObjectCreate(std::shared_ptr<Player> player);
 	void SeekerLineCreate();
 	void PlanetCreate();
@@ -80,9 +83,10 @@ public:
 	
 	void Clear();
 	int GetSize() { return static_cast<int>(m_lockedObjects.size()); }
-	std::shared_ptr<MyEngine::Collidable> GetCollidable(int connectNumber) { return m_lockedObjects[connectNumber]; }
+	std::shared_ptr<MyEngine::Collidable> GetCollidable(int connectNumber);
 	
 private:
+	std::shared_ptr<Camera> m_camera;
 	std::vector<Location> m_objectData;
 	std::vector<LocationPlanet> m_planetData;
 	std::vector<int> m_planetModelData;

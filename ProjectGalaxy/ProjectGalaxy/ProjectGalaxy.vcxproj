@@ -243,6 +243,7 @@
     <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="util\GameStopManager.cpp" />
+    <ClCompile Include="util\UtilFunc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -340,6 +341,7 @@
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="util\GameStopManager.h" />
+    <ClInclude Include="util\UtilFunc.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ProjectGalaxy.rc" />

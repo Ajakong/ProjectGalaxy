@@ -91,6 +91,8 @@ void TitlePlayer::Update()
 
 void TitlePlayer::IdleUpdate()
 {
+	m_upVec = Vec3::Up();
+
 	m_stateName = "Idle";
 	m_state = State::Neutral;
 
@@ -98,10 +100,16 @@ void TitlePlayer::IdleUpdate()
 
 void TitlePlayer::StopUpdate()
 {
+	m_upVec = Vec3::Up();
 	m_rigid->SetVelocity(Vec3::Zero());
 }
 
 void TitlePlayer::DoNotMove()
 {
 	m_titlePlayerUpdate = &TitlePlayer::StopUpdate;
+}
+
+void TitlePlayer::Move()
+{
+	m_titlePlayerUpdate = &TitlePlayer::OperationUpdate;
 }

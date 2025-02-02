@@ -88,8 +88,6 @@ void Kuribo::Init()
 
 void Kuribo::Update()
 {
-	//ローカル上方向ベクトルをいい感じ線形保管
-	m_upVec = Slerp(m_upVec, m_nextUpVec, 1.f);
 
 	(this->*m_moveUpdate)();
 	UpdateAnim(m_currentAnimNo);

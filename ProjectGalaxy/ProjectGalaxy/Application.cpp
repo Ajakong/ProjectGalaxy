@@ -70,7 +70,7 @@ bool Application::Init()
 
     
 
-    SetWindowText("なめぇを決めてください");
+    SetWindowText("Astro Seeker");
     if (DxLib_Init() == -1)
     {
         return false;

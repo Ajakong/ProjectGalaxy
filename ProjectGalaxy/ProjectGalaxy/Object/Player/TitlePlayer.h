@@ -26,6 +26,7 @@ public:
     void StopUpdate();
 
     void DoNotMove();
+    void Move();
 
     using playerState_t = void(TitlePlayer::*)();
     playerState_t m_titlePlayerUpdate;

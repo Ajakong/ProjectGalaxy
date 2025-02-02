@@ -73,6 +73,8 @@ namespace
 	const char* name = "Player";
 	const char* kFileName = "SpaceHarrier";
 
+	const char* effectname = "Landing.efk";
+
 
 }
 
@@ -161,7 +163,7 @@ m_titleUpdateNum(0)
 	m_handFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
 
 	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
-	m_dropAttackUpdate = &Player::NormalDropAttackUpdate;
+	m_dropAttackUpdate = &Player::FullPowerDropAttackUpdate;
 	m_spinAttackUpdate = &Player::SpiningUpdate;
 }
 
@@ -176,7 +178,7 @@ void Player::Init()
 
 void Player::Update()
 {
-	m_upVec = Slerp(m_upVec, m_nextUpVec, 0.1f);
+
 	m_isSearchFlag = false;
 	m_radius = 0;
 
@@ -589,14 +591,16 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 
 	if (colider->GetTag() == ObjectTag::Boss)
 	{
-		if (!m_state == State::Spin)
+		if (!(m_state == State::Spin))
 		{
 			if (colider->GetState() == State::Running || colider->GetState() == State::Tackle)
 			{
+				if (m_isVisibleFlag)return;
 				Vec3 dir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
-				dir = dir + m_upVec;
 				dir.Normalize();
-				m_rigid->SetVelocity(dir * 3);
+				dir = dir + m_upVec*2;
+				dir.Normalize();
+				m_rigid->AddVelocity(dir * 3);
 				StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
 				m_prevUpdate = m_playerUpdate;
 				m_playerUpdate = &Player::DamegeUpdate;
@@ -697,10 +701,7 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 
 void Player::OnTriggerStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
-	if (colider->GetTag() == ObjectTag::Stage)
-	{
-		int a = 0;
-	}
+	
 }
 
 Vec3 Player::GetCameraToPlayer() const
@@ -1201,6 +1202,7 @@ void Player::OperationUpdate()
 	m_moveDir.Normalize();
 	m_postPos = m_rigid->GetPos();
 	m_sideVec = Cross(m_upVec, m_moveDir);
+	m_upVec = Cross(m_moveDir, m_sideVec);
 	if (!m_isOperationFlag)
 	{
 		SetAntiGravity(false);

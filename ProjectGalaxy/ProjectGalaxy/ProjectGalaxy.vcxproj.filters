@@ -429,6 +429,9 @@
     <ClCompile Include="Object\Enemy\DecoyBoss.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="util\UtilFunc.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -714,6 +717,9 @@
       <Filter>ヘッダー ファイル\Object\Gimmick</Filter>
     </ClInclude>
     <ClInclude Include="Object\Enemy\DecoyBoss.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="util\UtilFunc.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

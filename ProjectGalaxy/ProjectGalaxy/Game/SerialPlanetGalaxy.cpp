@@ -109,10 +109,12 @@ m_bgmHandle(SoundManager::GetInstance().GetSoundData("WarOfAstron_Intro.mp3")),
 m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_battle.mp3")),
 m_warpEffectHandle(-1)
 {
-
+	m_camera = make_shared<Camera>();
+	m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - player->GetFrontVec() * (kCameraDistanceFront));
+	m_camera->SetAimCamera(Vec3(0, 0, 0));
 	MyEngine::Physics::GetInstance().Entry(player);//物理演算クラスに登録
 
-	
+	GalaxyCreater::GetInstance().SetCamera(m_camera);
 	
 	//惑星の配置
 	GalaxyCreater::GetInstance().PlanetCreate();
@@ -172,9 +174,7 @@ m_warpEffectHandle(-1)
 	m_talkObjects.push_back(std::make_shared<DekaHead_Blue>(Vec3(-123, 481, 1463)));
 	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());*/
 
-	m_camera = make_shared<Camera>();
-	m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - player->GetFrontVec() * (kCameraDistanceFront));
-	m_camera->SetAimCamera(Vec3(0, 0, 0));
+	
 	/*m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("GoldenBall.mv1")));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-100, 50, 400), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1"),4));
 	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-200, -300, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
@@ -314,25 +314,16 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
-	m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
-	if (player->GetIsAiming())m_camera->Update(player->GetShotDir());
-	else m_camera->Update(player->GetLookPoint());
-
-	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
-	Vec3 sideVec = player->GetSideVec();
-	Vec3 front = player->GetFrontVec();//-1をかけて逆ベクトルにしている
-
 	//相対的な軸ベクトルの設定
 
 	//player->SetUpVec(planetToPlayer);
 
-	m_camera->Setting(player->GetBoostFlag(), player->GetIsAiming());
 	//本当はカメラとプレイヤーの角度が90度以内になったときプレイヤーの頭上を見たりできるようにしたい。
-	m_camera->SetUpVec(player->GetNormVec());
-
-	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
-
-	
+	m_camera->SetUpVec(player->GetUpVec());
+	//Vec3 planetToPlayer = player->GetPos() - player->GetNowPlanetPos();
+	Vec3 sideVec = player->GetSideVec();
+	Vec3 front = player->GetFrontVec();//-1をかけて逆ベクトルにしている
+	m_camera->Setting(player->GetBoostFlag(), player->GetIsAiming());
 
 	if (player->GetBoostFlag())
 	{
@@ -352,10 +343,25 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		}*/
 		else
 		{
-			m_camera->SetCameraPoint(player->GetPos() + player->GetNormVec().GetNormalized() * kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+			m_camera->SetCameraPoint(player->GetPos() + player->GetUpVec()* kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
 			//m_camera->SetCameraPoint(player->GetPos() + Vec3::Left() * 30);
 		}
 	}
+
+
+	if(m_camera->m_cameraUpdate!=&Camera::WatchThisUpdate)m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
+	if (player->GetIsAiming())m_camera->Update(player->GetShotDir());
+	else m_camera->Update(player->GetLookPoint());
+
+	
+
+	
+
+	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
+
+	
+
+	
 
 	if (player->GetHp()<=0)
 	{
@@ -412,7 +418,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 
 	
 	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
-#ifdef DEBUG
+#ifdef _DEBUG
 	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
 	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);
@@ -454,6 +460,7 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 	DrawFormatString(0, 25 * 13, 0xffffff, "JumpFlag:%d", player->GetJumpFlag());
 
 	DrawFormatString(0, 25 * 14, 0xffffff, Pad::GetState().c_str());
+	DrawFormatString(0, 25 * 15, 0xffffff, "CameraPoint(%f,%f,%f)", m_camera->GetCameraPoint().x, m_camera->GetCameraPoint().y, m_camera->GetCameraPoint().z);
 #endif
 	//
 	//SetScreenFlipTargetWindow(NULL);

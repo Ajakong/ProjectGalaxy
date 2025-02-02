@@ -11,6 +11,12 @@
 #include "DebugDraw.h"
 #include"Planet.h"
 
+#include"GraphManager.h"
+
+#include"UtilFunc.h"
+
+#include"Easing.h"
+
 using namespace MyEngine;
 
 namespace
@@ -20,11 +26,14 @@ namespace
 
 
 	constexpr float CHECK_COLLIDE_LENDGHT = 100.0f;
-	constexpr float CHECK_COLLIDE_SQ_LENDGHT = CHECK_COLLIDE_LENDGHT * CHECK_COLLIDE_LENDGHT*10;
+	constexpr float CHECK_COLLIDE_SQ_LENDGHT = CHECK_COLLIDE_LENDGHT * CHECK_COLLIDE_LENDGHT * 10;
+
+	const char* kShadowGraphName = "TakasakiTaisa_talk.png";
 }
 
 Physics::Physics()
 {
+	m_shadowHandle = GraphManager::GetInstance().GetGraphData(kShadowGraphName);
 }
 
 Physics& Physics::GetInstance()
@@ -54,7 +63,7 @@ void Physics::Entry(const std::shared_ptr<Collidable>& collidable)
 	}
 	else if (!isFound)
 	{
-	
+
 		m_stageCollidables.emplace_back(collidable);
 		m_collidables.emplace_back(collidable);
 	}
@@ -102,10 +111,12 @@ void Physics::Exit(const std::shared_ptr<Collidable>& collidable)
 
 void Physics::Update()
 {
-	
+
 	std::reverse_iterator<std::vector<int>::iterator> rit;
-	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(),m_collidables.rend()))//途中で要素を削除してもいいように逆順
+	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(), m_collidables.rend()))//途中で要素を削除してもいいように逆順
 	{
+
+		item->SetUpVec(Slerp(item->GetUpVec(), item->GetNextUpVec(), 0.1f));
 		if (!item->GetIsActive())continue;
 		item->Update();
 	}
@@ -141,9 +152,9 @@ void Physics::Update()
 	// 通知を送る
 	for (const auto& item : m_onCollideInfo)
 	{
-		OnCollideInfo(item.own, item.send, item.ownTag,item.sendTag, item.hitPos, item.kind);
+		OnCollideInfo(item.own, item.send, item.ownTag, item.sendTag, item.hitPos, item.kind);
 	}
-	
+
 	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(), m_collidables.rend()))//途中で要素を削除してもいいように逆順
 	{
 		if (item->IsDestroy())Exit(item);
@@ -171,6 +182,85 @@ void MyEngine::Physics::Clear()
 	m_preTirrigerInfo.clear();
 }
 
+void MyEngine::Physics::Initialize(std::shared_ptr<Collidable> collidable)
+{
+	// 判定リストはペアになっているので半分の数だけ繰り返す
+	for (auto& stage : m_stageCollidables)
+	{
+
+		for (auto& col : collidable->m_colliders)
+		{
+			//Stage同士なら無視
+			if (collidable->GetTag() == ObjectTag::Stage)continue;
+			//距離が離れすぎているオブジェクトも無視
+			if ((collidable->GetRigidbody()->GetPos() - stage->GetRigidbody()->GetPos()).Length() > 500)continue;
+			for (auto stageCol : stage->m_colliders)
+			{
+				auto& colA = stageCol;
+				auto& colB = col;
+
+				// 判定
+				auto collideHitInfo = IsCollide(stage->m_rigid, collidable->m_rigid, colA, colB);
+				// 当たっていなければ次の判定に
+				if (!collideHitInfo.isHit) continue;
+
+				// 通過オブジェクト確認
+				auto throughA = stage->m_throughTags;
+				auto throughB = collidable->m_throughTags;
+				bool isThrough = std::find(throughA.begin(), throughA.end(), collidable->GetTag()) != throughA.end()
+					|| std::find(throughB.begin(), throughB.end(), stage->GetTag()) != throughB.end();
+				// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
+				bool isTrigger = colA->col->m_isTrigger || colB->col->m_isTrigger || isThrough;
+				if (isTrigger)
+				{
+					if (collidable->GetTag() == ObjectTag::Player)
+					{
+						printf("Player");
+						if (colB->tag == ColideTag::Foot)
+						{
+							printf("の足");
+						}
+					}
+					//重力はオブジェクトごとに一回のみ
+					//重力の強さぶんベクトルに加算
+					if (colB->tag != ColideTag::Body)continue;
+					auto planet = dynamic_cast<Planet*>(stage.get());
+					collidable->m_rigid->AddVelocity(planet->GravityEffect(collidable));
+					collidable->m_rigid->SetNextPos(collidable->m_rigid->GetPos() + collidable->m_rigid->GetVelocity());
+					collidable->gravityEffectCount++;
+					continue;
+				}
+				else
+				{
+					////摩擦力は触れている面積が多いほど強くなるため、そのオブジェクトの当たり判定が多く当たっているほどさらに上乗せする
+					//colB->col->SetOnHitResult(true);
+					//printf("Planetの地面と");
+					//if (object->GetTag() == ObjectTag::Player)
+					//{
+					//	printf("Player");
+					//	if (colB->tag == ColideTag::Foot)
+					//	{
+					//		printf("の足");
+					//	}
+					//}
+					//else
+					//{
+					//	printf("なにか");
+					//}
+					//printf("が当たりました\n");
+					//auto planet = dynamic_cast<Planet*>(stage.get());
+					//object->m_rigid->SetVelocity(planet->FrictionEffect(object));
+
+					//continue;
+				}
+			}
+
+		}
+
+
+	}
+}
+
 void MyEngine::Physics::Gravity()
 {
 	// 判定リストはペアになっているので半分の数だけ繰り返す
@@ -180,7 +270,7 @@ void MyEngine::Physics::Gravity()
 		for (auto& object : m_collidables)
 		{
 			if (!object->GetIsActive())continue;
-			if (object->IsAntiGravity())continue;
+
 			for (auto& col : object->m_colliders)
 			{
 				//Stage同士なら無視
@@ -194,16 +284,66 @@ void MyEngine::Physics::Gravity()
 
 					// 判定
 					auto collideHitInfo = IsCollide(stage->m_rigid, object->m_rigid, colA, colB);
+
 					// 当たっていなければ次の判定に
 					if (!collideHitInfo.isHit) continue;
+					if (object->GetTag() == ObjectTag::Coin)
+					{
+						int a = 0;
+					}
+					auto planet = std::dynamic_pointer_cast<Planet>(stage);
+
+					Vec3 planetPos = stage->GetRigidbody()->GetPos();
+					Vec3 objectPos = object->GetRigidbody()->GetPos();
+					/*Vec3 norm = object->GetRigidbody()->GetPos() - stage->GetRigidbody()->GetPos();
+					norm.Normalize();*/
+					// オブジェクトから惑星の中心へのベクトルを計算
+					Vec3 direction = planetPos - objectPos;
+					direction.Normalize();
+
+					// 線分の始点と終点を設定
+					Vec3 start = planetPos.VGet();
+					Vec3 end = objectPos.VGet();
+
+					// 衝突判定を実行
+					MV1_COLL_RESULT_POLY collisionResult = MV1CollCheck_Line(
+						planet->GetModelHandle(), // 惑星モデルのハンドル
+						-1,                       // 全てのフレームを対象
+						start.VGet(),                    // 線分の始点
+						end .VGet()                      // 線分の終点
+					);
+
+					// 衝突が検出された場合
+					if (collisionResult.HitFlag == TRUE) {
+						// 衝突位置を取得
+						Vec3 hitPosition = collisionResult.HitPosition;
+
+						UtilFunc::DrawTriangle(hitPosition+direction*-1, direction*-1, 3, 0x000000,m_shadowHandle);
+						//// 影の描画
+						//DrawBillboard3D(
+						//	hitPosition,          // 影の位置
+						//	0.5f,                 // 影の幅
+						//	0.5f,                 // 影の高さ
+						//	5.0f,                 // 距離減衰
+						//	0.0f,                 // 回転角度
+						//	m_shadowHandle,       // 影のテクスチャハンドル
+						//	TRUE                  // ビルボードフラグ
+						//);
+					}
+
+
 
 					// 通過オブジェクト確認
 					auto throughA = stage->m_throughTags;
 					auto throughB = object->m_throughTags;
+
 					bool isThrough = std::find(throughA.begin(), throughA.end(), object->GetTag()) != throughA.end()
 						|| std::find(throughB.begin(), throughB.end(), stage->GetTag()) != throughB.end();
 					// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
 					bool isTrigger = colA->col->m_isTrigger || colB->col->m_isTrigger || isThrough;
+
+
+					//if (object->IsAntiGravity())continue;
 					if (isTrigger)
 					{
 						if (object->GetTag() == ObjectTag::Player)
@@ -249,7 +389,7 @@ void MyEngine::Physics::Gravity()
 				}
 
 			}
-			
+
 		}
 	}
 }
@@ -289,7 +429,7 @@ void MyEngine::Physics::Friction()
 					bool isTrigger = colA->col->m_isTrigger || colB->col->m_isTrigger || isThrough;
 					if (isTrigger)
 					{
-			
+
 					}
 					else
 					{
@@ -329,7 +469,7 @@ void MyEngine::Physics::MoveNextPos() const
 {
 
 	//当たり判定をする必要があるペア同士の当たり判定のリスト(位置補正リスト)を取得
-	
+
 	//上記リストから、どれとどれが当たっているかを出す(当たり判定ペアリスト)を取得
 
 
@@ -407,7 +547,7 @@ void MyEngine::Physics::CheckCollide()
 
 	//当たり判定をする必要があるペア同士の当たり判定のリスト(位置補正リスト)を取得
 	const auto& colVec = GetCollisionList();
-	
+
 	//上記リストから、どれとどれが当たっているかを出す(当たり判定ペアリスト)を取得
 
 
@@ -422,7 +562,7 @@ void MyEngine::Physics::CheckCollide()
 		auto objA = colVec[i * 2];
 		auto objB = colVec[i * 2 + 1];
 
-		if (!objA->GetIsActive()||!objB->GetIsActive())continue;
+		if (!objA->GetIsActive() || !objB->GetIsActive())continue;
 		// それぞれが持つ判定全てを比較
 		for (int i = 0; i < objA->m_colliders.size(); ++i)
 		{
@@ -443,18 +583,18 @@ void MyEngine::Physics::CheckCollide()
 
 				//colA->col->SetPreOnHit(colA->col->NowOnHit());
 				//colB->col->SetPreOnHit(colB->col->NowOnHit());
-			    
+
 				colA->col->SetNowOnHit(false);
 				colB->col->SetNowOnHit(false);
 
 				// 判定
-				auto collideHitInfo =IsCollide(objA->m_rigid,objB->m_rigid,colA,colB);
+				auto collideHitInfo = IsCollide(objA->m_rigid, objB->m_rigid, colA, colB);
 				colA->col->UpdateHit(colB->col, collideHitInfo.isHit);
 				colB->col->UpdateHit(colA->col, collideHitInfo.isHit);
 				// 当たっていなければ次の判定に
 				if (!collideHitInfo.isHit) continue;
 
-				
+
 				// 通過オブジェクト確認
 				auto throughA = objA->m_throughTags;
 				auto throughB = objB->m_throughTags;
@@ -468,7 +608,7 @@ void MyEngine::Physics::CheckCollide()
 					continue;
 				}
 				//Triggerじゃなければ今当たってるフラグを立てる
-				
+
 				colA->col->SetOnHitResult(true);
 				colB->col->SetOnHitResult(true);
 
@@ -556,7 +696,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 				info.hitPos = nearPos;
 			}
 		}
-		if (kindB == ColliderBase::Kind::Polygons) 
+		if (kindB == ColliderBase::Kind::Polygons)
 		{
 			//2Dの線分と球の当たり判定で行う
 
@@ -656,17 +796,17 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 			float distance = (closestPoint - spherePos).Length();
 
 			// 距離が球の半径以下なら交差している
-			if (distance <= sphereRadius+1) 
+			if (distance <= sphereRadius + 1)
 			{
 				info.hitPos = closestPoint;
 				info.isHit = true;
 			}
 		}
 	}
-	
+
 
 	//kindA=立方体の当たり判定
-	if (kindA == ColliderBase::Kind::Box) 
+	if (kindA == ColliderBase::Kind::Box)
 	{
 		//立方体と球
 		if (kindB == ColliderBase::Kind::Sphere)
@@ -702,7 +842,7 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 
 		Vec3 closestHitPos;   // 球から最も近いポリゴンの最近接点
 		Vec3 closestNormal;   // 最も近いポリゴンの法線
-		float closestDistance =500; // 最小距離(はじめは馬鹿でか距離を入れておいて最小を更新していく)
+		float closestDistance = 500; // 最小距離(はじめは馬鹿でか距離を入れておいて最小を更新していく)
 		bool isCollision = false; // 衝突フラグ
 		bool isInside = false;    // 球がポリゴン内部かどうか
 
@@ -821,11 +961,11 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			auto primaryToSecondary = (secondaryRigid->GetNextPos() + secondaryCollider->col->GetShift()) -
 				(primaryRigid->GetNextPos() + primaryCollider->col->GetShift());
 			// そのままだとちょうど当たる位置になるので少し余分に離す
-			float  awayDist =( primarySphere->radius + secondarySphere->radius+0.0001f) ;
+			float  awayDist = (primarySphere->radius + secondarySphere->radius + 0.0001f);
 			// 長さを調整
 			primaryToSecondary = primaryToSecondary.GetNormalized() * awayDist;
 			// primaryからベクトル方向に押す
-			fixedPos = (primaryRigid->GetNextPos() - primaryCollider->col->GetShift()) + primaryToSecondary-secondaryCollider->col->GetShift();
+			fixedPos = (primaryRigid->GetNextPos() - primaryCollider->col->GetShift()) + primaryToSecondary - secondaryCollider->col->GetShift();
 		}
 		if (secondaryKind == ColliderBase::Kind::Box)
 		{
@@ -833,12 +973,12 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			dir.Normalize();
 			auto sphereCol = dynamic_pointer_cast<ColliderSphere>(primaryCollider->col);
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
-			fixedPos = info.hitPos + dir * (sphereCol->radius+0.0001f);
+			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
 		}
 		if (secondaryKind == ColliderBase::Kind::Polygons)
 		{
 			//今回のプロジェクトではポリゴンの当たり判定を持っているオブジェクトは動かさないので割愛
-			assert(0&&"ポリゴンモデルが衝突相手として入っています");
+			assert(0 && "ポリゴンモデルが衝突相手として入っています");
 		}
 	}
 	//primaryKind=立方体の位置補正
@@ -851,7 +991,7 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			dir.Normalize();
 			auto sphereCol = dynamic_pointer_cast<ColliderSphere>(secondaryCollider->col);
 			DrawSphere3D(info.hitPos.VGet(), 6, 8, 0xffffff, 0xffffff, false);
-			fixedPos = info.hitPos + dir * (sphereCol->radius+0.0001f);
+			fixedPos = info.hitPos + dir * (sphereCol->radius + 0.0001f);
 		}
 	}
 	if (primaryKind == ColliderBase::Kind::Polygons) {
@@ -883,13 +1023,13 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 				// 法線方向に補正距離分だけ移動
 				if (Reverce)
 				{
-					fixedPos = info.hitPos + (info.Norm*-1) * (secondarySphere->GetRadius()+0.001f) - secondaryCollider->col->GetShift();
+					fixedPos = info.hitPos + (info.Norm * -1) * (secondarySphere->GetRadius() + 0.001f) - secondaryCollider->col->GetShift();
 				}
 				else
 				{
-					fixedPos = info.hitPos + info.Norm *(secondarySphere->GetRadius() + 0.001f) - secondaryCollider->col->GetShift();
+					fixedPos = info.hitPos + info.Norm * (secondarySphere->GetRadius() + 0.001f) - secondaryCollider->col->GetShift();
 				}
-				
+
 			}
 			else {
 				// 侵入していない場合は補正不要
@@ -897,11 +1037,11 @@ void MyEngine::Physics::FixNextPos(const std::shared_ptr<Rigidbody> primaryRigid
 			}
 		}
 	}
-	
+
 	secondaryRigid->SetNextPos(fixedPos);
 }
 
-void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB,ColideTag ownTag, ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos)
+void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA, const std::weak_ptr<Collidable>& objB, ColideTag ownTag, ColideTag sendTag, SendCollideInfo& info, const Vec3& hitPos)
 {
 	// 既に追加されている通知リストにあれば追加しない
 	for (auto& i : info)
@@ -911,14 +1051,14 @@ void MyEngine::Physics::AddNewCollideInfo(const std::weak_ptr<Collidable>& objA,
 	}
 
 	// ここまで来たらまだ通知リストに追加されていないため追加
-	info.emplace_back(SendInfo{ objA, objB, ownTag, sendTag, hitPos});
+	info.emplace_back(SendInfo{ objA, objB, ownTag, sendTag, hitPos });
 }
 
 void MyEngine::Physics::CheckSendOnCollideInfo(SendCollideInfo& preSendInfo, SendCollideInfo& newSendInfo, bool isTrigger)
 {
 	// 1つ前に通知リストが当たったか
 	auto isPreExist = preSendInfo.size() != 0;
-	
+
 	for (auto& info : newSendInfo)
 	{
 		bool isEntry = false;
@@ -991,7 +1131,7 @@ void MyEngine::Physics::OnCollideInfo(const std::weak_ptr<Collidable>& own, cons
 
 	if (kind == OnCollideInfoKind::CollideEnter)
 	{
-		own.lock()->OnCollideEnter(item.lock(),ownTag,sendTag);
+		own.lock()->OnCollideEnter(item.lock(), ownTag, sendTag);
 	}
 	else if (kind == OnCollideInfoKind::CollideStay)
 	{

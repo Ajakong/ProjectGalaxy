@@ -1,4 +1,6 @@
-﻿#include "GalaxyCreater.h"
+﻿#include"Camera.h"
+
+#include "GalaxyCreater.h"
 #include"Player.h"
 #include"SpherePlanet.h"
 #include"SeekerLine.h"
@@ -452,4 +454,38 @@ void GalaxyCreater::Clear()
 	m_lockedData.clear();
 	m_lockedObjects.clear();
 	m_planetData.clear();
+}
+
+std::shared_ptr<MyEngine::Collidable> GalaxyCreater::GetCollidable(int connectNumber)
+{
+	auto obj = m_lockedObjects[connectNumber];
+	obj->SetIsActive(true);
+	MyEngine::Physics::GetInstance().Initialize(obj);
+	Vec3 objPos = obj->GetRigidbody()->GetPos();
+	Vec3 cameraPos = m_camera->GetPos();
+	
+	Vec3 cameraToObj = cameraPos - objPos;
+
+	Vec3 center = (objPos + cameraPos) / 2;
+
+	
+
+	// **カメラをオブジェクトとの中間点に配置**
+	Vec3 newCameraPos = (cameraPos + objPos) * 0.5f;
+
+	// **カメラの向きベクトル**
+	Vec3 cameraToObjDir = (objPos - newCameraPos).GetNormalized();
+
+	// **オブジェクトの上方向を取得**
+	Vec3 objUp = obj->GetUpVec();
+
+	// **カメラの「右方向ベクトル」を計算**
+	Vec3 rightVec = Cross(objUp, cameraToObjDir).GetNormalized();
+
+	// **カメラの「上方向ベクトル」を計算**
+	Vec3 upVec = Cross(cameraToObjDir, rightVec).GetNormalized();
+
+	// **カメラを設定**
+	m_camera->WatchThis(center, center+ upVec*cameraToObj.Length(), rightVec, 60.f);
+	return obj;
 }

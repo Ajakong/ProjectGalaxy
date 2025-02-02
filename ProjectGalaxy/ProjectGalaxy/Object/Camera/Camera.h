@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include"Vec3.h"
 #include"Quaternion.h"
-using namespace std;
 
 class Player;
 
@@ -41,7 +40,7 @@ public:
 	/// <param name="lookpoint">対象の場所</param>
 	/// <param name="cameraPos">カメラの位置</param>
 	/// <param name="upVec">カメラの上方向ベクトル</param>
-	void WatchThis(Vec3 lookpoint,Vec3 cameraPos,Vec3 upVec);
+	void WatchThis(Vec3 lookpoint,Vec3 cameraPos,Vec3 upVec,float easingSpeed);
 	/// <summary>
 	/// 通常更新
 	/// </summary>
@@ -52,21 +51,23 @@ public:
 	/// </summary>
 	/// <param name="LookPoint">対象の場所</param>
 	void AimingUpdate(Vec3 LookPoint);
-
-	//メンバ関数ポインタ
-	using cameraState_t = void(Camera::*)(Vec3 lookpoint);
-	cameraState_t m_cameraUpdate;
-private:
 	/// <summary>
 	/// 対象に注視
 	/// </summary>
 	/// <param name="LookPoint"></param>
 	void WatchThisUpdate(Vec3 LookPoint);
 
+	//メンバ関数ポインタ
+	using cameraState_t = void(Camera::*)(Vec3 lookpoint);
+	cameraState_t m_cameraUpdate;
+private:
+	
+
 private:
 	int m_lightHandle = -1;
 	int m_watchCount;
 	float m_easingSpeed;
+	float m_postEasingSpeed;
 
 	bool m_isFirstPerson;
 	bool m_isBoost;
@@ -82,7 +83,9 @@ private:
 	float m_pitchAngle;
 	Vec3 m_velocity;
 	Vec3 m_playerNormVec;
+	Vec3 m_nextUpVec;
 	Vec3 m_upVec;
+	Vec3 m_watchThisPos;
 	/// <summary>
 	/// プレイヤーから見たカメラの位置ベクトル
 	/// </summary>
