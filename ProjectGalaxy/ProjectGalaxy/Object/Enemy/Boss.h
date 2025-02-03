@@ -18,6 +18,7 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
+	void WakeUp() { m_isWakeUp = true; }
 private:
 
 	/// <summary>
@@ -74,7 +75,12 @@ private:
 	/// 着地
 	/// </summary>
 	void LandingUpdate();
-	
+
+	/// <summary>
+	/// 惑星移動
+	/// </summary>
+	void RunawayUpdate();
+
 	void BallAttackUpdate();
 
 	//アニメーションの進行
@@ -96,6 +102,7 @@ private:
 	bossState_t m_phaseUpdate;
 
 	Vec3 m_runningDir;
+	Vec3 m_runawayPos;
 
 	int m_animationSpeed;
 
@@ -130,6 +137,7 @@ private:
 
 	bool m_isHit;
 	bool m_onColStage;
+	bool m_isWakeUp;
 
 	std::shared_ptr<Player> m_player;
 	std::shared_ptr<Planet> m_nowPlanet;

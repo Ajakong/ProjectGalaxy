@@ -15,6 +15,17 @@ public:
 		int width;
 		int height;
 	};
+
+	enum class TalkGraphKind
+	{
+		TakasakiTaisa,
+		Dekahead_Red,
+		Dekahead_Green,
+		Dekahead_Yellow,
+		Dekehead_Blue,
+		Dekahead_White,
+		Boss
+	};
 	UI();
 	virtual ~UI();
 	static UI& GetInstance();
@@ -24,6 +35,11 @@ public:
 	
 	void Draw(float hp=0.f,bool aimFlag=false);
 	
+	/// <summary>
+	/// 話すオブジェクトのハンドルを設定
+	/// </summary>
+	/// <param name="handle"></param>
+	void SetTalkObjectHandle(TalkGraphKind obj);
 	/// <summary>
 	/// 新しいテキストをぶち込む
 	/// </summary>
@@ -38,8 +54,7 @@ public:
 	/// TalkObjectが話す
 	/// </summary>
 	/// <param name="obj">話させたいオブジェクト</param>
-	/// <param name="graphHandle">オブジェクトの画像</param>
-	void WannaTalk(std::shared_ptr<TalkObject> obj, int graphHandle);
+	void WannaTalk(std::shared_ptr<TalkObject> obj);
 	/// <summary>
 	/// 会話にならない
 	/// </summary>
@@ -127,6 +142,14 @@ private:
 	/// 大佐の顔画像ハンドル
 	/// </summary>
 	int m_uiTakasakiTaisaHandle;
+	
+	int m_uiDekahead_RedHandle;
+	int m_uiDekahead_GreenHandle;
+	int m_uiDekahead_YellowHandle;
+	int m_uiDekahead_BlueHandle;
+	int m_uiDekahead_WhiteHandle;
+
+	int m_uiBossHandle;
 
 	/// <summary>
 	/// 常駐UIアセットハンドル

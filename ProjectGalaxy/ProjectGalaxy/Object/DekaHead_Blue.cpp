@@ -5,10 +5,9 @@
 namespace
 {
 	const char* kModelName = "CuteCreature_blue";
-	const char* kGraphName = "cuteCreature_blue.png";
 }
 DekaHead_Blue::DekaHead_Blue(Vec3 pos) :
-	TalkObject(pos,ModelManager::GetInstance().GetModelData(kModelName),GraphManager::GetInstance().GetGraphData(kGraphName))
+	TalkObject(pos,ModelManager::GetInstance().GetModelData(kModelName))
 {
 }
 
@@ -18,6 +17,7 @@ DekaHead_Blue::~DekaHead_Blue()
 
 std::list<std::list<std::string>> DekaHead_Blue::GetTexts()
 {
+	UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Dekehead_Blue);
 	std::list<std::list<std::string>> talkText;
 	std::list<std::string> one;
 	one.push_back("Hey!Brother");

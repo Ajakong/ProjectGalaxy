@@ -163,6 +163,7 @@ m_warpEffectHandle(-1)
 	
 
 	UI::GetInstance().Init();
+	UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 	UI::GetInstance().InText("よし、現地に着いたようだな。ドレイク");
 	
 	std::list<std::string> texts1;

@@ -4,9 +4,12 @@
 #include"Physics.h"
 #include"SoundManager.h"
 #include"Easing.h"
+
+#include"GalaxyCreater.h"
+#include"UI.h"
 namespace
 {
-	constexpr int kHPFull = 60;
+	constexpr int kHPFull = 150;
 	constexpr float kBodyRadiusSize = 10.f;
 	constexpr int kKnockBackFrameMax = 50;
 
@@ -18,6 +21,8 @@ namespace
 
 	constexpr float kFrameParSecond = 60.0f;
 	constexpr float kRunningSpeed = 3.0f;
+
+	constexpr float kOnPhaseTwoHp = 100;
 
 
 	constexpr int kTackleMaxChargeFrame = 80;
@@ -56,8 +61,8 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	m_collision->radius = kBodyRadiusSize;
 
 	m_color = 0xff00ff;
-	m_bossUpdate = &Boss::NeutralUpdate;
-	m_phaseUpdate = &Boss::PhaseTwoUpdate;
+	m_bossUpdate = &Boss::InitUpdate;
+	m_phaseUpdate = &Boss::PhaseOneUpdate;
 }
 
 Boss::~Boss()
@@ -66,6 +71,7 @@ Boss::~Boss()
 
 void Boss::Init()
 {
+	m_runawayPos = Vec3(562, 650, 1953);
 }
 
 void Boss::Update()
@@ -114,6 +120,22 @@ void Boss::PhaseOneUpdate()
 		m_rigid->AddVelocity(m_upVec * 4);
 		m_bossUpdate = &Boss::FullpowerJumpUpdate;
 		break;
+	}
+
+	if (m_hp <= kOnPhaseTwoHp)
+	{
+		auto obj = GalaxyCreater::GetInstance().GetCollidable(1);
+		obj->SetIsActive(true);
+
+		std::list<std::string> texts1;
+		texts1.push_back("くそぉ！おまえなんなんだよ！");
+		texts1.push_back("スーパーマテリアルは渡さねぇぞ！");
+		UI::GetInstance().InTexts(texts1);
+
+		UI::GetInstance().InText("逃げるってわけじゃねぇからな！");
+
+		m_phaseUpdate = &Boss::PhaseTwoUpdate;
+		m_bossUpdate = &Boss::RunawayUpdate;
 	}
 
 }
@@ -211,6 +233,58 @@ void Boss::PhaseThreeUpdate()
 
 void Boss::InitUpdate()
 {
+	//今は簡単にプレイヤーとの距離をみて起動
+
+	float lenge = (m_player->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length();
+	m_isWakeUp = lenge < 100;
+	if (m_isWakeUp)
+	{
+		if (m_phaseUpdate == &Boss::PhaseOneUpdate)
+		{
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
+			std::list<std::string> text1;
+			text1.push_back("やっと来たか。");
+			text1.push_back("お前だな、俺様のことをこそこそかぎまわってる奴は");
+			UI::GetInstance().InTexts(text1);
+
+			//UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			//UI::GetInstance().InText("なに！？気づかれていたのか！");
+
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
+
+			std::list<std::string> text2;
+			text2.push_back("めざわりなんだよ！");
+			text2.push_back("消えてもらうぜ");
+			UI::GetInstance().InTexts(text2);
+
+			//UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			//UI::GetInstance().InText("ドレイク！ヤツは戦うつもりみたいだ");
+			//UI::GetInstance().InText("ここで決めてしまうぞ！");
+			m_bossUpdate = &Boss::NeutralUpdate;
+		}
+		if (m_phaseUpdate == &Boss::PhaseTwoUpdate)
+		{
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
+			std::list<std::string> text1;
+			text1.push_back("しつけぇ奴らだな");
+			text1.push_back("今度は本気の本気で消えてもらう");
+			UI::GetInstance().InTexts(text1);
+
+			//UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			//UI::GetInstance().InText("なに！？気づかれていたのか！");
+
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
+
+			std::list<std::string> text2;
+			text2.push_back("さっきみたいに甘くはやらねぇぞ！");
+			UI::GetInstance().InTexts(text2);
+
+			//UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			//UI::GetInstance().InText("ドレイク！ヤツは戦うつもりみたいだ");
+			//UI::GetInstance().InText("ここで決めてしまうぞ！");
+			m_bossUpdate = &Boss::NeutralUpdate;
+		}
+	}
 }
 
 void Boss::RestUpdate()
@@ -355,6 +429,20 @@ void Boss::LandingUpdate()
 		m_color = 0xff00ff;
 		m_bossUpdate = &Boss::NeutralUpdate;
 	}
+}
+
+void Boss::RunawayUpdate()
+{
+	Vec3 velo = m_runawayPos - m_rigid->GetPos();
+	if (velo.Length() < 15)
+	{
+		m_rigid->SetVelocity(Vec3::Zero());
+		m_bossUpdate = &Boss::InitUpdate;
+		
+	}
+	velo.Normalize();
+	m_rigid->SetVelocity(velo*3);
+	
 }
 
 void Boss::BallAttackUpdate()

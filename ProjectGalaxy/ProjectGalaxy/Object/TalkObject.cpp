@@ -1,6 +1,6 @@
 ﻿#include "TalkObject.h"
 #include"ColliderSphere.h"
-#include"UI.h"
+
 #include"Easing.h"
 
 namespace
@@ -10,12 +10,11 @@ namespace
 
 }
 
-TalkObject::TalkObject(Vec3 pos, int modelHandle, int graphHandle) : Collidable(Priority::Static, ObjectTag::TalkObject),
+TalkObject::TalkObject(Vec3 pos, int modelHandle) : Collidable(Priority::Static, ObjectTag::TalkObject),
 m_canTalk(false)
 {
 	SetAntiGravity(true);
 	m_modelHandle = modelHandle;
-	m_graphHandle = graphHandle;
 	MV1SetScale(m_modelHandle, VGet(0.5f, 0.5f,0.5f));
 	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
 	m_rigid->SetPos(pos);
@@ -139,7 +138,7 @@ void TalkObject::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag o
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
-		UI::GetInstance().WannaTalk(std::dynamic_pointer_cast<TalkObject>(shared_from_this()),m_graphHandle);
+		UI::GetInstance().WannaTalk(std::dynamic_pointer_cast<TalkObject>(shared_from_this()));
 		m_canTalk = true;
 
 	}

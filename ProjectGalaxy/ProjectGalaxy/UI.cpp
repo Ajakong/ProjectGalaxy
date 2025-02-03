@@ -13,6 +13,14 @@ namespace
 	const char* kGraphUIAssetName = "Designer_ui.png";
 	const char* kInputAUIName = "PushAbottonForTalk.png";
 	const char* kTakasakiTaisaGraphName = "TakasakiTaisa_talk.png";
+	
+	const char* kDekahead_RedGraphName = "cuteCreature_red.png";
+	const char* kDekahead_GreenGraphName = "cuteCreature_green.png";
+	const char* kDekahead_YellowGraphName = "cuteCreature_yellow.png";
+	const char* kDekahead_BlueGraphName = "cuteCreature_blue.png";
+	const char* kDekahead_WhiteGraphName = "cuteCreature_white.png";
+	const char* kBossGraphName = "Boss.png";
+
 	const char* kAimGraphName = "Elements_pro.png";
 
 	const char* kTextBoxIntroSEName = "Mission.mp3";
@@ -79,7 +87,18 @@ void UI::Init()
 {
 	m_uiAssetHandle = GraphManager::GetInstance().GetGraphData(kGraphUIAssetName);
 	m_uiInputAHandle = GraphManager::GetInstance().GetGraphData(kInputAUIName);
+
 	m_uiTakasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
+	
+	m_uiDekahead_RedHandle = GraphManager::GetInstance().GetGraphData(kDekahead_RedGraphName);
+	m_uiDekahead_GreenHandle = GraphManager::GetInstance().GetGraphData(kDekahead_GreenGraphName);
+	m_uiDekahead_YellowHandle = GraphManager::GetInstance().GetGraphData(kDekahead_YellowGraphName);
+	m_uiDekahead_BlueHandle = GraphManager::GetInstance().GetGraphData(kDekahead_BlueGraphName);
+	m_uiDekahead_WhiteHandle = GraphManager::GetInstance().GetGraphData(kDekahead_WhiteGraphName);
+
+	m_uiBossHandle = GraphManager::GetInstance().GetGraphData(kBossGraphName);
+
+
 	m_uiAimGraphHandle = GraphManager::GetInstance().GetGraphData(kAimGraphName);
 	m_textBoxSEHandle = SoundManager::GetInstance().GetSoundData(kTextBoxIntroSEName);
 	m_chatAppearSEHandle = SoundManager::GetInstance().GetSoundData(kChatAppearSEName);
@@ -295,6 +314,27 @@ void UI::MissionDraw()
 {
 }
 
+void UI::SetTalkObjectHandle(TalkGraphKind obj)
+{
+	switch (obj)
+	{
+	case TalkGraphKind::TakasakiTaisa:m_uiTalkingCharaHandle = m_uiTakasakiTaisaHandle;
+		break;
+	case TalkGraphKind::Dekahead_Red:m_uiTalkingCharaHandle = m_uiDekahead_RedHandle;
+		break;
+	case TalkGraphKind::Dekahead_Green:m_uiTalkingCharaHandle = m_uiDekahead_GreenHandle;
+		break;
+	case TalkGraphKind::Dekahead_Yellow:m_uiTalkingCharaHandle = m_uiDekahead_YellowHandle;
+		break;
+	case TalkGraphKind::Dekehead_Blue:m_uiTalkingCharaHandle = m_uiDekahead_BlueHandle;
+		break;
+	case TalkGraphKind::Dekahead_White:m_uiTalkingCharaHandle = m_uiDekahead_WhiteHandle;
+		break;
+	case TalkGraphKind::Boss:m_uiTalkingCharaHandle = m_uiBossHandle;
+		break;
+	}
+}
+
 void UI::InText(const std::string text)
 {
 	m_textManager->InText(text);
@@ -305,10 +345,9 @@ void UI::InTexts(const std::list<std::string> texts)
 	m_textManager->InTexts(texts);
 }
 
-void UI::WannaTalk(std::shared_ptr<TalkObject> obj,int graphHandle)
+void UI::WannaTalk(std::shared_ptr<TalkObject> obj)
 {
 	m_nowTalkObject = obj;
-	m_uiTalkingCharaHandle = graphHandle;
 	InputAMode();
 }
 

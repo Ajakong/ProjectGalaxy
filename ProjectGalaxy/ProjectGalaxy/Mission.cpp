@@ -47,6 +47,7 @@ void Mission::MoveUpdate()
 		//歩いたフレームが一定数を超えたら
 		if (m_moveFrame > kMissionClearFrameMove)
 		{
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			UI::GetInstance().InText("これが歩き・・・だ！");
 			std::list<std::string> nextMission;
 			nextMission.push_back("次はジャンプだ！");
@@ -68,6 +69,7 @@ void Mission::JumpUpdate()
 	//状態がジャンプになったら
 	if (m_player->GetPostState() == MyEngine::Collidable::State::Jump)
 	{
+		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 		UI::GetInstance().InText("完璧だな。");
 		std::list<std::string> nextMission;
 		nextMission.push_back("お次はダッシュだ！");
@@ -93,6 +95,7 @@ void Mission::DashUpdate()
 		//歩いたフレームが一定数を超えたら
 		if (m_moveFrame > kMissionClearFrameMove)
 		{
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			UI::GetInstance().InText("そうだ、危険が迫れば逃げることを忘れるな。");
 			std::list<std::string> nextMission;
 			nextMission.push_back("お次はダッシュジャンプだ！");
@@ -115,6 +118,7 @@ void Mission::DashJumpUpdate()
 	//状態がジャンプになったら
 	if (m_player->GetPostState() == MyEngine::Collidable::State::DashJump)
 	{
+		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 		UI::GetInstance().InText("よし！貴様にはもう教えることはない！");
 		std::list<std::string> nextMission;
 		nextMission.push_back("では最後にスピンだ！");
@@ -136,6 +140,7 @@ void Mission::SpinUpdate()
 	//状態がスピンになったら
 	if (m_player->GetPostState() == MyEngine::Collidable::State::Spin)
 	{
+		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 		UI::GetInstance().InText("カンを取り戻してきたようだな。");
 		std::list<std::string> text;
 		text.push_back("そんなことはない？");
