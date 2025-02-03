@@ -38,7 +38,8 @@ private:
     int m_titleHandle = 0;
     int m_titleBGMHandle;
     int m_gameStartSEHandle;
-    
+    int m_fadeSEHandle;
+
 	int m_stickOSTHandle = 0;
     int m_count;
 

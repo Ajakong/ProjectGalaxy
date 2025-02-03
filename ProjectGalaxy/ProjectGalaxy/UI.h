@@ -82,18 +82,34 @@ private:
 	/// </summary>
 	void NormalMode();
 
-	//通常モード用
+	/// <summary>
+	/// 通常モード用
+	/// </summary>
 	void NormalUpdate();
 	void NormalDraw();
-	//フェード用
+	
+	/// <summary>
+	/// フェード用
+	/// </summary>
 	void AppaerUpdate();
 	void FadeOutUpdate();
-	//Aボタン表示用
+
+	/// <summary>
+	/// Aボタン表示用
+	/// </summary>
 	void InputAFadeDraw();
 	void InputADraw();
-	//テキスト表示用
+	
+	/// <summary>
+	/// テキスト表示用
+	/// </summary>
 	void TextBoxFadeDraw();
 	void TextBoxDraw();
+	/// <summary>
+	/// ミッション描画用
+	/// </summary>
+	void MissionUpdate();
+	void MissionDraw();
 
 	float m_playerHp;
 

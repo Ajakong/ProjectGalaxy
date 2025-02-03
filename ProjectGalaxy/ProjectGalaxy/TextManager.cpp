@@ -1,6 +1,7 @@
 ﻿#include "TextManager.h"
 #include"FontManager.h"
 #include"SoundManager.h"
+#include"Game.h"
 #include<tchar.h>
 
 namespace
@@ -90,7 +91,7 @@ void TextManager::Draw()
     // テキストを描画
     for (auto text = drawText.begin(); text != drawText.end();)
     {
-        DrawFormatStringFToHandle(300, 200 + listIndex * (kFontSize+ kTextHeightDistance), 0xffffff, m_fontHandle, text->c_str());
+        DrawFormatStringFToHandle((Game::kScreenWidth/2)-Game::kScreenWidth*0.25f, 200 + listIndex * (kFontSize+ kTextHeightDistance), 0xffffff, m_fontHandle, text->c_str());
         listIndex++;
         text++;
     }

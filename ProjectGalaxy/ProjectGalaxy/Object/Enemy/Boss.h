@@ -109,6 +109,8 @@ private:
 	
 	int m_damageSoundHandle;
 	int m_criticalHandle;
+	int m_dropSoundHandle;
+
 	/// <summary>
 	/// マイナスの時はひるみ、もしくは動けない状態。
 	/// </summary>

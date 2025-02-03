@@ -22,7 +22,6 @@ namespace
 }
 
 Booster::Booster(Vec3 pos, Vec3 Dir, int handle, float power, bool isActive) :Collidable(Priority::StageGimmick, ObjectTag::WarpGate),
-m_emitterHandle(EffectManager::GetInstance().GetEffectData(effectname)),
 m_power(power)
 {
 	m_isActive = isActive;

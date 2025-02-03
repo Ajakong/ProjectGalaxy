@@ -21,6 +21,8 @@ private:
 	Vec3 m_playerStartPos;
 	Vec3 m_velocity;
 
+	int m_endPointSoundHandle;
+	int m_movePlayerSoundHandle;
 
 	int m_color;
 	int m_hitPointNum;

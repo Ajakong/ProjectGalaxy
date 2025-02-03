@@ -85,7 +85,6 @@ m_centerToEnemyAngle(0)
 	AddThroughTag(ObjectTag::Kuribo);
 	AddThroughTag(ObjectTag::Gorori);
 	AddThroughTag(ObjectTag::WarpGate);
-	AddThroughTag(ObjectTag::EnemyAttack);
 	m_modelHandle=ModelManager::GetInstance().GetModelData(kTakoboFileName);
 	MV1SetScale(m_modelHandle, VGet(kScaleMag, kScaleMag, kScaleMag));
 	ChangeAnim(Idle);

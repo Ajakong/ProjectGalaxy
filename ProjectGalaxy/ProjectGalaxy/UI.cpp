@@ -6,6 +6,8 @@
 #include"Pad.h"
 #include"GameStopManager.h"
 #include"TalkObject.h"
+
+#include"Mission.h"
 namespace
 {
 	const char* kGraphUIAssetName = "Designer_ui.png";
@@ -279,10 +281,18 @@ void UI::TextBoxDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * 9, 90, Game::kScreenWidth / 2 + m_appearFrame * 9, 440, 0x0000ff, false);
 
-	DrawRectRotaGraph((kWindowScreenUIInfo.width / 2) + 950, (kWindowScreenUIInfo.height / 2)+20, kTalkingCharaGraph.x, kTalkingCharaGraph.y, kTalkingCharaGraph.width, kTalkingCharaGraph.height, 0.3f, 0, m_uiTalkingCharaHandle, true);
+	DrawRectRotaGraph((kWindowScreenUIInfo.width / 2) + (Game::kScreenWidth*0.6f), (kWindowScreenUIInfo.height / 2)+20, kTalkingCharaGraph.x, kTalkingCharaGraph.y, kTalkingCharaGraph.width, kTalkingCharaGraph.height, 0.3f, 0, m_uiTalkingCharaHandle, true);
 
-	DrawRectRotaGraph((kWindowScreenUIInfo.width / 2)+950, (kWindowScreenUIInfo.height / 2)+50, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 0.7f, 0, m_uiAssetHandle, true);
+	DrawRectRotaGraph((kWindowScreenUIInfo.width / 2)+ (Game::kScreenWidth*0.6f), (kWindowScreenUIInfo.height / 2)+50, kWindowScreenUIInfo.x, kWindowScreenUIInfo.y, kWindowScreenUIInfo.width, kWindowScreenUIInfo.height, 0.7f, 0, m_uiAssetHandle, true);
 	m_textManager->Draw();
+}
+
+void UI::MissionUpdate()
+{
+}
+
+void UI::MissionDraw()
+{
 }
 
 void UI::InText(const std::string text)

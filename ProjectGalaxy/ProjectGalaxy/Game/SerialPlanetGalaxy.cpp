@@ -136,90 +136,21 @@ m_warpEffectHandle(-1)
 	////ギミック
 	////ブースター
 
-
-	//m_booster.push_back(make_shared<Booster>(Vec3(0,15,0),Vec3(0,1,1).GetNormalized(), -1,4.5f));
-	//MyEngine::Physics::GetInstance().Entry(m_booster.back());
-	//m_booster.push_back(make_shared<Booster>(Vec3(0, -20, 53), Vec3(0,1,0).GetNormalized(), -1));
-	//MyEngine::Physics::GetInstance().Entry(m_booster.back());
-
-	m_warpGate.push_back(make_shared<WarpGate>(Vec3(0, -50, -70), Vec3(-200, -300, 0), -1));
-	MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
+	//m_warpGate.push_back(make_shared<WarpGate>(Vec3(0, -50, -70), Vec3(-200, -300, 0), -1));
+	//MyEngine::Physics::GetInstance().Entry(m_warpGate.back());
 	//スターキャプチャー
-	m_starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
-	MyEngine::Physics::GetInstance().Entry(m_starCapture.back());
-
-	////シーカーライン
-	//std::vector<Vec3>seekerLine1Points;
-	//seekerLine1Points.push_back(Vec3(-50, -25,0));
-	//seekerLine1Points.push_back(Vec3(-20, 50, 0));
-	//seekerLine1Points.push_back(Vec3(-20, 100, 0));
-	//seekerLine1Points.push_back(Vec3(0, 30, 0));
-	//seekerLine1Points.push_back(Vec3(100, 200, 0));
-	//seekerLine1Points.push_back(Vec3(50, 450, 100));
-	//m_seekerLine.push_back(make_shared<SeekerLine>(seekerLine1Points,0x00aaff));
-
-	//MyEngine::Physics::GetInstance().Entry(m_seekerLine.back());
-
-
-	//クリスタル
-	//m_crystal.push_back(make_shared<Crystal>(Vec3(0, 0, 20),Vec3(0,1,0) ,Vec3(10, 10, 10)));
-	//MyEngine::Physics::GetInstance().Entry(m_crystal.back());
+	//m_starCapture.push_back(make_shared<StarCapture>(Vec3(0, 50, 40)));
+	//MyEngine::Physics::GetInstance().Entry(m_starCapture.back());
 
 #endif
-	
-	/*m_talkObjects.push_back(std::make_shared<DekaHead_Red>(Vec3(-10, 0, 50)));
-	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());
-
-	m_talkObjects.push_back(std::make_shared<DekaHead_Green>(Vec3(0, -300, 50)));
-	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());
-
-	m_talkObjects.push_back(std::make_shared<DekaHead_Blue>(Vec3(-123, 481, 1463)));
-	MyEngine::Physics::GetInstance().Entry(m_talkObjects.back());*/
-
-	
-	/*m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, -50, 0), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("GoldenBall.mv1")));
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-100, 50, 400), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1"),4));
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(-200, -300, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
-	m_planet.push_back(std::make_shared<BoxPlanet>(Vec3(0, -50, 200), 0x00ffff, 1.0f, Vec3(30, 30, 50)));
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(0, 500, 0), 0xaa0000, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_daia.mv1")));
-	m_planet.push_back(std::make_shared<SpherePlanet>(Vec3(300, 200, 100), 0xaadd33, 3.f, ModelManager::GetInstance().GetModelData("Sphere/planet_red.mv1")));
-	*/
-
 
 	m_skyDomeH = ModelManager::GetInstance().GetModelData("Skybox");
 
-	////エネミー
-	//m_kuribo.push_back(make_shared<Kuribo>(Vec3(0, 0, 30)));
-	//
-	//MyEngine::Physics::GetInstance().Entry(m_kuribo.back());
-	//m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, -60), player));
-	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	//m_takobo.push_back(make_shared<Takobo>(Vec3(0, 500, 60), player));
-	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-	//m_takobo.push_back(make_shared<Takobo>(Vec3(60, 500, -10), player));
-	//MyEngine::Physics::GetInstance().Entry(m_takobo.back());
-
-	/*auto boss=(make_shared<Boss>(Vec3(0, 0, 0),player));
-	MyEngine::Physics::GetInstance().Entry(boss);*/
-	
-	/*m_cannon.push_back(std::make_shared<Cannon>(Vec3(0, 0, 0), ObjectTag::EnemyBullet, 0xff0000));
-	MyEngine::Physics::GetInstance().Entry(m_cannon.back());*/
-
 	MV1SetScale(m_skyDomeH, VGet(1.3f, 1.3f, 1.3f));
 
-	////アイテム
-	//m_coin.push_back(make_shared<Coin>(Vec3(0, -105, 0), true));
-	//MyEngine::Physics::GetInstance().Entry(m_coin.back());
-	//m_item.push_back(make_shared<StickStarItem>(Vec3(0, 450, 0),true));
-	//m_item.push_back(make_shared <FullPowerDropItem>(Vec3(-550, 300, 0),true));
-	
 	m_managerUpdate = &SerialPlanetGalaxy::GamePlayingUpdate;
 	m_managerDraw = &SerialPlanetGalaxy::GamePlayingDraw;
 
-	//for (auto& item : m_planet)
-	//{
-	//	MyEngine::Physics::GetInstance().Entry(item);//物理演算クラスに登録
-	//}
 	for (auto& item : m_item)
 	{
 		MyEngine::Physics::GetInstance().Entry(item);

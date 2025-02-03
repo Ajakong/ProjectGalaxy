@@ -32,6 +32,7 @@ namespace
 
 	const char* kDamageSEName = "Parry.mp3";
 	const char* kCriticalHitSEName = "CounterHit.mp3";
+	const char* kDropSEName = "BossDropSE.mp3";
 
 }
 Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectTag::Boss),
@@ -44,6 +45,7 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	m_runningFrame(0),
 	m_damageSoundHandle(SoundManager::GetInstance().GetSoundData(kDamageSEName)),
 	m_criticalHandle(SoundManager::GetInstance().GetSoundData(kCriticalHitSEName)),
+	m_dropSoundHandle(SoundManager::GetInstance().GetSoundData(kDropSEName)),
 	m_shotCreateFrame(0)
 {
 	m_player = player;
@@ -248,6 +250,7 @@ void Boss::JumpingUpdate()
 	m_state = State::Attack;
 	if (m_onColStage)
 	{
+		PlaySoundMem(m_dropSoundHandle, DX_PLAYTYPE_BACK);
 		if (m_jumpCount > 2)
 		{
 			m_jumpCount = 0;
@@ -281,6 +284,8 @@ void Boss::FullpowerJumpUpdate()
 	m_state = State::Attack;
 	if (m_onColStage)
 	{
+		PlaySoundMem(m_dropSoundHandle, DX_PLAYTYPE_BACK);
+
 		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -kBodyRadiusSize, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::Electronic,2.f));
 		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 

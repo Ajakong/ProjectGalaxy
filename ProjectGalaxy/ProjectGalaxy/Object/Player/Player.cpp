@@ -1,24 +1,28 @@
 ﻿#include "Player.h"
-#include"Pad.h"
 
+#include"Pad.h"
 #include"Camera.h"
-#include"SoundManager.h"
+
 #include"Gorori.h"
 #include"Kuribo.h"
 #include"EnemySphere.h"
 #include"PlayerSphere.h"
 #include"PlayerStickSphere.h"
 #include"KillerTheSeeker.h"
+
+#include"SoundManager.h"
 #include"ModelManager.h"
 #include"GraphManager.h"
-#include"Planet.h"
-#include"UI.h"
+#include"EffectManager.h"
+
 #include"Easing.h"
+#include"Effect.h"
 
 #include"Mission.h"
-
 #include"Physics.h"
+#include"Planet.h"
 
+#include"UI.h"
 /// <summary>
 /// スピン専用の当たり判定を生成・体より半径が大きい当たり判定にし、スピン中にだけ出現
 /// </summary>
@@ -74,10 +78,13 @@ namespace
 	const char* name = "Player";
 	const char* kFileName = "SpaceHarrier";
 
-	const char* effectname = "Landing.efk";
+	const char* kLandingEffectname = "Landing.efk";
 
 
 }
+
+
+
 
 void MTransCopy(MATRIX& in, const MATRIX& src) {
 	in.m[3][0] = src.m[3][0]; in.m[3][1] = src.m[3][1]; in.m[3][2] = src.m[3][2]; in.m[3][3] = 1.f;
@@ -299,35 +306,6 @@ void Player::Update()
 
 void Player::SetMatrix()
 {
-	//Vec3 RotateYAxis = Cross(m_sideVec, m_moveDir);
-	//RotateYAxis.Normalize();
-	//float angleY = GetAngle(m_inputVec, m_postMoveDir);
-
-	//m_myQ = m_myQ.CreateRotationQuaternion(angleY, RotateYAxis) * m_myQ;//角度の変化量だけ渡す
-
-	//if (m_inputVec.Length() != 0)
-	//{
-	//	m_postMoveDir = m_inputVec;
-	//}
-	//Vec3 modelUp = GetUpDirection(m_modelHandle);
-	//float angle = GetAngle(m_postUpVec, m_upVec);//前のフレームの上方向ベクトルと今の上方向ベクトル
-
-	////printf("角度1=%f\n角度2=%f\n", angle, angle * 180.0f / 3.141592f);
-
-	//if (angle * 180.0f / 3.141592f > 10)
-	//{
-	//	int a = 0;
-	//}
-
-	//Vec3 axis = Cross(modelUp, m_rigid->GetVelocity());//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
-	//axis.Normalize();//単位ベクトル化
-
-	//m_myQ =m_myQ.CreateRotationQuaternion(angle, axis) * m_myQ;//回転の掛け算
-	//
-	//auto rotatemat = m_myQ.ToMat();//クォータニオンから行列に変換
-
-	//printf("x:%f,y:%f,z:%f\n", axis.x, axis.y, axis.z);
-
 
 #ifdef DEBUG
 	////回転軸のデバッグ表示(紫)
@@ -748,6 +726,7 @@ void Player::InitJump()
 
 void Player::Landing(int recast)
 {
+	EffectManager::GetInstance().PlayEffect(kLandingEffectname, false, 30, shared_from_this());
 	ChangeAnim(AnimNum::AnimationNumJumpAttack);
 	//57:着地アニメーションの終了時間
 	MV1SetAttachAnimTime(m_modelHandle, m_currentAnimNo, static_cast<float>(57 - recast));
@@ -1083,7 +1062,7 @@ void Player::NormalDropAttackUpdate()
 		m_postState = m_state;
 		m_landingStanFrame = 20;
 
-		m_playerUpdate = &Player::LandingUpdate;
+		Landing();
 	}
 }
 
@@ -1115,7 +1094,7 @@ void Player::FullPowerDropAttackUpdate()
 		m_impacts.push_back(std::make_shared<StampImpact>(m_rigid->GetPos() + m_upVec * -m_footCol->radius, m_nowPlanet->GetScale(), m_upVec * -1, ObjectTag::PlayerImpact, m_fullPowerChargeCount));
 		MyEngine::Physics::GetInstance().Entry(m_impacts.back());
 		m_fullPowerChargeCount = 0;
-		m_playerUpdate = &Player::LandingUpdate;
+		Landing(57);
 		m_landingStanFrame = 60;
 	}
 }

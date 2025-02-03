@@ -36,5 +36,7 @@ private:
 	std::shared_ptr<Player> m_target;
 	int m_pointeLightHandle;
 	int m_risingFrame;
+
+	int m_surviveFrame;
 };
 

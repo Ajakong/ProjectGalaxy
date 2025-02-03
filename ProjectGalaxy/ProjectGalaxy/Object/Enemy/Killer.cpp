@@ -12,7 +12,9 @@ namespace
 	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
 
-	constexpr int kRisingFrameMax = 80;
+	constexpr int kRisingFrameMax = 30;
+	constexpr int kSurviveFrameMax = 200;
+
 	const char* name = "Killer";
 }
 Killer::Killer(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable>enemy, std::shared_ptr<MyEngine::Collidable>target, Vec3 pos, Vec3 velocity, int moveNum, int color):EnemySphere(priority,tag,enemy,pos,velocity,target->GetRigidbody()->GetPos(),moveNum,color),
@@ -72,6 +74,10 @@ void Killer::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	{
 		//m_isDestroyFlag = true;
 	}
+	if (m_counterFlag && colider->GetTag() == ObjectTag::Takobo)
+	{
+		m_isDestroyFlag = true;
+	}
 }
 
 void Killer::RisingUpdate()
@@ -86,6 +92,11 @@ void Killer::RisingUpdate()
 
 void Killer::SearchUpDate()
 {
+	m_surviveFrame++;
+	if (m_surviveFrame >= kSurviveFrameMax)
+	{
+		m_isDestroyFlag = true;
+	}
 	Vec3 toVec = m_target->GetRigidbody()->GetPos() - m_rigid->GetPos();
 	m_velocity = toVec.GetNormalized();
 

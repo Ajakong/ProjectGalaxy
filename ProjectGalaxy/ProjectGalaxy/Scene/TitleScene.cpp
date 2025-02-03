@@ -10,25 +10,25 @@
 #include "GraphManager.h"
 #include "SoundManager.h"
 #include "ModelManager.h"
+#include"EffectManager.h"
 #include "TitlePlayer.h"
 #include "Physics.h"
 #include "SpherePlanet.h"
 #include "Camera.h"
 #include"UI.h"
+
 namespace
 {
     constexpr int kFadeFrameMax = 60;
     constexpr int kStandByFrame = 120;
 
-    // 画面の幅と高さ
-    constexpr int screenWidth = 1600;
-    constexpr int screenHeight = 900;
 
     constexpr int kLightningFrameMax = 200;
 
     const char* kTitleGraphName = "galaxy_titleLogo_pro.png";
     const char* kFrameName = "Frame.png";
     const char* kTitleBGMName = "AstroSeeker_Theme.mp3";
+    const char* kTitleFadeSEName = "TitleSE_Fade.mp3";
 
     const char* kStickName = "parry.mp3";
     const char* kGameStartSEName = "StartGame_SE.mp3";
@@ -51,12 +51,10 @@ namespace
     constexpr int kTitleGraphHeight = 600;
     constexpr int kTitleTextX = 350;
     constexpr int kTitleTextY = 600;
-    constexpr int kFadeBoxWidth = 1600;
-    constexpr int kFadeBoxHeight = 900;
+  
     constexpr int kFadeBoxColor = 0x001111;
     constexpr int kLineColor = 0x44ffff;
     constexpr int kLineX = 30;
-    constexpr int kLineY = 900;
 
     const Vec3 cameraFirstPosition = { -50,0,200 };
     const Vec3 cameraSecondPosition = { -5,10,10 };
@@ -68,6 +66,7 @@ TitleScene::TitleScene(SceneManager& manager) :
     Scene(manager),
     m_titleBGMHandle(SoundManager::GetInstance().GetSoundData(kTitleBGMName)),
     m_gameStartSEHandle(SoundManager::GetInstance().GetSoundData(kGameStartSEName)),
+    m_fadeSEHandle(SoundManager::GetInstance().GetSoundData(kTitleFadeSEName)),
     m_btnFrame(0),
     m_fadeSpeed(1),
     m_titleHandle(GraphManager::GetInstance().GetGraphData(kTitleGraphName)),
@@ -82,7 +81,6 @@ TitleScene::TitleScene(SceneManager& manager) :
 	m_count(0),
     m_cameraRotateAngle(0)
 {
-    
     camera->Update(VGet(0, 0, 150));
 
     PlaySoundMem(m_titleBGMHandle, DX_PLAYTYPE_LOOP);
@@ -162,6 +160,7 @@ void TitleScene::Update()
     m_skyDomeRotationAngle += kSkyDomeRotationSpeed;
     MV1SetRotationXYZ(m_skyDomeH, VGet(0, m_skyDomeRotationAngle, 0));
 
+    EffectManager::GetInstance().Update();
     Pad::Update();
 }
 
@@ -209,7 +208,7 @@ void TitleScene::NormalUpdate()
     camera->Update(VGet(0, 0, 150));
     if (Pad::IsTrigger(PAD_INPUT_1))
     {
-        
+       
         camera->SetCameraPoint(cameraSecondPosition);
         //player->MoveToTargetPosWithSticker(nextPlanet->GetRigidbody()->GetPos());
         m_updateFunc = &TitleScene::WatchPlayerUpdate;
@@ -301,6 +300,7 @@ void TitleScene::LoadingUpdate()
         UI::GetInstance().Update();
         if (UI::GetInstance().TextRemaining() == 0)
         {
+            PlaySoundMem(m_fadeSEHandle, DX_PLAYTYPE_BACK);
             player->Move();
             PlaySoundMem(m_gameStartSEHandle,DX_PLAYTYPE_BACK);
             m_updateFunc = &TitleScene::FadeOutUpdate;
@@ -332,14 +332,14 @@ void TitleScene::FadeDraw()
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
         SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
         DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
-        DrawBox(0, 0, m_frame * kLineX, kFadeBoxWidth, kFadeBoxColor, true);
+        DrawBox(0, 0, m_frame * kLineX, Game::kScreenWidth, kFadeBoxColor, true);
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
     }
 
     SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
     DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
-    DrawBox(0, 0, m_frame * kLineX, kFadeBoxWidth, kFadeBoxColor, true);
+    DrawBox(0, 0, m_frame * kLineX, Game::kScreenWidth, kFadeBoxColor, true);
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
     if (m_isGamePlaying)
@@ -349,7 +349,7 @@ void TitleScene::FadeDraw()
         Pad::Init();
         ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
     }
-    DrawLine(m_frame * kLineX, 0, m_frame * kLineX, kLineY, kLineColor);
+    DrawLine(m_frame * kLineX, 0, m_frame * kLineX, Game::kScreenHeight, kLineColor);
 }
 
 void TitleScene::NormalDraw()
@@ -371,12 +371,12 @@ void TitleScene::NormalDraw()
         }
         SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
         DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
-        DrawBox(0, 0, m_frame * kLineX, kFadeBoxWidth, kFadeBoxColor, true);
+        DrawBox(0, 0, m_frame * kLineX, Game::kScreenWidth, kFadeBoxColor, true);
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
     }
    
-    DrawLine(m_frame * kLineX, 0, m_frame * kLineX, kLineY, kLineColor);
+    DrawLine(m_frame * kLineX, 0, m_frame * kLineX, Game::kScreenHeight, kLineColor);
     if(m_count > 70)
     {
         UI::GetInstance().Draw();

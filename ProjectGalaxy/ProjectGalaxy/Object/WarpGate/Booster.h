@@ -20,8 +20,6 @@ public:
 private:
 	Vec3 m_dir;
 	Vec3 m_warpPos;
-	int m_emitterHandle;
-	int m_effectPlayHandle;
 	bool m_isActive;
 	float m_power;
 	Vec3 m_nowPlanetPos;

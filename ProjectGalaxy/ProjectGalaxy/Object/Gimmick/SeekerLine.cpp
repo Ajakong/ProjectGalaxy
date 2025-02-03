@@ -3,10 +3,15 @@
 #include"Easing.h"
 #include"ColliderSphere.h"
 
+#include"SoundManager.h"
+
 namespace
 {
 	constexpr int kSpeedMax = 2;
 	constexpr int kRadius = 5;
+
+	const char* kEndPointSEName = "SeekerLineEndSE.mp3";
+	const char* kPlayerMoveSEName = "Fastener.mp3";
 }
 
 
@@ -17,6 +22,8 @@ float EaseInOutNum(float x)
 
 
 SeekerLine::SeekerLine(std::vector<Vec3> points, int color, bool isActive) : Collidable(Priority::StageGimmick, ObjectTag::SeekerLine),
+m_endPointSoundHandle(SoundManager::GetInstance().GetSoundData(kEndPointSEName)),
+m_movePlayerSoundHandle(SoundManager::GetInstance().GetSoundData(kPlayerMoveSEName)),
 m_hitPointNum(0),
 m_length(0),
 m_speed(0),
@@ -73,6 +80,7 @@ void SeekerLine::Update()
 	//m_player->SetPos(EaseInOut(m_points[m_hitPointNum], m_points[m_hitPointNum + 1], 1, 2));
 	m_player.lock()->SetPos(m_player.lock()->GetPos() + m_velocity * m_num);
 	m_player.lock()->SetVelocity(m_velocity * m_num);
+	PlaySoundMem(m_movePlayerSoundHandle, DX_PLAYTYPE_BACK);
 	//m_player->SetUpVec(Cross(m_velocity,Vec3::Front()*-1));
 
 	//m_player->SetPos((m_points[m_hitPointNum+1]));
@@ -82,9 +90,10 @@ void SeekerLine::Update()
 		m_hitPointNum++;
 		if (m_points[m_hitPointNum] == m_points.back())//次のポイントが最後だったら
 		{
+			PlaySoundMem(m_endPointSoundHandle, DX_PLAYTYPE_BACK);
 			m_player.lock()->SetIsOperation(false);
 			//プレイヤーをジャンプさせる
-			//m_player->CommandJump();
+			m_player.lock()->CommandJump();
 
 			m_hitPointNum = 0;
 			m_player.reset();
