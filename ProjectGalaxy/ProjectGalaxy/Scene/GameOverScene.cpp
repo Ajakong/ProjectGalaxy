@@ -60,8 +60,8 @@ void GameOverScene::FadeInUpdate()
 	if (m_frame <= 0)
 	{
 		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
-		UI::GetInstance().InText("そう簡単に死なれちゃ困るぜ");
-		UI::GetInstance().InText("もう一度立ち上がってくれるかい。");
+		UI::GetInstance().InText("しかたない・・・あの時間からやり直す。");
+		UI::GetInstance().InText("君の力を借してくれ。");
 
 		m_updateFunc = &GameOverScene::NormalUpdate;
 		m_drawFunc = &GameOverScene::NormalDraw;

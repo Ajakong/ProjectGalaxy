@@ -95,6 +95,17 @@ void Boss::Update()
 		m_dropItem = std::make_shared<ClearObject>(m_rigid->GetPos(), true);
 		Physics::GetInstance().Entry(m_dropItem);
 		m_isDestroyFlag = true;
+		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
+		std::list<std::string> text1;
+		text1.push_back("ばかなぁこのおれが。。。");
+		UI::GetInstance().InTexts(text1);
+
+		UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+		UI::GetInstance().InNextText("やったぞ！お前の勝ちだ！");
+
+		std::list<std::string> text2;
+		text2.push_back("さぁ奴が吐き出したスーパーマテリアルを取り返すんだ！");
+		UI::GetInstance().InNextTexts(text2);
 	}
 	DeleteObject(m_impacts);
 

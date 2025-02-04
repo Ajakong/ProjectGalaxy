@@ -12,6 +12,7 @@
 #include"Planet.h"
 
 #include"GraphManager.h"
+#include"ModelManager.h"
 
 #include"UtilFunc.h"
 
@@ -28,7 +29,8 @@ namespace
 	constexpr float CHECK_COLLIDE_LENDGHT = 50.0f;
 	constexpr float CHECK_COLLIDE_SQ_LENDGHT = CHECK_COLLIDE_LENDGHT * CHECK_COLLIDE_LENDGHT * 10;
 
-	const char* kShadowGraphName = "TakasakiTaisa_talk.png";
+	const char* kShadowGraphName = "shadow.png";
+	const char* kShadowModelName = "Shadow";
 }
 
 Physics::Physics()
@@ -168,6 +170,10 @@ void MyEngine::Physics::Draw()
 		if (!obj->GetIsActive())continue;
 		obj->Draw();
 	}
+
+
+	m_shadowHandles.clear();
+	ModelManager::GetInstance().ClearShadowModel();
 }
 
 void MyEngine::Physics::Clear()
@@ -284,7 +290,6 @@ void MyEngine::Physics::Gravity()
 					// 判定
 					auto collideHitInfo = IsCollide(stage->m_rigid, object->m_rigid, colA, colB);
 
-					// 当たっていなければ次の判定に
 					if (!collideHitInfo.isHit) continue;
 					
 					auto planet = std::dynamic_pointer_cast<Planet>(stage);
@@ -309,13 +314,34 @@ void MyEngine::Physics::Gravity()
 						end .VGet()                      // 線分の終点
 					);
 
-					// 衝突が検出された場合
-					if (collisionResult.HitFlag == TRUE) {
-						// 衝突位置を取得
+					//体の判定のみ(一回)
+					if (collisionResult.HitFlag == true&&colB->tag == ColideTag::Body) {
+						//モデルと線分が衝突した地点
 						Vec3 hitPosition = collisionResult.HitPosition;
+						int shadowHandle = ModelManager::GetInstance().GetModelData(kShadowModelName,true);
 
-						UtilFunc::DrawTriangle(hitPosition+direction*-1, direction*-1, 3, 0x444444,m_shadowHandle);
-						
+						//惑星からオブジェクトまでの法線
+						Vec3 norm = (end - start).GetNormalized();
+
+						MATRIX scaleMat = MGetScale(VGet(0.1f, 0.0f, 0.1f)); // Y軸方向に0.1倍のスケーリング
+
+						// 回転行列の作成（モデルの上方向ベクトルを法線ベクトルに合わせる）
+						MATRIX rotMat = MGetRotVec2(Vec3::Up().VGet(), norm.VGet());
+
+						// 平行移動行列の作成（モデルを衝突位置に移動）
+						MATRIX transMat = MGetTranslate((hitPosition+norm).VGet());
+
+						// 変換行列の合成（スケーリング → 回転 → 平行移動の順）
+						MATRIX transformMat = MMult(scaleMat, rotMat);
+						transformMat = MMult(transformMat, transMat);
+
+						// モデルの行列を設定
+						MV1SetMatrix(shadowHandle, transformMat);
+
+						SetDrawBlendMode(DX_BLENDMODE_ALPHA, 50);
+						// モデルを描画
+						MV1DrawModel(shadowHandle);
+						SetDrawBlendMode(DX_BLENDMODE_NOBLEND,0);
 					}
 
 

@@ -12,6 +12,7 @@
 
 #include"ModelManager.h"
 #include"GraphManager.h"
+#include"SoundManager.h"
 
 #include"Takobo.h"
 #include"Kuribo.h"
@@ -26,6 +27,11 @@
 #include"DekaHead_White.h"
 
 #include<cassert>
+
+namespace
+{
+	const char* kObjectAppearSEHandle = "ObjectAppear.mp3";
+}
 
 GalaxyCreater::GalaxyCreater()
 {
@@ -116,7 +122,7 @@ void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 		printf("Rot:%f,%f,%f\n", item.rot.x, item.rot.y, item.rot.z);
 		printf("scale:%f,%f,%f\n", item.scale.x, item.scale.y, item.scale.z);
 	}
-
+	m_createObjectSEHandle=SoundManager::GetInstance().GetSoundData(kObjectAppearSEHandle);
 }
 
 void GalaxyCreater::SeekerLineCreate()
@@ -468,6 +474,7 @@ void GalaxyCreater::Clear()
 
 std::shared_ptr<MyEngine::Collidable> GalaxyCreater::GetCollidable(int connectNumber)
 {
+	PlaySoundMem(m_createObjectSEHandle, DX_PLAYTYPE_BACK);
 	auto obj = m_lockedObjects[connectNumber];
 	obj->SetIsActive(true);
 	MyEngine::Physics::GetInstance().Initialize(obj);

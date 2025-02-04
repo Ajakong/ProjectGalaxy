@@ -144,6 +144,7 @@ namespace MyEngine
 		SendCollideInfo m_preTirrigerInfo;
 
 		int m_shadowHandle;
+		std::vector<int> m_shadowHandles;
 	};
 }
 

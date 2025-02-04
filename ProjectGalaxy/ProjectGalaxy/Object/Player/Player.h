@@ -298,6 +298,7 @@ protected:
 	int m_actionFrame = 0;
 
 	int m_fragmentCount;
+	int m_coinCount;
 
 	int m_pointLightHandle = -1;
 
@@ -308,7 +309,10 @@ protected:
 	int m_parrySEHandle;
 	int m_searchSEHandle;
 	int m_shotStickStarSEHandle;
+	int m_shotTheStarSEHandle;
 	int m_getItemHandle;
+	int m_specialItemGetSEHandle;
+	int m_powerUpItemGetSEHandle;
 
 	//エフェクト
 	int m_starEffect;

@@ -39,6 +39,11 @@ std::list<std::list<std::string>> DekaHead_Green::GetTexts()
 		two.push_back("あのカードキーがないと");
 		two.push_back("惑星から脱出できる加速装置が設置されないんだ。");
 		talkText.push_back(two);
+
+		std::list<std::string> three;
+		three.push_back("あのての生き物は踏みつけたら");
+		two.push_back("つぶれていなくなるんだけど、僕の体重じゃ軽くて無理なんだ");
+		talkText.push_back(two);
 	}
 	else
 	{

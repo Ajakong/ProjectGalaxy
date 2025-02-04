@@ -72,7 +72,10 @@ namespace
 	const char* kGororiHitSEName = "Hit.mp3";
 	const char* kElectroSEName = "Electro.mp3";
 	const char* kShotStickSEName = "ShotSound.mp3";
+	const char* kShotTheStarSEName = "ShotTheStar.mp3";
 	const char* kGetItemSEName = "GetItemSE.mp3";
+	const char* kSpecialItemGetSEName = "SpecialItemGetSE.mp3";
+	const char* kPowerUpItemGetSEName = "PowerUpItemGetSE.mp3";
 	const char* kOnParrySEName = "Parry.mp3";
 	const char* kJumpDropGroundSEName = "JumpDrop_ground.mp3";
 
@@ -98,10 +101,13 @@ Player::Player(Vec3 pos) : Collidable(Priority::High, ObjectTag::Player),
 m_modelHandle(MV1DuplicateModel(ModelManager::GetInstance().GetModelData(kFileName))),
 m_parrySEHandle(SoundManager::GetInstance().GetSoundData(kOnParrySEName)),
 m_getItemHandle(SoundManager::GetInstance().GetSoundData(kGetItemSEName)),
+m_powerUpItemGetSEHandle(SoundManager::GetInstance().GetSoundData(kPowerUpItemGetSEName)),
+m_specialItemGetSEHandle(SoundManager::GetInstance().GetSoundData(kSpecialItemGetSEName)),
 m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
 m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
 m_elecSEHandle(SoundManager::GetInstance().GetSoundData(kElectroSEName)),
 m_shotStickStarSEHandle(SoundManager::GetInstance().GetSoundData(kShotStickSEName)),
+m_shotTheStarSEHandle(SoundManager::GetInstance().GetSoundData(kShotTheStarSEName)),
 m_postUpVec(Vec3::Up()),
 m_shotDir(Vec3::Front()),
 m_moveDir(Vec3::Front()),
@@ -134,7 +140,8 @@ m_currentOxygen(0),
 m_shotAnimCount(0),
 m_shotAnimFlag(false),
 m_titleUpdateNum(0),
-m_fragmentCount(0)
+m_fragmentCount(0),
+m_coinCount(0)
 {
 	m_postUpVec = m_upVec;
 	m_rigid->SetPos(pos);
@@ -236,8 +243,7 @@ void Player::Update()
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
 		m_shotAnimFlag = true;
-		m_rigid->SetVelocity(Vec3::Zero());
-		//ChangeAnim(AnimNum::AnimationNumShotPose);
+		if (!m_state == State::Boosting)m_rigid->SetVelocity(Vec3::Zero());
 		(this->*m_shotUpdate)();
 	}
 	if (m_shotAnimFlag)
@@ -686,16 +692,20 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		printf("StickStarItem\n");
 		m_shotUpdate = &Player::ShotTheStickStar;
 
+		PlaySoundMem(m_powerUpItemGetSEHandle, DX_PLAYTYPE_BACK);
+
 	}
 	if (colider->GetTag() == ObjectTag::FullPowerDropItem)
 	{
 		printf("FullPowerDropItem\n");
 		m_dropAttackUpdate = &Player::FullPowerDropAttackUpdate;
+		PlaySoundMem(m_powerUpItemGetSEHandle, DX_PLAYTYPE_BACK);
 	}
 	if (colider->GetTag() == ObjectTag::Coin)
 	{
 		printf("Coin\n");
 		m_hp += 10;
+		m_coinCount++;
 		if (m_hp > kPlayerHPMax)
 		{
 			m_hp = kPlayerHPMax;
@@ -703,6 +713,8 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	}
 	if (colider->GetTag() == ObjectTag::FragmentOfStar)
 	{
+
+		PlaySoundMem(m_specialItemGetSEHandle, DX_PLAYTYPE_BACK);
 		m_fragmentCount++;
 		if (m_fragmentCount >= 5)
 		{
@@ -1344,6 +1356,7 @@ Vec3 Player::Move()
 
 void Player::ShotTheStar()
 {
+	PlaySoundMem(m_shotTheStarSEHandle, DX_PLAYTYPE_BACK);
 	Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
 	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
 	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
@@ -1449,6 +1462,7 @@ void Player::SetShotDir()
 	else {
 		inputDir = m_frontVec; // 初期値として前方ベクトルを使用
 		inputDuration = 0.0f; // 入力がない場合、時間をリセット
+		
 	}
 
 	// 入力の強度を計算（0～1の範囲）
@@ -1473,6 +1487,11 @@ void Player::SetShotDir()
 	lerpSpeed *= std::clamp(inputDuration / 0.5f, 0.0f, 1.0f); // 0.5秒以内の入力で速度を抑制
 
 	m_shotDir = m_shotDir * (1.0f - lerpSpeed) + inputDir * lerpSpeed;
+	if (!m_isAimFlag)
+	{
+		m_shotDir = m_frontVec;
+		return;
+	}
 }
 
 void Player::DeleteManage()

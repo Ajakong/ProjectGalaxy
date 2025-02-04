@@ -211,6 +211,9 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,Colide
 		if (attack->GetCounterFlag())
 		{
 			m_hp -= 60;
+			Vec3 dir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
+			dir.Normalize();
+			m_rigid->AddVelocity(dir * 2);
 		}
 	}
 }

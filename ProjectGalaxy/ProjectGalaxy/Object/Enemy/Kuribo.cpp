@@ -270,7 +270,7 @@ void Kuribo::ComebackUpdate()
 	vec.Normalize();
 	m_frontVec = vec;
 	m_rigid->AddVelocity(vec*kChaseSpeed);
-	if ((m_comebackPoint - m_rigid->GetPos()).Length() <= 3)
+	if ((m_comebackPoint - m_rigid->GetPos()).Length() < 5)
 	{
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_moveUpdate = &Kuribo::SearchUpdate;

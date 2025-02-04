@@ -95,5 +95,8 @@ private:
 
 	std::vector<LockedObject> m_lockedData;
 	std::vector<std::shared_ptr<MyEngine::Collidable>> m_lockedObjects;
+
+
+	int m_createObjectSEHandle;
 };
 
