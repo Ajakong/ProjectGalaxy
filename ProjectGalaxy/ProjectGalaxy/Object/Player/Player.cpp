@@ -21,6 +21,8 @@
 #include"Mission.h"
 #include"Physics.h"
 #include"Planet.h"
+#include"GalaxyCreater.h"
+
 
 #include"UI.h"
 /// <summary>
@@ -79,6 +81,7 @@ namespace
 	const char* kFileName = "SpaceHarrier";
 
 	const char* kLandingEffectname = "Landing.efk";
+	const char* kStarEffectName = "StarEffect.efk";
 
 
 }
@@ -130,7 +133,8 @@ m_modelDirAngle(0),
 m_currentOxygen(0),
 m_shotAnimCount(0),
 m_shotAnimFlag(false),
-m_titleUpdateNum(0)
+m_titleUpdateNum(0),
+m_fragmentCount(0)
 {
 	m_postUpVec = m_upVec;
 	m_rigid->SetPos(pos);
@@ -164,8 +168,6 @@ m_titleUpdateNum(0)
 	AddThroughTag(ObjectTag::PlayerBullet);
 
 	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
-	//ChangeAnim(AnimNum::AnimationNumIdle);
-
 	SetMatrix();
 	m_initMat = MV1GetLocalWorldMatrix(m_modelHandle);
 
@@ -174,6 +176,7 @@ m_titleUpdateNum(0)
 	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
 	m_dropAttackUpdate = &Player::FullPowerDropAttackUpdate;
 	m_spinAttackUpdate = &Player::SpiningUpdate;
+
 }
 
 Player::~Player()
@@ -183,6 +186,8 @@ Player::~Player()
 
 void Player::Init()
 {
+
+	EffectManager::GetInstance().PlayEffect(kStarEffectName, true, 0, shared_from_this());
 	Mission::GetInstance().SetPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()));
 }
 
@@ -614,6 +619,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 			}
 		}
 	}
+	
 	if (colider->GetTag() == ObjectTag::ClearObject)
 	{
 		printf("ClearObject\n");
@@ -695,6 +701,16 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 			m_hp = kPlayerHPMax;
 		}
 	}
+	if (colider->GetTag() == ObjectTag::FragmentOfStar)
+	{
+		m_fragmentCount++;
+		if (m_fragmentCount >= 5)
+		{
+			//スターシェードを5つ集めたらブースター生成
+			auto obj = GalaxyCreater::GetInstance().GetCollidable(3);
+			obj->SetIsActive(true);
+		}
+	}
 	if (colider->GetTag() == ObjectTag::ClearObject)
 	{
 		m_isClearFlag = true;
@@ -726,7 +742,6 @@ void Player::InitJump()
 
 void Player::Landing(int recast)
 {
-	EffectManager::GetInstance().PlayEffect(kLandingEffectname, false, 30, shared_from_this());
 	ChangeAnim(AnimNum::AnimationNumJumpAttack);
 	//57:着地アニメーションの終了時間
 	MV1SetAttachAnimTime(m_modelHandle, m_currentAnimNo, static_cast<float>(57 - recast));

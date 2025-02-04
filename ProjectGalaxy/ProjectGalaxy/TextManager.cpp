@@ -114,16 +114,42 @@ void TextManager::InText(const std::string text)
 	m_texts.push_back(strings);
 }
 
+void TextManager::InNextText(const std::string text)
+{
+    std::list<std::string> string;
+    string.push_back(text);
+    std::list<std::list<std::string>> strings;
+    strings.push_back(string);
+    m_nextTexts.push_back(strings);
+}
+
 void TextManager::InTexts(const std::list<std::string> text)
 {
 	m_texts.push_back(text);
 }
 
+void TextManager::InNextTexts(const std::list<std::string> text)
+{
+    std::list<std::list<std::string>> strings;
+    strings.push_back(text);
+
+    m_nextTexts.push_back(strings);
+}
+
+void TextManager::SetTexts(const std::list<std::list<std::string>> texts)
+{
+    m_texts = texts;
+}
+void TextManager::SetNextTexts(const std::list<std::list<std::string>> texts)
+{
+    m_nextTexts.push_back(texts);
+}
 void TextManager::DeleteText()
 {
 	m_drawTextLength = 0;
     m_postFrameTextSize = 0;
 	m_texts.pop_front();
+   
 }
 
 

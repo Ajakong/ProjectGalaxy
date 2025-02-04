@@ -59,6 +59,7 @@ void GameOverScene::FadeInUpdate()
 
 	if (m_frame <= 0)
 	{
+		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 		UI::GetInstance().InText("そう簡単に死なれちゃ困るぜ");
 		UI::GetInstance().InText("もう一度立ち上がってくれるかい。");
 

@@ -45,7 +45,9 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	m_actionFrame(0),
 	m_tackleChargeFrame(0),
 	m_isHit(false),
+	m_isTalk(false),
 	m_onColStage(false),
+	
 	m_knockBackFrame(0),
 	m_runningFrame(0),
 	m_damageSoundHandle(SoundManager::GetInstance().GetSoundData(kDamageSEName)),
@@ -127,6 +129,8 @@ void Boss::PhaseOneUpdate()
 		auto obj = GalaxyCreater::GetInstance().GetCollidable(1);
 		obj->SetIsActive(true);
 
+		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
+
 		std::list<std::string> texts1;
 		texts1.push_back("くそぉ！おまえなんなんだよ！");
 		texts1.push_back("スーパーマテリアルは渡さねぇぞ！");
@@ -137,7 +141,6 @@ void Boss::PhaseOneUpdate()
 		m_phaseUpdate = &Boss::PhaseTwoUpdate;
 		m_bossUpdate = &Boss::RunawayUpdate;
 	}
-
 }
 
 void Boss::PhaseTwoUpdate()
@@ -247,19 +250,19 @@ void Boss::InitUpdate()
 			text1.push_back("お前だな、俺様のことをこそこそかぎまわってる奴は");
 			UI::GetInstance().InTexts(text1);
 
-			//UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
-			//UI::GetInstance().InText("なに！？気づかれていたのか！");
+			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			UI::GetInstance().InNextText("なに！？気づかれていたのか！");
 
-			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
+			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::Boss);
 
 			std::list<std::string> text2;
 			text2.push_back("めざわりなんだよ！");
 			text2.push_back("消えてもらうぜ");
-			UI::GetInstance().InTexts(text2);
+			UI::GetInstance().InNextTexts(text2);
 
-			//UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
-			//UI::GetInstance().InText("ドレイク！ヤツは戦うつもりみたいだ");
-			//UI::GetInstance().InText("ここで決めてしまうぞ！");
+			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			UI::GetInstance().InNextText("ドレイク！ヤツは戦うつもりみたいだ");
+			UI::GetInstance().InNextText("ここで決めてしまうぞ！");
 			m_bossUpdate = &Boss::NeutralUpdate;
 		}
 		if (m_phaseUpdate == &Boss::PhaseTwoUpdate)
@@ -270,18 +273,20 @@ void Boss::InitUpdate()
 			text1.push_back("今度は本気の本気で消えてもらう");
 			UI::GetInstance().InTexts(text1);
 
-			//UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
-			//UI::GetInstance().InText("なに！？気づかれていたのか！");
-
-			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
-
+			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			std::list<std::string> text2;
-			text2.push_back("さっきみたいに甘くはやらねぇぞ！");
-			UI::GetInstance().InTexts(text2);
+			text2.push_back("ドレイク！ここが決戦の場になる。");
+			text2.push_back("ここでヤツを倒してスーパーマテリアルを取り返せ！");
+			UI::GetInstance().InNextTexts(text2);
 
-			//UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
-			//UI::GetInstance().InText("ドレイク！ヤツは戦うつもりみたいだ");
-			//UI::GetInstance().InText("ここで決めてしまうぞ！");
+			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::Boss);
+
+			std::list<std::string> text3;
+			text3.push_back("さっきみたいに甘くはやらねぇぞ！");
+			UI::GetInstance().InNextTexts(text3);
+
+			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			UI::GetInstance().InNextText("すべてを出し切るぞ！");
 			m_bossUpdate = &Boss::NeutralUpdate;
 		}
 	}
@@ -422,6 +427,27 @@ void Boss::LandingUpdate()
 	m_color = 0x00ff00;
 	m_state = State::Land;
 
+	if (!m_isTalk)
+	{
+		m_isTalk = true;
+		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
+		UI::GetInstance().InText("はぁはぁ(*´Д｀)");
+
+		UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+		UI::GetInstance().InNextText("なんだ、敵の様子がおかしいぞ！");
+
+		std::list<std::string> text1;
+		text1.push_back("緑になった時がヤツの防御が低くなった合図だ！");
+		text1.push_back("なぜかわからんが、俺の直感がそう言っている。");
+		UI::GetInstance().InNextTexts(text1);
+
+		std::list<std::string> text2;
+		text2.push_back("敵が緑色になった時に");
+		text2.push_back("近づいてスピンで攻撃するか、");
+		text2.push_back("L1で狙ってXで遠距離から攻撃するんだ！");
+		UI::GetInstance().InNextTexts(text2);
+
+	}
 
 	m_actionFrame++;
 	if (m_actionFrame > 0)
@@ -532,6 +558,14 @@ void Boss::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 			m_actionFrame = -m_hp-200;
 			m_bossUpdate = &Boss::LandingUpdate;
 		}
+		if (state == State::Land && colider->GetState() == State::Spin)
+		{
+			m_rigid->SetVelocity(m_upVec * 3);
+			m_hp -= 20;
+			m_color = 0xff00ff;
+			m_bossUpdate = &Boss::NeutralUpdate;
+			PlaySoundMem(m_criticalHandle, DX_PLAYTYPE_BACK);
+		}
 	}
 }
 
@@ -545,7 +579,7 @@ void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 	{
 		if (colider->GetTag() == ObjectTag::PlayerImpact)
 		{
-			m_rigid->AddVelocity(m_upVec * 4);
+			m_rigid->SetVelocity(m_upVec * 3);
 			m_hp -= 20;
 			m_color = 0xff00ff;
 			m_bossUpdate = &Boss::NeutralUpdate;

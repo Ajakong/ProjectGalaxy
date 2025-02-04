@@ -24,7 +24,7 @@ ClearScene::ClearScene(SceneManager& mgr) :
 	m_frame = 60;
 	m_updateFunc = &ClearScene::FadeInUpdate;
 	m_drawFunc = &ClearScene::FadeDraw;
-
+	UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 	UI::GetInstance().InText("Congratulations!");
 
 	std::list<std::string> clear;

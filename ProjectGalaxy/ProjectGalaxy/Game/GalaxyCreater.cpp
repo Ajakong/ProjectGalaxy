@@ -8,7 +8,7 @@
 #include"FullPowerDropItem.h"
 #include"StickStarItem.h"
 #include"Coin.h"
-
+#include"FragmentOfStar.h"
 
 #include"ModelManager.h"
 #include"GraphManager.h"
@@ -99,6 +99,11 @@ void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 			auto stickStarItem = std::make_shared<StickStarItem>(loc.pos, true);
 			MyEngine::Physics::GetInstance().Entry(stickStarItem);
 		}
+		else if (loc.tag == "StarShard")
+		{
+			auto starShard = std::make_shared<FragmentOfStar>(loc.pos, true);
+			MyEngine::Physics::GetInstance().Entry(starShard);
+		}
 
 		
 	}
@@ -185,6 +190,7 @@ void GalaxyCreater::PlanetCreate()
 		FileRead_read(&loc.coefficientOfFriction, sizeof(loc.coefficientOfFriction), handle);
 		//大きさを取得する
 		FileRead_read(&loc.scale, sizeof(loc.scale), handle);
+
 
 		m_planetModelData.push_back(ModelManager::GetInstance().GetModelData(loc.modelName.c_str()));
 		auto planet = std::make_shared<SpherePlanet>(loc.pos, loc.color, loc.gravityPower, m_planetModelData.back(), loc.coefficientOfFriction, loc.scale);
@@ -385,6 +391,7 @@ void GalaxyCreater::LockedObjectCreate()
 				//名前を取得する
 				FileRead_read(info.name.data(), sizeof(char) * static_cast<int>(info.name.size()), handle);
 
+				//位置を設定
 				Vec3 pos;
 				FileRead_read(&pos, sizeof(pos), handle);
 				info.points.push_back(pos);
@@ -433,7 +440,8 @@ std::vector<std::shared_ptr<Enemy>> GalaxyCreater::KeyLockObjectCreate()
 
 		//座標を取得する
 		FileRead_read(&loc.pos, sizeof(loc.pos), handle);
-
+		
+		//つながってるオブジェクトの番号を設定
 		FileRead_read(&loc.connectObjectNumber, sizeof(loc.connectObjectNumber), handle);
 
 		if (loc.tag == "BigKuribo")
@@ -443,8 +451,10 @@ std::vector<std::shared_ptr<Enemy>> GalaxyCreater::KeyLockObjectCreate()
 		}
 		
 	}
+
 	FileRead_close(handle);
 	return enemies;
+
 }
 
 void GalaxyCreater::Clear()

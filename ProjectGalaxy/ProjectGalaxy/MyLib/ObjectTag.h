@@ -24,6 +24,7 @@ enum class ObjectTag
 	FullPowerDropItem,
 	StickStarItem,
 	Coin,
+	FragmentOfStar,
 	Key,
 	ClearObject,
 	StarCapture,

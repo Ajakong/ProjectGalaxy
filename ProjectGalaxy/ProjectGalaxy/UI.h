@@ -2,6 +2,7 @@
 #include<string>
 #include<memory>
 #include<list>
+#include<vector>
 class TextManager;
 class TalkObject;
 class UI
@@ -40,16 +41,31 @@ public:
 	/// </summary>
 	/// <param name="handle"></param>
 	void SetTalkObjectHandle(TalkGraphKind obj);
+
+	void SetNextTalkObjectHandle(TalkGraphKind obj);
+
 	/// <summary>
 	/// 新しいテキストをぶち込む
 	/// </summary>
 	/// <param name="text">1行で表示したいテキスト</param>
 	void InText(const std::string text);
 	/// <summary>
+	/// テキストデータ群に次に表示したいテキストをぶち込む(全角でぶち込んでください)
+	/// </summary>
+	/// <param name="text">表示したいテキスト</param>
+	void InNextText(const std::string text);
+
+	/// <summary>
 	/// 新しいテキスト群をぶち込む
 	/// </summary>
 	/// <param name="texts">同じテキストボックス内で表示したいテキスト</param>
 	void InTexts(const std::list<std::string> texts);
+	/// <summary>
+	/// 同じテキストボックス内に次に表示したいテキスト群をぶち込む
+	/// </summary>
+	/// <param name="text">表示したいテキスト群</param>
+	void InNextTexts(const std::list<std::string> text);
+
 	/// <summary>
 	/// TalkObjectが話す
 	/// </summary>
@@ -138,6 +154,11 @@ private:
 	/// 今話している人の顔画像ハンドル
 	/// </summary>
 	int m_uiTalkingCharaHandle;
+	/// <summary>
+	/// しゃべる人のハンドル順
+	/// </summary>
+	std::list<int>m_uiNextTalkCharaHandle;
+
 	/// <summary>
 	/// 大佐の顔画像ハンドル
 	/// </summary>

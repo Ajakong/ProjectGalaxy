@@ -137,7 +137,7 @@ void UI::NormalUpdate()
 	//テキストデータがぶち込まれていたら表示する
 	if (m_textManager->GetTextDataSize() != 0)
 	{
-		m_uiTalkingCharaHandle = m_uiTakasakiTaisaHandle;
+		
 		TextMode();
 	}
 	
@@ -173,9 +173,21 @@ void UI::TextBoxUpdate()
 	//表示させるテキストがない場合
 	if (m_textManager->GetTextDataSize() == 0)
 	{
-		//テキストボックスのフェードアウトヘ以降
-		m_uiUpdate = &UI::FadeOutUpdate;
-		m_uiDraw = &UI::TextBoxFadeDraw;
+		
+		m_textManager->TextUpdate();
+		if (m_uiNextTalkCharaHandle.size() != 0)
+		{
+			m_uiTalkingCharaHandle = m_uiNextTalkCharaHandle.front();
+			m_uiNextTalkCharaHandle.pop_front();
+
+		}
+		if (m_textManager->GetTextDataSize() == 0)
+		{
+			//テキストボックスのフェードアウトヘ以降
+			m_uiUpdate = &UI::FadeOutUpdate;
+			m_uiDraw = &UI::TextBoxFadeDraw;
+		}
+		
 	}
 }
 
@@ -255,7 +267,7 @@ void UI::Draw(float hp, bool aimFlag)
 	}
 	(this->*m_uiDraw)();
 
-	if (aimFlag)DrawRectRotaGraph(800, 450, kAimGraph.x, kAimGraph.y, kAimGraph.width, kAimGraph.height, 0.3, 0, m_uiAimGraphHandle, true);
+	if (aimFlag)DrawRectRotaGraph(Game::kScreenWidth/2, Game::kScreenHeight/2, kAimGraph.x, kAimGraph.y, kAimGraph.width, kAimGraph.height, 0.3, 0, m_uiAimGraphHandle, true);
 }
 
 void UI::NormalDraw()
@@ -335,14 +347,45 @@ void UI::SetTalkObjectHandle(TalkGraphKind obj)
 	}
 }
 
+void UI::SetNextTalkObjectHandle(TalkGraphKind obj)
+{
+	switch (obj)
+	{
+	case TalkGraphKind::TakasakiTaisa:m_uiNextTalkCharaHandle.push_back(m_uiTakasakiTaisaHandle);
+		break;
+	case TalkGraphKind::Dekahead_Red:m_uiNextTalkCharaHandle.push_back(m_uiDekahead_RedHandle);
+		break;
+	case TalkGraphKind::Dekahead_Green:m_uiNextTalkCharaHandle.push_back(m_uiDekahead_GreenHandle);
+		break;
+	case TalkGraphKind::Dekahead_Yellow:m_uiNextTalkCharaHandle.push_back(m_uiDekahead_YellowHandle);
+		break;
+	case TalkGraphKind::Dekehead_Blue:m_uiNextTalkCharaHandle.push_back(m_uiDekahead_BlueHandle);
+		break;
+	case TalkGraphKind::Dekahead_White:m_uiNextTalkCharaHandle.push_back(m_uiDekahead_WhiteHandle);
+		break;
+	case TalkGraphKind::Boss:m_uiNextTalkCharaHandle.push_back(m_uiBossHandle);
+		break;
+	}
+}
+
 void UI::InText(const std::string text)
 {
 	m_textManager->InText(text);
 }
 
+void UI::InNextText(const std::string text)
+{
+	m_textManager->InNextText(text);
+}
+
 void UI::InTexts(const std::list<std::string> texts)
 {
 	m_textManager->InTexts(texts);
+}
+
+void UI::InNextTexts(const std::list<std::string> text)
+{
+	m_textManager->InNextTexts(text);
 }
 
 void UI::WannaTalk(std::shared_ptr<TalkObject> obj)

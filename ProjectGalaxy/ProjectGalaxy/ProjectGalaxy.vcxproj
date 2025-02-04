@@ -215,6 +215,7 @@
     <ClCompile Include="Object\Gimmick\SeekerLine.cpp" />
     <ClCompile Include="Object\Gimmick\StarCapture.cpp" />
     <ClCompile Include="Object\Item\Coin.cpp" />
+    <ClCompile Include="Object\Item\FragmentOfStar.cpp" />
     <ClCompile Include="Object\Item\FullPowerDropItem.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
     <ClCompile Include="Object\Item\Key.cpp" />
@@ -313,6 +314,7 @@
     <ClInclude Include="Object\Gimmick\SeekerLine.h" />
     <ClInclude Include="Object\Gimmick\StarCapture.h" />
     <ClInclude Include="Object\Item\Coin.h" />
+    <ClInclude Include="Object\Item\FragmentOfStar.h" />
     <ClInclude Include="Object\Item\FullPowerDropItem.h" />
     <ClInclude Include="Object\Item\Item.h" />
     <ClInclude Include="Object\Item\Key.h" />

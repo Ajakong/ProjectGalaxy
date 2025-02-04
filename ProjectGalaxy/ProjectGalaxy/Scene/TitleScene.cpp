@@ -102,6 +102,7 @@ TitleScene::TitleScene(SceneManager& manager) :
     MV1SetScale(m_skyDomeH, VGet(kSkyDomeScale, kSkyDomeScale, kSkyDomeScale));
 
     UI::GetInstance().Init();
+    UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
     std::list<std::string> ImTakasaki;
     ImTakasaki.push_back( "聞こえるか、ドレイク！　私だ、タカサキ大佐だ。");
     ImTakasaki.push_back("聞こえていたらAボタンを押してくれ。");

@@ -297,10 +297,12 @@ protected:
 	/// </summary>
 	int m_actionFrame = 0;
 
+	int m_fragmentCount;
 
 	int m_pointLightHandle = -1;
 
 
+	//音
 	int m_hitSEHandle;
 	int m_elecSEHandle;
 	int m_parrySEHandle;
@@ -308,6 +310,8 @@ protected:
 	int m_shotStickStarSEHandle;
 	int m_getItemHandle;
 
+	//エフェクト
+	int m_starEffect;
 
 	int m_color;
 	int m_spinCount;

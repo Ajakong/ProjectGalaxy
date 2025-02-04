@@ -314,7 +314,7 @@ void MyEngine::Physics::Gravity()
 						// 衝突位置を取得
 						Vec3 hitPosition = collisionResult.HitPosition;
 
-						UtilFunc::DrawTriangle(hitPosition+direction*-1, direction*-1, 3, 0x000000,m_shadowHandle);
+						UtilFunc::DrawTriangle(hitPosition+direction*-1, direction*-1, 3, 0x444444,m_shadowHandle);
 						
 					}
 

@@ -42,7 +42,7 @@ void Key::Draw()
 {
 	MV1DrawModel(m_modelHandle);
 
-	m_col->DebugDraw(m_rigid->GetPos());
+	//m_col->DebugDraw(m_rigid->GetPos());
 }
 
 void Key::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)

@@ -287,15 +287,7 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	if (player->GetIsAiming())m_camera->Update(player->GetShotDir());
 	else m_camera->Update(player->GetLookPoint());
 
-	
-
-	
-
 	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
-
-	
-
-	
 
 	if (player->GetDeathFlag())
 	{
