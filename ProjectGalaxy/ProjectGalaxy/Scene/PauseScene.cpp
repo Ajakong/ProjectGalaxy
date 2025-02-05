@@ -175,21 +175,22 @@ void PauseScene::NormalDraw()
 
 	DrawRotaString((Game::kScreenWidth/2)-130, 300, 6, 6, 0, 0, 0, 0xffffbb, 0, 0, "Pause");
 
-	DrawExtendFormatStringToHandle(750, 500,0.3f,0.3f,  0xffffff,m_fontHandle,"ゲームに戻る");
-	DrawExtendFormatStringToHandle(770, 600, 0.3f, 0.3f, 0xffffff,m_fontHandle, "操作説明");
-	DrawExtendFormatStringToHandle(760, 700, 0.3f, 0.3f, 0xffffff,m_fontHandle, "タイトルへ");
+	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-50, 500,0.3f,0.3f,  0xffffff,m_fontHandle,"ゲームに戻る");
+	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-30, 600, 0.3f, 0.3f, 0xffffff,m_fontHandle, "操作説明");
+	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-40, 700, 0.3f, 0.3f, 0xffffff,m_fontHandle, "初めから");
+	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2) - 40, 800, 0.3f, 0.3f, 0xffffff, m_fontHandle, "タイトルへ");
 
-	if (m_select % 3 == 0)
+	if (m_select % 4 == 0)
 	{
-		DrawRectExtendGraph(690 - static_cast<int>(m_btnFrame) / 6, 470 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 540 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
+		DrawRectExtendGraph((Game::kScreenWidth/2)-110 - static_cast<int>(m_btnFrame) / 6, 470 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 540 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
 	}
-	if (m_select % 3 == 1 || m_select % 3 == -2)
+	if (m_select % 4 == 1 || m_select % 4 == -3)
 	{
-		DrawRectExtendGraph(690 - static_cast<int>(m_btnFrame) / 6, 570 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 640 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
+		DrawRectExtendGraph((Game::kScreenWidth / 2) - 110 - static_cast<int>(m_btnFrame) / 6, 570 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 640 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
 	}
-	if (m_select % 3 == 2 || m_select % 3 == -1)
+	if (m_select % 4 == 2 || m_select % 4 == -2)
 	{
-		DrawRectExtendGraph(690 - static_cast<int>(m_btnFrame) / 6, 670 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 740 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
+		DrawRectExtendGraph((Game::kScreenWidth / 2) - 110 - static_cast<int>(m_btnFrame) / 6, 670 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 740 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
 	}
 
 
