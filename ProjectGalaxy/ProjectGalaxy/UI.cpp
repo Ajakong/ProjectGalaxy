@@ -12,7 +12,10 @@ namespace
 {
 	const char* kGraphUIAssetName = "Designer_ui.png";
 	const char* kInputAUIName = "PushAbottonForTalk.png";
+	const char* kPushLushInputAUIName = "PushLushAbotton.png";
+	const char* kPushLushInputAUI2Name = "PushLushAbotton2.png";
 	const char* kTakasakiTaisaGraphName = "TakasakiTaisa_talk.png";
+
 	
 	const char* kDekahead_RedGraphName = "cuteCreature_red.png";
 	const char* kDekahead_GreenGraphName = "cuteCreature_green.png";
@@ -31,6 +34,8 @@ namespace
 	const UI::UIinfo kIdemBoxUIInfo{ 0,0,255,255 };
 	const UI::UIinfo kHPBarUIInfo { 125,730,820,140 };
 	const UI::UIinfo kWindowScreenUIInfo{ 620,15,400,500 };
+	const UI::UIinfo kPushLushInputAUIInfo{ 90,100,835,850 };
+	const UI::UIinfo kPushLushInputAUI2Info{ 90,100,835,850 };
 	const UI::UIinfo kInputAUIInfo{ 200,105,620,695 };
 	const UI::UIinfo kTalkingCharaGraph{ 0,0,775,890 };
 
@@ -58,6 +63,7 @@ namespace
 UI::UI():
 	m_fadeSpeed(1),
 	m_appearFrame(0),
+	m_changeFrame(0),
 	m_uiUpdate(&UI::NormalUpdate),
 	m_uiDraw(&UI::NormalDraw),
 	m_uiAssetHandle(-1),
@@ -65,6 +71,8 @@ UI::UI():
 	m_uiAimGraphHandle(-1),
 	m_uiTakasakiTaisaHandle(-1),
 	m_uiTalkingCharaHandle(-1),
+	m_uiPushLushInputAButtonHandle(-1),
+	m_uiPushLushInputAButton2Handle(-1),
 	m_textBoxSEHandle(-1),
 	m_chatAppearSEHandle(-1),
 	m_hpLowerSEHandle(-1),
@@ -87,6 +95,8 @@ void UI::Init()
 {
 	m_uiAssetHandle = GraphManager::GetInstance().GetGraphData(kGraphUIAssetName);
 	m_uiInputAHandle = GraphManager::GetInstance().GetGraphData(kInputAUIName);
+	m_uiPushLushInputAButtonHandle = GraphManager::GetInstance().GetGraphData(kPushLushInputAUIName);
+	m_uiPushLushInputAButton2Handle = GraphManager::GetInstance().GetGraphData(kPushLushInputAUI2Name);
 
 	m_uiTakasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
 	
@@ -107,6 +117,7 @@ void UI::Init()
 	NormalMode();
 	m_appearFrame = 0;
 	m_fadeSpeed = 1;
+	m_changeFrame = 0;
 	m_HPColor = 0x00044ff;
 }
 
@@ -122,7 +133,7 @@ void UI::Update()
 		m_HPColor = 0x00044ff;
 	}
 	(this->*m_uiUpdate)();
-
+	m_changeFrame++;
 }
 
 void UI::NormalMode()
@@ -249,7 +260,7 @@ void UI::FadeOutUpdate()
 	
 }
 
-void UI::Draw(float hp, bool aimFlag)
+void UI::Draw(float hp, bool aimFlag,bool isDeath)
 {
 	m_playerHp = hp;
 
@@ -268,6 +279,18 @@ void UI::Draw(float hp, bool aimFlag)
 	(this->*m_uiDraw)();
 
 	if (aimFlag)DrawRectRotaGraph(Game::kScreenWidth/2, Game::kScreenHeight/2, kAimGraph.x, kAimGraph.y, kAimGraph.width, kAimGraph.height, 0.3, 0, m_uiAimGraphHandle, true);
+	if (isDeath)
+	{
+		if (m_changeFrame % 2 == 0)
+		{
+			DrawRectRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, kPushLushInputAUIInfo.x, kPushLushInputAUIInfo.y, kPushLushInputAUIInfo.width, kPushLushInputAUIInfo.height, 0.3, 0, m_uiPushLushInputAButtonHandle, true);
+		}
+		else
+		{
+			DrawRectRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, kPushLushInputAUI2Info.x, kPushLushInputAUI2Info.y, kPushLushInputAUI2Info.width, kPushLushInputAUI2Info.height, 0.3, 0, m_uiPushLushInputAButton2Handle, true);
+		}
+		
+	}
 }
 
 void UI::NormalDraw()

@@ -34,7 +34,7 @@ public:
 	void Update();
 	
 	
-	void Draw(float hp=0.f,bool aimFlag=false);
+	void Draw(float hp=0.f,bool aimFlag=false, bool isDeath=false);
 	
 	/// <summary>
 	/// 話すオブジェクトのハンドルを設定
@@ -150,6 +150,8 @@ private:
 
 	int m_HPColor;
 
+	int m_changeFrame;
+
 	/// <summary>
 	/// 今話している人の顔画像ハンドル
 	/// </summary>
@@ -164,12 +166,16 @@ private:
 	/// </summary>
 	int m_uiTakasakiTaisaHandle;
 	
+	/// <summary>
+	/// パンパーンの色別顔写真集
+	/// </summary>
 	int m_uiDekahead_RedHandle;
 	int m_uiDekahead_GreenHandle;
 	int m_uiDekahead_YellowHandle;
 	int m_uiDekahead_BlueHandle;
 	int m_uiDekahead_WhiteHandle;
 
+	//ボスの顔写真
 	int m_uiBossHandle;
 
 	/// <summary>
@@ -180,6 +186,16 @@ private:
 	/// Aボタン画像ハンドル
 	/// </summary>
 	int m_uiInputAHandle;
+
+	/// <summary>
+	/// A連打画像の1つ目のハンドル
+	/// </summary>
+	int m_uiPushLushInputAButtonHandle;
+	/// <summary>
+	/// A連打画像の2つ目のハンドル
+	/// </summary>
+	int m_uiPushLushInputAButton2Handle;
+
 	/// <summary>
 	/// 照準画像ハンドル
 	/// </summary>
@@ -198,7 +214,6 @@ private:
 	/// HPが少ないことを知らせる音
 	/// </summary>
 	int m_hpLowerSEHandle;
-
 
 	std::shared_ptr<TextManager> m_textManager;
 	std::shared_ptr<TalkObject> m_nowTalkObject;

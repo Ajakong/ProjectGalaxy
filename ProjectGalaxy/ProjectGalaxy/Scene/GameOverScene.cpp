@@ -44,7 +44,7 @@ void GameOverScene::Draw()
 {
 	(this->*m_drawFunc)();
 
-	if (Pad::IsTrigger(PAD_INPUT_1)&&Pad::GetState()=="PlayerInput")
+	if (UI::GetInstance().TextRemaining() == 0)
 	{
 		
 		ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
@@ -59,9 +59,7 @@ void GameOverScene::FadeInUpdate()
 
 	if (m_frame <= 0)
 	{
-		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
-		UI::GetInstance().InText("しかたない・・・あの時間からやり直す。");
-		UI::GetInstance().InText("君の力を借してくれ。");
+		
 
 		m_updateFunc = &GameOverScene::NormalUpdate;
 		m_drawFunc = &GameOverScene::NormalDraw;
@@ -70,7 +68,6 @@ void GameOverScene::FadeInUpdate()
 
 void GameOverScene::NormalUpdate()
 {
-	
 
 }
 

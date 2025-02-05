@@ -6,9 +6,12 @@
 #include "PauseScene.h"
 #include"TitleScene.h"
 #include"Game.h"
+
+#include"ModelManager.h"
 #include"SoundManager.h"
 #include"GraphManager.h"
 #include"FontManager.h"
+
 #include"Physics.h"
 #include"GamePlayingScene.h"
 
@@ -43,6 +46,12 @@ m_tutoFlag(false)
 	m_updateFunc = &PauseScene::AppearUpdate;
 	m_drawFunc = &PauseScene::ExpandDraw;
 	m_tutoHandle =GraphManager::GetInstance().GetGraphData("information.png");
+	
+	m_fontHandle = FontManager::GetInstance().GetFontData("SF_font.ttf", "廻想体 ネクスト UP B", 28);
+}
+
+PauseScene::~PauseScene()
+{
 	
 }
 
@@ -108,12 +117,12 @@ void PauseScene::NormalUpdate()
 
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
-		if (m_select % 3 == 0)
+		if (m_select % 4 == 0)
 		{
 			m_updateFunc = &PauseScene::DisappearUpdate;
 			m_drawFunc = &PauseScene::ExpandDraw;
 		}
-		if(m_select % 3 == 1|| m_select % 3 == -2)
+		if(m_select % 4 == 1|| m_select % 4 == -3)
 		{
 			if (m_tutoFlag)
 			{
@@ -125,10 +134,22 @@ void PauseScene::NormalUpdate()
 			}
 
 		}
-		if (m_select % 3 == 2 || m_select % 3 == -1)
+		if (m_select % 4 == 2 || m_select % 4 == -2)
 		{
-			m_manager.ResetScene(std::make_shared<GamePlayingScene>(m_manager));
 			MyEngine::Physics::GetInstance().Clear();
+			m_manager.ResetScene(std::make_shared<GamePlayingScene>(m_manager));
+			
+
+		}
+		if (m_select % 4 == 3 || m_select % 4 == -1)
+		{
+			ModelManager::GetInstance().Clear();
+			SoundManager::GetInstance().Clear();
+			GraphManager::GetInstance().Clear();
+			MyEngine::Physics::GetInstance().Clear();
+			m_manager.ResetScene(std::make_shared<TitleScene>(m_manager));
+			
+
 		}
 	}
 
@@ -175,22 +196,30 @@ void PauseScene::NormalDraw()
 
 	DrawRotaString((Game::kScreenWidth/2)-130, 300, 6, 6, 0, 0, 0, 0xffffbb, 0, 0, "Pause");
 
-	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-50, 500,0.3f,0.3f,  0xffffff,m_fontHandle,"ゲームに戻る");
-	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-30, 600, 0.3f, 0.3f, 0xffffff,m_fontHandle, "操作説明");
-	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-40, 700, 0.3f, 0.3f, 0xffffff,m_fontHandle, "初めから");
-	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2) - 40, 800, 0.3f, 0.3f, 0xffffff, m_fontHandle, "タイトルへ");
+	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-84, 500, 1.f,1.f,  0xffffff,m_fontHandle,"ゲームに戻る");
+	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-56, 600, 1.f, 1.f, 0xffffff,m_fontHandle, "操作説明");
+	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2)-56, 700, 1.f, 1.f, 0xffffff,m_fontHandle, "初めから");
+	DrawExtendFormatStringToHandle((Game::kScreenWidth / 2) - 70, 800, 1.f, 1.f, 0xffffff, m_fontHandle, "タイトルへ");
 
 	if (m_select % 4 == 0)
 	{
 		DrawRectExtendGraph((Game::kScreenWidth/2)-110 - static_cast<int>(m_btnFrame) / 6, 470 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 540 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
+		DrawBox((Game::kScreenWidth / 2) - 100, 450, (Game::kScreenWidth / 2) + 100, 500, 0x00ffff,true);
 	}
 	if (m_select % 4 == 1 || m_select % 4 == -3)
 	{
 		DrawRectExtendGraph((Game::kScreenWidth / 2) - 110 - static_cast<int>(m_btnFrame) / 6, 570 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 640 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
+		DrawBox((Game::kScreenWidth / 2) - 100, 550, (Game::kScreenWidth / 2) + 100, 600, 0x00ffff, true);
 	}
 	if (m_select % 4 == 2 || m_select % 4 == -2)
 	{
 		DrawRectExtendGraph((Game::kScreenWidth / 2) - 110 - static_cast<int>(m_btnFrame) / 6, 670 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 740 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
+		DrawBox((Game::kScreenWidth / 2) - 100, 650, (Game::kScreenWidth / 2) + 100, 700, 0x00ffff, true);
+	}
+	if (m_select % 4 == 3 || m_select % 4 == -1)
+	{
+		DrawRectExtendGraph((Game::kScreenWidth / 2) - 110 - static_cast<int>(m_btnFrame) / 6, 870 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 740 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
+		DrawBox((Game::kScreenWidth / 2) - 100, 750, (Game::kScreenWidth / 2) + 100, 800, 0x00ffff, true);
 	}
 
 

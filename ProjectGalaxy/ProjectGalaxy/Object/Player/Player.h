@@ -319,6 +319,8 @@ protected:
 
 	int m_color;
 	int m_spinCount;
+	int m_pushCount;
+	int m_revivalCount;
 
 	bool m_shotAnimFlag;
 	/// <summary>

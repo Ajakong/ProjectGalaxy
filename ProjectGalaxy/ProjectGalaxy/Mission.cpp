@@ -73,7 +73,7 @@ void Mission::JumpUpdate()
 		UI::GetInstance().InText("完璧だな。");
 		std::list<std::string> nextMission;
 		nextMission.push_back("お次はダッシュだ！");
-		nextMission.push_back("Rを押しながら移動することでダッシュできるぞ");
+		nextMission.push_back("RB(R1)を押しながら移動することでダッシュできるぞ");
 		nextMission.push_back("ダッシュができん奴から戦場で死んでいく。");
 		UI::GetInstance().InTexts(nextMission);
 		m_missionUpdate = &Mission::DashUpdate;
@@ -98,8 +98,8 @@ void Mission::DashUpdate()
 			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			UI::GetInstance().InText("そうだ、危険が迫れば逃げることを忘れるな。");
 			std::list<std::string> nextMission;
-			nextMission.push_back("お次はダッシュジャンプだ！");
-			nextMission.push_back("ダッシュ中にジャンプをすれば高く飛べるぞ");
+			nextMission.push_back("お次は大ジャンプだ！");
+			nextMission.push_back("RB(R1)を押しながらジャンプをすれば高く飛べるぞ");
 			nextMission.push_back("都合上という魔法の力だ。さあやってみろ！");
 			UI::GetInstance().InTexts(nextMission);
 			m_moveFrame = 0;
@@ -142,17 +142,8 @@ void Mission::SpinUpdate()
 	{
 		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 		UI::GetInstance().InText("カンを取り戻してきたようだな。");
-		std::list<std::string> text;
-		text.push_back("そんなことはない？");
-		text.push_back("私にはわかるのだ。");
-		UI::GetInstance().InTexts(text);
-
+	
 		UI::GetInstance().InText("この宇宙に生きる命は君にかかっている");
-		std::list<std::string> text2;
-
-		text2.push_back("重大な任務を君だけに託すことになってしまい、");
-		text2.push_back("申し訳ない");
-		UI::GetInstance().InTexts(text2);
 
 		std::list<std::string> text3;
 

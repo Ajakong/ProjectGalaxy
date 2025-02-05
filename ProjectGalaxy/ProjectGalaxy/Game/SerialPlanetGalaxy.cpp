@@ -125,7 +125,7 @@ m_warpEffectHandle(-1)
 	//その他オブジェクトの配置
 	GalaxyCreater::GetInstance().ObjectCreate(player);
 	//その他オブジェクトの配置
-	GalaxyCreater::GetInstance().LockedObjectCreate();
+	m_lockedObject=GalaxyCreater::GetInstance().LockedObjectCreate();
 	m_keyLockEnemies=GalaxyCreater::GetInstance().KeyLockObjectCreate();
 	GalaxyCreater::GetInstance().TalkObjectCreate();
 
@@ -178,14 +178,6 @@ m_warpEffectHandle(-1)
 	mission.push_back("まずは左スティックを動かして歩いてみろ");
 	UI::GetInstance().InTexts(mission);
 
-	std::list<std::string> panparn;
-	panparn.push_back("赤いパンパーンには都合上、まだ話しかけるなよ");
-	UI::GetInstance().InTexts(panparn);
-
-
-
-	
-
 }
 
 SerialPlanetGalaxy::~SerialPlanetGalaxy()
@@ -196,7 +188,7 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 	m_poworStone.clear();
 	m_warpGate.clear();
 	m_talkObjects.clear();
-
+	m_lockedObject.clear();
 	
 }
 
@@ -271,22 +263,30 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		{
 			m_camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -5 + player->GetNormVec() * 8 + player->GetSideVec() * 2);
 		}
-		/*if (!player->GetJumpFlag())
-		{
-			m_camera->SetCameraPoint(player->GetPos() + upVec * kCameraDistanceUp - front * kCameraDistanceFront);
-		}*/
 		else
 		{
 			m_camera->SetCameraPoint(player->GetPos() + player->GetUpVec()* kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
-			//m_camera->SetCameraPoint(player->GetPos() + Vec3::Left() * 30);
 		}
 	}
 
-
+	bool watchLockedObject = false;
+	
 	if(m_camera->m_cameraUpdate!=&Camera::WatchThisUpdate)m_camera->SetEasingSpeed(player->GetCameraEasingSpeed());
 	if (player->GetIsAiming())m_camera->Update(player->GetShotDir());
-	else m_camera->Update(player->GetLookPoint());
-
+	if (!player->GetIsAiming())
+	{
+		for (auto& item : m_lockedObject)if (item->GetIsActive()&&!item->GetIsIgnore())
+		{
+			watchLockedObject = true;
+			m_camera->Update(item->GetRigidbody()->GetPos());
+		}
+		else if (watchLockedObject)
+		{
+			int a = 0;
+		}
+		else m_camera->Update(player->GetLookPoint());
+	}
+	
 	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ
 
 	if (player->GetDeathFlag())
@@ -297,6 +297,8 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 	{
 		m_isClearFlag = true;
 	}
+
+
 	
 	MyEngine::Physics::GetInstance().Update();
 	player->SetMatrix();//行列を反映

@@ -66,8 +66,9 @@ void GameManager::Draw()
 	m_galaxy.back()->Draw();
 	float hp = m_player->GetHp();
 	bool aim = m_player->GetIsAiming();
+	bool becameDeath = m_player->GetState() == MyEngine::Collidable::State::Death;
 
-	UI::GetInstance().Draw(hp, aim);
+	UI::GetInstance().Draw(hp, aim,becameDeath);
 }
 
 void GameManager::IntroUpdate()
