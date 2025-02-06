@@ -82,7 +82,7 @@ void Boss::Update()
 	//上方向ベクトルをいい感じに線形保管
 	//m_upVec = Slerp(m_upVec, m_nextUpVec, 1.f);
 	(this->*m_bossUpdate)();
-	if (m_phaseUpdate = &Boss::PhaseOneUpdate)
+	if (m_phaseUpdate == &Boss::PhaseOneUpdate)
 	{
 		if (m_hp <= kOnPhaseTwoHp)
 		{

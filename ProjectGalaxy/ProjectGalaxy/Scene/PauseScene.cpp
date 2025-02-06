@@ -204,22 +204,30 @@ void PauseScene::NormalDraw()
 	if (m_select % 4 == 0)
 	{
 		DrawRectExtendGraph((Game::kScreenWidth/2)-110 - static_cast<int>(m_btnFrame) / 6, 470 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 540 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
-		DrawBox((Game::kScreenWidth / 2) - 100, 450, (Game::kScreenWidth / 2) + 100, 500, 0x00ffff,true);
+		SetDrawBlendMode(DX_BLENDMODE_MUL, 60);
+		DrawBox((Game::kScreenWidth / 2) - 100, 490, (Game::kScreenWidth / 2) + 100, 540, 0x00ffff,true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	if (m_select % 4 == 1 || m_select % 4 == -3)
 	{
 		DrawRectExtendGraph((Game::kScreenWidth / 2) - 110 - static_cast<int>(m_btnFrame) / 6, 570 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 640 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
-		DrawBox((Game::kScreenWidth / 2) - 100, 550, (Game::kScreenWidth / 2) + 100, 600, 0x00ffff, true);
+		SetDrawBlendMode(DX_BLENDMODE_MUL, 60);
+		DrawBox((Game::kScreenWidth / 2) - 100, 590, (Game::kScreenWidth / 2) + 100, 640, 0x00ffff, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	if (m_select % 4 == 2 || m_select % 4 == -2)
 	{
 		DrawRectExtendGraph((Game::kScreenWidth / 2) - 110 - static_cast<int>(m_btnFrame) / 6, 670 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 740 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
-		DrawBox((Game::kScreenWidth / 2) - 100, 650, (Game::kScreenWidth / 2) + 100, 700, 0x00ffff, true);
+		SetDrawBlendMode(DX_BLENDMODE_MUL, 60);
+		DrawBox((Game::kScreenWidth / 2) - 100,690, (Game::kScreenWidth / 2) + 100, 740, 0x00ffff, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	if (m_select % 4 == 3 || m_select % 4 == -1)
 	{
 		DrawRectExtendGraph((Game::kScreenWidth / 2) - 110 - static_cast<int>(m_btnFrame) / 6, 870 - static_cast<int>(m_btnFrame) / 6, 920 + static_cast<int>(m_btnFrame) / 6, 740 + static_cast<int>(m_btnFrame) / 6, 0, 0, 4167, 4167, m_frameHandle, true);
-		DrawBox((Game::kScreenWidth / 2) - 100, 750, (Game::kScreenWidth / 2) + 100, 800, 0x00ffff, true);
+		SetDrawBlendMode(DX_BLENDMODE_MUL, 60);
+		DrawBox((Game::kScreenWidth / 2) - 100, 790, (Game::kScreenWidth / 2) + 100, 840, 0x00ffff, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
 
