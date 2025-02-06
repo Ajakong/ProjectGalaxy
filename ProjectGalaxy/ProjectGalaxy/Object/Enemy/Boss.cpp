@@ -318,6 +318,7 @@ void Boss::RestUpdate()
 
 void Boss::NeutralUpdate()
 {
+	m_state = State::Neutral;
 	(this->*m_phaseUpdate)();
 }
 

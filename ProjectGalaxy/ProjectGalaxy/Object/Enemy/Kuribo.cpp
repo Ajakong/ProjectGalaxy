@@ -103,6 +103,15 @@ void Kuribo::Update()
 	m_sideVec = Cross(m_upVec, m_frontVec);
 
 	//m_bodyCol->SetShiftPosNum(m_upVec * 5);
+
+	if (m_hp <= 0)
+	{
+		if (m_moveUpdate != &Kuribo::DeathUpdate)
+		{
+			ChangeAnim(AnimNum::AnimationNumRoar);
+			m_moveUpdate = &Kuribo::DeathUpdate;
+		}
+	}
 	
 }
 
@@ -196,6 +205,7 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
+		m_hp -= 5;
 		m_moveUpdate = &Kuribo::ChaseUpdate;
 	}
 }

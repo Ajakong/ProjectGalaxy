@@ -34,7 +34,7 @@ public:
 	void Update();
 	
 	
-	void Draw(float hp=0.f,bool aimFlag=false, bool isDeath=false);
+	void Draw(float hp=0.f,int coinNum=0,bool aimFlag=false, bool isDeath=false);
 	
 	/// <summary>
 	/// 話すオブジェクトのハンドルを設定
@@ -79,6 +79,8 @@ public:
 	/// 入力を受け付けたら表示しているテキストを削除して次のテキストに移る
 	/// </summary>
 	void DeleteText();
+
+	void ClearText();
 	/// <summary>
 	/// 残りテキスト量を取得
 	/// </summary>
@@ -200,6 +202,8 @@ private:
 	/// 照準画像ハンドル
 	/// </summary>
 	int m_uiAimGraphHandle;
+
+	int m_uiStarHandle;
 
 	/// <summary>
 	/// テキストボックス出現音

@@ -349,6 +349,7 @@ void TitleScene::FadeDraw()
 
     if (m_isGamePlaying)
     {
+		
         ModelManager::GetInstance().Clear();
         UI::GetInstance().Init();
         Pad::Init();

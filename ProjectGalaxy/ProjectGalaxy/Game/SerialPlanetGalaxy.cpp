@@ -102,12 +102,14 @@ namespace
 
 	const char* kModelScreenName = "ModelScreen";
 
+	const char* kTitleBGMName = "AstroSeeker_Theme.mp3";
+	const char* kBGMName = "BattleOfSeeker.mp3";
 
 	constexpr float kGravityRange = 150.f;
 }
 
 SerialPlanetGalaxy::SerialPlanetGalaxy(std::shared_ptr<Player> playerPointer) : Galaxy(playerPointer),
-m_bgmHandle(SoundManager::GetInstance().GetSoundData("WarOfAstron_Intro.mp3")),
+m_bgmHandle(SoundManager::GetInstance().GetSoundData(kBGMName)),
 m_bossBattleBgmHandle(SoundManager::GetInstance().GetSoundData("SpaceEmperor_battle.mp3")),
 m_warpEffectHandle(-1)
 {
@@ -128,6 +130,9 @@ m_warpEffectHandle(-1)
 	m_lockedObject=GalaxyCreater::GetInstance().LockedObjectCreate();
 	m_keyLockEnemies=GalaxyCreater::GetInstance().KeyLockObjectCreate();
 	GalaxyCreater::GetInstance().TalkObjectCreate();
+	m_titleBGMHandle = SoundManager::GetInstance().GetSoundData(kTitleBGMName);
+	StopSoundMem(m_titleBGMHandle);
+	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 
 #ifdef _DEBUG
 
@@ -166,17 +171,6 @@ m_warpEffectHandle(-1)
 	UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 	UI::GetInstance().InText("よし、現地に着いたようだな。ドレイク");
 	
-	std::list<std::string> texts1;
-	texts1.push_back("そういえばドレイク、貴様は軍から抜けて長いだろう");
-	texts1.push_back("体がなまってるんじゃないか？");
-
-
-	UI::GetInstance().InTexts(texts1);
-
-	std::list<std::string> mission;
-	mission.push_back("鍛えなおしてやる");
-	mission.push_back("まずは左スティックを動かして歩いてみろ");
-	UI::GetInstance().InTexts(mission);
 
 }
 
@@ -189,12 +183,20 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 	m_warpGate.clear();
 	m_talkObjects.clear();
 	m_lockedObject.clear();
-	
+	m_seekerLine.clear();
+	m_crystal.clear();
+	m_item.clear();
+	m_cannon.clear();
+	m_starCapture.clear();
+	m_booster.clear();
+	m_coin.clear();
+	m_lockedObject.clear();
+	StopSoundMem(m_bgmHandle);
 }
 
 void SerialPlanetGalaxy::Init()
 {
-	ChangeVolumeSoundMem(100, m_bgmHandle);
+	//ChangeVolumeSoundMem(255, m_bgmHandle);
 	//PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
 	SetGlobalAmbientLight(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -220,7 +222,7 @@ void SerialPlanetGalaxy::Init()
 
 void SerialPlanetGalaxy::Update()
 {
-	Mission::GetInstance().UpDate();
+	
 	(this->*m_managerUpdate)();
 	
 }

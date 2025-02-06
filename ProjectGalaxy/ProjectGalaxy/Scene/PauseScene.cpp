@@ -52,7 +52,7 @@ m_tutoFlag(false)
 
 PauseScene::~PauseScene()
 {
-	
+	SoundManager::GetInstance().ChangeSoundVolume(m_soundVol);
 }
 
 void PauseScene::Load()
@@ -70,9 +70,11 @@ void PauseScene::Update()
 	{
 		m_soundVol--;
 	}
+	if (m_soundVol >= 0)SoundManager::GetInstance().ChangeSoundVolume(m_soundVol);
+	{
 
-	SoundManager::GetInstance().ChangeSoundVolume(m_soundVol);
-
+	}
+	
 	m_btnFrame += m_fadeSpeed;
 	if (m_btnFrame > kFadeFrameMax)m_fadeSpeed *= -1;
 	if (m_btnFrame < 0)m_fadeSpeed *= -1;

@@ -14,6 +14,7 @@ namespace
 	const char* kInputAUIName = "PushAbottonForTalk.png";
 	const char* kPushLushInputAUIName = "PushLushAbotton.png";
 	const char* kPushLushInputAUI2Name = "PushLushAbotton2.png";
+	const char* kGraphUIStarName = "Star.png";
 	const char* kTakasakiTaisaGraphName = "TakasakiTaisa_talk.png";
 
 	
@@ -37,6 +38,8 @@ namespace
 	const UI::UIinfo kPushLushInputAUIInfo{ 90,100,835,850 };
 	const UI::UIinfo kPushLushInputAUI2Info{ 90,100,835,850 };
 	const UI::UIinfo kInputAUIInfo{ 200,105,620,695 };
+	const UI::UIinfo kStarUIInfo{ 0,0,810,810 };
+
 	const UI::UIinfo kTalkingCharaGraph{ 0,0,775,890 };
 
 	const UI::UIinfo kAimGraph{ 3140 ,200,400,370 };
@@ -76,6 +79,7 @@ UI::UI():
 	m_textBoxSEHandle(-1),
 	m_chatAppearSEHandle(-1),
 	m_hpLowerSEHandle(-1),
+	m_uiStarHandle(-1),
 	m_playerHp(0)
 {
 	
@@ -97,6 +101,8 @@ void UI::Init()
 	m_uiInputAHandle = GraphManager::GetInstance().GetGraphData(kInputAUIName);
 	m_uiPushLushInputAButtonHandle = GraphManager::GetInstance().GetGraphData(kPushLushInputAUIName);
 	m_uiPushLushInputAButton2Handle = GraphManager::GetInstance().GetGraphData(kPushLushInputAUI2Name);
+	m_uiStarHandle = GraphManager::GetInstance().GetGraphData("star.png");
+
 
 	m_uiTakasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
 	
@@ -260,7 +266,7 @@ void UI::FadeOutUpdate()
 	
 }
 
-void UI::Draw(float hp, bool aimFlag,bool isDeath)
+void UI::Draw(float hp, int coinNum, bool aimFlag,bool isDeath)
 {
 	m_playerHp = hp;
 
@@ -275,6 +281,11 @@ void UI::Draw(float hp, bool aimFlag,bool isDeath)
 		DrawRectRotaGraph(Game::kScreenWidth - kIdemBoxUIInfo.width / 2 - 170, kIdemBoxUIInfo.height / 2 + 50, kIdemBoxUIInfo.x, kIdemBoxUIInfo.y, kIdemBoxUIInfo.width, kIdemBoxUIInfo.height, 1, 0, m_uiAssetHandle, true);
 #endif
 
+	}
+	if (coinNum > 0)
+	{
+		DrawRectRotaGraphF(static_cast<float>(kStarUIInfo.width / 2)/10+ static_cast<float>(kHPBarUIInfo.width), static_cast<float>(kStarUIInfo.height / 2)/10+15, kStarUIInfo.x, kStarUIInfo.y, kStarUIInfo.width, kStarUIInfo.height, 0.1f, 0, m_uiStarHandle, true);
+		DrawFormatString(static_cast<int>(kStarUIInfo.width)/10 + static_cast<int>(kHPBarUIInfo.width), static_cast<float>(kStarUIInfo.height / 2) / 10+15, 0xffffff, "x%d", coinNum);
 	}
 	(this->*m_uiDraw)();
 
@@ -434,6 +445,11 @@ void UI::TalkExit()
 void UI::DeleteText()
 {
 	m_textManager->DeleteText();
+}
+
+void UI::ClearText()
+{
+	m_textManager->ClearText();
 }
 
 int UI::TextRemaining()
