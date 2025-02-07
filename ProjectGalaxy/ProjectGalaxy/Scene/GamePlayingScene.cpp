@@ -80,6 +80,10 @@ void GamePlayingScene::Draw()
 	else if (m_isContinue)ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
 }
 
+void GamePlayingScene::End()
+{
+}
+
 void GamePlayingScene::FadeInUpdate()
 {
 	m_fps = GetFPS();

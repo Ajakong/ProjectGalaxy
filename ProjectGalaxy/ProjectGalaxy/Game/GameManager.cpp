@@ -89,3 +89,7 @@ void GameManager::GamePlayingUpdate()
 void GameManager::GamePlayingDraw()
 {
 }
+
+void GameManager::End()
+{
+}

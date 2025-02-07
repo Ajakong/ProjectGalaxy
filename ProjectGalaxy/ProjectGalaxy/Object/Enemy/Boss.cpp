@@ -598,6 +598,45 @@ void Boss::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag,
 	}
 }
 
+void Boss::OnCollideStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
+{
+	if (colider->GetTag() == ObjectTag::Stage)
+	{
+		m_onColStage = true;
+	}
+	if (m_bossUpdate == &Boss::LandingUpdate)
+	{
+		if (colider->GetTag() == ObjectTag::PlayerBullet)
+		{
+			m_isHit = true;
+			PlaySoundMem(m_damageSoundHandle, DX_PLAYTYPE_BACK);
+			m_hp -= 1;
+		}
+	}
+	if (colider->GetTag() == ObjectTag::Player)
+	{
+		auto state = GetState();
+		if ((state == State::Running || state == State::Tackle) && colider->GetState() == State::Spin)
+		{
+			PlaySoundMem(m_criticalHandle, DX_PLAYTYPE_BACK);
+			Vec3 dir = colider->GetRigidbody()->GetPos();
+			dir.Normalize();
+			m_rigid->SetVelocity((dir + m_upVec) * 2);
+			//HPが少ないほど隙がなくなる
+			m_actionFrame = -m_hp - 200;
+			m_bossUpdate = &Boss::LandingUpdate;
+		}
+		if (state == State::Land && colider->GetState() == State::Spin)
+		{
+			m_rigid->SetVelocity(m_upVec * 2);
+			m_hp -= 20;
+			m_color = 0xff00ff;
+			m_bossUpdate = &Boss::NeutralUpdate;
+			PlaySoundMem(m_criticalHandle, DX_PLAYTYPE_BACK);
+		}
+	}
+}
+
 void Boss::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Stage)

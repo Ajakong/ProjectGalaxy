@@ -91,6 +91,7 @@ private:
 
 	// 衝突したとき
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
+	virtual void OnCollideStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 
 	template <typename T>
