@@ -303,7 +303,7 @@ void Player::Update()
 	{
 		m_visibleCount = 0;
 		m_isVisibleFlag = true;
-		if (m_playerUpdate != &Player::DeathUpdate)
+		if (m_playerUpdate != &Player::DeathUpdate&&m_playerUpdate!= &Player::TalkingUpdate)
 		{
 			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			UI::GetInstance().InText("Aボタンを連打して自分で心肺蘇生するんだ！");
