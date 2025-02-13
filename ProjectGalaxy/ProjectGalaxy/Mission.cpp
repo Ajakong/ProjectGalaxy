@@ -37,6 +37,7 @@ void Mission::UpDate()
 	{
 		if (m_missionUpdate != &Mission::SkipUpdate)
 		{
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			UI::GetInstance().ClearText();
 			UI::GetInstance().InText("貴様には必要ないか・・・");
 			m_missionUpdate = &Mission::SkipUpdate;
@@ -44,6 +45,7 @@ void Mission::UpDate()
 		}
 		else
 		{
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			UI::GetInstance().ClearText();
 			std::list<std::string> texts1;
 			texts1.push_back("やはり必要か？");
