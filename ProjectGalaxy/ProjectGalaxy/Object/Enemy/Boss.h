@@ -18,6 +18,8 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
+	bool GetIsBattle() { return m_isBattle; }
+
 	void WakeUp() { m_isWakeUp = true; }
 private:
 
@@ -141,6 +143,8 @@ private:
 	bool m_isWakeUp;
 	bool m_isTalk;
 	bool m_isTackle;
+	bool m_isBattle;
+	
 
 	std::shared_ptr<Player> m_player;
 	std::shared_ptr<Planet> m_nowPlanet;

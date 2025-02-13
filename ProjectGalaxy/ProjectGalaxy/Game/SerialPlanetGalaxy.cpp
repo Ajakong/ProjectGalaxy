@@ -102,8 +102,8 @@ namespace
 
 	const char* kModelScreenName = "ModelScreen";
 
-	const char* kTitleBGMName = "AstroSeeker_Theme.mp3";
-	const char* kBGMName = "BattleOfSeeker.mp3";
+	const char* kTitleBGMName = "AstroSeeker_Theme_free.mp3";
+	const char* kBGMName = "BattleOfAstro.mp3";
 
 	constexpr float kGravityRange = 150.f;
 }
@@ -131,8 +131,16 @@ m_warpEffectHandle(-1)
 	m_keyLockEnemies=GalaxyCreater::GetInstance().KeyLockObjectCreate();
 	GalaxyCreater::GetInstance().TalkObjectCreate();
 	m_titleBGMHandle = SoundManager::GetInstance().GetSoundData(kTitleBGMName);
-	StopSoundMem(m_titleBGMHandle);
-	PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
+	SoundManager::GetInstance().ChangeBGM(m_bgmHandle);
+
+	for (auto& enemy : m_enemies)
+	{
+		if (enemy->GetTag() == ObjectTag::Boss)
+		{
+			m_boss = std::dynamic_pointer_cast<Boss>(enemy);
+		}
+	}
+	//PlaySoundMem(m_bgmHandle,DX_PLAYTYPE_LOOP);
 
 #ifdef _DEBUG
 
@@ -191,7 +199,6 @@ SerialPlanetGalaxy::~SerialPlanetGalaxy()
 	m_booster.clear();
 	m_coin.clear();
 	m_lockedObject.clear();
-	StopSoundMem(m_bgmHandle);
 }
 
 void SerialPlanetGalaxy::Init()
@@ -242,6 +249,8 @@ void SerialPlanetGalaxy::IntroDraw()
 
 void SerialPlanetGalaxy::GamePlayingUpdate()
 {
+	MyEngine::Physics::GetInstance().Update();
+
 	//相対的な軸ベクトルの設定
 
 	//player->SetUpVec(planetToPlayer);
@@ -265,6 +274,10 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		{
 			m_camera->SetCameraPoint(player->GetPos() + player->GetShotDir() * -5 + player->GetNormVec() * 8 + player->GetSideVec() * 2);
 		}
+		else if (m_boss->GetIsBattle())
+		{
+			m_camera->SetCameraPoint(player->GetPos() + player->GetUpVec() * kCameraDistanceUp*2 - front * (kCameraDistanceFront*2 + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+		}
 		else
 		{
 			m_camera->SetCameraPoint(player->GetPos() + player->GetUpVec()* kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
@@ -286,6 +299,10 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		{
 			int a = 0;
 		}
+		else if (m_boss->GetIsBattle())
+		{
+			m_camera->Update(m_boss->GetRigidbody()->GetPos());
+		}
 		else m_camera->Update(player->GetLookPoint());
 	}
 	
@@ -302,7 +319,6 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 
 
 	
-	MyEngine::Physics::GetInstance().Update();
 	player->SetMatrix();//行列を反映
 	for (auto& item : m_enemies) { item->SetMatrix(); }
 	for (auto& item : m_keyLockEnemies) { item->SetMatrix(); }
@@ -344,56 +360,58 @@ void SerialPlanetGalaxy::GamePlayingDraw()
 		DxLib::DrawBox(0, 0, 1600, 900,
 			0x444488, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+#ifdef _DEBUG
+		int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
+		Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -50 + Vec3(GetCameraUpVector()) * 37);
+		DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
+		DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);
+		DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Front() * 20).VGet(), 0x0000ff);
+		DrawLine3D(UIPos.VGet(), Vec3(UIPos + player->GetRigidbody()->GetVelocity() * 20).VGet(), 0x00ffff);
+
+		DrawCircle(200, 500, 100, 0xffff00, 0);
+		DrawLine(200, 500, static_cast <int>(200 + player->GetInputVec().x * 70), static_cast <int>(500 + player->GetInputVec().z * 70), 0xff0000);
+		DrawLine(200, 500, static_cast <int>(200 + player->GetPostMoveDir().x * 70), static_cast <int>(500 + player->GetPostMoveDir().z * 70), 0x0000ff);
+		DrawCircle(static_cast <int>(200 + player->GetInputVec().x * ((player->GetInputVec().Length() * 70.f))), static_cast <int>(500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f))), 30, 0xffff00, 0);
+
+
+
+		DxLib::SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
+		DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
+		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		DrawFormatString(0, 25 * 6, 0xffffff, "HP:%f", player->GetHp());
+
+		DrawFormatString(0, 25 * 7, 0xffffff, "UpVec(%f,%f,%f)", player->GetUpVec().x, player->GetUpVec().y, player->GetUpVec().z);
+
+		DrawFormatString(0, 25 * 8, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
+		DrawFormatString(0, 25 * 9, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
+		DrawFormatString(0, 25 * 10, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
+		DrawFormatString(0, 25 * 11, 0xffffff, "Camera(%f,%f,%f),Length(%f)", m_camera->GetPos().x, m_camera->GetPos().y, m_camera->GetPos().z, (m_camera->GetPos() - player->GetPos()).Length());
+
+		auto cameraNear = GetCameraNear();
+		auto cameraFar = GetCameraFar();
+
+		DrawFormatString(0, 25 * 12, 0xffffff, "CameraNearFar(%f,%f)", cameraNear, cameraFar);
+
+		DrawFormatString(0, 25 * 13, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
+		DrawFormatString(0, 25 * 14, 0xffffff, player->GetStateName().c_str());
+		DrawFormatString(0, 25 * 15, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
+		DrawFormatString(0, 25 * 16, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
+		DrawFormatString(0, 25 * 17, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
+
+		DrawFormatString(0, 25 * 18, 0xffffff, "size(%d)", GalaxyCreater::GetInstance().GetSize());
+		DrawFormatString(0, 25 * 19, 0xffffff, "JumpFlag:%d", player->GetJumpFlag());
+
+		DrawFormatString(0, 25 * 20, 0xffffff, Pad::GetState().c_str());
+		DrawFormatString(0, 25 * 21, 0xffffff, "CameraPoint(%f,%f,%f)", m_camera->GetCameraPoint().x, m_camera->GetCameraPoint().y, m_camera->GetCameraPoint().z);
+		DrawFormatString(0, 25 * 22, 0xffffff, "state:%d", player->GetPostState());
+
+#endif
 	}
 
 	
-	int alpha = static_cast<int>(255 * (static_cast<float>(player->GetDamageFrame()) / 60.0f));
-#ifdef DEBUG
-	Vec3 UIPos = ((Vec3(GetCameraPosition()) + Vec3(GetCameraFrontVector()) * 110) + Vec3(GetCameraLeftVector()) * -70 + Vec3(GetCameraUpVector()) * 37);
-	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Up() * 20).VGet(), 0xff0000);
-	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Right() * 20).VGet(), 0x00ff00);
-	DrawLine3D(UIPos.VGet(), Vec3(UIPos + Vec3::Front() * 20).VGet(), 0x0000ff);
-	DrawLine3D(UIPos.VGet(), Vec3(UIPos + player->GetRigidbody()->GetVelocity() * 20).VGet(), 0x00ffff);
-
-	DrawCircle(200, 500, 100, 0xffff00,0);
-	DrawLine(200, 500, static_cast <int>( 200 + player->GetInputVec().x * 70), static_cast < int>( 500 + player->GetInputVec().z * 70), 0xff0000);
-	DrawLine(200, 500, static_cast <int>( 200 + player->GetPostMoveDir().x * 70), static_cast < int>( 500 + player->GetPostMoveDir().z * 70), 0x0000ff);
-	DrawCircle(static_cast < int>(200 + player->GetInputVec().x *((player->GetInputVec().Length()*70.f))), static_cast < int>(500 + player->GetInputVec().z * ((player->GetInputVec().Length() * 70.f))), 30, 0xffff00, 0);
-
-
 	
-	DxLib::SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
-	DxLib::DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xff4444, true);
-	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawFormatString(0, 25 * 0, 0xffffff, "HP:%f", player->GetHp());
-
-	DrawFormatString(0, 25*1, 0xffffff, "UpVec(%f,%f,%f)", player->GetUpVec().x, player->GetUpVec().y, player->GetUpVec().z);
-	
-	DrawFormatString(0, 25*2, 0xffffff, "FrontVec(%f,%f,%f)", player->GetFrontVec().x, player->GetFrontVec().y, player->GetFrontVec().z);
-	DrawFormatString(0, 25*3, 0xffffff, "SideVec(%f,%f,%f)", player->GetSideVec().x, player->GetSideVec().y, player->GetSideVec().z);
-	DrawFormatString(0, 25*4, 0xffffff, "shotDir(%f,%f,%f)", player->GetShotDir().x, player->GetShotDir().y, player->GetShotDir().z);
-	DrawFormatString(0, 25*5, 0xffffff, "Camera(%f,%f,%f),Length(%f)",m_camera->GetPos().x, m_camera->GetPos().y, m_camera->GetPos().z,(m_camera->GetPos() - player->GetPos()).Length());
-
-	auto cameraNear = GetCameraNear();
-	auto cameraFar = GetCameraFar();
-	
-	DrawFormatString(0, 25 * 6, 0xffffff, "CameraNearFar(%f,%f)", cameraNear, cameraFar);
-	
-	DrawFormatString(0, 25*7, 0xffffff, "PlayerPos(%f,%f,%f)", player->GetPos().x, player->GetPos().y, player->GetPos().z);
-	DrawFormatString(0, 25*8, 0xffffff, player->GetStateName().c_str());
-	DrawFormatString(0, 25*9, 0xffffff, "EasingSpeed:%f", player->GetCameraEasingSpeed());
-	DrawFormatString(0, 25 * 10, 0xffffff, "FootNowOnHit:%d", player->GetFootOnHit());
-	DrawFormatString(0, 25 * 11, 0xffffff, "PlayerVelocity(%f,%f,%f)", player->GetRigidbody()->GetVelocity());
-
-	DrawFormatString(0, 25 * 12, 0xffffff, "size(%d)",GalaxyCreater::GetInstance().GetSize());
-	DrawFormatString(0, 25 * 13, 0xffffff, "JumpFlag:%d", player->GetJumpFlag());
-
-	DrawFormatString(0, 25 * 14, 0xffffff, Pad::GetState().c_str());
-	DrawFormatString(0, 25 * 15, 0xffffff, "CameraPoint(%f,%f,%f)", m_camera->GetCameraPoint().x, m_camera->GetCameraPoint().y, m_camera->GetCameraPoint().z);
-	DrawFormatString(0, 25 * 17, 0xffffff, "state:%d", player->GetPostState());
-
-#endif
 	//
 	//SetScreenFlipTargetWindow(NULL);
 

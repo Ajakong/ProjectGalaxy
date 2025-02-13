@@ -109,6 +109,7 @@ private:
 	std::vector<std::shared_ptr<Cannon>>m_cannon;
 	//エネミー
 	std::vector<std::shared_ptr<Enemy>> m_enemies;
+	std::shared_ptr<Boss> m_boss;
 	std::vector<std::shared_ptr<Enemy>> m_keyLockEnemies;
 	/*std::vector<std::shared_ptr<Takobo>> m_takobo;
 	std::vector<std::shared_ptr<KillerTheSeeker>> m_killerTheSeeker;

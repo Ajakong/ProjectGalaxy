@@ -207,7 +207,8 @@ void Kuribo::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag
 	if (colider->GetTag() == ObjectTag::PlayerBullet)
 	{
 		m_hp -= 5;
-		m_moveUpdate = &Kuribo::ChaseUpdate;
+		ChangeAnim(AnimNum::AnimationNumSleep);
+		m_moveUpdate = &Kuribo::StanUpdate;
 	}
 }
 

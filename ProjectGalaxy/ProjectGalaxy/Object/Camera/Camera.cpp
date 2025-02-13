@@ -99,6 +99,7 @@ void Camera::SetCamera(Vec3 LookPoint)
 	velocity.y = (m_cameraPoint.y - m_pos.y) / m_easingSpeed;
 	velocity.z = (m_cameraPoint.z - m_pos.z) / m_easingSpeed;
 	m_pos += velocity;//イージング
+	m_playerCameraPoint = m_pos;
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());
 	m_postLookPointPos = m_lookPoint;
@@ -117,6 +118,7 @@ void Camera::SetAimCamera(Vec3 LookPoint)
 
 	m_pos = m_cameraPoint;
 
+	m_playerCameraPoint = m_pos;
 	//DrawSphere3D(m_pos.VGet(), 20, 8, 0xffffff, 0xffffff, true);
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_pos+LookPoint).VGet(), m_upVec.VGet());

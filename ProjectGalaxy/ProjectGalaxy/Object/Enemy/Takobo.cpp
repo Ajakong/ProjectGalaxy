@@ -179,7 +179,7 @@ void Takobo::DeleteManage()
 
 void Takobo::Draw()
 {
-	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
+	//DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, 0xff0000, 0xff0000, false);
 	MV1DrawModel(m_modelHandle);
 
 #ifdef DEBUG

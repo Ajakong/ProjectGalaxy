@@ -44,6 +44,12 @@ void Mission::UpDate()
 		}
 		else
 		{
+			UI::GetInstance().ClearText();
+			std::list<std::string> texts1;
+			texts1.push_back("やはり必要か？");
+			texts1.push_back("ではまず左スティックで歩いてみろ");
+			texts1.push_back("基本を厳かにするんじゃないぞ");
+			UI::GetInstance().InTexts(texts1);
 			m_missionUpdate = &Mission::MoveUpdate;
 			m_missionDraw = &Mission::MoveDraw;
 		}

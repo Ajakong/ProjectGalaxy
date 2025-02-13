@@ -9,7 +9,7 @@
 
 namespace
 {
-	const char* kAstroSeekerThemeName = "AstroSeeker_Theme.mp3";
+	const char* kAstroSeekerThemeName = "AstroSeeker_Theme_free.mp3";
 	//const char* kAstroSeekerRevivalBGMName=""
 }
 

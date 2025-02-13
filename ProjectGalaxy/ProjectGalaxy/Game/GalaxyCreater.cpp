@@ -50,6 +50,8 @@ GalaxyCreater& GalaxyCreater::GetInstance()
 
 void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 {
+	m_objectData.clear();
+
 	std::string fileName = "Data/Info/data.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
@@ -159,6 +161,9 @@ void GalaxyCreater::SeekerLineCreate()
 
 void GalaxyCreater::PlanetCreate()
 {
+	m_planetData.clear();
+	m_planetModelData.clear();
+
 	std::string fileName = "Data/Info/Planet.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
@@ -273,6 +278,8 @@ void GalaxyCreater::TalkObjectCreate()
 
 std::vector<std::shared_ptr<Enemy>> GalaxyCreater::EnemyCreate(std::shared_ptr<Player>player)
 {
+	m_enemyData.clear();
+
 	std::string fileName = "Data/Info/Enemy.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
@@ -330,6 +337,8 @@ std::vector<std::shared_ptr<Enemy>> GalaxyCreater::EnemyCreate(std::shared_ptr<P
 
 std::vector<std::shared_ptr<MyEngine::Collidable>> GalaxyCreater::LockedObjectCreate()
 {
+	m_lockedObjects.clear();
+
 	std::string fileName = "Data/Info/LockedObject.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
@@ -415,6 +424,8 @@ std::vector<std::shared_ptr<MyEngine::Collidable>> GalaxyCreater::LockedObjectCr
 
 std::vector<std::shared_ptr<Enemy>> GalaxyCreater::KeyLockObjectCreate()
 {
+	m_keyLockObjectData.clear();
+
 	std::string fileName = "Data/Info/KeyLockedObjects.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
@@ -480,7 +491,7 @@ std::shared_ptr<MyEngine::Collidable> GalaxyCreater::GetCollidable(int connectNu
 	obj->SetIsActive(true);
 	MyEngine::Physics::GetInstance().Initialize(obj);
 	Vec3 objPos = obj->GetRigidbody()->GetPos();
-	Vec3 cameraPos = m_camera->GetPos();
+	Vec3 cameraPos = m_camera->GetPlayerCameraPoint();
 	
 	Vec3 cameraToObj = cameraPos - objPos;
 

@@ -373,6 +373,10 @@ protected:
 
 	Vec3 m_shotDir;
 	Vec3 m_modelBodyRotate;
+	/// <summary>
+	/// 最後に立っていた惑星の地面の位置
+	/// </summary>
+	Vec3 m_postPlayerGroundPos;
 
 	//アニメーション変数
 

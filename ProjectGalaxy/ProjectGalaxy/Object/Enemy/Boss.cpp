@@ -9,7 +9,7 @@
 #include"UI.h"
 namespace
 {
-	constexpr int kHPFull = 150;
+	constexpr int kHPFull = 170;
 	constexpr float kBodyRadiusSize = 10.f;
 	constexpr int kKnockBackFrameMax = 50;
 
@@ -39,6 +39,9 @@ namespace
 	const char* kCriticalHitSEName = "CounterHit.mp3";
 	const char* kDropSEName = "BossDropSE.mp3";
 
+	const char* kGamePlayBGMName = "BattleOfAstro.mp3";
+	const char* kBossBattleBGMName = "bossbattle.mp3";
+	const char* kSuperMatrialBGMName = "SuperMaterial.mp3";
 }
 Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectTag::Boss),
 	m_jumpCount(0),
@@ -100,6 +103,8 @@ void Boss::Update()
 	}
 	if (m_hp <= 0)
 	{
+		m_isBattle = false;
+		SoundManager::GetInstance().ChangeBGM(SoundManager::GetInstance().GetSoundData(kSuperMatrialBGMName));
 		m_dropItem = std::make_shared<ClearObject>(m_rigid->GetPos(), true);
 		Physics::GetInstance().Entry(m_dropItem);
 		m_isDestroyFlag = true;
@@ -145,8 +150,7 @@ void Boss::PhaseOneUpdate()
 
 	if (m_hp <= kOnPhaseTwoHp)
 	{
-		auto obj = GalaxyCreater::GetInstance().GetCollidable(1);
-		obj->SetIsActive(true);
+		
 
 		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
 
@@ -255,12 +259,14 @@ void Boss::PhaseThreeUpdate()
 
 void Boss::InitUpdate()
 {
+	m_isBattle = false;
 	//今は簡単にプレイヤーとの距離をみて起動
 
 	float lenge = (m_player->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length();
 	m_isWakeUp = lenge < 100;
 	if (m_isWakeUp)
 	{
+		
 		if (m_phaseUpdate == &Boss::PhaseOneUpdate)
 		{
 			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
@@ -282,6 +288,8 @@ void Boss::InitUpdate()
 			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			UI::GetInstance().InNextText("ドレイク！ヤツは戦うつもりみたいだ");
 			UI::GetInstance().InNextText("ここで決めてしまうぞ！");
+			m_isBattle = true;
+			SoundManager::GetInstance().ChangeBGM(SoundManager::GetInstance().GetSoundData(kBossBattleBGMName));
 			m_bossUpdate = &Boss::NeutralUpdate;
 		}
 		if (m_phaseUpdate == &Boss::PhaseTwoUpdate)
@@ -306,6 +314,8 @@ void Boss::InitUpdate()
 
 			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			UI::GetInstance().InNextText("すべてを出し切るぞ！");
+			m_isBattle = true;
+			SoundManager::GetInstance().ChangeBGM(SoundManager::GetInstance().GetSoundData(kBossBattleBGMName));
 			m_bossUpdate = &Boss::NeutralUpdate;
 		}
 	}
@@ -411,11 +421,11 @@ void Boss::TackleUpdate()
 		if (!m_isTackle)
 		{
 			m_isTackle = true;
-			UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 			std::list<std::string> text2;
-			text2.push_back("ヤツは何かしてくる気のようだ。");
+			text2.push_back("ヤツが突っ込んでくるぞ！");
 			text2.push_back("危ないと思ったらスピンで身を守れ！");
-			UI::GetInstance().InNextTexts(text2);
+			UI::GetInstance().InTexts(text2);
 		}
 		m_rigid->SetVelocity(targetDir * kTackleSpeed);
 		if (m_tackleChargeFrame - kTackleMaxChargeFrame > kTackleTime)
@@ -460,7 +470,7 @@ void Boss::LandingUpdate()
 	{
 		m_isTalk = true;
 		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
-		UI::GetInstance().InText("はぁはぁ(*´Д｀)");
+		UI::GetInstance().InText("はぁはぁ");
 
 		UI::GetInstance().SetNextTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
 		UI::GetInstance().InNextText("なんだ、敵の様子がおかしいぞ！");
@@ -489,8 +499,17 @@ void Boss::LandingUpdate()
 void Boss::RunawayUpdate()
 {
 	Vec3 velo = m_runawayPos - m_rigid->GetPos();
+	if (velo.Length() < 1200&&m_isBattle)
+	{
+		SoundManager::GetInstance().ChangeBGM(SoundManager::GetInstance().GetSoundData(kGamePlayBGMName));
+
+		auto obj = GalaxyCreater::GetInstance().GetCollidable(1);
+		obj->SetIsActive(true);
+		m_isBattle = false;
+	}
 	if (velo.Length() < 15)
 	{
+		
 		m_rigid->SetVelocity(Vec3::Zero());
 		m_bossUpdate = &Boss::InitUpdate;
 		

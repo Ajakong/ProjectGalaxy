@@ -28,8 +28,12 @@ namespace
     const char* kTitleGraphName = "galaxy_titleLogo_pro.png";
     const char* kPushAToStartGraphName = "PushAToStart.png";
     const char* kFrameName = "Frame.png";
-    const char* kTitleBGMName = "AstroSeeker_Theme.mp3";
+    const char* kTitleBGMName = "AstroSeeker_Theme_free.mp3";
+    const char* kGamePlayBGMName = "BattleOfAstro.mp3";
+    
     const char* kTitleFadeSEName = "TitleSE_Fade.mp3";
+
+
 
     const char* kStickName = "parry.mp3";
     const char* kGameStartSEName = "StartGame_SE.mp3";
@@ -84,8 +88,8 @@ TitleScene::TitleScene(SceneManager& manager) :
     m_cameraRotateAngle(0)
 {
     camera->Update(VGet(0, 0, 150));
-
-    PlaySoundMem(m_titleBGMHandle, DX_PLAYTYPE_LOOP);
+    SoundManager::GetInstance().ChangeBGM(m_titleBGMHandle);
+    //PlaySoundMem(m_titleBGMHandle, DX_PLAYTYPE_LOOP);
     //SetCameraPositionAndTarget_UpVecY(VGet(-200, -45, 80), VGet(0, -45, 80));
     //SetCameraNearFar(kCameraNear, kCameraFar);
 

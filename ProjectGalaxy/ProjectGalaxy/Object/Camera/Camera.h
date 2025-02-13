@@ -19,6 +19,7 @@ public:
 	Vec3 cameraToPlayer(const Vec3& targetPos);
 	
 	const Vec3& GetPos() const { return m_pos; }
+	const Vec3& GetPlayerCameraPoint() const { return m_playerCameraPoint; }
 
 	void SetCameraPos(Vec3 LookPoint);
 	void SetCameraFirstPersonPos(Vec3 LookPoint);
@@ -77,6 +78,7 @@ private:
 	Quaternion m_myQ;
 	Vec3 m_pos;			// ポジション.
 	Vec3 m_cameraPoint;//カメラが移動してほしい位置
+	Vec3 m_playerCameraPoint;
 	Vec3 m_lookPoint;
 	Vec3 m_postLookPointPos;
 	float m_cameraAngle = -DX_PI_F / 2;

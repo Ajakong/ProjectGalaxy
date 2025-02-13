@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Enemy.h"
 
+class Item;
 /// <summary>
 /// プレイヤーを視認後その方向に走り続ける敵
 /// </summary>
@@ -18,7 +19,7 @@ public:
 	void Draw();
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
-
+	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 	Vec3 GetMyPos();
 	int WatchHp() const { return m_hp; }
 	float GetColRadius() { return m_radius; }
@@ -67,6 +68,7 @@ private:
 	Vec3 m_attackDir;
 	Vec3 m_moveShaftPos;
 	std::shared_ptr<Collidable> m_target;
+	std::shared_ptr<Item>m_dropItem;
 	//アニメーション変数
 	int m_anim_nutral = 0;
 	int m_anim_move = 0;

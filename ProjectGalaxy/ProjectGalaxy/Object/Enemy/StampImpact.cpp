@@ -47,7 +47,7 @@ void StampImpact::Update()
 void StampImpact::Draw()
 {
 	Draw3DCircle(m_rigid->GetPos(), m_nowRadius, kSegment);
-	DrawSphere3D(m_rigid->GetPos().VGet(),3,20,0xff0000, 0xff0000,true);
+	//DrawSphere3D(m_rigid->GetPos().VGet(),3,20,0xff0000, 0xff0000,true);
 }
 
 void StampImpact::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)

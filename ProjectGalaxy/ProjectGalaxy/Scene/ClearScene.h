@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Scene.h"
 
 class ClearScene : public Scene
@@ -18,20 +18,22 @@ private:
     int m_numFontHandle;
     int m_fontHandle;
 
-    // ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^‚ÌéŒ¾
+    int m_themeHandle;
+
+    // ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿ã®å®£è¨€
     using UpdateFunc_t = void (ClearScene::*)();
     using DrawFunc_t = void (ClearScene::*)();
     UpdateFunc_t m_updateFunc;
     DrawFunc_t m_drawFunc;
 
-    // XVó‘Ô‚ğ•\‚·ŠÖ”
+    // æ›´æ–°çŠ¶æ…‹ã‚’è¡¨ã™é–¢æ•°
     void FadeInUpdate();
     void NormalUpdate();
     void FadeOutUpdate();
 
     void ChangeScene(std::shared_ptr<Scene> nextScene);
 
-    // •`‰æó‘Ô‚ğ•\‚·ŠÖ”
+    // æç”»çŠ¶æ…‹ã‚’è¡¨ã™é–¢æ•°
     void FadeDraw();
     void NormalDraw();
 

@@ -17,6 +17,8 @@ namespace
 {
 	constexpr int kAppeaInterval = 60;
 	constexpr int kMenuMargin = 50;
+
+	const char* kAstroSeekerThemeName = "AstroSeeker_Theme_free.mp3";
 }
 
 ClearScene::ClearScene(SceneManager& mgr) :
@@ -24,6 +26,7 @@ ClearScene::ClearScene(SceneManager& mgr) :
 	m_numFontHandle(FontManager::GetInstance().GetFontData("disital.TTF", "Pocket Calculator", 60, 7, DX_FONTTYPE_NORMAL)),
 	m_fontHandle(FontManager::GetInstance().GetFontData("SF_font.ttf", "廻想体 ネクスト UP B", 60, 7, DX_FONTTYPE_NORMAL))
 {
+	m_themeHandle = SoundManager::GetInstance().GetSoundData(kAstroSeekerThemeName);
 	m_frame = 60;
 	m_updateFunc = &ClearScene::FadeInUpdate;
 	m_drawFunc = &ClearScene::FadeDraw;
@@ -106,6 +109,7 @@ void ClearScene::FadeOutUpdate()
 	m_frame--;
 	if (m_frame == 0)
 	{
+		/*StopSoundMem(m_themeHandle);*/
 		ModelManager::GetInstance().Clear();
 
 		m_manager.ResetScene(std::make_shared<TitleScene>(m_manager));

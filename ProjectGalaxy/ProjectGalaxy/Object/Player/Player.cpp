@@ -305,8 +305,10 @@ void Player::Update()
 		m_isVisibleFlag = true;
 		if (m_playerUpdate != &Player::DeathUpdate)
 		{
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			UI::GetInstance().InText("Aボタンを連打して自分で心肺蘇生するんだ！");
 			m_isAimFlag = false;
-			ChangeAnim(AnimNum::AnimationNumDeath,1+m_revivalCount);
+			ChangeAnim(AnimNum::AnimationNumDeath,0.1+m_revivalCount/2);
 			m_playerUpdate = &Player::DeathUpdate;
 		}
 		
@@ -322,7 +324,18 @@ void Player::Update()
 	{
 		m_animBlendRate = 1.0f;
 	}
-
+	if (m_nowPlanet!=nullptr)
+	{
+		float planetDistance = (m_nowPlanet->GetRigidbody()->GetPos() - m_rigid->GetPos()).Length();
+		if (planetDistance > 3000)
+		{
+			UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::TakasakiTaisa);
+			UI::GetInstance().InText("吹き飛ばしだぁ！！");
+			
+			m_isDeathFlag = true;
+		}
+	}
+	
 
 }
 
@@ -451,6 +464,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 
 	if (colider->GetTag() == ObjectTag::Stage)
 	{
+		//m_postPlayerGroundPos = m_rigid->GetPos();
 		printf("Stage\n");
 		m_spinCount = 0;
 		m_isOperationFlag = false;
@@ -848,23 +862,24 @@ void Player::NeutralUpdate()
 
 	Vec3 move = Move();
 
-	if ((Pad::IsPress(PAD_INPUT_Z)) && Pad::IsTrigger(PAD_INPUT_1))
-	{
-		m_postState = m_state;
-		m_cameraEasingSpeed = 15.f;
-		ChangeAnim(AnimNum::AnimationNumJump);
-		m_isJumpFlag = true;
-		move += m_upVec.GetNormalized() * kJumpPower;
-		m_playerUpdate = &Player::DashJumpUpdate;
-	}
+	
 	if (std::abs(move.Length()) >= 0.2f * kMaxSpeed)
 	{
 		m_postState = m_state;
 		ChangeAnim(AnimNum::AnimationNumRun);
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
+	if ((Pad::IsPress(PAD_INPUT_Z)) && Pad::IsTrigger(PAD_INPUT_1))
+	{
+		m_postState = m_state;
+		m_cameraEasingSpeed = 15.f;
+		ChangeAnim(AnimNum::AnimationNumJump);
+		m_isJumpFlag = true;
+		move += m_upVec.GetNormalized() * kJumpPower*2;
+		m_playerUpdate = &Player::DashJumpUpdate;
+	}
 	//プレイヤーの最大移動速度は0.01f/frame
-	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
+	else if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
 		m_postState = m_state;
 		ChangeAnim(AnimNum::AnimationNumJump);

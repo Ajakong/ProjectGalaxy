@@ -13,6 +13,13 @@ SoundManager::~SoundManager()
 {
 }
 
+void SoundManager::ChangeBGM(int handle)
+{
+	StopSoundMem(m_playingBGMHandle);
+	PlaySoundMem(handle, DX_PLAYTYPE_LOOP);
+	m_playingBGMHandle = handle;
+}
+
 SoundManager& SoundManager::GetInstance()
 {
 	static SoundManager info;

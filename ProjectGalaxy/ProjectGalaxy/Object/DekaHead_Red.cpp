@@ -43,7 +43,7 @@ std::list<std::list<std::string>> DekaHead_Red::GetTexts()
 
 		std::list<std::string> three;
 		three.push_back("久しぶりの任務で体がなまってるだろうから");
-		three.push_back("まずは金色のタマをとって体をうごかせってよ");
+		three.push_back("まずは金色のスターをとって体をうごかせってよ");
 		talkText.push_back(three);
 	
 		m_useFlag = true;

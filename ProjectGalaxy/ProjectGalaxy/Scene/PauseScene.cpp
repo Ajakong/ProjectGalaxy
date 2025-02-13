@@ -216,6 +216,7 @@ void PauseScene::NormalDraw()
 		SetDrawBlendMode(DX_BLENDMODE_MUL, 60);
 		DrawBox((Game::kScreenWidth / 2) - 100, 590, (Game::kScreenWidth / 2) + 100, 640, 0x00ffff, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 	}
 	if (m_select % 4 == 2 || m_select % 4 == -2)
 	{

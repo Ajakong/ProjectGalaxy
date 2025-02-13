@@ -5,7 +5,7 @@
 #include"ModelManager.h"
 #include"Easing.h"
 
-
+#include"Coin.h"
 namespace
 {
 	constexpr float kCollisionRadius = 5.f;
@@ -85,6 +85,12 @@ void Gorori::Update()
 {
 
 	(this->*m_enemyUpdate)();
+	if (m_hp <= 0)
+	{
+		m_dropItem = std::make_shared<Coin>(m_rigid->GetPos(), true);
+		Physics::GetInstance().Entry(m_dropItem);
+		m_isDestroyFlag = true;
+	}
 }
 
 void Gorori::SetMatrix()
@@ -131,16 +137,32 @@ void Gorori::SetMatrix()
 
 void Gorori::Draw()
 {
-	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10,m_color, 0xff0000, true);
+	DrawSphere3D(m_rigid->GetPos().VGet(), kCollisionRadius, 10, m_color, 0xff0000, true);
 	MV1DrawModel(m_modelHandle);
 }
 
-void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)
+void Gorori::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	if (colider->GetTag() == ObjectTag::Player)
 	{
 		m_hp -= 20;
 	}
+}
+
+void Gorori::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
+{
+	if (colider->GetTag() == ObjectTag::PlayerImpact)
+	{
+		m_rigid->SetVelocity(m_upVec * 2);
+		m_hp = 0;
+		m_color = 0xff00ff;
+		//PlaySoundMem(m_criticalHandle, DX_PLAYTYPE_BACK);
+	}
+	if (colider->GetTag() == ObjectTag::PlayerBullet)
+	{
+		m_hp -= 1;
+	}
+
 }
 
 Vec3 Gorori::GetMyPos()
@@ -174,10 +196,10 @@ void Gorori::IdleUpdate()
 			{
 			case 0:
 				m_attackCoolDownCount = 0;
-				
+
 				break;
 			default:
-				m_attackCoolDownCount =0;
+				m_attackCoolDownCount = 0;
 				break;
 			}
 		}
@@ -190,7 +212,7 @@ void Gorori::IdleUpdate()
 void Gorori::AttackUpdate()
 {
 	//m_attackDirはターゲットに向かうベクトルなので、今はsideのベクトルを出してる。Playerに追いかけさせるの面白そうなんよな。止まってるときはバリアあって動いてるときだけ倒せるてきな
-	Vec3 runVec = Cross(m_attackDir,m_upVec);
+	Vec3 runVec = Cross(m_attackDir, m_upVec);
 	m_rigid->SetVelocity(runVec);
 	m_attackCount++;
 	if (m_attackCount > 1000)
@@ -204,6 +226,6 @@ void Gorori::AttackUpdate()
 Vec3 Gorori::GetAttackDir() const
 {
 	Vec3 vec = ToVec(m_rigid->GetPos(), m_target->GetRigidbody()->GetPos()).GetNormalized();
-	
+
 	return vec;
 }
