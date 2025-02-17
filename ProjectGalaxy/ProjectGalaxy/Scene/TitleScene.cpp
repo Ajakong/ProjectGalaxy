@@ -367,7 +367,7 @@ void TitleScene::NormalDraw()
 {
     if (!(m_updateFunc == &TitleScene::LoadingUpdate))
     {
-        DrawFormatString(20, 20, 0xffffff, "BGM created by Udio");
+        //DrawFormatString(20, 20, 0xffffff, "BGM created by Udio");
         int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
         if (m_updateFunc == &TitleScene::NormalUpdate)
         {
@@ -375,7 +375,7 @@ void TitleScene::NormalDraw()
 
 
             int btnalpha = static_cast<int>(255 * (static_cast<float>(m_btnFrame) / kFadeFrameMax));
-            SetDrawBlendMode(DX_BLENDMODE_ADD, btnalpha);
+            SetDrawBlendMode(DX_BLENDMODE_ADD, 0);
 
             DrawExtendGraph(1100, 790, 1850, 1000, m_PushAToStartHandle, true);
            
