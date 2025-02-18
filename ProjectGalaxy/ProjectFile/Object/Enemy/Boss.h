@@ -11,12 +11,21 @@ class Killer;
 class Boss : public Enemy
 {
 public:
+	enum AnimNum : int
+	{
+		AnimationNumWalk,
+		AnimationNumJump,
+		AnimationNumTackle,
+		AnimationNumStunned,
+		AnimationNumStandNum,
+	};
 	Boss(Vec3 pos,std::shared_ptr<Player>player);
 	virtual ~Boss();
 
 	virtual void Init();
 	virtual void Update();
 	virtual void Draw();
+	virtual void SetMatrix();
 
 	bool GetIsBattle() { return m_isBattle; }
 

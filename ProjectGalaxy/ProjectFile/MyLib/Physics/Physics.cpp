@@ -880,7 +880,10 @@ MyEngine::Physics::CollideHitInfo Physics::IsCollide(const std::shared_ptr<Rigid
 		// 衝突結果を設定
 		info.isHit = isCollision || isInside;  // 衝突または内部判定が真なら衝突
 		info.hitPos = closestHitPos;  // 常に最も近い点を格納
+#ifdef _DEBUG
+
 		DrawSphere3D(closestHitPos.VGet(), 7, 7, 0xff000, 0xffffff, false);
+#endif
 		info.Norm = closestNormal; //最近接点からsphereへの向き
 	}
 	if (kindA == ColliderBase::Kind::Line && kindB == ColliderBase::Kind::Sphere)

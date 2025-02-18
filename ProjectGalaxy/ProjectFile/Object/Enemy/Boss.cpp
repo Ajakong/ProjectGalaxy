@@ -3,6 +3,7 @@
 #include"Player.h"
 #include"Physics.h"
 #include"SoundManager.h"
+#include"ModelManager.h"
 #include"Easing.h"
 
 #include"GalaxyCreater.h"
@@ -24,6 +25,8 @@ namespace
 
 	constexpr float kOnPhaseTwoHp = 100;
 
+	constexpr float kScaleMag = 0.1f;
+
 
 	constexpr int kTackleMaxChargeFrame = 80;
 	constexpr int kRunningFrameMax = 400;
@@ -35,6 +38,8 @@ namespace
 
 	constexpr int kTackleLength = kTackleSpeed *kTackleTime;
 
+	const char* kBossModelName = "SpaceMutant";
+
 	const char* kDamageSEName = "Parry.mp3";
 	const char* kCriticalHitSEName = "CounterHit.mp3";
 	const char* kDropSEName = "BossDropSE.mp3";
@@ -43,6 +48,7 @@ namespace
 	const char* kBossBattleBGMName = "bossbattle.mp3";
 	const char* kSuperMatrialBGMName = "SuperMaterial.mp3";
 }
+
 Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectTag::Boss),
 	m_jumpCount(0),
 	m_actionFrame(0),
@@ -51,7 +57,6 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	m_isTalk(false),
 	m_isTackle(false),
 	m_onColStage(false),
-	
 	m_knockBackFrame(0),
 	m_runningFrame(0),
 	m_damageSoundHandle(SoundManager::GetInstance().GetSoundData(kDamageSEName)),
@@ -59,6 +64,8 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	m_dropSoundHandle(SoundManager::GetInstance().GetSoundData(kDropSEName)),
 	m_shotCreateFrame(0)
 {
+	m_modelHandle = ModelManager::GetInstance().GetModelData(kBossModelName);
+
 	m_player = player;
 	m_hp = kHPFull;
 	m_rigid->SetPos(pos);
@@ -69,6 +76,8 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	m_color = 0xff00ff;
 	m_bossUpdate = &Boss::InitUpdate;
 	m_phaseUpdate = &Boss::PhaseOneUpdate;
+
+	MV1SetScale(m_modelHandle,VGet(kScaleMag, kScaleMag,kScaleMag));
 }
 
 Boss::~Boss()
@@ -128,6 +137,16 @@ void Boss::Update()
 void Boss::Draw()
 {
 	DrawSphere3D(m_rigid->GetPos().VGet(), kBodyRadiusSize,8,m_color,0x000000,true);
+	
+	MV1DrawModel(m_modelHandle);
+	
+}
+
+void Boss::SetMatrix()
+{
+	m_postUpVec = m_upVec;
+	MV1SetPosition(m_modelHandle, m_rigid->GetPos().VGet());
+	MV1SetRotationZYAxis(m_modelHandle, (m_frontVec * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
 	
 }
 
