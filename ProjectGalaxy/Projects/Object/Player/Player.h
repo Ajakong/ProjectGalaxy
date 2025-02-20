@@ -16,7 +16,6 @@ class Player : public MyEngine::Collidable
 public:
 	enum AnimNum : int
 	{
-		
 		AnimationNumEmpty,
 		AnimationNumTpose,
 		AnimationNumDeath,
@@ -60,7 +59,6 @@ public:
 
 	void Landing(int recast=15);
 
-
 	Vec3 GetPos() const { return  m_rigid->GetPos(); }
 	Vec3 GetLeftHandPos() { return Vec3(MV1GetFramePosition(m_modelHandle, m_handFrameIndex)); }
 	
@@ -81,7 +79,6 @@ public:
 	float GetCameraEasingSpeed()const { return m_cameraEasingSpeed; }
 	float GetHp() { return m_hp; }
 
-	
 	bool GetOperationFlag()const { return m_playerUpdate==&Player::OperationUpdate; }
 	bool GetBoostFlag() const{ return m_playerUpdate==&Player::BoostUpdate; }
 	bool GetIsAiming() { return m_isAimFlag; }
@@ -97,7 +94,7 @@ public:
 	int WatchHp()const { return static_cast<int>(m_hp); }
 	int GetStarNum()const { return m_coinCount; }
 	int GetPlayerModelhandle() const { return m_modelHandle; }
-	int GetTitleMoveNum() { return m_titleUpdateNum; }
+
 	int GetDamageFrame() const { return m_damageFrame; }
 
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag);
@@ -339,10 +336,6 @@ protected:
 	int m_revivalCount;
 
 	bool m_shotAnimFlag;
-	/// <summary>
-	/// タイトル画面で今している行動の番号
-	/// </summary>
-	int m_titleUpdateNum;
 
 	std::list<std::shared_ptr<PlayerSphere>> m_sphere;
 	std::vector<std::shared_ptr<StampImpact>> m_impacts;
@@ -356,7 +349,6 @@ protected:
 
 	float m_regeneRange;
 	float m_angle;
-	float m_modelDirAngle;
 	float m_spinAngle;
 	float m_radius = 0;
 	float m_attackRadius;
@@ -367,6 +359,7 @@ protected:
 	Quaternion m_rotateYQ;
 
 	MATRIX m_initMat;
+
 	Vec3 m_cameraToPlayer;
 	Vec3 m_cameraPos;
 	Vec3 m_lookPoint;
@@ -385,7 +378,6 @@ protected:
 	Vec3 m_postUpVec;
 
 	Vec3 m_shotDir;
-	Vec3 m_modelBodyRotate;
 	/// <summary>
 	/// 最後に立っていた惑星の地面の位置
 	/// </summary>

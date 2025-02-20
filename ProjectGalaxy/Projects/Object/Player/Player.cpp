@@ -107,53 +107,72 @@ void MTransCopy(MATRIX& in, const MATRIX& src) {
 
 
 Player::Player(Vec3 pos) : Collidable(Priority::High, ObjectTag::Player),
-m_modelHandle(MV1DuplicateModel(ModelManager::GetInstance().GetModelData(kFileName))),
-m_parrySEHandle(SoundManager::GetInstance().GetSoundData(kOnParrySEName)),
-m_getItemHandle(SoundManager::GetInstance().GetSoundData(kGetItemSEName)),
-m_powerUpItemGetSEHandle(SoundManager::GetInstance().GetSoundData(kPowerUpItemGetSEName)),
-m_specialItemGetSEHandle(SoundManager::GetInstance().GetSoundData(kSpecialItemGetSEName)),
-m_searchSEHandle(SoundManager::GetInstance().GetSoundData(kGetSearchSEName)),
-m_hitSEHandle(SoundManager::GetInstance().GetSoundData(kGororiHitSEName)),
-m_elecSEHandle(SoundManager::GetInstance().GetSoundData(kElectroSEName)),
-m_shotStickStarSEHandle(SoundManager::GetInstance().GetSoundData(kShotStickSEName)),
-m_shotTheStarSEHandle(SoundManager::GetInstance().GetSoundData(kShotTheStarSEName)),
+//ハンドルの初期化
+m_modelHandle(-1),
+m_hitSEHandle(-1),
+m_elecSEHandle(-1),
+m_parrySEHandle(-1),
+m_getItemHandle(-1),
+m_searchSEHandle(-1),
+m_shotTheStarSEHandle(-1),
+m_shotStickStarSEHandle(-1),
+m_powerUpItemGetSEHandle(-1),
+m_specialItemGetSEHandle(-1),
+//ベクトルの初期設定
 m_postUpVec(Vec3::Up()),
 m_shotDir(Vec3::Front()),
 m_moveDir(Vec3::Front()),
 m_frontVec(Vec3::Front()),
-m_playerUpdate(&Player::StartUpdate),
-m_prevUpdate(&Player::StartUpdate),
-m_hp(kPlayerHPMax),
-m_radius(kNeutralRadius),
-m_visibleCount(0),
-m_damageFrame(0),
-m_regeneRange(0),
-m_angle(0),
-m_spinAngle(0),
-m_animBlendRate(0),
-m_currentAnimNo(-1),
-m_prevAnimNo(0),
-m_isDeathFlag(false),
-m_isJumpFlag(false),
-m_isSpinFlag(false),
-m_isOperationFlag(false),
-m_color(0x00ffff),
-m_attackRadius(0),
-m_fullPowerChargeCount(0),
-m_landingStanFrame(0),
-m_modelBodyRotate(m_frontVec),
 m_inputVec(Vec3::Front() * -1),
 m_postMoveDir(Vec3::Front()),
-m_modelDirAngle(0),
-m_currentOxygen(0),
-m_shotAnimCount(0),
-m_shotAnimFlag(false),
-m_titleUpdateNum(0),
-m_fragmentCount(0),
+//ステートの初期化
+m_prevUpdate(&Player::StartUpdate),
+m_playerUpdate(&Player::StartUpdate),
+
+m_hp(kPlayerHPMax),
+m_radius(kNeutralRadius),
+//カウントの初期化
 m_coinCount(0),
 m_pushCount(0),
-m_revivalCount(0)
+m_damageFrame(0),
+m_regeneRange(0),
+m_revivalCount(0),
+m_visibleCount(0),
+m_shotAnimCount(0),
+m_fragmentCount(0),
+m_landingStanFrame(0),
+m_fullPowerChargeCount(0),
+
+m_angle(0),
+m_spinAngle(0),
+
+m_animBlendRate(0),
+m_prevAnimNo(0),
+m_currentAnimNo(-1),
+//フラグの初期化
+m_isJumpFlag(false),
+m_isSpinFlag(false),
+m_isDeathFlag(false),
+m_shotAnimFlag(false),
+m_isOperationFlag(false),
+
+m_color(0x00ffff),
+m_attackRadius(0),
+m_currentOxygen(0),
+
+m_titleUpdateNum(0)
 {
+	m_modelHandle = ModelManager::GetInstance().GetModelData(kFileName);
+	m_parrySEHandle = SoundManager::GetInstance().GetSoundData(kOnParrySEName);
+	m_getItemHandle = SoundManager::GetInstance().GetSoundData(kGetItemSEName);
+	m_powerUpItemGetSEHandle = SoundManager::GetInstance().GetSoundData(kPowerUpItemGetSEName);
+	m_specialItemGetSEHandle = SoundManager::GetInstance().GetSoundData(kSpecialItemGetSEName);
+	m_searchSEHandle = SoundManager::GetInstance().GetSoundData(kGetSearchSEName);
+	m_hitSEHandle = SoundManager::GetInstance().GetSoundData(kGororiHitSEName);
+	m_elecSEHandle = SoundManager::GetInstance().GetSoundData(kElectroSEName);
+	m_shotStickStarSEHandle = SoundManager::GetInstance().GetSoundData(kShotStickSEName);
+	m_shotTheStarSEHandle = SoundManager::GetInstance().GetSoundData(kShotTheStarSEName);
+
 	m_postUpVec = m_upVec;
 	m_rigid->SetPos(pos);
 	{
@@ -1033,6 +1052,8 @@ void Player::JumpingUpdate()
 {
 	m_stateName = "Jumping";
 	m_state = State::Jump;
+
+	m_rigid->SetVelocity(Move());
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
 		m_postState = m_state;

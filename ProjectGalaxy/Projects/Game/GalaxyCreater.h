@@ -76,6 +76,8 @@ public:
 	static GalaxyCreater& GetInstance();
 
 	void SetCamera(std::shared_ptr<Camera>camera) { m_camera = camera; };
+
+	void GalaxyCreate(std::shared_ptr<Player> player,std::string galaxyName);
 	void ObjectCreate(std::shared_ptr<Player> player);
 	void SeekerLineCreate();
 	void PlanetCreate();
@@ -101,6 +103,7 @@ private:
 	std::vector<LockedObject> m_lockedData;
 	std::vector<std::shared_ptr<MyEngine::Collidable>> m_lockedObjects;
 
+	std::string m_galaxyName;
 
 	int m_createObjectSEHandle;
 };

@@ -48,11 +48,17 @@ GalaxyCreater& GalaxyCreater::GetInstance()
 	return info;
 }
 
+void GalaxyCreater::GalaxyCreate(std::shared_ptr<Player> player, std::string galaxyName)
+{
+	m_galaxyName = galaxyName+"/";
+}
+
 void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 {
 	m_objectData.clear();
 
-	std::string fileName = "Data/Info/data.loc";
+
+	std::string fileName = "Data/Info/"+ m_galaxyName + "data.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
@@ -129,7 +135,7 @@ void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 
 void GalaxyCreater::SeekerLineCreate()
 {
-	std::string fileName = "Data/Info/SeekerLine.loc";
+	std::string fileName = m_galaxyName + "Data/Info/" + m_galaxyName + "SeekerLine.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
@@ -164,7 +170,7 @@ void GalaxyCreater::PlanetCreate()
 	m_planetData.clear();
 	m_planetModelData.clear();
 
-	std::string fileName = "Data/Info/Planet.loc";
+	std::string fileName = "Data/Info/"+m_galaxyName + "Planet.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
@@ -215,7 +221,7 @@ void GalaxyCreater::PlanetCreate()
 void GalaxyCreater::TalkObjectCreate()
 {
 	std::list<TalkObject> objects;
-	std::string fileName = "Data/Info/TalkObject.loc";
+	std::string fileName = "Data/Info/"+m_galaxyName + "TalkObject.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
@@ -280,7 +286,7 @@ std::vector<std::shared_ptr<Enemy>> GalaxyCreater::EnemyCreate(std::shared_ptr<P
 {
 	m_enemyData.clear();
 
-	std::string fileName = "Data/Info/Enemy.loc";
+	std::string fileName = "Data/Info/"+m_galaxyName + "Enemy.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
@@ -339,7 +345,7 @@ std::vector<std::shared_ptr<MyEngine::Collidable>> GalaxyCreater::LockedObjectCr
 {
 	m_lockedObjects.clear();
 
-	std::string fileName = "Data/Info/LockedObject.loc";
+	std::string fileName = "Data/Info/"+m_galaxyName + "LockedObject.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 
@@ -426,7 +432,7 @@ std::vector<std::shared_ptr<Enemy>> GalaxyCreater::KeyLockObjectCreate()
 {
 	m_keyLockObjectData.clear();
 
-	std::string fileName = "Data/Info/KeyLockedObjects.loc";
+	std::string fileName = "Data/Info/"+m_galaxyName + "KeyLockedObjects.loc";
 	//開くファイルのハンドルを取得
 	int handle = FileRead_open(fileName.c_str());
 

@@ -244,7 +244,7 @@ void MyEngine::Physics::Initialize(std::shared_ptr<Collidable> collidable)
 	}
 }
 
-void MyEngine::Physics::Gravity()
+void MyEngine::Physics::UpdatePlanetPhysics()
 {
 	// 判定リストはペアになっているので半分の数だけ繰り返す
 	for (auto& stage : m_stageCollidables)
@@ -355,74 +355,6 @@ void MyEngine::Physics::Gravity()
 					}
 					else
 					{
-						////摩擦力は触れている面積が多いほど強くなるため、そのオブジェクトの当たり判定が多く当たっているほどさらに上乗せする
-						//colB->col->SetOnHitResult(true);
-						//printf("Planetの地面と");
-						//if (object->GetTag() == ObjectTag::Player)
-						//{
-						//	printf("Player");
-						//	if (colB->tag == ColideTag::Foot)
-						//	{
-						//		printf("の足");
-						//	}
-						//}
-						//else
-						//{
-						//	printf("なにか");
-						//}
-						//printf("が当たりました\n");
-						//auto planet = dynamic_cast<Planet*>(stage.get());
-						//object->m_rigid->SetVelocity(planet->FrictionEffect(object));
-
-						//continue;
-					}
-				}
-
-			}
-
-		}
-	}
-}
-
-void MyEngine::Physics::Friction()
-{
-	// 判定リストはペアになっているので半分の数だけ繰り返す
-	for (auto& stage : m_stageCollidables)
-	{
-		// それぞれが持つ判定全てを比較
-		for (auto& object : m_collidables)
-		{
-			if (!object->GetIsActive())continue;
-			if (object->IsAntiGravity())continue;
-			for (auto& col : object->m_colliders)
-			{
-				//Stage同士なら無視
-				if (object->GetTag() == ObjectTag::Stage)continue;
-				//距離が離れすぎているオブジェクトも無視
-				if ((object->GetRigidbody()->GetPos() - stage->GetRigidbody()->GetPos()).Length() > 500)continue;
-				for (auto stageCol : stage->m_colliders)
-				{
-					auto& colA = stageCol;
-					auto& colB = col;
-
-					// 判定
-					auto collideHitInfo = IsCollide(stage->m_rigid, object->m_rigid, colA, colB);
-					// 当たっていなければ次の判定に
-					if (!collideHitInfo.isHit) continue;
-
-					// 通過オブジェクト確認
-					auto throughA = stage->m_throughTags;
-					auto throughB = object->m_throughTags;
-					bool isThrough = std::find(throughA.begin(), throughA.end(), object->GetTag()) != throughA.end()
-						|| std::find(throughB.begin(), throughB.end(), stage->GetTag()) != throughB.end();
-					// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
-					bool isTrigger = colA->col->m_isTrigger || colB->col->m_isTrigger || isThrough;
-					if (isTrigger)
-					{
-
-					}
-					else
-					{
 						//摩擦力は触れている面積が多いほど強くなるため、そのオブジェクトの当たり判定が多く当たっているほどさらに上乗せする
 						colB->col->SetOnHitResult(true);
 						printf("Planetの地面と");
@@ -451,6 +383,74 @@ void MyEngine::Physics::Friction()
 		}
 	}
 }
+//
+//void MyEngine::Physics::Friction()
+//{
+//	// 判定リストはペアになっているので半分の数だけ繰り返す
+//	for (auto& stage : m_stageCollidables)
+//	{
+//		// それぞれが持つ判定全てを比較
+//		for (auto& object : m_collidables)
+//		{
+//			if (!object->GetIsActive())continue;
+//			if (object->IsAntiGravity())continue;
+//			for (auto& col : object->m_colliders)
+//			{
+//				//Stage同士なら無視
+//				if (object->GetTag() == ObjectTag::Stage)continue;
+//				//距離が離れすぎているオブジェクトも無視
+//				if ((object->GetRigidbody()->GetPos() - stage->GetRigidbody()->GetPos()).Length() > 500)continue;
+//				for (auto stageCol : stage->m_colliders)
+//				{
+//					auto& colA = stageCol;
+//					auto& colB = col;
+//
+//					// 判定
+//					auto collideHitInfo = IsCollide(stage->m_rigid, object->m_rigid, colA, colB);
+//					// 当たっていなければ次の判定に
+//					if (!collideHitInfo.isHit) continue;
+//
+//					// 通過オブジェクト確認
+//					auto throughA = stage->m_throughTags;
+//					auto throughB = object->m_throughTags;
+//					bool isThrough = std::find(throughA.begin(), throughA.end(), object->GetTag()) != throughA.end()
+//						|| std::find(throughB.begin(), throughB.end(), stage->GetTag()) != throughB.end();
+//					// isTriggerがtrueか通過オブジェクトなら通知だけ追加して次の判定に
+//					bool isTrigger = colA->col->m_isTrigger || colB->col->m_isTrigger || isThrough;
+//					if (isTrigger)
+//					{
+//
+//					}
+//					else
+//					{
+//						//摩擦力は触れている面積が多いほど強くなるため、そのオブジェクトの当たり判定が多く当たっているほどさらに上乗せする
+//						colB->col->SetOnHitResult(true);
+//						printf("Planetの地面と");
+//						if (object->GetTag() == ObjectTag::Player)
+//						{
+//							printf("Player");
+//							if (colB->tag == ColideTag::Foot)
+//							{
+//								printf("の足");
+//							}
+//						}
+//						else
+//						{
+//							printf("なにか");
+//						}
+//						printf("が当たりました\n");
+//						auto planet = dynamic_cast<Planet*>(stage.get());
+//						object->m_rigid->SetVelocity(planet->FrictionEffect(object));
+//
+//						continue;
+//					}
+//				}
+//
+//			}
+//
+//		}
+//	}
+//}
 
 /// <summary>
 /// 物理からの移動を未来の座標に適用

@@ -61,6 +61,10 @@ namespace
 	/// Aボタンのフェード速度
 	/// </summary>
 	constexpr int kInputAFadeFrameSpeed = 20.f;
+
+	constexpr int kTextBoxFrameUp = 90;
+	constexpr int kTextBoxFrameDown = 440;
+	constexpr int kTextBoxFadeSpeedX = 9;
 }
 
 UI::UI():
@@ -331,9 +335,9 @@ void UI::TextBoxFadeDraw()
 
 
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 150);
-	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * 9, 90, Game::kScreenWidth / 2 + m_appearFrame * 9, 440, 0x111111, true);
+	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * kTextBoxFadeSpeedX, kTextBoxFrameUp, Game::kScreenWidth / 2 + m_appearFrame * kTextBoxFadeSpeedX, kTextBoxFrameDown, 0x111111, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * 9, 90, Game::kScreenWidth / 2 + m_appearFrame * 9, 440, 0x0000ff, false);
+	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * kTextBoxFadeSpeedX, kTextBoxFrameUp, Game::kScreenWidth / 2 + m_appearFrame * kTextBoxFadeSpeedX, kTextBoxFrameDown, 0x0000ff, false);
 }
 
 void UI::TextBoxDraw()
@@ -342,9 +346,9 @@ void UI::TextBoxDraw()
 	DrawBox(0, Game::kScreenHeight, Game::kScreenWidth, Game::kScreenHeight - m_appearFrame, 0x000000, true);
 	
 	SetDrawBlendMode(DX_BLENDMODE_MULA, 150);
-	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * 9, 90, Game::kScreenWidth / 2 + m_appearFrame * 9, 440, 0x111111, true);
+	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * kTextBoxFadeSpeedX, kTextBoxFrameUp, Game::kScreenWidth / 2 + m_appearFrame * kTextBoxFadeSpeedX, kTextBoxFrameDown, 0x111111, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * 9, 90, Game::kScreenWidth / 2 + m_appearFrame * 9, 440, 0x0000ff, false);
+	DrawBox(Game::kScreenWidth / 2 - m_appearFrame * kTextBoxFadeSpeedX, kTextBoxFrameUp, Game::kScreenWidth / 2 + m_appearFrame * kTextBoxFadeSpeedX, kTextBoxFrameDown, 0x0000ff, false);
 
 	DrawRectRotaGraph((kWindowScreenUIInfo.width / 2) + (Game::kScreenWidth*0.6f), (kWindowScreenUIInfo.height / 2)+20, kTalkingCharaGraph.x, kTalkingCharaGraph.y, kTalkingCharaGraph.width, kTalkingCharaGraph.height, 0.3f, 0, m_uiTalkingCharaHandle, true);
 

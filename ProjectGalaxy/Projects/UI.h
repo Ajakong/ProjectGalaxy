@@ -49,6 +49,7 @@ public:
 	/// </summary>
 	/// <param name="text">1行で表示したいテキスト</param>
 	void InText(const std::string text);
+
 	/// <summary>
 	/// テキストデータ群に次に表示したいテキストをぶち込む(全角でぶち込んでください)
 	/// </summary>
@@ -106,10 +107,12 @@ private:
 	/// テキストモードに移行
 	/// </summary>
 	void TextMode();
+
 	/// <summary>
 	/// Aボタン表示モードに移行
 	/// </summary>
 	void InputAMode();
+
 	/// <summary>
 	/// 通常UIモードに移行
 	/// </summary>
@@ -138,6 +141,7 @@ private:
 	/// </summary>
 	void TextBoxFadeDraw();
 	void TextBoxDraw();
+
 	/// <summary>
 	/// ミッション描画用
 	/// </summary>
@@ -214,6 +218,7 @@ private:
 	/// 会話UI出現音
 	/// </summary>
 	int m_chatAppearSEHandle;
+
 	/// <summary>
 	/// HPが少ないことを知らせる音
 	/// </summary>

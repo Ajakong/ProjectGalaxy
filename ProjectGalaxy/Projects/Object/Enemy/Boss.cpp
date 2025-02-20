@@ -204,7 +204,6 @@ void Boss::PhaseTwoUpdate()
 	//タックルのレンジ内に入ったら
 	if (ToTargetVec.Length() < kTackleLength)
 	{
-		//m_bossUpdate = &Boss::TackleUpdate;
 		switch (GetRand(3))
 		{
 		case(0):
