@@ -42,6 +42,7 @@ public:
 	void Update();
 	void SetMatrix();
 	void Draw();
+
 	void SetVelocity(Vec3 pos) { m_velocity = pos; m_rigid->SetVelocity(pos); }
 	void AddVelocity(Vec3 pos) { m_rigid->AddVelocity(pos); }
 	void SetSideVec(Vec3 right) { m_sideVec = right; }
@@ -140,16 +141,17 @@ public:
 	/// 操作される更新処理
 	/// </summary>
 	void OperationUpdate();
-	/// <summary>
-	/// StickStarで引数に向けて移動
-	/// </summary>
-	void MoveToTargetWithStickStar(Vec3 targetPos);
+
 
 	//TitlePlayerからポインタを通してアクセスするためPublic(ポインタを通す場合継承していてもProtectedでは扱えない)
 	void ShotTheStar();
 
 	void ShotTheStickStar();
 
+	/// <summary>
+	/// 通常時
+	/// </summary>
+	void NeutralUpdate();
 protected:
 	Vec3 Move();
 
@@ -167,10 +169,9 @@ protected:
 	/// 開始直後に呼ばれる
 	/// </summary>
 	void StartUpdate();
-	/// <summary>
-	/// 通常時
-	/// </summary>
-	void NeutralUpdate();
+
+	
+
 	/// <summary>
 	/// 歩き
 	/// </summary>

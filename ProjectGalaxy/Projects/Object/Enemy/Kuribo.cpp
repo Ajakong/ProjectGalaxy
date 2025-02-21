@@ -48,7 +48,7 @@ Kuribo::Kuribo(Vec3 pos) :Enemy(Priority::Low, ObjectTag::Kuribo),
 m_attackDir(0, 0, 1),
 m_chaseFrameCount(0),
 m_stanCount(0),
-m_speed(1)
+m_speed(1.f)
 {
 	m_hp = 10;
 	m_comebackPoint = pos;

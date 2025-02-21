@@ -56,11 +56,11 @@ namespace
 	/// <summary>
 	/// テキストボックスのフェード速度
 	/// </summary>
-	constexpr int kTextBoxFadeFrameSpeed = 5.f;
+	constexpr float kTextBoxFadeFrameSpeed = 5.f;
 	/// <summary>
 	/// Aボタンのフェード速度
 	/// </summary>
-	constexpr int kInputAFadeFrameSpeed = 20.f;
+	constexpr float kInputAFadeFrameSpeed = 20.f;
 
 	constexpr int kTextBoxFrameUp = 90;
 	constexpr int kTextBoxFrameDown = 440;
@@ -274,6 +274,7 @@ void UI::Draw(float hp, int coinNum, bool aimFlag,bool isDeath)
 {
 	m_playerHp = hp;
 
+	//プレイヤーのHPが残っているなら
 	if (m_playerHp > 0)
 	{
 		DrawBox(40, 40, 780, static_cast<int>(kHPBarUIInfo.height / 2 + 10), 0x0000044, true);
@@ -286,14 +287,20 @@ void UI::Draw(float hp, int coinNum, bool aimFlag,bool isDeath)
 #endif
 
 	}
+
+	//プレイヤーがコインを持っているなら
 	if (coinNum > 0)
 	{
 		DrawRectRotaGraphF(static_cast<float>(kStarUIInfo.width / 2)/10+ static_cast<float>(kHPBarUIInfo.width), static_cast<float>(kStarUIInfo.height / 2)/10+15, kStarUIInfo.x, kStarUIInfo.y, kStarUIInfo.width, kStarUIInfo.height, 0.1f, 0, m_uiStarHandle, true);
 		DrawFormatString(static_cast<int>(kStarUIInfo.width)/10 + static_cast<int>(kHPBarUIInfo.width), static_cast<float>(kStarUIInfo.height / 2) / 10+15, 0xffffff, "x%d", coinNum);
 	}
+
 	(this->*m_uiDraw)();
 
+	//エイム時なら
 	if (aimFlag)DrawRectRotaGraph(Game::kScreenWidth/2, Game::kScreenHeight/2, kAimGraph.x, kAimGraph.y, kAimGraph.width, kAimGraph.height, 0.3, 0, m_uiAimGraphHandle, true);
+	
+	//死んでいたら
 	if (isDeath)
 	{
 		if (m_changeFrame % 2 == 0)

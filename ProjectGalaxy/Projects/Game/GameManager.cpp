@@ -4,6 +4,7 @@
 #include"DebugGalaxy.h"
 #include"Player.h"
 #include"ModelManager.h"
+#include"EffectManager.h"
 #include"GameStopManager.h"
 #include"UI.h"
 #include"Mission.h"
@@ -39,6 +40,7 @@ void GameManager::Update()
 {
 	UI::GetInstance().Update();
 	Mission::GetInstance().UpDate();
+	EffectManager::GetInstance().Update();
 	m_updateStopFrame--;
 	if (m_updateStopFrame < 0&&UI::GetInstance().GetState()!=&UI::TextBoxUpdate)
 	{

@@ -17,7 +17,8 @@
 #include"Physics.h"
 
 
-TitlePlayer::TitlePlayer() : Player()
+TitlePlayer::TitlePlayer() : Player(),
+m_titleUpdateNum(0)
 {
 	ChangeAnim(AnimNum::AnimationNumIdle);
 	m_titlePlayerUpdate = &TitlePlayer::IdleUpdate;
@@ -112,4 +113,60 @@ void TitlePlayer::DoNotMove()
 void TitlePlayer::Move()
 {
 	m_titlePlayerUpdate = &TitlePlayer::OperationUpdate;
+}
+
+void TitlePlayer::MoveToTargetWithStickStar(Vec3 targetPos)
+{
+	if (m_titleUpdateNum == 1)
+	{
+		if (m_sphere.size() == 0)
+		{
+			Vec3 targetVec = (targetPos - m_rigid->GetPos()).GetNormalized();
+			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+			m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, targetVec, m_sideVec, 1, 0xff0000));
+			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+			m_sphere.back()->Init();
+
+			m_playerUpdate = &Player::NeutralUpdate;
+		}
+		else
+		{
+			auto colidFlag = m_sphere.back()->GetStickFlag();
+			if (colidFlag)
+			{
+				m_titleUpdateNum = 2;
+				m_sphere.back()->Effect();
+
+			}
+		}
+
+	}
+
+	if (m_titleUpdateNum == 0)
+	{
+		if (m_sphere.size() == 0)
+		{
+			Vec3 targetVec = (targetPos - m_rigid->GetPos()).GetNormalized();
+			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+			m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, targetVec, m_sideVec, 1, 0xff0000));
+			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+			m_sphere.back()->Init();
+
+			MV1SetScale(m_modelHandle, VGet(0.01f, 0.01f, 0.01f));
+			m_moveDir = Cross(GetCameraRightVector(), m_upVec);
+			ChangeAnim(AnimNum::AnimationNumIdle);
+			m_playerUpdate = &Player::NeutralUpdate;
+		}
+		else
+		{
+
+			auto colidFlag = m_sphere.back()->GetStickFlag();
+			if (colidFlag)
+			{
+				m_titleUpdateNum = 1;
+				m_sphere.back()->Effect();
+
+			}
+		}
+	}
 }

@@ -51,6 +51,9 @@ namespace
 	constexpr float kAnimChangeFrame = 20.0f;
 	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
 
+	//死ぬモーションの初期速度
+	constexpr float kDeathAnimationInitialSpeed = 0.1f;
+
 	//アナログスティックによる移動関連
 	constexpr float kMaxSpeed = 0.5f;//プレイヤーの最大速度
 	constexpr float kAnalogRangeMin = 0.1f;//アナログスティックの入力判定範囲
@@ -65,8 +68,14 @@ namespace
 
 	constexpr int kAvoidFrame = 60;
 
+	constexpr int kFullPowerChargeTimeMax = 3;
+	constexpr float kFullPowerChargeSpeed = 0.1f;
+
 	constexpr float kJumpPower = 2.f;
 	
+	//アングルが回転する速度
+	constexpr float kAngleRotateSpeed = (DX_PI_F * 2) / 16;
+
 	/// <summary>
 	/// プレイヤーが帰ってこれなくなる長さ
 	/// </summary>
@@ -92,6 +101,7 @@ namespace
 
 	const char* kLandingEffectname = "Landing.efk";
 	const char* kStarEffectName = "StarEffect.efk";
+	
 
 
 
@@ -158,9 +168,7 @@ m_isOperationFlag(false),
 
 m_color(0x00ffff),
 m_attackRadius(0),
-m_currentOxygen(0),
-
-m_titleUpdateNum(0)
+m_currentOxygen(0)
 {
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kFileName);
 	m_parrySEHandle = SoundManager::GetInstance().GetSoundData(kOnParrySEName);
@@ -198,7 +206,7 @@ m_titleUpdateNum(0)
 	}
 
 
-	m_shotUpdate = &Player::ShotTheStar;
+	m_shotUpdate = &Player::ShotTheStickStar;
 
 	m_cameraEasingSpeed = 5.f;
 
@@ -211,7 +219,7 @@ m_titleUpdateNum(0)
 	m_handFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
 
 	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
-	m_dropAttackUpdate = &Player::NormalDropAttackUpdate;
+	m_dropAttackUpdate = &Player::FullPowerDropAttackUpdate;
 	m_spinAttackUpdate = &Player::SpiningUpdate;
 
 }
@@ -223,7 +231,7 @@ Player::~Player()
 
 void Player::Init()
 {
-
+	
 	EffectManager::GetInstance().PlayEffect(kStarEffectName, true, 0, shared_from_this());
 	Mission::GetInstance().SetPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()));
 }
@@ -278,14 +286,14 @@ void Player::Update()
 	//XBoxコントローラーでXボタンが入力されていたら
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
-		if (m_coinCount > 0)
-		{
-			m_shotAnimFlag = true;
-			if (!m_state == State::Boosting)m_rigid->SetVelocity(Vec3::Zero());
 
-			(this->*m_shotUpdate)();
-		}
-		
+		m_shotAnimFlag = true;
+			
+		//Playerが惑星移動しているか
+		bool isBoosting = m_state == State::Boosting;
+		if (!isBoosting)m_rigid->SetVelocity(Vec3::Zero());
+
+		(this->*m_shotUpdate)();
 	}
 
 	////エイム状態だったら
@@ -342,7 +350,7 @@ void Player::Update()
 			UI::GetInstance().InText("Aボタンを連打して自分で心肺蘇生するんだ！");
 			m_isAimFlag = false;
 			//死亡するごとに志望アニメーションの進行速度を上げる
-			ChangeAnim(AnimNum::AnimationNumDeath,0.1+m_revivalCount/2);
+			ChangeAnim(AnimNum::AnimationNumDeath, kDeathAnimationInitialSpeed +m_revivalCount/2);
 
 			m_playerUpdate = &Player::DeathUpdate;
 		}
@@ -413,11 +421,14 @@ void Player::SetMatrix()
 	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
 	m_lookPoint = m_rigid->GetPos() + m_upVec * 10;
 
+	
 
 }
 
 void Player::Draw()
 {
+	//DrawSphere3D(.VGet(), 1, 7, 0xff0000, 0xffffff, true);
+
 	if (m_visibleCount % 3 == 0 || m_visibleCount % 2 == 0)
 	{
 		MV1DrawModel(m_modelHandle);
@@ -785,6 +796,7 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 			obj->SetIsActive(true);
 		}
 	}
+
 	if (colider->GetTag() == ObjectTag::ClearObject)
 	{
 		m_isClearFlag = true;
@@ -1053,7 +1065,7 @@ void Player::JumpingUpdate()
 	m_stateName = "Jumping";
 	m_state = State::Jump;
 
-	m_rigid->SetVelocity(Move());
+
 	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
 		m_postState = m_state;
@@ -1123,13 +1135,17 @@ void Player::JumpBoostUpdate()
 {
 	m_stateName = "JumpBoost";
 	m_state = State::JumpBoost;
-	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
+
+	//XBoxのAボタンの入力があったら
+	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
 		m_postState = m_state;
 		ChangeAnim(AnimNum::AnimationNumJumpAttack);
 		m_rigid->SetVelocity(Vec3::Zero());
 		m_playerUpdate = &Player::DropAttackUpdate;
 	}
+
+	//何かに着地した時
 	if (m_footCol->OnHit())
 	{
 		m_postState = m_state;
@@ -1150,14 +1166,22 @@ void Player::NormalDropAttackUpdate()
 	m_stateName = "DropAttack";
 
 	m_state = State::JumpDrop;
+	
+	//現在のアニメーションの時間を取得
 	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在のアニメーション再生カウント
 	m_rigid->AddVelocity(m_upVec * -0.8f);
 
-	if (now < 16)
+	//アニメーションがチャージ中か
+	bool isCharging = now < 16;
+	
+	//アニメーションがまだチャージ中の場合
+	if (isCharging)
 	{
 		m_angle += (DX_PI_F * 2) / 16;
 		m_rigid->SetVelocity(Vec3::Zero());
 	}
+
+	//何かに着地したとき
 	if (m_footCol->OnHit())
 	{
 		m_postState = m_state;
@@ -1173,17 +1197,22 @@ void Player::FullPowerDropAttackUpdate()
 
 	m_state = State::FullpowerJumpDrop;
 	float now = MV1GetAttachAnimTime(m_modelHandle, m_currentAnimNo);//現在の再生カウント
-	m_rigid->AddVelocity(m_upVec * -0.8f);
+	m_rigid->AddVelocity(m_upVec*-1);
+	
+	//Aボタンが入力されていたら
 	if (Pad::IsPress(PAD_INPUT_1))
 	{
-		if (m_fullPowerChargeCount < 3)m_fullPowerChargeCount += 0.1f;
+		//チャージ量が上限に達していなかったら
+		if (m_fullPowerChargeCount < kFullPowerChargeTimeMax)m_fullPowerChargeCount += kFullPowerChargeSpeed;
 
-		m_angle += (DX_PI_F * 2) / 16;
+		
+
+		m_angle += kAngleRotateSpeed;
 		m_rigid->SetVelocity(Vec3::Zero());
 		if (now < 16)
 		{
 			MV1SetAttachAnimTime(m_modelHandle, m_currentAnimNo, 0);
-			m_angle += (DX_PI_F * 2) / 16;
+			m_angle += kAngleRotateSpeed;
 			m_rigid->SetVelocity(Vec3::Zero());
 		}
 	}
@@ -1430,12 +1459,17 @@ Vec3 Player::Move()
 
 void Player::ShotTheStar()
 {
-	PlaySoundMem(m_shotTheStarSEHandle, DX_PLAYTYPE_BACK);
-	Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
-	m_coinCount--;
-	m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
-	MyEngine::Physics::GetInstance().Entry(m_sphere.back());
-	m_sphere.back()->Init();
+	//コインを持っていたら
+	if (m_coinCount > 0)
+	{
+
+		PlaySoundMem(m_shotTheStarSEHandle, DX_PLAYTYPE_BACK);
+		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+		m_coinCount--;
+		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
+		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
+		m_sphere.back()->Init();
+	}
 }
 
 void Player::ShotTheStickStar()
@@ -1613,62 +1647,3 @@ void Player::TalkingUpdate()
 		m_playerUpdate = m_postUpdate;
 	}
 }
-
-void Player::MoveToTargetWithStickStar(Vec3 targetPos)
-{
-	if (m_titleUpdateNum == 1)
-	{
-		if (m_sphere.size() == 0)
-		{
-			Vec3 targetVec = (targetPos - m_rigid->GetPos()).GetNormalized();
-			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
-			m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, targetVec, m_sideVec, 1, 0xff0000));
-			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
-			m_sphere.back()->Init();
-
-			m_playerUpdate = &Player::NeutralUpdate;
-		}
-		else
-		{
-			auto colidFlag = m_sphere.back()->GetStickFlag();
-			if (colidFlag)
-			{
-				m_titleUpdateNum = 2;
-				m_sphere.back()->Effect();
-
-			}
-		}
-
-	}
-
-	if (m_titleUpdateNum == 0)
-	{
-		if (m_sphere.size() == 0)
-		{
-			Vec3 targetVec = (targetPos - m_rigid->GetPos()).GetNormalized();
-			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
-			m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, targetVec, m_sideVec, 1, 0xff0000));
-			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
-			m_sphere.back()->Init();
-
-			MV1SetScale(m_modelHandle, VGet(0.01f, 0.01f, 0.01f));
-			m_moveDir = Cross(GetCameraRightVector(), m_upVec);
-			ChangeAnim(AnimNum::AnimationNumIdle);
-			m_playerUpdate = &Player::NeutralUpdate;
-		}
-		else
-		{
-
-			auto colidFlag = m_sphere.back()->GetStickFlag();
-			if (colidFlag)
-			{
-				m_titleUpdateNum = 1;
-				m_sphere.back()->Effect();
-
-			}
-		}
-	}
-
-
-}
-

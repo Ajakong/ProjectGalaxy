@@ -94,7 +94,7 @@ namespace MyEngine
 		/// </summary>
 		void UpdatePlanetPhysics();
 		//摩擦をかける
-		//void Friction();
+		void Friction();
 
 		void MoveNextPos() const;
 		/// <summary>

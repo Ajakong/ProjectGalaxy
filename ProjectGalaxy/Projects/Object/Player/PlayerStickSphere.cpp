@@ -9,7 +9,7 @@ namespace
 	/// <summary>
 	/// 球の当たり判定半径
 	/// </summary>
-	constexpr float kSphereRadius = 1.0f;
+	constexpr float kSphereRadius = 0.3f;
 	/// <summary>
 	/// 球の生成間隔
 	/// </summary>
@@ -19,6 +19,8 @@ namespace
 	const char* kName = "Sphere";
 
 	const char* kOperationSEName = "Fastener.mp3";
+
+	constexpr float kTensionSpeed = 3.f;
 }
 
 PlayerStickSphere::PlayerStickSphere(MyEngine::Collidable::Priority priority, ObjectTag tag, std::shared_ptr<MyEngine::Collidable> player, Vec3 pos, Vec3 velocity, Vec3 sideVec, int moveNum, int color) : PlayerSphere(priority, tag, player, pos, velocity, sideVec, moveNum, color),
@@ -64,7 +66,7 @@ void PlayerStickSphere::Update()
 void PlayerStickSphere::Draw()
 {
 
-	//DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, false);
+	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, true);
 
 	//m_stickFlagがtrueの時に赤くなる
 	DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff-(0x00ffff*m_stickFlag));
@@ -91,10 +93,15 @@ void PlayerStickSphere::Effect()
 		else
 		{
 			
-			
+			//Aが入力された回数(押された分速度が上がる)
 			m_pushCount++;
+			
+			//プレイヤーを操作されている状態に移行する
 			m_player.lock()->SetIsOperation(true);
-			m_player.lock()->SetVelocity((m_rigid->GetPos() - m_player.lock()->GetPos()).GetNormalized() * 3 * m_pushCount);
+			
+			//Playerを引っ張る方向
+			Vec3 tensionDir = (m_rigid->GetPos() - m_player.lock()->GetPos()).GetNormalized();
+			m_player.lock()->SetVelocity(tensionDir * kTensionSpeed * static_cast<float>(m_pushCount));
 		}
 		
 	}
