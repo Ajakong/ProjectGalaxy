@@ -20,7 +20,7 @@ GameManager::GameManager() :
 	m_player(std::make_shared<Player>(Vec3(0,20,0)))
 {
 	//ステージの追加
-	m_galaxy.push_back(std::make_shared<SerialPlanetGalaxy>(m_player));
+	m_galaxy.push_back(std::make_shared<DebugGalaxy>(m_player));
 	
 }
 
