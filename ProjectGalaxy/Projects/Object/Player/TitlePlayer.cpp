@@ -60,14 +60,13 @@ void TitlePlayer::Update()
 {
 	m_upVec = Slerp(m_upVec, m_nextUpVec, 0.1f);
 	m_isSearchFlag = false;
-	m_radius = 0;
 
 	(this->*m_titlePlayerUpdate)();
 
 
 	int index = MV1SearchFrame(m_modelHandle, "mixamorig:Spine");
-	MATRIX shotDirMat = MGetRotVec2(m_nowVec.VGet(), m_shotDir.VGet());
-	m_nowVec = m_shotDir.VGet();
+	MATRIX shotDirMat = MGetRotVec2(m_postShotVec.VGet(), m_shotDir.VGet());
+	m_postShotVec = m_shotDir.VGet();
 
 	/*for (auto& item : m_sphere)
 	{
@@ -122,7 +121,7 @@ void TitlePlayer::MoveToTargetWithStickStar(Vec3 targetPos)
 		if (m_sphere.size() == 0)
 		{
 			Vec3 targetVec = (targetPos - m_rigid->GetPos()).GetNormalized();
-			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_leftHandFrameIndex);
 			m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, targetVec, m_sideVec, 1, 0xff0000));
 			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 			m_sphere.back()->Init();
@@ -147,7 +146,7 @@ void TitlePlayer::MoveToTargetWithStickStar(Vec3 targetPos)
 		if (m_sphere.size() == 0)
 		{
 			Vec3 targetVec = (targetPos - m_rigid->GetPos()).GetNormalized();
-			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+			Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_leftHandFrameIndex);
 			m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, targetVec, m_sideVec, 1, 0xff0000));
 			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 			m_sphere.back()->Init();

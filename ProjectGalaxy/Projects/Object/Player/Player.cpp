@@ -25,9 +25,9 @@
 
 
 #include"UI.h"
-/// <summary>
-/// スピン専用の当たり判定を生成・体より半径が大きい当たり判定にし、スピン中にだけ出現
-/// </summary>
+
+///Collidableにpowerを持たせて衝突時はそのパワー分のダメージを受けるようにする(現在はPlayer側が直値を書き込んでいる)
+///その他直値の解決
 
 namespace
 {
@@ -36,6 +36,7 @@ namespace
 	constexpr float kNeutralBodyRadius = 2.f;//通常時の当たり半径
 	constexpr float kNeutralFootRadius = 1.f;//通常時の当たり半径
 	constexpr float kNeutralSpinRadius = 3.f;//通常時の当たり半径
+	constexpr float kCollisionRadiusGap = 0.2f;//当たり判定同士のギャップ
 
 	constexpr int kPlayerHPMax = 50;
 
@@ -44,6 +45,8 @@ namespace
 	constexpr int kIdleAnimIndex = 1;
 	//constexpr int kIdleAnimIndex = 2;//待機テスト
 	constexpr int kAttackAnimIndex = 30;
+
+	constexpr float kPlayerModelScaleMag = 0.005f;
 
 	constexpr float kAnimFrameSpeed = 30.0f;//アニメーション進行速度
 
@@ -80,6 +83,8 @@ namespace
 	/// プレイヤーが帰ってこれなくなる長さ
 	/// </summary>
 	constexpr float kGalaxyLength = 3000.f;
+
+	constexpr float kCamerLookPointHeight = 10.0f;
 
 
 	constexpr int kSearchRemainTimeMax = 28;
@@ -128,6 +133,7 @@ m_shotTheStarSEHandle(-1),
 m_shotStickStarSEHandle(-1),
 m_powerUpItemGetSEHandle(-1),
 m_specialItemGetSEHandle(-1),
+
 //ベクトルの初期設定
 m_postUpVec(Vec3::Up()),
 m_shotDir(Vec3::Front()),
@@ -135,41 +141,43 @@ m_moveDir(Vec3::Front()),
 m_frontVec(Vec3::Front()),
 m_inputVec(Vec3::Front() * -1),
 m_postMoveDir(Vec3::Front()),
+
 //ステートの初期化
 m_prevUpdate(&Player::StartUpdate),
 m_playerUpdate(&Player::StartUpdate),
 
-m_hp(kPlayerHPMax),
-m_radius(kNeutralRadius),
 //カウントの初期化
 m_coinCount(0),
-m_pushCount(0),
 m_damageFrame(0),
 m_regeneRange(0),
 m_revivalCount(0),
 m_visibleCount(0),
-m_shotAnimCount(0),
 m_fragmentCount(0),
 m_landingStanFrame(0),
 m_fullPowerChargeCount(0),
 
-m_angle(0),
-m_spinAngle(0),
-
+//アニメーションフレームの初期化
 m_animBlendRate(0),
 m_prevAnimNo(0),
 m_currentAnimNo(-1),
+
 //フラグの初期化
 m_isJumpFlag(false),
+m_isBoostFlag(false),
 m_isSpinFlag(false),
 m_isDeathFlag(false),
-m_shotAnimFlag(false),
+m_isAimFlag(false),
 m_isOperationFlag(false),
+m_isVisibleFlag(false),
+m_isSearchFlag(false),
+m_isClearFlag(false),
 
-m_color(0x00ffff),
-m_attackRadius(0),
+//プレイヤーステートプロパティの初期化
+m_hp(kPlayerHPMax),
+m_spinAngle(0),
 m_currentOxygen(0)
 {
+	//ハンドルの取得
 	m_modelHandle = ModelManager::GetInstance().GetModelData(kFileName);
 	m_parrySEHandle = SoundManager::GetInstance().GetSoundData(kOnParrySEName);
 	m_getItemHandle = SoundManager::GetInstance().GetSoundData(kGetItemSEName);
@@ -181,88 +189,100 @@ m_currentOxygen(0)
 	m_shotStickStarSEHandle = SoundManager::GetInstance().GetSoundData(kShotStickSEName);
 	m_shotTheStarSEHandle = SoundManager::GetInstance().GetSoundData(kShotTheStarSEName);
 
-	m_postUpVec = m_upVec;
+	m_postUpVec = m_upVec;//もしかしたらプレイヤーの初期上方向ベクトルが0,1,0ではないかもしれないので
+
+	//初期位置設定
 	m_rigid->SetPos(pos);
+	
+	//当たり判定の設定
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Head);
 		m_headCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-		m_headCol->radius = kNeutralHeadRadius - 0.2f;
+		m_headCol->radius = kNeutralHeadRadius - kCollisionRadiusGap;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Body);
 		m_bodyCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-		m_bodyCol->radius = kNeutralBodyRadius - 0.2f;
+		m_bodyCol->radius = kNeutralBodyRadius - kCollisionRadiusGap;
 	}
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Foot);
 		m_footCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-		m_footCol->radius = kNeutralFootRadius - 0.2f;
+		m_footCol->radius = kNeutralFootRadius - kCollisionRadiusGap;
 	}
 
 	{
 		AddCollider(MyEngine::ColliderBase::Kind::Sphere, ColideTag::Spin);
 		m_spinCol = dynamic_pointer_cast<MyEngine::ColliderSphere>(m_colliders.back()->col);
-		m_spinCol->radius = m_attackRadius;
 	}
 
+	//メンバ関数の初期設定
+	m_shotUpdate = &Player::ShotTheStar;
+	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
+	m_dropAttackUpdate = &Player::DropAttackUpdate;
+	m_spinAttackUpdate = &Player::SpiningUpdate;
 
-	m_shotUpdate = &Player::ShotTheStickStar;
-
+	//カメラの追ってきてほしい速度の初期設定
 	m_cameraEasingSpeed = 5.f;
 
+	//プレイヤーの弾との当たり判定を無視
 	AddThroughTag(ObjectTag::PlayerBullet);
 
-	DxLib::MV1SetScale(m_modelHandle, VGet(0.005f, 0.005f, 0.005f));
+	//プレイヤーモデルの拡大率の設定
+	DxLib::MV1SetScale(m_modelHandle, VGet(kPlayerModelScaleMag, kPlayerModelScaleMag, kPlayerModelScaleMag));
+	
+	//モデルの回転などの設定
 	SetMatrix();
-	m_initMat = MV1GetLocalWorldMatrix(m_modelHandle);
+	//モデルの左手のフレームインデックスの取得
+	m_leftHandFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
 
-	m_handFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
-
-	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
-	m_dropAttackUpdate = &Player::FullPowerDropAttackUpdate;
-	m_spinAttackUpdate = &Player::SpiningUpdate;
+	
 
 }
 
 Player::~Player()
 {
-	MV1DeleteModel(m_modelHandle);
 }
 
 void Player::Init()
 {
-	
+	//エフェクトの再生
 	EffectManager::GetInstance().PlayEffect(kStarEffectName, true, 0, shared_from_this());
+	//ミッションを管理するクラスにプレイヤーのポインタを設定
 	Mission::GetInstance().SetPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()));
 }
 
 void Player::Update()
 {
-
+	
 	m_isSearchFlag = false;
-	m_radius = 0;
 
+	//コントローラーの入力状態がプレイヤー操作状態じゃなかったら
 	if (!Pad::IsState("PlayerInput"))
 	{
+		//会話中状態に移行
 		if(m_playerUpdate!=&Player::TalkingUpdate)m_postUpdate = m_playerUpdate;
-		
-		//ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::TalkingUpdate;
 	}
 
+	//状態関数の実行
 	(this->*m_playerUpdate)();
 
-
+	//LBが入力されたら
 	if (Pad::IsTrigger(PAD_INPUT_Y))
 	{
+		//エイム中の時
 		if (m_isAimFlag)
 		{
+			//エイム状態を解除する
 			m_isAimFlag = false;
 		}
 		else
 		{
+			//弾の射撃方向をプレイヤーの正面ベクトルに設定して
 			m_shotDir = m_frontVec;
 
+			//エイム状態にする
 			m_isAimFlag = true;
 		}
 	}
@@ -277,40 +297,25 @@ void Player::Update()
 		m_isSearchFlag = true;
 	}
 
+	//弾の射撃方向を操作
 	SetShotDir();
-
-	int index = MV1SearchFrame(m_modelHandle, "mixamorig:Spine");
-	MATRIX shotDirMat = MGetRotVec2(m_nowVec.VGet(), m_shotDir.VGet());
-	m_nowVec = m_shotDir.VGet();
 
 	//XBoxコントローラーでXボタンが入力されていたら
 	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
-
-		m_shotAnimFlag = true;
 			
 		//Playerが惑星移動しているか
 		bool isBoosting = m_state == State::Boosting;
 		if (!isBoosting)m_rigid->SetVelocity(Vec3::Zero());
 
 		(this->*m_shotUpdate)();
+		
 	}
+	m_postShotVec = m_shotDir;
 
-	////エイム状態だったら
-	//if (m_shotAnimFlag)
-	//{
-	//	m_shotAnimCount++;
-
-	//	//アニメーションが一定数再生されたら
-	//	if (m_shotAnimCount > 10)
-	//	{
-	//		m_shotAnimFlag = false;
-	//		m_shotAnimCount = 0;
-	//		//ChangeAnim(MV1GetAttachAnim(m_modelHandle, m_prevAnimNo));
-	//	}
-	//}
-
+	//不要になった弾の削除関数
 	DeleteManage();
+	//不要になった衝撃波の削除関数
 	DeleteObject(m_impacts);
 
 	//無敵時間が上限を超えたら
@@ -415,13 +420,12 @@ void Player::SetMatrix()
 	MV1SetRotationZYAxis(m_modelHandle, (m_moveDir * -1).VGet(), m_upVec.GetNormalized().VGet(), 0);
 
 	//当たり判定の更新
+	
+	//※直径分ずらすため半径を2倍にしている
 	m_headCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 2 + m_bodyCol->GetRadius() * 2 + m_headCol->GetRadius()));
 	m_bodyCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius() * 2 + m_bodyCol->GetRadius()));
 	m_footCol->SetShiftPosNum(m_upVec * m_footCol->GetRadius());
-	//m_spinCol->SetShiftPosNum(m_upVec * (m_footCol->GetRadius()*2+m_bodyCol->GetRadius()));
-	m_lookPoint = m_rigid->GetPos() + m_upVec * 10;
-
-	
+	m_lookPoint = m_rigid->GetPos() + m_upVec * kCamerLookPointHeight;
 
 }
 
@@ -429,17 +433,16 @@ void Player::Draw()
 {
 	//DrawSphere3D(.VGet(), 1, 7, 0xff0000, 0xffffff, true);
 
+	//2と3の公倍数だけ描画してチカチカさせる
 	if (m_visibleCount % 3 == 0 || m_visibleCount % 2 == 0)
 	{
 		MV1DrawModel(m_modelHandle);
 	}
-	//MV1DrawModel(m_modelHandle);
-	/*m_headCol->DebugDraw(m_rigid->GetPos());
-	m_bodyCol->DebugDraw(m_rigid->GetPos());
-	m_footCol->DebugDraw(m_rigid->GetPos());*/
-	m_spinCol->DebugDraw(m_rigid->GetPos());
+	
+	
 
 #if DEBUG
+	m_spinCol->DebugDraw(m_rigid->GetPos());
 	//DrawLine3D(m_rigid->GetPos().VGet(), Vec3(m_rigid->GetPos() + m_shotDir * 100).VGet(), 0x0000ff);
 	Vec3 axis = Cross(m_upVec, m_moveDir);//上方向ベクトルと進行方向ベクトルの外積から回転軸を生成
 	axis.Normalize();//単位ベクトル化
@@ -469,11 +472,6 @@ void Player::Draw()
 
 }
 
-void Player::SetCameraToPlayer(Vec3 cameraToPlayer)
-{
-	m_cameraToPlayer = cameraToPlayer;
-}
-
 void Player::SetBoost(Vec3 sideVec)
 {
 	m_sideVec = sideVec * -1;
@@ -490,7 +488,6 @@ void Player::SetIsOperation(bool flag)
 		ChangeAnim(AnimNum::AnimationNumRolling);
 		SetAntiGravity();
 		m_playerUpdate = &Player::OperationUpdate;
-		//ChangeAnim(kAnimationNumFall);
 		m_isOperationFlag = true;
 	}
 	else
@@ -499,10 +496,6 @@ void Player::SetIsOperation(bool flag)
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_isOperationFlag = false;
 	}
-}
-void Player::SetCameraAngle(float cameraAngle)
-{
-	m_cameraAngle = cameraAngle;
 }
 
 void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
@@ -514,7 +507,6 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	{
 		//m_postPlayerGroundPos = m_rigid->GetPos();
 		printf("Stage\n");
-		m_spinCount = 0;
 		m_isOperationFlag = false;
 		m_isJumpFlag = false;
 		if (m_playerUpdate == &Player::DropAttackUpdate)
@@ -532,7 +524,6 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	if (colider->GetTag() == ObjectTag::Crystal)
 	{
 		printf("Crystal\n");
-		m_spinCount = 0;
 		m_isJumpFlag = false;
 		m_isBoostFlag = false;
 
@@ -543,6 +534,8 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		if (m_isSpinFlag)
 		{
 			auto kuribo = std::dynamic_pointer_cast<Kuribo>(colider);
+
+			//60フレームスタンさせる
 			kuribo->Stan(60);
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
 		}
@@ -560,7 +553,10 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 			StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
+
+			//10ダメージ受ける
 			m_hp -= 10;
+
 			m_isOnDamageFlag = true;
 			m_isVisibleFlag = true;
 			m_damageFrame = kDamageFrameMax;
@@ -587,7 +583,10 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 			if (m_isVisibleFlag)return;
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			StartJoypadVibration(DX_INPUT_PAD1, 600, 600);
+			
+			//10ダメージ受ける
 			m_hp -= 10;
+			
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
 			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 3);
@@ -614,7 +613,10 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 			if (m_isVisibleFlag)return;
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 			StartJoypadVibration(DX_INPUT_PAD1, 600, 600);
+			
+			//10ダメージ受ける
 			m_hp -= 10;
+			
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
 			m_rigid->AddVelocity(Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 4);
@@ -645,6 +647,8 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 			StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
 			m_prevUpdate = m_playerUpdate;
 			m_playerUpdate = &Player::DamegeUpdate;
+
+			//10ダメージ受ける
 			m_hp -= 10;
 			m_isOnDamageFlag = true;
 			
@@ -664,6 +668,8 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
 		m_prevUpdate = m_playerUpdate;
 		m_playerUpdate = &Player::DamegeUpdate;
+
+		//10ダメージ受ける
 		m_hp -= 10;
 		m_isOnDamageFlag = true;
 
@@ -689,6 +695,8 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 				StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
 				m_prevUpdate = m_playerUpdate;
 				m_playerUpdate = &Player::DamegeUpdate;
+
+				//20ダメージ受ける
 				m_hp -= 20;
 				m_isOnDamageFlag = true;
 
@@ -703,11 +711,6 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	{
 		printf("ClearObject\n");
 		m_isClearFlag = true;
-	}
-	if (m_hp <= 0)
-	{
-		m_hp = 0;
-		m_color = 0xff0000;
 	}
 }
 
@@ -737,7 +740,10 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
 		m_prevUpdate = m_playerUpdate;
 		m_playerUpdate = &Player::DamegeUpdate;
+
+		//10ダメージ受ける
 		m_hp -= 10;
+
 		m_isOnDamageFlag = true;
 		m_damageFrame = kDamageFrameMax;
 		ChangeAnim(AnimNum::AnimationNumHit);
@@ -752,7 +758,10 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		StartJoypadVibration(DX_INPUT_PAD1, 300, 600);
 		m_prevUpdate = m_playerUpdate;
 		m_playerUpdate = &Player::DamegeUpdate;
+
+		//10ダメージ受ける
 		m_hp -= 10;
+
 		m_isOnDamageFlag = true;
 
 		m_isVisibleFlag = true;
@@ -777,6 +786,8 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	if (colider->GetTag() == ObjectTag::Coin)
 	{
 		printf("Coin\n");
+
+		//10ダメージ回復
 		m_hp += 10;
 		m_coinCount++;
 		if (m_hp > kPlayerHPMax)
@@ -806,24 +817,6 @@ void Player::OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 void Player::OnTriggerStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag)
 {
 	
-}
-
-Vec3 Player::GetCameraToPlayer() const
-{
-	return m_cameraToPlayer;
-}
-
-void Player::InitDush()
-{
-	ChangeAnim(AnimNum::AnimationNumRun, kDashMag);
-	m_playerUpdate = &Player::DashUpdate;
-}
-
-void Player::InitJump()
-{
-	ChangeAnim(AnimNum::AnimationNumJump);
-	m_isJumpFlag = true;
-	m_playerUpdate = &Player::JumpingUpdate;
 }
 
 void Player::Landing(int recast)
@@ -1048,11 +1041,6 @@ void Player::DashUpdate()
 
 	m_rigid->AddVelocity(ans * kDashMag);
 
-	/*if (m_playerUpdate != &Player::BoostUpdate && !m_footCol->OnHit())
-	{
-		m_playerUpdate = &Player::JumpingUpdate;
-	}*/
-
 	if (!m_footCol->OnHit())
 	{
 		m_postState = m_state;
@@ -1077,9 +1065,7 @@ void Player::JumpingUpdate()
 	{
 		m_postState = m_state;
 		ChangeAnim(AnimNum::AnimationNumSpin, 5.f);
-		/*if (m_spinCount >= 1)return;
-		m_isSpinFlag = true;
-		m_spinCount++;*/
+		
 		m_rigid->AddVelocity(m_frontVec * kJumpPower);
 		m_playerUpdate = &Player::JumpActionUpdate;
 	}
@@ -1109,9 +1095,7 @@ void Player::DashJumpUpdate()
 	{
 		m_postState = m_state;
 		ChangeAnim(AnimNum::AnimationNumSpin, 5.f);
-		/*if (m_spinCount >= 1)return;
-		m_isSpinFlag = true;
-		m_spinCount++;*/
+
 		m_rigid->AddVelocity(m_frontVec * kJumpPower);
 		m_playerUpdate = &Player::JumpActionUpdate;
 	}
@@ -1177,7 +1161,6 @@ void Player::NormalDropAttackUpdate()
 	//アニメーションがまだチャージ中の場合
 	if (isCharging)
 	{
-		m_angle += (DX_PI_F * 2) / 16;
 		m_rigid->SetVelocity(Vec3::Zero());
 	}
 
@@ -1205,14 +1188,10 @@ void Player::FullPowerDropAttackUpdate()
 		//チャージ量が上限に達していなかったら
 		if (m_fullPowerChargeCount < kFullPowerChargeTimeMax)m_fullPowerChargeCount += kFullPowerChargeSpeed;
 
-		
-
-		m_angle += kAngleRotateSpeed;
 		m_rigid->SetVelocity(Vec3::Zero());
 		if (now < 16)
 		{
 			MV1SetAttachAnimTime(m_modelHandle, m_currentAnimNo, 0);
-			m_angle += kAngleRotateSpeed;
 			m_rigid->SetVelocity(Vec3::Zero());
 		}
 	}
@@ -1307,7 +1286,6 @@ void Player::SpinActionUpdate()
 
 void Player::SpiningUpdate()
 {
-	m_radius = kNeutralSpinRadius;
 	m_stateName = "Spining";
 
 	m_state = State::Spin;
@@ -1317,7 +1295,7 @@ void Player::SpiningUpdate()
 
 	m_rigid->AddVelocity(move);
 
-	m_spinAngle += DX_PI_F / 15;
+	m_spinAngle += DX_PI_F;
 
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
@@ -1347,7 +1325,6 @@ void Player::RollingAttackUpdate()
 
 void Player::JumpingSpinUpdate()
 {
-	m_radius = kNeutralSpinRadius;
 	m_stateName = "JumpSpin";
 
 	m_state = State::Spin;
@@ -1358,10 +1335,7 @@ void Player::JumpingSpinUpdate()
 
 	m_rigid->SetVelocity(move);
 
-	m_spinAngle += DX_PI_F / 15;
-	m_angle += DX_PI_F / 15;
-	m_spinAngle += DX_PI_F / 15;
-	m_angle += DX_PI_F / 15;
+	m_spinAngle += DX_PI_F;
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		m_postState = m_state;
@@ -1464,7 +1438,7 @@ void Player::ShotTheStar()
 	{
 
 		PlaySoundMem(m_shotTheStarSEHandle, DX_PLAYTYPE_BACK);
-		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_leftHandFrameIndex);
 		m_coinCount--;
 		m_sphere.push_back(std::make_shared<PlayerSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
 		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
@@ -1477,7 +1451,7 @@ void Player::ShotTheStickStar()
 	if (m_sphere.size() == 0)
 	{
 		PlaySoundMem(m_shotStickStarSEHandle, DX_PLAYTYPE_BACK);
-		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_handFrameIndex);
+		Vec3 shotPos = MV1GetFramePosition(m_modelHandle, m_leftHandFrameIndex);
 		m_coinCount--;
 		m_sphere.push_back(std::make_shared<PlayerStickSphere>(Priority::Low, ObjectTag::PlayerBullet, shared_from_this(), shotPos, m_shotDir, m_sideVec, 1, 0xff0000));
 		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
@@ -1517,18 +1491,6 @@ void Player::DamegeUpdate()
 			m_playerUpdate = &Player::NeutralUpdate;
 			m_prevUpdate = m_playerUpdate;
 		}
-	}
-}
-void Player::AvoidUpdate()
-{
-	m_actionFrame++;
-
-	if (m_actionFrame > kAvoidFrame)
-	{
-		m_actionFrame = 0;
-		m_radius = kNeutralRadius;
-		ChangeAnim(AnimNum::AnimationNumIdle);
-		m_playerUpdate = &Player::NeutralUpdate;
 	}
 }
 

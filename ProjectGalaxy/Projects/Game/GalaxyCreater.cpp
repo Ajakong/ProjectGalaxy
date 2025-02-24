@@ -133,38 +133,6 @@ void GalaxyCreater::ObjectCreate(std::shared_ptr<Player> player)
 	m_createObjectSEHandle=SoundManager::GetInstance().GetSoundData(kObjectAppearSEHandle);
 }
 
-void GalaxyCreater::SeekerLineCreate()
-{
-	std::string fileName = m_galaxyName + "Data/Info/" + m_galaxyName + "SeekerLine.loc";
-	//開くファイルのハンドルを取得
-	int handle = FileRead_open(fileName.c_str());
-
-
-	//読み込むオブジェクト数が何個あるか取得
-	int dataCnt = 0;
-	FileRead_read(&dataCnt, sizeof(dataCnt), handle);
-	LocationSeekerLine info;
-	for (int i = 0; i < dataCnt; i++)
-	{
-		//名前のバイト数を取得する
-		byte nameCnt = 0;
-		FileRead_read(&nameCnt, sizeof(nameCnt), handle);
-		//名前のサイズを変更する
-		info.name.resize(nameCnt);
-		//名前を取得する
-		FileRead_read(info.name.data(), sizeof(char) * static_cast<int>(info.name.size()), handle);
-
-		Vec3 pos;
-		FileRead_read(&pos, sizeof(pos), handle);
-		info.points.push_back(pos);
-
-	}
-	auto seekerLine = std::make_shared<SeekerLine>(info.points, info.color);
-	MyEngine::Physics::GetInstance().Entry(seekerLine);
-	FileRead_close(handle);
-
-}
-
 void GalaxyCreater::PlanetCreate()
 {
 	m_planetData.clear();
