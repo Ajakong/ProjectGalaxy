@@ -441,7 +441,7 @@ void Player::SetMatrix()
 
 void Player::Draw()
 {
-	//2と3の公倍数だけ描画してチカチカさせる
+	//無敵状態の間は2と3の公倍数だけ描画してチカチカさせる
 	if (m_visibleCount % 3 == 0 || m_visibleCount % 2 == 0)
 	{
 		MV1DrawModel(m_modelHandle);
