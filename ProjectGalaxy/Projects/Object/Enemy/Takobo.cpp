@@ -72,6 +72,8 @@ m_hp(kHp),
 m_attackCoolDownCount(0),
 m_centerToEnemyAngle(0)
 {
+	m_power = 10;
+
 	m_target=target;
 	SetCreate3DSoundFlag(true);
 	m_shotSEHandle = SoundManager::GetInstance().GetSoundData(kShotSEhandlePath);

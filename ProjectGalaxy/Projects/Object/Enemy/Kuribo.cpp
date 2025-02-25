@@ -50,6 +50,8 @@ m_chaseFrameCount(0),
 m_stanCount(0),
 m_speed(1.f)
 {
+	m_power = 10;
+
 	m_hp = 10;
 	m_comebackPoint = pos;
 	m_rigid->SetPos(pos);

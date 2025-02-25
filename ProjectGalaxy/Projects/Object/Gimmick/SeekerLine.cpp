@@ -134,6 +134,7 @@ void SeekerLine::Update()
 
 void SeekerLine::Draw()
 {
+
 	auto camerapos = GetCameraPosition();
 	auto cameraTarget = GetCameraTarget();
 	auto cameraUpVec = GetCameraUpVector();
@@ -146,6 +147,7 @@ void SeekerLine::Draw()
 	SetDrawScreen(m_gaussFilterScreen);
 	// 画面をクリア
 	ClearDrawScreen();
+
 	SetCameraPositionAndTargetAndUpVec(camerapos, cameraTarget, cameraUpVec);
 	for (int i = 0; i < m_points.size(); i++)
 	{
@@ -162,13 +164,8 @@ void SeekerLine::Draw()
 
 	SetCameraPositionAndTargetAndUpVec(camerapos, cameraTarget, cameraUpVec);
 	SetCameraNearFar(cameraNear, cameraFar);
+
 	DrawGraph(0, 0, m_highBrightScreen, false);
-	/*for (int i = 0; i < m_points.size(); i++)
-	{
-		if (i <= 0)continue;
-		DrawLine3D((m_points.begin() + i - 1)->VGet(), (m_points.begin() + i)->VGet(), m_color);
-		if ((m_points.begin() + i) == m_points.end())return;
-	}*/
 }
 
 void SeekerLine::OnTriggerEnter(std::shared_ptr<Collidable> colider,ColideTag ownTag,ColideTag targetTag)

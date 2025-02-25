@@ -12,16 +12,20 @@ using namespace MyEngine;
 
 namespace
 {
+
+	constexpr float kFirstPosY = 20.f;
+
 	const char* kPlayerFileName = "SpaceHarrier.mv1";
+
+
 }
 
 GameManager::GameManager() : 
 	m_updateStopFrame(0),
-	m_player(std::make_shared<Player>(Vec3(0,20,0)))
+	m_player(std::make_shared<Player>(Vec3(0.f, kFirstPosY,0.f)))
 {
 	//ステージの追加
 	m_galaxy.push_back(std::make_shared<SerialPlanetGalaxy>(m_player));
-	
 }
 
 GameManager::~GameManager()
@@ -68,8 +72,6 @@ void GameManager::Update()
 	{
 		//クリアにする
 		m_isClearFlag = true;
-		
-		//galaxy.push_back();/*ここでステージ選択のフィールドを入れなおす*/
 	}
 
 

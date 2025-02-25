@@ -216,6 +216,13 @@ public:
 	/// <returns>ダメージ中のフレーム</returns>
 	int GetDamageFrame() const { return m_damageFrame; }
 
+	/// <summary>
+	/// ノックバックさせてダメージを受け、無敵状態にする
+	/// </summary>
+	/// <param name="knockBackVec">ノックバックのベクトル</param>
+	/// <param name="damage">ダメージ量</param>
+	void OnDamege(Vec3 knockBackVec, float damage);
+
 	virtual void OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 	virtual void OnCollideStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 
@@ -224,12 +231,13 @@ public:
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_postUpdate;
+
+	//プレイヤーの状態
 	playerState_t m_playerUpdate;
-
+	//前のプレイヤーの状態
 	playerState_t m_prevUpdate;
+
 	playerState_t m_cameraUpdate;
-
-
 	// 弾の種類によって中身を入れ替える
 	playerState_t m_shotUpdate;
 
@@ -242,18 +250,30 @@ public:
 	// スピンの更新処理
 	playerState_t m_spinAttackUpdate;
 
-	// ジャンプさせる
+	/// <summary>
+	/// ジャンプさせる
+	/// </summary>
 	void CommandJump();
 
-	// 惑星移動中の処理
+	/// <summary>
+	/// 惑星移動中の処理
+	/// </summary>
 	void BoostUpdate();
 
-	// 操作される更新処理
+	/// <summary>
+	/// 操作される更新処理
+	/// </summary>
 	void OperationUpdate();
 
 
 	//TitlePlayerからポインタを通してアクセスするためPublic(ポインタを通す場合継承していてもProtectedでは扱えない)
+	/// <summary>
+	/// 弾を発射
+	/// </summary>
 	void ShotTheStar();
+	/// <summary>
+	/// グラッピング弾を発射
+	/// </summary>
 	void ShotTheStickStar();
 
 	/// <summary>
@@ -263,15 +283,25 @@ public:
 protected:
 
 	//アニメーションの進行
-	//ループしたかどうかを返す
+	/// <summary>
+	/// ループしたかどうかを返す
+	/// </summary>
+	/// <param name="attachNo">現在アタッチしているアニメーション番号</param>
+	/// <returns>ループしたかどうか</returns>
 	bool UpdateAnim(int attachNo);
-	//アニメーションの変更
+
+	/// <summary>
+	/// アニメーションの変更
+	/// </summary>
+	/// <param name="animIndex">アニメーションのインデックス</param>
+	/// <param name="speed">アニメーション再生速度</param>
 	void ChangeAnim(int animIndex, float speed = 1.f);
 
 	/// <summary>
 	/// コントローラーの入力に合わせた射撃方向の設定
 	/// </summary>
 	void SetShotDir();
+
 	/// <summary>
 	/// 弾の削除処理
 	/// </summary>

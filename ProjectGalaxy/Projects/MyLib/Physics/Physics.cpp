@@ -232,7 +232,6 @@ void MyEngine::Physics::Initialize(std::shared_ptr<Collidable> collidable)
 					auto planet = dynamic_cast<Planet*>(stage.get());
 					collidable->m_rigid->AddVelocity(planet->GravityEffect(collidable));
 					collidable->m_rigid->SetNextPos(collidable->m_rigid->GetPos() + collidable->m_rigid->GetVelocity());
-					collidable->gravityEffectCount++;
 					continue;
 				}
 			}
@@ -350,7 +349,6 @@ void MyEngine::Physics::UpdatePlanetPhysics()
 						auto planet = dynamic_cast<Planet*>(stage.get());
 						object->m_rigid->AddVelocity(planet->GravityEffect(object));
 						object->m_rigid->SetNextPos(object->m_rigid->GetPos() + object->m_rigid->GetVelocity());
-						object->gravityEffectCount++;
 						continue;
 					}
 					else
@@ -511,8 +509,6 @@ std::vector<std::shared_ptr<Collidable>> Physics::GetCollisionList() const
 		{
 			auto& obj1 = m_collidables[i];
 			auto& obj2 = m_collidables[j];
-			obj1->gravityEffectCount = 0;
-			obj2->gravityEffectCount = 0;
 			// 移動しないオブジェクト同士なら判定しない
 			if (obj1->GetPriority() == Collidable::Priority::Static && obj2->GetPriority() == Collidable::Priority::Static) continue;
 

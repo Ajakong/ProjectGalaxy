@@ -71,6 +71,7 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	m_isBattle(false),
 	m_onColStage(false)
 {
+	m_power = 20.f;
 	m_player = player;
 	m_hp = kHPFull;
 	m_rigid->SetPos(pos);

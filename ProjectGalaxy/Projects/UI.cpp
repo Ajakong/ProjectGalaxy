@@ -44,6 +44,8 @@ namespace
 
 	const UI::UIinfo kAimGraph{ 3140 ,200,400,370 };
 
+	constexpr int kDangerousHPNum = 20;
+
 	constexpr float kHpDecreaseSpeed = 0.3f;
 
 
@@ -65,25 +67,42 @@ namespace
 	constexpr int kTextBoxFrameUp = 90;
 	constexpr int kTextBoxFrameDown = 440;
 	constexpr int kTextBoxFadeSpeedX = 9;
+
+	constexpr int kNeutralHPGaugeColor = 0x0044ff;
+	constexpr int kDangerousHPGaugeColor = 0xff0000;
 }
 
 UI::UI():
-	m_fadeSpeed(1),
-	m_appearFrame(0),
-	m_changeFrame(0),
-	m_uiUpdate(&UI::NormalUpdate),
-	m_uiDraw(&UI::NormalDraw),
+	//画像ハンドルの初期化
+	m_uiStarHandle(-1),
 	m_uiAssetHandle(-1),
 	m_uiInputAHandle(-1),
 	m_uiAimGraphHandle(-1),
-	m_uiTakasakiTaisaHandle(-1),
-	m_uiTalkingCharaHandle(-1),
 	m_uiPushLushInputAButtonHandle(-1),
 	m_uiPushLushInputAButton2Handle(-1),
+
+	//キャラクターの画像ハンドルの初期化
+	m_uiDekahead_RedHandle(-1),
+	m_uiDekahead_BlueHandle(-1),
+	m_uiDekahead_GreenHandle(-1),
+	m_uiDekahead_WhiteHandle(-1),
+	m_uiDekahead_YellowHandle(-1),
+	m_uiTalkingCharaHandle(-1),
+	m_uiTakasakiTaisaHandle(-1),
+	m_uiBossHandle(-1),
+
+	//SEハンドルの初期化
 	m_textBoxSEHandle(-1),
-	m_chatAppearSEHandle(-1),
 	m_hpLowerSEHandle(-1),
-	m_uiStarHandle(-1),
+	m_chatAppearSEHandle(-1),
+
+	m_fadeSpeed(1),
+	m_appearFrame(0),
+	m_changeFrame(0),
+	m_uiDraw(&UI::NormalDraw),
+	m_uiUpdate(&UI::NormalUpdate),
+
+	m_HPColor(0),
 	m_playerHp(0)
 {
 	
@@ -101,46 +120,48 @@ UI& UI::GetInstance()
 
 void UI::Init()
 {
+	//キャラクターの画像ハンドル
 	m_uiAssetHandle = GraphManager::GetInstance().GetGraphData(kGraphUIAssetName);
 	m_uiInputAHandle = GraphManager::GetInstance().GetGraphData(kInputAUIName);
 	m_uiPushLushInputAButtonHandle = GraphManager::GetInstance().GetGraphData(kPushLushInputAUIName);
 	m_uiPushLushInputAButton2Handle = GraphManager::GetInstance().GetGraphData(kPushLushInputAUI2Name);
 	m_uiStarHandle = GraphManager::GetInstance().GetGraphData("star.png");
 
-
 	m_uiTakasakiTaisaHandle = GraphManager::GetInstance().GetGraphData(kTakasakiTaisaGraphName);
 	
 	m_uiDekahead_RedHandle = GraphManager::GetInstance().GetGraphData(kDekahead_RedGraphName);
 	m_uiDekahead_GreenHandle = GraphManager::GetInstance().GetGraphData(kDekahead_GreenGraphName);
-	m_uiDekahead_YellowHandle = GraphManager::GetInstance().GetGraphData(kDekahead_YellowGraphName);
 	m_uiDekahead_BlueHandle = GraphManager::GetInstance().GetGraphData(kDekahead_BlueGraphName);
 	m_uiDekahead_WhiteHandle = GraphManager::GetInstance().GetGraphData(kDekahead_WhiteGraphName);
+	m_uiDekahead_YellowHandle = GraphManager::GetInstance().GetGraphData(kDekahead_YellowGraphName);
 
 	m_uiBossHandle = GraphManager::GetInstance().GetGraphData(kBossGraphName);
 
-
+	//UIのデフォルト画像ハンドル
+	m_hpLowerSEHandle = SoundManager::GetInstance().GetSoundData(kHPLowerSEName);
 	m_uiAimGraphHandle = GraphManager::GetInstance().GetGraphData(kAimGraphName);
 	m_textBoxSEHandle = SoundManager::GetInstance().GetSoundData(kTextBoxIntroSEName);
 	m_chatAppearSEHandle = SoundManager::GetInstance().GetSoundData(kChatAppearSEName);
-	m_hpLowerSEHandle = SoundManager::GetInstance().GetSoundData(kHPLowerSEName);
+	
+
 	m_textManager = std::make_shared<TextManager>();
 	NormalMode();
 	m_appearFrame = 0;
 	m_fadeSpeed = 1;
 	m_changeFrame = 0;
-	m_HPColor = 0x00044ff;
+	m_HPColor = kNeutralHPGaugeColor;
 }
 
 void UI::Update()
 {
-	if (m_HPColor == 0x00044ff && m_playerHp <= 20&&m_playerHp!=0)
+	if (m_HPColor == kNeutralHPGaugeColor && m_playerHp <= kDangerousHPNum &&m_playerHp!=0)
 	{
 		PlaySoundMem(m_hpLowerSEHandle, DX_PLAYTYPE_BACK);
-		m_HPColor = 0xff0000;
+		m_HPColor = kDangerousHPGaugeColor;
 	}
-	else if (m_HPColor == 0xff0000 && m_playerHp > 20)
+	else if (m_HPColor == kDangerousHPGaugeColor && m_playerHp > kDangerousHPNum)
 	{
-		m_HPColor = 0x00044ff;
+		m_HPColor = kNeutralHPGaugeColor;
 	}
 	(this->*m_uiUpdate)();
 	m_changeFrame++;
@@ -158,7 +179,7 @@ void UI::NormalUpdate()
 	//テキストデータがぶち込まれていたら表示する
 	if (m_textManager->GetTextDataSize() != 0)
 	{
-		
+		//テキスト表示モードに移行
 		TextMode();
 	}
 	
@@ -216,6 +237,7 @@ void UI::InputAUpdate()
 {
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
+		//パッドをテキスト入力モードに移行
 		Pad::SetState("TextInput");
 		m_textManager->SetTexts(m_nowTalkObject->GetTexts());
 		m_uiUpdate = &UI::FadeOutUpdate;
@@ -226,19 +248,23 @@ void UI::InputAUpdate()
 void UI::TextMode()
 {
 	PlaySoundMem(m_textBoxSEHandle,DX_PLAYTYPE_BACK);
-	m_fadeSpeed = kTextBoxFadeFrameSpeed;
+	PlaySoundMem(m_textBoxSEHandle,DX_PLAYTYPE_BACK);
+
+	//パッドをテキスト入力モードに移行
 	Pad::SetState("TextInput");
 	m_uiUpdate = &UI::AppaerUpdate;
 	m_uiDraw = &UI::TextBoxFadeDraw;
+	m_fadeSpeed = kTextBoxFadeFrameSpeed;
 }
 
 void UI::InputAMode()
 {
 	PlaySoundMem(m_chatAppearSEHandle, DX_PLAYTYPE_BACK);
-	m_fadeSpeed = kInputAFadeFrameSpeed;
-	
+
+	//Aボタンで話しかけるUI表示モード
 	m_uiUpdate = &UI::AppaerUpdate;
 	m_uiDraw = &UI::InputAFadeDraw;
+	m_fadeSpeed = kInputAFadeFrameSpeed;
 }
 
 

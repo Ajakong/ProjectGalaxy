@@ -20,13 +20,17 @@
 TitlePlayer::TitlePlayer() : Player(),
 m_titleUpdateNum(0)
 {
+	//アイドル状態に設定
 	ChangeAnim(AnimNum::AnimationNumIdle);
 	m_titlePlayerUpdate = &TitlePlayer::IdleUpdate;
+
+	//グラッピング弾に設定
 	m_shotUpdate = &Player::ShotTheStickStar;
 }
 
 TitlePlayer::~TitlePlayer()
 {
+
 	for (auto& item : m_sphere)
 	{
 		MyEngine::Physics::GetInstance().Exit(item);
@@ -36,6 +40,7 @@ TitlePlayer::~TitlePlayer()
 
 bool TitlePlayer::MoveToTargetPosWithSticker(Vec3 targetPos)
 {
+	//弾を撃っていないとき
 	if (m_sphere.size() != 0)if (!m_sphere.back()->GetStickFlag())return false;
 	m_shotDir = (targetPos - m_rigid->GetPos()).GetNormalized();
 	(this->*m_shotUpdate)();
@@ -68,10 +73,6 @@ void TitlePlayer::Update()
 	MATRIX shotDirMat = MGetRotVec2(m_postShotVec.VGet(), m_shotDir.VGet());
 	m_postShotVec = m_shotDir.VGet();
 
-	/*for (auto& item : m_sphere)
-	{
-		item->Update();
-	}*/
 	DeleteManage();
 
 
