@@ -47,6 +47,7 @@ Camera::Camera(Vec3 pos):
 	SetupCamera_Perspective(kCameraFOV * (static_cast<float>(DX_PI_F) / 180.0f));
 
 	m_pos = pos;
+	m_centerPosition = pos;
 	m_playerToCameraVec = { 0.f,100.f,-200.f };
 	m_postLookPointPos = { 0,0,0 };
 	m_fowardVec = { 0.f,0.f,0.1f };
@@ -94,14 +95,13 @@ void Camera::Update(Vec3 LookPoint)
 
 void Camera::SetCamera(Vec3 LookPoint)
 {
-
 	m_lookPoint = LookPoint;
 
 	Vec3 velocity;
 	velocity.x = (m_cameraPoint.x - m_pos.x) / m_easingSpeed;
 	velocity.y = (m_cameraPoint.y - m_pos.y) / m_easingSpeed;
 	velocity.z = (m_cameraPoint.z - m_pos.z) / m_easingSpeed;
-	m_centerPosition += velocity;//イージング
+	m_pos += velocity;//イージング
 
 	m_playerCameraPoint = m_pos;
 
@@ -109,12 +109,10 @@ void Camera::SetCamera(Vec3 LookPoint)
 	int directX = 0, directY = 0;
 	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
 
-	////プレイヤーの上方向を回転軸にして左スティックのX方向入力の強度に応じて回転
-	//m_myQ.SetQuaternion(m_pos);
-	//m_myQ.SetMove(static_cast<float>(directX) / kCameraRotationSpeed, m_upVec);
-	//m_pos = m_myQ.Move(m_pos, Vec3::Zero());
+	//プレイヤーの上方向を回転軸にして左スティックのX方向入力の強度に応じて回転
+	m_myQ.SetMove(static_cast<float>(directX) / kCameraRotationSpeed, m_upVec);
+	m_pos = m_myQ.Move(m_pos, LookPoint);
 
-	
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());
 	m_postLookPointPos = m_lookPoint;
 }
