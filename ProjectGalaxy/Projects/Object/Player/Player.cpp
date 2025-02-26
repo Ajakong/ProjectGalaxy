@@ -232,7 +232,7 @@ m_currentOxygen(0)
 	//メンバ関数の初期設定
 	m_shotUpdate = &Player::ShotTheStickStar;
 	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
-	m_dropAttackUpdate = &Player::DropAttackUpdate;
+	m_dropAttackUpdate = &Player::NormalDropAttackUpdate;
 	m_spinAttackUpdate = &Player::SpiningUpdate;
 
 	//カメラの追ってきてほしい速度の初期設定
@@ -1393,7 +1393,7 @@ void Player::SpiningUpdate()
 	m_rigid->AddVelocity(move);
 
 	//回転させる
-	m_spinAngle += DX_PI_F;
+	m_spinAngle += DX_PI_F / 15;
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		//アイドル状態に移行
@@ -1441,7 +1441,7 @@ void Player::JumpingSpinUpdate()
 	m_rigid->SetVelocity(move);
 
 	//回転させる
-	m_spinAngle += DX_PI_F;
+	m_spinAngle += DX_PI_F / 15;
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		//ジャンプ状態に移行

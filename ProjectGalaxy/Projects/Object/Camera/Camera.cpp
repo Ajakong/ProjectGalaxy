@@ -21,7 +21,7 @@ namespace
 	constexpr float kOneRapAngle = 360.f;
 	constexpr float kWatchThisTime = 200.f;
 
-	constexpr float kCameraRotationSpeed = 10000.f;
+	constexpr float kCameraRotationSpeed = 20000.f;//速:小～大:遅
 }
 
 Camera::Camera(Vec3 pos):
@@ -110,8 +110,8 @@ void Camera::SetCamera(Vec3 LookPoint)
 	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
 
 	//プレイヤーの上方向を回転軸にして左スティックのX方向入力の強度に応じて回転
-	m_myQ.SetMove(static_cast<float>(directX) / kCameraRotationSpeed, m_upVec);
-	m_pos = m_myQ.Move(m_pos, LookPoint);
+	m_myQ=m_myQ.CreateRotationQuaternion(static_cast<float>(directX) / kCameraRotationSpeed, m_upVec);
+	m_pos = m_myQ.Move(m_pos-LookPoint, LookPoint);
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());
 	m_postLookPointPos = m_lookPoint;
