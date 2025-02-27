@@ -108,9 +108,9 @@ void Camera::SetCamera(Vec3 LookPoint)
 	// 入力された左スティック方向
 	int directX = 0, directY = 0;
 	GetJoypadAnalogInputRight(&directX, &directY, DX_INPUT_PAD1);
-
 	//プレイヤーの上方向を回転軸にして左スティックのX方向入力の強度に応じて回転
 	m_myQ=m_myQ.CreateRotationQuaternion(static_cast<float>(directX) / kCameraRotationSpeed, m_upVec);
+	//ローカル座標系(原点中心)で回転させたのちに平行移動
 	m_pos = m_myQ.Move(m_pos-LookPoint, LookPoint);
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(), Vec3(m_lookPoint + m_upVec).VGet(), m_upVec.VGet());

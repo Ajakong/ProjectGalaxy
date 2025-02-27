@@ -117,12 +117,17 @@ void Physics::Update()
 	std::reverse_iterator<std::vector<int>::iterator> rit;
 	for (auto& item : std::vector<std::shared_ptr<MyEngine::Collidable>>(m_collidables.rbegin(), m_collidables.rend()))//途中で要素を削除してもいいように逆順
 	{
+		//次の上方向ベクトルを設定(このオブジェクトに影響している全重力の合計の反対方向になってるので方向だけにする)
 		item->SetNextUpVec(item->GetNextUpVec().GetNormalized());
+
+		//補完しながら現在の上方向ベクトルを設定
 		item->SetUpVec(Slerp(item->GetUpVec(), item->GetNextUpVec(), 0.1f));
+		
+		//右方向ベクトルを設定
+		item->SetSideVec(Cross(item->GetFrontVec(), item->GetUpVec()));
 		if (!item->GetIsActive())continue;
 		item->Update();
 	}
-
 
 	// 通知リストのクリア・更新
 	m_onCollideInfo.clear();
@@ -167,8 +172,17 @@ void MyEngine::Physics::Draw()
 	for (const auto& obj : m_collidables)
 	{
 		if (!obj->GetIsActive())continue;
+		
 		obj->Draw();
+
+		Vec3 objPos = obj->GetRigidbody()->GetPos();
+
+		DrawLine3D(objPos.VGet(), (objPos + obj->GetUpVec() * 6).VGet(),0xff0000);
+		DrawLine3D(objPos.VGet(), (objPos + obj->GetFrontVec() * 6).VGet(), 0x00ff00);
+		DrawLine3D(objPos.VGet(), (objPos + obj->GetSideVec() * 6).VGet(), 0x0000ff);
+
 	}
+
 
 
 	m_shadowHandles.clear();

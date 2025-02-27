@@ -1393,7 +1393,7 @@ void Player::SpiningUpdate()
 	m_rigid->AddVelocity(move);
 
 	//回転させる
-	m_spinAngle += DX_PI_F / 15;
+	m_spinAngle += kAngleRotateSpeed;
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		//アイドル状態に移行
@@ -1441,7 +1441,7 @@ void Player::JumpingSpinUpdate()
 	m_rigid->SetVelocity(move);
 
 	//回転させる
-	m_spinAngle += DX_PI_F / 15;
+	m_spinAngle += kAngleRotateSpeed*5;
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		//ジャンプ状態に移行
