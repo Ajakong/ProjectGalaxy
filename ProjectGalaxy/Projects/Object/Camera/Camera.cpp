@@ -25,18 +25,17 @@ namespace
 }
 
 Camera::Camera(Vec3 pos):
+	//カメラのパラメータの初期化
 	m_cameraAngle(0),
 	m_pitchAngle(0),
-	
 	m_watchCount(0),
-	m_isFirstPerson(0),
-
 	m_easingSpeed(-1),
 	m_postEasingSpeed(0),
-	
+	//フラグの初期化
 	m_isAim(false),
 	m_isBoost(false),
-	
+	m_isFirstPerson(false),
+
 	m_upVec(Vec3(0, 1, 0))
 {
 	
@@ -73,7 +72,7 @@ void Camera::Update(Vec3 LookPoint)
 		}
 	}
 	
-	//ぷれいやーが惑星移動中
+	//プレイヤーが惑星移動中
 	if (m_isBoost)
 	{
 		// FOV(視野角)を60度に
@@ -125,16 +124,12 @@ void Camera::Set()
 void Camera::SetAimCamera(Vec3 LookPoint)
 {
 	m_lookPoint = LookPoint;
-	/*SetLightPositionHandle(m_lightHandle, Vec3(LookPoint + m_upVec * 12).VGet());
-	SetLightDirectionHandle(m_lightHandle, (m_upVec * -1).VGet());*/
 
 	m_pos = m_cameraPoint;
 
 	m_playerCameraPoint = m_pos;
-	//DrawSphere3D(m_pos.VGet(), 20, 8, 0xffffff, 0xffffff, true);
 
 	SetCameraPositionAndTargetAndUpVec(m_pos.VGet(),Vec3(m_pos+LookPoint).VGet(), m_upVec.VGet());
-	//SetCameraPositionAndTargetAndUpVec(VGet(0,400,-500), VGet(0,0,0), m_upVec.VGet());
 
 	m_postLookPointPos = m_lookPoint+m_pos;
 }

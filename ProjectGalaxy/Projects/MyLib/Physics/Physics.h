@@ -90,8 +90,6 @@ namespace MyEngine
 		/// <param name="col">初期情報が必用なオブジェクト</param>
 		void Initialize(std::shared_ptr<Collidable> col);
 
-
-
 		void Update();
 
 		void Draw();

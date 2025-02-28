@@ -248,7 +248,9 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		}
 		else
 		{
-			m_camera->SetCameraPoint(player->GetPos() + player->GetUpVec()* kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag()));
+			m_camera->SetCameraPoint(
+				player->GetPos() + player->GetUpVec()* kCameraDistanceUp - front * (kCameraDistanceFront + kCameraDistanceAddFrontInJump * player->GetJumpFlag())
+			);
 		}
 	}
 
@@ -271,7 +273,10 @@ void SerialPlanetGalaxy::GamePlayingUpdate()
 		{
 			m_camera->Update(m_boss->GetRigidbody()->GetPos());
 		}
-		else m_camera->Update(player->GetLookPoint());
+		else
+		{
+			m_camera->Update(player->GetLookPoint());
+		}
 	}
 	
 	userData->dissolveY = player->GetRegenerationRange();//シェーダー用プロパティ

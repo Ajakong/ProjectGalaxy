@@ -145,16 +145,21 @@ void Physics::Update()
 			col->col->SetOnHitResult(false);
 		}
 	}
+
 	//次の位置を決定した後ではないと補正されて衝突していなくなる
 	UpdatePlanetPhysics();
 	Friction();
+
 	// 判定確認
 	CheckCollide();
+
 	// 通知リストを確認
 	CheckSendOnCollideInfo(m_preCollideInfo, m_newCollideInfo, false);
 	CheckSendOnCollideInfo(m_preTirrigerInfo, m_newTirrigerInfo, true);
+
 	// 座標を決定
 	FixPos();
+
 	// 通知を送る
 	for (const auto& item : m_onCollideInfo)
 	{
@@ -175,15 +180,15 @@ void MyEngine::Physics::Draw()
 		
 		obj->Draw();
 
+#ifdef _DEBUG
 		Vec3 objPos = obj->GetRigidbody()->GetPos();
 
 		DrawLine3D(objPos.VGet(), (objPos + obj->GetUpVec() * 6).VGet(),0xff0000);
 		DrawLine3D(objPos.VGet(), (objPos + obj->GetFrontVec() * 6).VGet(), 0x00ff00);
 		DrawLine3D(objPos.VGet(), (objPos + obj->GetSideVec() * 6).VGet(), 0x0000ff);
+#endif
 
 	}
-
-
 
 	m_shadowHandles.clear();
 	ModelManager::GetInstance().ClearShadowModel();

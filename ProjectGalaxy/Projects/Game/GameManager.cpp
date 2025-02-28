@@ -25,7 +25,7 @@ GameManager::GameManager() :
 	m_player(std::make_shared<Player>(Vec3(0.f, kFirstPosY,0.f)))
 {
 	//ステージの追加
-	m_galaxy.push_back(std::make_shared<DebugGalaxy>(m_player));
+	m_galaxy.push_back(std::make_shared<SerialPlanetGalaxy>(m_player));
 }
 
 GameManager::~GameManager()
@@ -94,5 +94,5 @@ void GameManager::Draw()
 	int coinNum = m_player->GetStarNum();
 	bool aim = m_player->GetIsAiming();
 	bool becameDeath = m_player->GetState() == MyEngine::Collidable::State::Death;
-	//UI::GetInstance().Draw(hp, coinNum, aim,becameDeath);
+	UI::GetInstance().Draw(hp, coinNum, aim,becameDeath);
 }
