@@ -45,7 +45,7 @@ bool TitlePlayer::MoveToTargetPosWithSticker(Vec3 targetPos)
 	m_shotDir = (targetPos - m_rigid->GetPos()).GetNormalized();
 	(this->*m_shotUpdate)();
 
-	if (m_isOperationFlag)
+	if (m_isOperation)
 	{
 		return true;
 	}
@@ -64,7 +64,7 @@ void TitlePlayer::SetShot()
 void TitlePlayer::Update()
 {
 	m_upVec = Slerp(m_upVec, m_nextUpVec, 0.1f);
-	m_isSearchFlag = false;
+	m_isSearch = false;
 
 	(this->*m_titlePlayerUpdate)();
 
@@ -127,7 +127,7 @@ void TitlePlayer::MoveToTargetWithStickStar(Vec3 targetPos)
 			MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 			m_sphere.back()->Init();
 
-			m_playerUpdate = &Player::NeutralUpdate;
+			Player::SetNeutralUpdate();
 		}
 		else
 		{
@@ -155,7 +155,7 @@ void TitlePlayer::MoveToTargetWithStickStar(Vec3 targetPos)
 			MV1SetScale(m_modelHandle, VGet(0.01f, 0.01f, 0.01f));
 			m_moveDir = Cross(GetCameraRightVector(), m_upVec);
 			ChangeAnim(AnimNum::AnimationNumIdle);
-			m_playerUpdate = &Player::NeutralUpdate;
+			Player::SetNeutralUpdate();
 		}
 		else
 		{

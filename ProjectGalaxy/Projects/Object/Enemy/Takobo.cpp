@@ -310,7 +310,7 @@ void Takobo::ChangeAnim(int animIndex, int speed)
 
 void Takobo::IdleUpdate()
 {
-	if (ToVec(m_rigid->GetPos(), m_target->GetRigidbody()->GetPos()).Length() > kFiringRange) return;
+	if ((m_rigid->GetPos()- m_target->GetRigidbody()->GetPos()).Length() > kFiringRange) return;
 	//攻撃インターバルの更新
 	m_attackCoolDownCount++;
 
@@ -349,7 +349,7 @@ void Takobo::DeathUpdate()
 	m_dropItem = std::make_shared<Coin>(m_rigid->GetPos(), true);
 	Physics::GetInstance().Entry(m_dropItem);
 
-	m_isDestroyFlag = true;
+	m_isDestroy = true;
 }
 
 void Takobo::AttackSphereUpdate()
@@ -369,7 +369,7 @@ void Takobo::AttackSphereUpdate()
 			Vec3 headPos = MV1GetFramePosition(m_modelHandle, m_modelHeadIndex);
 			//着弾地点の設定
 			m_strikePoint = m_target->GetRigidbody()->GetPos();
-			Vec3 toVec = ToVec(m_rigid->GetPos(), m_strikePoint);
+			Vec3 toVec = m_rigid->GetPos()- m_strikePoint;
 			//攻撃方向の確定
 			m_attackDir = toVec.GetNormalized();
 			m_shotUpVec = m_target->GetUpVec();
@@ -393,8 +393,8 @@ void Takobo::AttackSphereUpdate()
 
 Vec3 Takobo::GetAttackDir() const
 {
-	Vec3 toVec = ToVec(m_rigid->GetPos(), m_target->GetRigidbody()->GetPos());
-	Vec3 vec = norm(ToVec(m_rigid->GetPos(), m_target->GetRigidbody()->GetPos()));
+	Vec3 toVec = m_rigid->GetPos()- m_target->GetRigidbody()->GetPos();
+	Vec3 vec = (m_rigid->GetPos()- m_target->GetRigidbody()->GetPos()).GetNormalized();
 	vec = VGet(vec.x * abs(toVec.x), vec.y * abs(toVec.y), vec.z * abs(toVec.z));
 	return vec;
 }

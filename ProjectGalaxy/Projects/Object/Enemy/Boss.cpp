@@ -142,7 +142,7 @@ void Boss::Update()
 		SoundManager::GetInstance().ChangeBGM(SoundManager::GetInstance().GetSoundData(kSuperMatrialBGMName));
 		m_dropItem = std::make_shared<ClearObject>(m_rigid->GetPos(), true);
 		Physics::GetInstance().Entry(m_dropItem);
-		m_isDestroyFlag = true;
+		m_isDestroy = true;
 		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
 		std::list<std::string> text1;
 		text1.push_back("ばかなぁこのおれが。。。");

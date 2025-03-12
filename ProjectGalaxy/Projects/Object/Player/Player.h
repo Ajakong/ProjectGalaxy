@@ -79,6 +79,15 @@ public:
 	void SetIsOperation(bool flag);
 
 	/// <summary>
+	/// 状態関数にニュートラルを設定する
+	/// </summary>
+	void SetNeutralUpdate() { m_playerUpdate = &Player::NeutralUpdate; }
+	/// <summary>
+	/// 状態関数にブーストを設定する
+	/// </summary>
+	void SetBoostUpdate() { m_playerUpdate = &Player::BoostUpdate; }
+
+	/// <summary>
 	/// 着地
 	/// </summary>
 	/// <param name="recast">着地の隙(デフォルト15フレーム)</param>
@@ -172,7 +181,7 @@ public:
 	/// プレイヤーがエイム中か
 	/// </summary>
 	/// <returns>プレイヤーがエイム中かフラグ</returns>
-	bool GetIsAiming() const { return m_isAimFlag; }
+	bool GetIsAiming() const { return m_isAiming; }
 
 	/// <summary>
 	/// (デバッグにしか使われていない)プレイヤーが何かに着地しているか
@@ -184,25 +193,25 @@ public:
 	/// (デバッグにしか使われてない)プレイヤーがデバッグ情報表示状態か
 	/// </summary>
 	/// <returns>プレイヤーがデバッグ情報表示状態かフラグ</returns>
-	bool IsSearch() { return m_isSearchFlag; }
+	bool IsSearch() { return m_isSearch; }
 
 	/// <summary>
 	/// プレイヤーがクリア条件を満たしたか
 	/// </summary>
 	/// <returns>クリア条件を満たしたかフラグ</returns>
-	bool IsClear() const { return m_isClearFlag; }
+	bool IsClear() const { return m_isClear; }
 
 	/// <summary>
 	/// プレイヤーがジャンプ中か
 	/// </summary>
 	/// <returns>プレイヤーがジャンプ中かフラグ</returns>
-	bool GetJumpFlag() const { return m_isJumpFlag; }
+	bool GetJumpFlag() const { return m_isJump; }
 
 	/// <summary>
 	/// プレイヤーが死亡したか
 	/// </summary>
 	/// <returns>プレイヤーが死亡したかフラグ</returns>
-	bool GetDeathFlag() const { return m_isDeathFlag; }
+	bool GetDeathFlag() const { return m_isDead; }
 
 	/// <summary>
 	/// プレイヤーが持っているスターコインの数
@@ -228,27 +237,6 @@ public:
 
 	virtual void OnTriggerEnter(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
 	virtual void OnTriggerStay(std::shared_ptr<Collidable> colider, ColideTag ownTag, ColideTag targetTag);
-	//メンバ関数ポインタ
-	using playerState_t = void(Player::*)();
-	playerState_t m_postUpdate;
-
-	//プレイヤーの状態
-	playerState_t m_playerUpdate;
-	//前のプレイヤーの状態
-	playerState_t m_prevUpdate;
-
-	playerState_t m_cameraUpdate;
-	// 弾の種類によって中身を入れ替える
-	playerState_t m_shotUpdate;
-
-	// 現在のジャンプアクションによって中身を入れ替える
-	playerState_t m_jumpActionUpdate;
-
-	// ジャンプ中の落下攻撃
-	playerState_t m_dropAttackUpdate;
-
-	// スピンの更新処理
-	playerState_t m_spinAttackUpdate;
 
 	/// <summary>
 	/// ジャンプさせる
@@ -302,6 +290,8 @@ protected:
 	/// </summary>
 	void SetShotDir();
 
+	
+
 	/// <summary>
 	/// 弾の削除処理
 	/// </summary>
@@ -316,6 +306,29 @@ protected:
 	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
 
 protected:
+
+	//メンバ関数ポインタ
+	using playerState_t = void(Player::*)();
+	playerState_t m_postUpdate;
+
+	//プレイヤーの状態
+	playerState_t m_playerUpdate;
+	//前のプレイヤーの状態
+	playerState_t m_prevUpdate;
+
+	playerState_t m_cameraUpdate;
+	// 弾の種類によって中身を入れ替える
+	playerState_t m_shotUpdate;
+
+	// 現在のジャンプアクションによって中身を入れ替える
+	playerState_t m_jumpActionUpdate;
+
+	// ジャンプ中の落下攻撃
+	playerState_t m_dropAttackUpdate;
+
+	// スピンの更新処理
+	playerState_t m_spinAttackUpdate;
+
 	float m_regeneRange;//(シェーダー用)モデルの生成されているフレーム数
 
 	int m_modelHandle;//プレイヤーモデルハンドル
@@ -332,17 +345,14 @@ protected:
 	/// </summary>
 	Vec3 m_postPlayerGroundPos;
 
-	bool m_isVisibleFlag;//無敵状態フラグ
-	bool m_isJumpFlag;//ジャンプ状態フラグ
-	bool m_isBoostFlag;//加速状態フラグ
-	bool m_isOperationFlag;//プレイヤーがほかのオブジェクトに操作されているかフラグ
-	bool m_isSearchFlag;//(デバッグ用)デバッグ情報表示状態かフラグ
-	bool m_isAimFlag;//エイム状態かフラグ
-	bool m_isOnDamageFlag;//ダメージを受けているかフラグ
-	bool m_isSpinFlag;//現在スピン中かフラグ
-	bool m_isDeathFlag;//死亡したかフラグ
+	bool m_isVisible;//無敵状態フラグ
+	bool m_isJump;//ジャンプ状態フラグ
+	bool m_isOperation;//プレイヤーがほかのオブジェクトに操作されているかフラグ
+	bool m_isSearch;//(デバッグ用)デバッグ情報表示状態かフラグ
+	bool m_isAiming;//エイム状態かフラグ
+	bool m_isDead;//死亡したかフラグ
 
-	bool m_isClearFlag;//クリア条件を満たしたかフラグ
+	bool m_isClear;//クリア条件を満たしたかフラグ
 
 
 	float m_spinAngle;//プレイヤーの回転量
