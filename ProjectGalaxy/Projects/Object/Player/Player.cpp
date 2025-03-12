@@ -1738,8 +1738,8 @@ void Player::DeleteManage()
 	//デストロイフラグが立っている弾を削除する
 	auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
 		{
-			bool isOut = sphere->IsDestroy() == true;
-			if (isOut == true)
+			bool isOut = sphere->IsDestroy();
+			if (isOut)
 			{
 				sphere->OnDestroy();
 				MyEngine::Physics::GetInstance().Exit(sphere);

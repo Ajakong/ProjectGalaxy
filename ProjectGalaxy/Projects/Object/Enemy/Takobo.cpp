@@ -152,8 +152,8 @@ void Takobo::DeleteManage()
 	{
 		auto result = remove_if(m_sphere.begin(), m_sphere.end(), [this](const auto& sphere)
 		{
-			bool isOut = sphere->IsDestroy() == true;
-			if (isOut == true)
+			bool isOut = sphere->IsDestroy();
+			if (isOut)
 			{
 				m_sphereNum--;
 				sphere->OnDestroy();
@@ -167,8 +167,8 @@ void Takobo::DeleteManage()
 	{
 		auto result = remove_if(m_killer.begin(), m_killer.end(), [this](const auto& sphere)
 		{
-			bool isOut = sphere->IsDestroy() == true;
-			if (isOut == true)
+			bool isOut = sphere->IsDestroy();
+			if (isOut)
 			{
 				m_sphereNum--;
 				sphere->OnDestroy();
@@ -213,7 +213,7 @@ void Takobo::OnCollideEnter(std::shared_ptr<MyEngine::Collidable> colider,Colide
 
 		if (attack->GetCounterFlag())
 		{
-			m_hp -= 60;
+			m_hp -= colider->GetPower();
 			Vec3 dir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
 			dir.Normalize();
 			m_rigid->AddVelocity(dir * 2);
@@ -226,7 +226,7 @@ void Takobo::OnTriggerEnter(std::shared_ptr<MyEngine::Collidable> colider, Colid
 	if (colider->GetTag() == ObjectTag::PlayerImpact)
 	{
 		m_rigid->AddVelocity(m_upVec);
-		m_hp -= 20;
+		m_hp -= colider->GetPower();
 	}
 }
 

@@ -855,6 +855,7 @@ void Boss::DeleteObject(std::vector<std::shared_ptr<T>>& objects)
 {
 	auto result = remove_if(objects.begin(), objects.end(), [this](const auto& object)
 		{
+			//削除されるオブジェクトか
 			if (object->GetDeleteFlag())
 			{
 				MyEngine::Physics::GetInstance().Exit(object);

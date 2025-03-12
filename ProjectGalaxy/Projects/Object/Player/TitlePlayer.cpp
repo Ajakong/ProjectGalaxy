@@ -131,8 +131,9 @@ void TitlePlayer::MoveToTargetWithStickStar(Vec3 targetPos)
 		}
 		else
 		{
-			auto colidFlag = m_sphere.back()->GetStickFlag();
-			if (colidFlag)
+			//何かに衝突しているか
+			auto isColid = m_sphere.back()->GetStickFlag();
+			if (isColid)
 			{
 				m_titleUpdateNum = 2;
 				m_sphere.back()->Effect();
@@ -160,8 +161,8 @@ void TitlePlayer::MoveToTargetWithStickStar(Vec3 targetPos)
 		else
 		{
 
-			auto colidFlag = m_sphere.back()->GetStickFlag();
-			if (colidFlag)
+			auto isColid = m_sphere.back()->GetStickFlag();
+			if (isColid)
 			{
 				m_titleUpdateNum = 1;
 				m_sphere.back()->Effect();
