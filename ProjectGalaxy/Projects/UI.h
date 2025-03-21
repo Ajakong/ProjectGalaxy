@@ -7,30 +7,7 @@ class TextManager;
 class TalkObject;
 class UI
 {
-	
 public:
-	//UIの情報群
-	struct UIinfo
-	{
-		int x;//画像上の表示したいものの左端
-		int y;//画像上の表示したいものの上端
-		int width;//画像上の表示したいものの横の長さ
-		int height;//画像上の表示したいものの縦の長さ
-		float extrate;//拡大率
-	};
-
-	//話すオブジェクトの種類
-	enum class TalkGraphKind
-	{
-		TakasakiTaisa,
-		Dekahead_Red,
-		Dekahead_Green,
-		Dekahead_Yellow,
-		Dekehead_Blue,
-		Dekahead_White,
-		Boss
-	};
-
 	UI();
 	virtual ~UI();
 	static UI& GetInstance();
@@ -92,11 +69,6 @@ public:
 	/// <returns>残りテキスト量</returns>
 	int TextRemaining();
 
-
-	using UIstate_t = void(UI::*)();
-	UIstate_t m_uiUpdate;
-	UIstate_t m_uiDraw;
-	
 	/// <summary>
 	/// 現在のモード
 	/// </summary>
@@ -107,6 +79,30 @@ public:
 	void InputAUpdate();
 
 private:
+	//UIの情報群
+	struct UIinfo
+	{
+		int x;//画像上の表示したいものの左端
+		int y;//画像上の表示したいものの上端
+		int width;//画像上の表示したいものの横の長さ
+		int height;//画像上の表示したいものの縦の長さ
+		float extrate;//拡大率
+	};
+
+	//話すオブジェクトの種類
+	enum class TalkGraphKind
+	{
+		TakasakiTaisa,
+		Dekahead_Red,
+		Dekahead_Green,
+		Dekahead_Yellow,
+		Dekehead_Blue,
+		Dekahead_White,
+		Boss
+	};
+
+private:
+
 	/// <summary>
 	/// テキストモードに移行
 	/// </summary>
@@ -151,6 +147,13 @@ private:
 	/// </summary>
 	void MissionUpdate();
 	void MissionDraw();
+
+private:
+
+	using UIstate_t = void(UI::*)();
+	UIstate_t m_uiUpdate;
+	UIstate_t m_uiDraw;
+
 
 	float m_playerHp;
 

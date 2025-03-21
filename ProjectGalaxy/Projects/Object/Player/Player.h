@@ -268,8 +268,8 @@ public:
 	/// 通常時
 	/// </summary>
 	void NeutralUpdate();
-protected:
 
+protected:
 	//アニメーションの進行
 	/// <summary>
 	/// ループしたかどうかを返す
@@ -306,7 +306,6 @@ protected:
 	void DeleteObject(std::vector<std::shared_ptr<T>>& objects);
 
 protected:
-
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_postUpdate;
@@ -372,8 +371,6 @@ protected:
 	Vec3 m_sideVec;//プレイヤーの右方向ベクトル
 	Vec3 m_postUpVec;//1フレーム前のプレイヤーの上方向ベクトル
 	Vec3 m_shotDir;//弾の射撃方向ベクトル
-
-	
 
 	//アニメーション変数
 
@@ -447,7 +444,6 @@ private:
 	/// </summary>
 	void TalkingUpdate();
 
-
 	//ジャンプ中の特殊アクション
 	/*m_jumpActionUpdateで使う*/
 
@@ -513,7 +509,6 @@ private:
 	/// </summary>
 	std::shared_ptr<MyEngine::ColliderSphere> m_spinCol;
 
-
 	int m_landingStanFrame;//プレイヤーの着地の隙
 
 	//プレイヤーのステータス
@@ -538,7 +533,6 @@ private:
 	int m_powerUpItemGetSEHandle;
 
 	int m_revivalCount;//蘇生回数カウンター
-
 
 	int m_damageFrame;//ダメージ状態の現在のフレーム数
 

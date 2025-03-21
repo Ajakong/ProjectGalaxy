@@ -8,12 +8,6 @@ struct SoundInfo {
 };
 class SoundManager
 {
-private:
-	std::map<std::string, SoundInfo> m_pathAndSoundInfoes;
-	int m_soundVol;
-
-	int m_playingBGMHandle;
-
 public:
 	SoundManager();
 	~SoundManager();
@@ -25,5 +19,12 @@ public:
 	int GetSoundData(const char* filepath);
 
 	void Clear();
+
+private:
+	std::map<std::string, SoundInfo> m_pathAndSoundInfoes;
+	int m_soundVol;
+
+	int m_playingBGMHandle;
+
 };
 

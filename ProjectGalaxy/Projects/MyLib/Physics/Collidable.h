@@ -18,6 +18,7 @@ namespace MyEngine
 	class Collidable : public std::enable_shared_from_this<Collidable>
 	{
 		friend Physics;
+
 	public:
 		struct CollideInfo
 		{
@@ -76,6 +77,7 @@ namespace MyEngine
 			Talk,
 			End,
 		};
+
 	public:
 
 		float GetAngle(Vec3 a, Vec3 b)

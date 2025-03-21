@@ -4,7 +4,8 @@
 #include<list>
 #include<EffekseerForDXLib.h>
 #include"Collidable.h"
-struct EffectInfo {
+struct EffectInfo 
+{
 	int emitterhandle;//エミッターハンドル
 	int playhandle;//プレイするハンドル
 	int playingFrame;//再生中フレーム
@@ -15,12 +16,6 @@ struct EffectInfo {
 };
 class EffectManager
 {
-private:
-	/// <summary>
-	/// エフェクトの情報群
-	/// </summary>
-	std::map<std::string, std::map<int,EffectInfo>> m_pathAndEffectInfoes;
-	
 public:
 	EffectManager();
 	~EffectManager();
@@ -41,5 +36,9 @@ private:
 	/// 再生中エフェクトのデータ
 	/// </summary>
 	std::map<std::string, std::map<int, EffectInfo>>m_playingEffectInfoes;
+	/// <summary>
+	/// エフェクトの情報群
+	/// </summary>
+	std::map<std::string, std::map<int, EffectInfo>> m_pathAndEffectInfoes;
 };
 

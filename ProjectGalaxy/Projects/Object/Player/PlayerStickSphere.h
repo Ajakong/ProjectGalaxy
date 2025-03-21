@@ -22,6 +22,7 @@ protected:
 	virtual void StickUpdate();
 	virtual void ComeBackUpdate();
 	virtual void ComeBackWithObjectUpdate();
+
 protected:
 	Vec3 m_sideVec;
 	int m_lifeTime;
