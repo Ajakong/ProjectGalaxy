@@ -21,7 +21,6 @@ public:
 	void Update();
 	void Draw();
 
-	
 private:
 	using managerState_t = void(DebugGalaxy::*)();
 	managerState_t m_managerUpdate;

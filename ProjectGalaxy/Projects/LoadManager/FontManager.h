@@ -29,4 +29,5 @@ public:
 
 private:
 	std::map<std::string, FontInfo> m_pathAndFontInfoes;
+
 };

@@ -38,7 +38,6 @@ public:
 	bool operator==(const Vec3& val) const;
 	bool operator!=(const Vec3& val) const;
 
-
 	// 長さ取得
 	float Length() const;
 	// 長さの2乗を取得
@@ -47,7 +46,6 @@ public:
 	Vec3 GetNormalized() const;
 	// 自身の正規化
 	void Normalize();
-
 
 	// DxLib用のVECTORを取得
 	DxLib::VECTOR VGet() const;

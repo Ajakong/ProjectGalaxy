@@ -254,10 +254,7 @@ void MyEngine::Physics::Initialize(std::shared_ptr<Collidable> collidable)
 					continue;
 				}
 			}
-
 		}
-
-
 	}
 }
 

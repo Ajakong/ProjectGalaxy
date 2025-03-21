@@ -17,7 +17,6 @@ public:
 	static SoundManager& GetInstance();
 	void ChangeSoundVolume(int vol);
 	int GetSoundData(const char* filepath);
-
 	void Clear();
 
 private:

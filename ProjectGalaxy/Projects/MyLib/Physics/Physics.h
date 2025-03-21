@@ -160,8 +160,8 @@ namespace MyEngine
 		/// <param name="radius">球の半径</param>
 		/// <returns>true:してまぁす！！,false:してますぇん</returns>
 		bool IsPointOnEdge(const Vec3& point, float radius, const Vec3& v0, const Vec3& v1) const;
+
 	private:
-		
 		std::vector<std::shared_ptr<Collidable>> m_stageCollidables;
 
 		std::list<OnCollideInfoData> m_onCollideInfo;
@@ -170,8 +170,8 @@ namespace MyEngine
 		SendCollideInfo m_newTirrigerInfo;
 		SendCollideInfo m_preTirrigerInfo;
 
-		int m_shadowHandle;
 		std::vector<int> m_shadowHandles;
+		int m_shadowHandle;
 	};
 }
 
