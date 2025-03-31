@@ -180,7 +180,7 @@ void MyEngine::Physics::Draw()
 		
 		obj->Draw();
 
-#ifdef _DEBUG
+#ifdef DEBUG
 		Vec3 objPos = obj->GetRigidbody()->GetPos();
 
 		DrawLine3D(objPos.VGet(), (objPos + obj->GetUpVec() * 6).VGet(),0xff0000);
