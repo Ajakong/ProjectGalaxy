@@ -135,7 +135,6 @@ void SeekerLine::Draw()
 
 	DrawSphere3D(m_points[0].VGet(), kRadius, 8, 0xffff00, 0xffffff, false);
 	
-	
 	for (int i = 0; i < m_points.size(); i++)
 	{
 		if (i <= 0)continue;
