@@ -25,12 +25,12 @@ protected:
 
 protected:
 	Vec3 m_sideVec;
+	Vec3 m_emitPoint;//生成地点
 	int m_lifeTime;
 	int m_pushCount;
 	int m_operationHandle;
 
-	int m_gaussFilterScreen;
-	int m_highBrightScreen;
+	int m_lineEffectIndex;
 	/// <summary>
 	/// 接触しているオブジェクトを動かせるか
 	/// </summary>

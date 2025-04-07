@@ -11,6 +11,7 @@ namespace
 		{ObjectTag::Takobo,"Takobo"},
 		{ObjectTag::Kuribo,"Kuribo"},
 		{ObjectTag::Gorori,"Gorori"},
+		{ObjectTag::Boss,"Boss"},
 		{ObjectTag::KillerTheSeeker,"KillerTheSeeker"},
 		{ObjectTag::SpaceEmperor,"SpaceEmperor"},
 		{ObjectTag::EnemyAttack,"EnemyAttack"},

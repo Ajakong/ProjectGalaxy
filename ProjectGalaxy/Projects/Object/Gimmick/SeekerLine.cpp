@@ -72,8 +72,6 @@ m_movePlayerSoundHandle(-1)
 	m_endPointSoundHandle = SoundManager::GetInstance().GetSoundData(kEndPointSEName);
 	m_movePlayerSoundHandle = SoundManager::GetInstance().GetSoundData(kPlayerMoveSEName);
 
-	m_gaussFilterScreen=ScreenManager::GetInstance().GetScreenData(kGaussFilterScreenName,Game::kScreenWidth,Game::kScreenHeight);
-	m_highBrightScreen = ScreenManager::GetInstance().GetScreenData(kHighBrightScreenName, Game::kScreenWidth, Game::kScreenHeight);
 }
 
 SeekerLine::~SeekerLine()

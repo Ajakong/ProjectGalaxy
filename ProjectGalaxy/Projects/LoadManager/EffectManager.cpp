@@ -30,14 +30,14 @@ void EffectManager::Update()
 			//このエフェクトがループ再生かどうか
 			if (eff.second.isLoop)
 			{
-				//ループするとき
-				auto ref=GetEffekseer3DManager();
-				
-				//ループ再生の場合はマスターがいなくなったら消す
-				if (eff.second.master.expired())
-				{
-					StopEffect(effData.first.c_str(), eff.first);
-				}
+				////ループするとき
+				//auto ref=GetEffekseer3DManager();
+				//
+				////ループ再生の場合はマスターがいなくなったら消す
+				//if (eff.second.master.expired())
+				//{
+				//	StopEffect(effData.first.c_str(), eff.first);
+				//}
 			}
 			else
 			{

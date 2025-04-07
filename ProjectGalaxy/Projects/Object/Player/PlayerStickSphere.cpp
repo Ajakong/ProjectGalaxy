@@ -5,6 +5,7 @@
 
 #include"SoundManager.h"
 #include"ScreenManager.h"
+#include"EffectManager.h"
 
 #include"Game.h"
 namespace
@@ -20,6 +21,7 @@ namespace
 
 	constexpr int kLifeTimeMax = 100;
 	const char* kName = "Sphere";
+	const char* kLineEffectName = "Line.efk";
 
 	const char* kOperationSEName = "Fastener.mp3";
 
@@ -33,6 +35,7 @@ PlayerStickSphere::PlayerStickSphere(MyEngine::Collidable::Priority priority, Ob
 m_sideVec(sideVec),
 m_lifeTime(0),
 m_pushCount(0),
+m_lineEffectIndex(0),
 m_operationHandle(SoundManager::GetInstance().GetSoundData(kOperationSEName))
 {
 	
@@ -50,19 +53,19 @@ m_operationHandle(SoundManager::GetInstance().GetSoundData(kOperationSEName))
 	}
 
 	SetAntiGravity(true);
-	m_gaussFilterScreen = ScreenManager::GetInstance().GetScreenData(kGaussFilterScreenName, Game::kScreenWidth, Game::kScreenHeight);
-	m_highBrightScreen = ScreenManager::GetInstance().GetScreenData(kHighBrightScreenName, Game::kScreenWidth, Game::kScreenHeight);
+
+	m_emitPoint = m_player.lock()->GetLeftHandPos();
 }
 
 
 PlayerStickSphere::~PlayerStickSphere()
 {
-	
+	EffectManager::GetInstance().StopEffect(kLineEffectName, m_lineEffectIndex);
 }
 
 void PlayerStickSphere::Init()
 {
-
+	m_lineEffectIndex = EffectManager::GetInstance().PlayEffect(kLineEffectName, true, 0, shared_from_this());
 }
 
 void PlayerStickSphere::Update()
@@ -73,46 +76,22 @@ void PlayerStickSphere::Update()
 
 void PlayerStickSphere::Draw()
 {
-	/*auto camerapos = GetCameraPosition();
-	auto cameraTarget = GetCameraTarget();
-	auto cameraUpVec = GetCameraUpVector();
-	auto cameraMat = GetCameraViewMatrix();
-	auto cameraNear = GetCameraNear();
-	auto cameraFar = GetCameraFar();*/
-
 	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, true);
 	
-	//// 通常の描画結果を書き込むスクリーンを描画対象にする
-	//SetDrawScreen(m_gaussFilterScreen);
-	//// 画面をクリア
-	//ClearDrawScreen();
-
-	//SetCameraPositionAndTargetAndUpVec(camerapos, cameraTarget, cameraUpVec);
-	//SetCameraNearFar(cameraNear, cameraFar);
 	//m_isStickがtrueの時に赤くなる
 	DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff - (0x00ffff * m_isStick));
 
-	//GraphFilterBlt(m_gaussFilterScreen, m_highBrightScreen, DX_GRAPH_FILTER_GAUSS, 16, 200);
-	//GraphFilterBlt(m_highBrightScreen, DX_SCREEN_BACK, DX_GRAPH_FILTER_GAUSS, 16, 900);
-
-	//// 描画対象を裏画面にする
-	//SetDrawScreen(DX_SCREEN_BACK);
-
-	//SetCameraPositionAndTargetAndUpVec(camerapos, cameraTarget, cameraUpVec);
-	//SetCameraNearFar(cameraNear, cameraFar);
-	//DrawGraph(0, 0, m_highBrightScreen, false);
-	
-
+	auto lineLength = (m_startPos - m_emitPoint).Length();
+	for (int i = 0; i < lineLength; i+=5)
+	{
+		DrawSphere3D((m_emitPoint + (m_startPos - m_emitPoint).GetNormalized() * i).VGet(), 0.1f, 10, 0x00ffff, 0x00ffff, true);
+	}
+	EffectManager::GetInstance().SetPositionEffect(kLineEffectName, m_lineEffectIndex, m_player.lock()->GetPos(), MGetIdent());
 	
 }
 
 void PlayerStickSphere::Effect()
 {
-	/*if (m_player->GetOperationFlag())
-	{
-		m_player->SetIsOperation(false);
-		m_isDestroy = true;
-	}*/
 	if (m_isStick)
 	{
 		
