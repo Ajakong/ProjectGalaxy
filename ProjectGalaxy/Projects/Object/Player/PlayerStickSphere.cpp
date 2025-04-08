@@ -23,6 +23,7 @@ namespace
 	const char* kName = "Sphere";
 	const char* kLineEffectName = "Line.efk";
 	const char* kSphereEffectName = "StickSphere.efk";
+	const char* kBoostEffectName = "BoostEffect.efk";
 
 	const char* kOperationSEName = "Fastener.mp3";
 
@@ -38,6 +39,7 @@ m_lifeTime(0),
 m_pushCount(0),
 m_lineEffectIndex(0),
 m_sphereEffectIndex(0),
+m_boostEffectIndex(0),
 m_operationHandle(SoundManager::GetInstance().GetSoundData(kOperationSEName))
 {
 	
@@ -64,12 +66,14 @@ PlayerStickSphere::~PlayerStickSphere()
 {
 	EffectManager::GetInstance().StopEffect(kLineEffectName, m_lineEffectIndex);
 	EffectManager::GetInstance().StopEffect(kSphereEffectName, m_sphereEffectIndex);
+	EffectManager::GetInstance().StopEffect(kBoostEffectName, m_boostEffectIndex);
 }
 
 void PlayerStickSphere::Init()
 {
 	m_lineEffectIndex = EffectManager::GetInstance().PlayEffect(kLineEffectName, true, 0, shared_from_this());
 	m_sphereEffectIndex = EffectManager::GetInstance().PlayEffect(kSphereEffectName, true, 0, shared_from_this());
+	m_boostEffectIndex = EffectManager::GetInstance().PlayEffect(kBoostEffectName, true, 0, shared_from_this());
 }
 
 void PlayerStickSphere::Update()
@@ -94,6 +98,9 @@ void PlayerStickSphere::Draw()
 	//ラインの描画
 	EffectManager::GetInstance().SetPositionEffect(kLineEffectName, m_lineEffectIndex, m_player.lock()->GetPos(), MGetIdent());
 	
+	auto mat = MGetRotVec2(m_startPos.GetNormalized().VGet(), m_rigid->GetPos().GetNormalized().VGet());
+	//プレイヤーの移動軌跡の描画
+	EffectManager::GetInstance().SetPositionEffect(kBoostEffectName, m_boostEffectIndex, m_player.lock()->GetPos(), mat);
 }
 
 void PlayerStickSphere::Effect()

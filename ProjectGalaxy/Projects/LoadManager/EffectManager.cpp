@@ -81,7 +81,10 @@ void EffectManager::SetPositionEffect(const char* effectname,int index, Vec3 pos
 	
 	auto effData = m_pathAndEffectInfoes[effectname][index];
 	SetPosPlayingEffekseer3DEffect(effData.playhandle, position.x, position.y, position.z);
-	
+	GetEffekseer3DManager()->SetRotation(effData.playhandle,GetEffVec)
+	auto effekRef=GetEffekseerEffect(effData.playhandle);
+	auto effectData=effekRef.Get();
+	effectData.
 }
 
 void EffectManager::StopEffect(const char* effectname, int index)

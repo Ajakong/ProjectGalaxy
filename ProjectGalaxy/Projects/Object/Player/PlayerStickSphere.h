@@ -32,6 +32,7 @@ protected:
 
 	int m_lineEffectIndex;
 	int m_sphereEffectIndex;
+	int m_boostEffectIndex;
 	/// <summary>
 	/// 接触しているオブジェクトを動かせるか
 	/// </summary>
