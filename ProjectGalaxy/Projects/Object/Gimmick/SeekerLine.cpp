@@ -21,9 +21,6 @@ namespace
 
 	const char* kLineTraceName = "Line.efk";
 
-	const char* kGaussFilterScreenName = "GaussOfSeekerLine";
-	const char* kHighBrightScreenName = "HighBrightSeekerLine";
-
 }
 
 

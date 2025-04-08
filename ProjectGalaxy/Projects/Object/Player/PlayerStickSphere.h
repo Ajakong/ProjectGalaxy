@@ -31,6 +31,7 @@ protected:
 	int m_operationHandle;
 
 	int m_lineEffectIndex;
+	int m_sphereEffectIndex;
 	/// <summary>
 	/// 接触しているオブジェクトを動かせるか
 	/// </summary>

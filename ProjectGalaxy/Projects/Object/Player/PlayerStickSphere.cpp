@@ -22,6 +22,7 @@ namespace
 	constexpr int kLifeTimeMax = 100;
 	const char* kName = "Sphere";
 	const char* kLineEffectName = "Line.efk";
+	const char* kSphereEffectName = "StickSphere.efk";
 
 	const char* kOperationSEName = "Fastener.mp3";
 
@@ -36,6 +37,7 @@ m_sideVec(sideVec),
 m_lifeTime(0),
 m_pushCount(0),
 m_lineEffectIndex(0),
+m_sphereEffectIndex(0),
 m_operationHandle(SoundManager::GetInstance().GetSoundData(kOperationSEName))
 {
 	
@@ -61,11 +63,13 @@ m_operationHandle(SoundManager::GetInstance().GetSoundData(kOperationSEName))
 PlayerStickSphere::~PlayerStickSphere()
 {
 	EffectManager::GetInstance().StopEffect(kLineEffectName, m_lineEffectIndex);
+	EffectManager::GetInstance().StopEffect(kSphereEffectName, m_sphereEffectIndex);
 }
 
 void PlayerStickSphere::Init()
 {
 	m_lineEffectIndex = EffectManager::GetInstance().PlayEffect(kLineEffectName, true, 0, shared_from_this());
+	m_sphereEffectIndex = EffectManager::GetInstance().PlayEffect(kSphereEffectName, true, 0, shared_from_this());
 }
 
 void PlayerStickSphere::Update()
@@ -76,7 +80,8 @@ void PlayerStickSphere::Update()
 
 void PlayerStickSphere::Draw()
 {
-	DrawSphere3D(m_rigid->GetPos().VGet(), kSphereRadius, 10, 0xffff00, m_color, true);
+	//弾の描画
+	EffectManager::GetInstance().SetPositionEffect(kSphereEffectName, m_sphereEffectIndex, m_rigid->GetPos(), MScale(MGetIdent(),0.3f));
 	
 	//m_isStickがtrueの時に赤くなる
 	DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff - (0x00ffff * m_isStick));
@@ -86,6 +91,7 @@ void PlayerStickSphere::Draw()
 	{
 		DrawSphere3D((m_emitPoint + (m_startPos - m_emitPoint).GetNormalized() * i).VGet(), 0.1f, 10, 0x00ffff, 0x00ffff, true);
 	}
+	//ラインの描画
 	EffectManager::GetInstance().SetPositionEffect(kLineEffectName, m_lineEffectIndex, m_player.lock()->GetPos(), MGetIdent());
 	
 }
@@ -94,7 +100,6 @@ void PlayerStickSphere::Effect()
 {
 	if (m_isStick)
 	{
-		
 		if (m_isMoving)
 		{
 			m_moveUpdate = &PlayerStickSphere::ComeBackWithObjectUpdate;
@@ -178,7 +183,6 @@ void PlayerStickSphere::ComeBackUpdate()
 
 void PlayerStickSphere::ComeBackWithObjectUpdate()
 {
-
 	m_rigid->SetVelocity((m_startPos - m_rigid->GetPos()).GetNormalized() * 3);
 	m_contactedCollidable->GetRigidbody()->SetPos(m_rigid->GetPos()+m_collidableContactPosition);
 	if ((m_rigid->GetPos() - m_startPos).Length() <= 1.2f)
