@@ -4,6 +4,7 @@
 #include<list>
 #include<EffekseerForDXLib.h>
 #include"Collidable.h"
+#include"Quaternion.h"
 struct EffectInfo 
 {
 	int emitterhandle;//エミッターハンドル
@@ -26,7 +27,7 @@ public:
 	void Update();
 
 	int PlayEffect(const char* effectname,bool playLoop,float lifeTime,std::weak_ptr<MyEngine::Collidable> master=std::weak_ptr<MyEngine::Collidable>());
-	void SetPositionEffect(const char* effectname,int index, Vec3 position,MATRIX rotateMat);
+	void SetInformationEffect(const char* effectname,int index, const Vec3& pos, const Quaternion& rot, const Vec3& scale);
 	void StopEffect(const char* effectname,int index);
 
 	void Clear();

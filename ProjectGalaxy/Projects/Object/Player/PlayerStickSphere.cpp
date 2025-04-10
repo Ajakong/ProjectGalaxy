@@ -85,7 +85,7 @@ void PlayerStickSphere::Update()
 void PlayerStickSphere::Draw()
 {
 	//弾の描画
-	EffectManager::GetInstance().SetPositionEffect(kSphereEffectName, m_sphereEffectIndex, m_rigid->GetPos(), MScale(MGetIdent(),0.3f));
+	EffectManager::GetInstance().SetInformationEffect(kSphereEffectName, m_sphereEffectIndex, m_rigid->GetPos(), Quaternion::GetIdentity(), Vec3(0.3f, 0.3f, 0.3f));
 	
 	//m_isStickがtrueの時に赤くなる
 	DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff - (0x00ffff * m_isStick));
@@ -96,11 +96,10 @@ void PlayerStickSphere::Draw()
 		DrawSphere3D((m_emitPoint + (m_startPos - m_emitPoint).GetNormalized() * i).VGet(), 0.1f, 10, 0x00ffff, 0x00ffff, true);
 	}
 	//ラインの描画
-	EffectManager::GetInstance().SetPositionEffect(kLineEffectName, m_lineEffectIndex, m_player.lock()->GetPos(), MGetIdent());
+	EffectManager::GetInstance().SetInformationEffect(kLineEffectName, m_lineEffectIndex, m_player.lock()->GetPos(), Quaternion::GetIdentity(), Vec3(0.3f, 0.3f, 0.3f));
 	
-	auto mat = MGetRotVec2(m_startPos.GetNormalized().VGet(), m_rigid->GetPos().GetNormalized().VGet());
 	//プレイヤーの移動軌跡の描画
-	EffectManager::GetInstance().SetPositionEffect(kBoostEffectName, m_boostEffectIndex, m_player.lock()->GetPos(), mat);
+	EffectManager::GetInstance().SetInformationEffect(kBoostEffectName, m_boostEffectIndex, m_player.lock()->GetPos(),Quaternion::GetQuaternion((m_startPos-m_emitPoint).GetNormalized(), Vec3::Right()), Vec3(1, 1, 1));
 }
 
 void PlayerStickSphere::Effect()

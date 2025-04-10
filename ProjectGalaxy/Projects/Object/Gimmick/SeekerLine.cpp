@@ -103,7 +103,7 @@ void SeekerLine::Update()
 	//プレイヤーを徐々に加速させる
 	m_player.lock()->SetVelocity(m_velocity * m_totalPlayerMoveNum);
 
-	EffectManager::GetInstance().SetPositionEffect(kLineTraceName,m_lineEffectIndex, m_player.lock()->GetPos(), MGetIdent());
+	EffectManager::GetInstance().SetInformationEffect(kLineTraceName,m_lineEffectIndex, m_player.lock()->GetPos(), Quaternion::GetIdentity(),Vec3(1,1,1));
 	PlaySoundMem(m_movePlayerSoundHandle, DX_PLAYTYPE_BACK);
 	
 	//次のポイントに到達したら
