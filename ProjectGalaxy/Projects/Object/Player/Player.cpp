@@ -88,6 +88,8 @@ namespace
 
 	constexpr float kJumpPower = 2.f;
 
+	constexpr float kKnockBackPower = 0.5f;
+
 	//スティックの入力の歩きと判定する範囲
 	constexpr float kWalkInputVecMag = 0.2f;
 
@@ -561,7 +563,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		printf("Kuribo\n");
 
 		//スピンしていたら
-		if (m_state=State::Spin)
+		if (m_state==State::Spin)
 		{
 			auto kuribo = std::dynamic_pointer_cast<Kuribo>(colider);
 			//ノックバックするベクトルを計算
@@ -604,7 +606,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		Vec3 knockBackVec = Vec3(m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 3;
 
 		//スピンを当てたら
-		if (m_state = State::Spin)
+		if (m_state == State::Spin)
 		{
 			//パリィSEを流す
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
@@ -629,7 +631,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 
 		//ノックバックのベクトル計算
 		Vec3 knockBackVec = (m_rigid->GetPos() - colider->GetRigidbody()->GetPos()).GetNormalized() * 4;
-		if (m_state = State::Spin)
+		if (m_state == State::Spin)
 		{
 			//パリィSEを流す
 			PlaySoundMem(m_parrySEHandle, DX_PLAYTYPE_BACK);
@@ -1454,7 +1456,7 @@ void Player::CommandJump()
 	//プレイヤーをジャンプ状態に移行
 	m_playerUpdate = &Player::JumpingUpdate;
 	//移動ベクトルを加算
-	m_rigid->AddVelocity(m_upVec.GetNormalized() * kJumpPower);
+	m_rigid->AddVelocity(m_upVec.GetNormalized() * kKnockBackPower);
 }
 
 void Player::BoostUpdate()
