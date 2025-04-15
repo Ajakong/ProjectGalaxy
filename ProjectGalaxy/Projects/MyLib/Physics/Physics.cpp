@@ -266,6 +266,7 @@ void MyEngine::Physics::UpdatePlanetPhysics()
 		// それぞれが持つ判定全てを比較
 		for (auto& object : m_collidables)
 		{
+			if (object->IsAntiGravity())continue;
 			if (!object->GetIsActive())continue;
 			for (auto& col : object->m_colliders)
 			{
