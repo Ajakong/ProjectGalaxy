@@ -30,6 +30,7 @@ namespace
 	const char* kLineEffectName = "Line.efk";
 	const char* kSphereEffectName = "StickSphere.efk";
 	const char* kBoostEffectName = "BoostEffect.efk";
+	const char* kGravityWaveEffectName = "GravityWave.efk";
 
 	const char* kOperationSEName = "Fastener.mp3";
 
@@ -66,17 +67,23 @@ PlayerStickSphere::~PlayerStickSphere()
 	EffectManager::GetInstance().StopEffect(kLineEffectName, m_lineEffectIndex);
 	EffectManager::GetInstance().StopEffect(kSphereEffectName, m_sphereEffectIndex);
 	EffectManager::GetInstance().StopEffect(kBoostEffectName, m_boostEffectIndex);
+	EffectManager::GetInstance().StopEffect(kGravityWaveEffectName, m_gravityWaveEffectIndex);
 }
 
 void PlayerStickSphere::Init()
 {
 	m_lineEffectIndex = EffectManager::GetInstance().PlayEffect(kLineEffectName, true, 0, shared_from_this());
 	m_sphereEffectIndex = EffectManager::GetInstance().PlayEffect(kSphereEffectName, true, 0, shared_from_this());
-	m_boostEffectIndex = EffectManager::GetInstance().PlayEffect(kBoostEffectName, true, 0, shared_from_this());
+	
 }
 
 void PlayerStickSphere::Update()
 {
+	if (m_player.lock()->GetOperationFlag())
+	{
+		m_boostEffectIndex = EffectManager::GetInstance().PlayEffect(kBoostEffectName, true, 0, shared_from_this());
+		m_gravityWaveEffectIndex = EffectManager::GetInstance().PlayEffect(kGravityWaveEffectName, true, 0, shared_from_this());
+	}
 	m_startPos = m_player.lock()->GetLeftHandPos();
 	(this->*m_moveUpdate)();
 }
@@ -87,13 +94,21 @@ void PlayerStickSphere::Draw()
 	EffectManager::GetInstance().SetInformationEffect(kSphereEffectName, m_sphereEffectIndex, m_rigid->GetPos(), Quaternion::GetIdentity(), Vec3(kSphereRadius, kSphereRadius, kSphereRadius));
 	
 	//m_isStickがtrueの時に赤くなる
-	DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff - (0x00ffff * m_isStick));
+	//DrawLine3D(m_startPos.VGet(), m_rigid->GetPos().VGet(), 0xffffff - (0x00ffff * m_isStick));
 
 	//ラインの描画
 	EffectManager::GetInstance().SetInformationEffect(kLineEffectName, m_lineEffectIndex, m_player.lock()->GetPos(), Quaternion::GetIdentity(), Vec3(kSphereRadius, kSphereRadius, kSphereRadius));
 	
-	//プレイヤーの移動軌跡の描画
-	EffectManager::GetInstance().SetInformationEffect(kBoostEffectName, m_boostEffectIndex, m_player.lock()->GetPos(),Quaternion::GetQuaternion((m_startPos-m_emitPoint).GetNormalized(), Vec3::Right()), Vec3(1, 1, 1));
+	if (m_player.lock()->GetOperationFlag())
+	{
+		auto rotQuaternion = Quaternion::GetQuaternion((m_startPos - m_emitPoint).GetNormalized(), Vec3::Right());
+		EffectManager::GetInstance().SetInformationEffect(kGravityWaveEffectName, m_gravityWaveEffectIndex, m_rigid->GetPos(), rotQuaternion, Vec3(1, 1, 1));
+		//プレイヤーの移動軌跡の描画
+		EffectManager::GetInstance().SetInformationEffect(kBoostEffectName, m_boostEffectIndex, m_player.lock()->GetPos(),rotQuaternion, Vec3(1, 1, 1));
+
+		
+	}
+	
 }
 
 void PlayerStickSphere::Effect()
