@@ -214,6 +214,7 @@ void TitleScene::Draw()
     DxLib::MV1DrawModel(m_skyDomeH);
     // 物理エンジンの描画
     MyEngine::Physics::GetInstance().Draw();
+    DrawEffekseer3D();
     // シーン固有の描画
     (this->*m_drawFunc)();
   

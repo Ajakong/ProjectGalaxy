@@ -142,9 +142,6 @@
     <Filter Include="ヘッダー ファイル\Object\TalkObject">
       <UniqueIdentifier>{d850fceb-59b9-44c5-85dc-a45ce78e603c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\MyLib\NewFilter1">
-      <UniqueIdentifier>{e4b02c75-1ede-4e70-8312-8d84ca77fdd7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
