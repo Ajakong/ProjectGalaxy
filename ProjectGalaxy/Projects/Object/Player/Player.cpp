@@ -342,7 +342,7 @@ void Player::Update()
 	}
 
 	//ダメージを受けていたら
-	if (m_state==State::Damage)
+	if (m_state == State::Damage)
 	{
 		m_damageFrame--;
 		if (m_damageFrame < 0)
@@ -563,7 +563,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 		printf("Kuribo\n");
 
 		//スピンしていたら
-		if (m_state==State::Spin)
+		if (m_state == State::Spin)
 		{
 			auto kuribo = std::dynamic_pointer_cast<Kuribo>(colider);
 			//ノックバックするベクトルを計算
@@ -1063,42 +1063,29 @@ void Player::DashUpdate()
 	if ((Pad::IsRelase(PAD_INPUT_Z)))
 	{
 		//歩き状態に移行
-		m_postState = m_state;
-		m_cameraEasingSpeed = kOnNeutralCameraEasingSpeed;
-		ChangeAnim(AnimNum::AnimationNumRun);
-		m_playerUpdate = &Player::WalkingUpdate;
+		Walk();
 	}
 
 	//スティックの歩き範囲より小さい入力か
 	if (std::abs(ans.Length()) < kWalkInputVecMag * kMaxSpeed)
 	{
 		//アイドル状態に移行
-		m_postState = m_state;
-		m_cameraEasingSpeed = kOnNeutralCameraEasingSpeed;
-		ChangeAnim(AnimNum::AnimationNumIdle);
-		m_playerUpdate = &Player::NeutralUpdate;
+		Neutral();
 	}
 
 	//Aボタンが入力されているか
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
 		//ジャンプ状態に以降
-		m_postState = m_state;
-		m_cameraEasingSpeed = kOnNeutralCameraEasingSpeed;
-		ChangeAnim(AnimNum::AnimationNumJump);
-		m_isJump = true;
 		ans += m_upVec.GetNormalized() * kJumpPower;
-		m_playerUpdate = &Player::DashJumpUpdate;
+		DashJump();
 	}
 
 	//Bボタンが入力されているか
 	if (Pad::IsTrigger(PAD_INPUT_B))
 	{
 		//スピン状態に移行
-		m_postState = m_state;
-		m_cameraEasingSpeed = kOnNeutralCameraEasingSpeed;
-		ChangeAnim(AnimNum::AnimationNumSpin, kSpinAnimationSpeed);
-		m_playerUpdate = &Player::SpinActionUpdate;
+		SpinAction();
 	}
 
 	//移動ベクトルに加算
@@ -1413,7 +1400,7 @@ void Player::RollingAttackUpdate()
 	//Bボタンが入力されているか
 	if (Pad::IsTrigger(PAD_INPUT_B))
 	{
-		
+
 		m_postState = m_state;
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
@@ -1436,7 +1423,7 @@ void Player::JumpingSpinUpdate()
 	m_rigid->SetVelocity(move);
 
 	//回転させる
-	m_spinAngle += kAngleRotateSpeed*5;
+	m_spinAngle += kAngleRotateSpeed * 5;
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		//ジャンプ状態に移行
@@ -1470,7 +1457,7 @@ void Player::BoostUpdate()
 	m_moveDir = m_frontVec;
 
 	//加速が終了したら
-	if (!m_state==State::Boosting)
+	if (!m_state == State::Boosting)
 	{
 		//アイドル状態に移行
 		m_postState = m_state;
@@ -1550,6 +1537,43 @@ Vec3 Player::Move()
 
 	//移動ベクトルを返す
 	return ans;
+}
+
+void Player::Walk()
+{
+	//歩き状態に移行
+	m_postState = m_state;
+	m_cameraEasingSpeed = kOnNeutralCameraEasingSpeed;
+	ChangeAnim(AnimNum::AnimationNumRun);
+	m_playerUpdate = &Player::WalkingUpdate;
+}
+
+void Player::Neutral()
+{
+	//アイドル状態に移行
+	m_postState = m_state;
+	m_cameraEasingSpeed = kOnNeutralCameraEasingSpeed;
+	ChangeAnim(AnimNum::AnimationNumIdle);
+	m_playerUpdate = &Player::NeutralUpdate;
+}
+
+void Player::DashJump()
+{
+	//ジャンプ状態に以降
+	m_postState = m_state;
+	m_cameraEasingSpeed = kOnNeutralCameraEasingSpeed;
+	ChangeAnim(AnimNum::AnimationNumJump);
+	m_isJump = true;
+	m_playerUpdate = &Player::DashJumpUpdate;
+}
+
+void Player::SpinAction()
+{
+	//スピン状態に移行
+	m_postState = m_state;
+	m_cameraEasingSpeed = kOnNeutralCameraEasingSpeed;
+	ChangeAnim(AnimNum::AnimationNumSpin, kSpinAnimationSpeed);
+	m_playerUpdate = &Player::SpinActionUpdate;
 }
 
 void Player::ShotTheStar()

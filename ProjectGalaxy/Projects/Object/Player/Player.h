@@ -387,6 +387,11 @@ private:
 	/// <returns>プレイヤーのローカル移動方向</returns>
 	Vec3 Move();
 
+	void Walk();
+	void Neutral();
+	void DashJump();
+	void SpinAction();
+
 	//状態別関数(ポインタで呼び出す)
 	/*m_playerUpdateで使う*/
 
