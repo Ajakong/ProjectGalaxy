@@ -100,7 +100,7 @@ void PlayerStickSphere::Update()
 		EffectManager::GetInstance().SetInformationEffect(kBoostEffectName, m_boostEffectIndex, m_player.lock()->GetPos(), rotQuaternion, Vec3(1, 1, 1));
 		Vec3 dir = (m_player.lock()->GetPos() - m_rigid->GetPos()).GetNormalized();
 		rotQuaternion = Quaternion::GetQuaternion(Vec3::Front(), dir);
-		EffectManager::GetInstance().SetInformationEffect(kGravityWaveEffectName, m_gravityWaveEffectIndex,m_rigid->GetPos() + dir * 200 + Vec3::Up() * 5, rotQuaternion, Vec3(10.f, 10.f, 10.f));
+		//EffectManager::GetInstance().SetInformationEffect(kGravityWaveEffectName, m_gravityWaveEffectIndex,m_rigid->GetPos() + dir * 200 + Vec3::Up() * 5, rotQuaternion, Vec3(10.f, 10.f, 10.f));
 	}
 }
 

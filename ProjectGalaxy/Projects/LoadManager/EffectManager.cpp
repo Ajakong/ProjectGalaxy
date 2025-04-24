@@ -84,7 +84,6 @@ int EffectManager::PlayEffect(const char* effectname,bool playLoop, float lifeTi
 
 void EffectManager::SetInformationEffect(const char* effectname,int index, const Vec3& pos, const Quaternion& rot, const Vec3& scale)
 {
-	
 	auto effData = m_pathAndEffectInfoes[effectname][index];
 	SetPosPlayingEffekseer3DEffect(effData.playhandle, pos.x, pos.y, pos.z);
 	SetScalePlayingEffekseer3DEffect(effData.playhandle, scale.x, scale.y, scale.z);

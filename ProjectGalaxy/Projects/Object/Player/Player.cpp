@@ -962,11 +962,12 @@ void Player::NeutralUpdate()
 	//プレイヤーの最大移動速度は0.01f/frame
 	else if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
 	{
-		//Aボタンだけ入力されていたら
-
-		//ただのジャンプ
+		//ジャンプされる
 		m_postState = m_state;
-		CommandJump();
+		ChangeAnim(AnimNum::AnimationNumJump);
+		m_isJump = true;
+		move += m_upVec.GetNormalized() * kJumpPower;
+		m_playerUpdate = &Player::JumpingUpdate;
 	}
 
 	//XBoxのBボタンが入力されているか
@@ -1377,7 +1378,7 @@ void Player::SpiningUpdate()
 	m_rigid->AddVelocity(move);
 
 	//回転させる
-	m_spinAngle += kAngleRotateSpeed;
+	m_spinAngle += kAngleRotateSpeed/2;
 	if (m_spinAngle >= DX_PI_F * 2)
 	{
 		//アイドル状態に移行
@@ -1400,7 +1401,6 @@ void Player::RollingAttackUpdate()
 	//Bボタンが入力されているか
 	if (Pad::IsTrigger(PAD_INPUT_B))
 	{
-
 		m_postState = m_state;
 		ChangeAnim(AnimNum::AnimationNumIdle);
 		m_playerUpdate = &Player::NeutralUpdate;
@@ -1443,7 +1443,7 @@ void Player::CommandJump()
 	//プレイヤーをジャンプ状態に移行
 	m_playerUpdate = &Player::JumpingUpdate;
 	//移動ベクトルを加算
-	m_rigid->AddVelocity(m_upVec.GetNormalized() * kKnockBackPower);
+	m_rigid->AddVelocity(m_upVec.GetNormalized() * kKnockBackPower*2);
 }
 
 void Player::BoostUpdate()
@@ -1583,7 +1583,6 @@ void Player::ShotTheStar()
 	{
 		//弾を発射
 		m_coinCount--;
-		m_sphere.back()->Init();
 		PlaySoundMem(m_shotTheStarSEHandle, DX_PLAYTYPE_BACK);
 
 		//弾の発生位置
@@ -1623,7 +1622,6 @@ void Player::ShotTheStickStar()
 
 		//グラッピング弾を発射
 		m_coinCount--;
-		m_sphere.back()->Init();
 		MyEngine::Physics::GetInstance().Entry(m_sphere.back());
 		PlaySoundMem(m_shotStickStarSEHandle, DX_PLAYTYPE_BACK);
 	}

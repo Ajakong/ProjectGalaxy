@@ -27,7 +27,7 @@ public:
 
 protected:
 	std::shared_ptr<ColliderSphere> m_col;
-	float angle;
+	float m_angle;
 	Vec3 m_nowPlanetPos;
 };
 
