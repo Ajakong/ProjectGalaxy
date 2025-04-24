@@ -231,7 +231,7 @@ m_currentOxygen(0)
 	}
 
 	//メンバ関数の初期設定
-	m_shotUpdate = &Player::ShotTheStickStar;
+	m_shotUpdate = &Player::ShotTheStar;
 	m_jumpActionUpdate = &Player::JumpingSpinUpdate;
 	m_dropAttackUpdate = &Player::NormalDropAttackUpdate;
 	m_spinAttackUpdate = &Player::SpiningUpdate;
@@ -717,7 +717,7 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 				dir.Normalize();
 				dir = dir + m_upVec * 2;
 				dir.Normalize();
-				Vec3 knockBackVec = dir * 3;
+				Vec3 knockBackVec = dir * 2;
 				//ダメージを受ける
 				OnDamege(knockBackVec, colider->GetPower());
 			}

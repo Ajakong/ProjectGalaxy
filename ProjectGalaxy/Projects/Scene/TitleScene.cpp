@@ -408,13 +408,13 @@ void TitleScene::FadeDraw()
     }
     
     //タイトル遷移時のフェード演出で使用する青い線の描画
-    //DrawLine(m_frame * kLineX, 0, m_frame * kLineX, Game::kScreenHeight, kLineColor);
+    DrawLine(m_frame * kLineX, 0, m_frame * kLineX, Game::kScreenHeight, kLineColor);
 
-    //心電図を作りたい
-    for (int i = 0; i < Game::kScreenHeight; i++)
-    {
-        DrawPixel(m_frame * kLineX + sin(i/50.f)*50.f, i, kLineColor);
-    }
+    ////心電図を作りたい
+    //for (int i = 0; i < Game::kScreenHeight; i++)
+    //{
+    //    DrawPixel(m_frame * kLineX + sin(i/50.f)*50.f, i, kLineColor);
+    //}
 }
 
 void TitleScene::NormalDraw()
@@ -444,13 +444,8 @@ void TitleScene::NormalDraw()
        
     }
     //タイトル遷移時のフェード演出で使用する青い線の描画
-    //DrawLine(m_frame * kLineX, 0, m_frame * kLineX, Game::kScreenHeight, kLineColor);
+    DrawLine(m_frame * kLineX, 0, m_frame * kLineX, Game::kScreenHeight, kLineColor);
 
-    for (int i = 0; i < Game::kScreenHeight; i++)
-    {
-        DrawPixel(m_frame * kLineX + sin(i*0.02f), i, kLineColor);
-    }
-    
     if(m_cameraMoveCount > 70)
     {
         UI::GetInstance().Draw();

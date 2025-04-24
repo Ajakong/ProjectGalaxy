@@ -103,7 +103,6 @@ Boss::Boss(Vec3 pos, std::shared_ptr<Player>player):Enemy(Priority::Boss,ObjectT
 	MV1SetScale(m_modelHandle, VGet(kScaleMag,kScaleMag,kScaleMag));
 
 	m_phaseUpdate = &Boss::PhaseOneUpdate;
-
 	ChangeAnim(AnimNum::AnimationNumStun);
 }
 
@@ -140,7 +139,7 @@ void Boss::Update()
 	{
 		m_isBattle = false;
 		SoundManager::GetInstance().ChangeBGM(SoundManager::GetInstance().GetSoundData(kSuperMatrialBGMName));
-		m_dropItem = std::make_shared<ClearObject>(m_rigid->GetPos(), true);
+		m_dropItem = std::make_shared<ClearObject>(m_rigid->GetPos()+m_upVec* kModelHeightSize, true);
 		Physics::GetInstance().Entry(m_dropItem);
 		m_isDestroy = true;
 		UI::GetInstance().SetTalkObjectHandle(UI::TalkGraphKind::Boss);
@@ -184,7 +183,8 @@ void Boss::Update()
 
 void Boss::Draw()
 {
-	MV1DrawModel(m_modelHandle);
+	DrawSphere3D((m_rigid->GetPos()+m_upVec* kModelHeightSize).VGet(), kBodyRadiusSize, 8, m_color, 0x000000, true);
+	//MV1DrawModel(m_modelHandle);
 }
 
 void Boss::SetMatrix()
