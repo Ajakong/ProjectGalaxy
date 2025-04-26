@@ -288,11 +288,19 @@ std::vector<std::shared_ptr<Enemy>> GalaxyCreater::EnemyCreate(std::shared_ptr<P
 
 		if (loc.tag == "Takobo")
 		{
-			enemies.push_back(std::make_shared<Takobo>(loc.pos, player));
+			int hp;
+			//重力を取得する
+			FileRead_read(&hp, sizeof(hp), handle);//重力を取得する
+			enemies.push_back(std::make_shared<Takobo>(loc.pos, player,hp));
 		}
 		else if (loc.tag == "Kuribo")
 		{
-			enemies.push_back(std::make_shared<Kuribo>(loc.pos));
+			int hp;
+			//重力を取得する
+			FileRead_read(&hp, sizeof(hp), handle);//重力を取得する
+			float speed;
+			FileRead_read(&speed, sizeof(speed), handle);
+			enemies.push_back(std::make_shared<Kuribo>(loc.pos,hp,speed));
 		}
 		
 		else if (loc.tag == "Boss")

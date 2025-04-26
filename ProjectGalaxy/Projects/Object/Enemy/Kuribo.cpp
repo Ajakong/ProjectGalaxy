@@ -46,15 +46,15 @@ float GetVec2Angle(Vec3 a, Vec3 b)
 	return rad;
 }
 
-Kuribo::Kuribo(Vec3 pos) :Enemy(Priority::Low, ObjectTag::Kuribo),
+Kuribo::Kuribo(Vec3 pos, int hp,float speed) :Enemy(Priority::Low, ObjectTag::Kuribo),
 m_attackDir(0, 0, 1),
 m_chaseFrameCount(0),
 m_stanCount(0),
-m_speed(1.f)
+m_speed(speed)
 {
 	m_power = 10;
 
-	m_hp = 10;
+	m_hp = hp;
 	m_comebackPoint = pos;
 	m_rigid->SetPos(pos);
 	{
