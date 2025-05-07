@@ -918,7 +918,6 @@ void Player::ChangeAnim(int animIndex, float speed)
 
 void Player::StartUpdate()
 {
-	m_stateName = "Start";
 	m_postState = m_state;
 	m_state = State::Intro;
 	m_rigid->SetVelocity(Vec3::Zero());
@@ -929,7 +928,6 @@ void Player::StartUpdate()
 
 void Player::NeutralUpdate()
 {
-	m_stateName = "Neutral";
 	m_state = State::Neutral;
 
 	//アナログスティックを使って移動
@@ -993,8 +991,6 @@ void Player::NeutralUpdate()
 
 void Player::WalkingUpdate()
 {
-	m_stateName = "Walking";
-
 	m_state = State::Walk;
 
 	//移動ベクトル
@@ -1053,7 +1049,6 @@ void Player::WalkingUpdate()
 void Player::DashUpdate()
 {
 	m_cameraEasingSpeed = kOnDashCameraEasingSpeed;
-	m_stateName = "Dash";
 	m_state = State::Dash;
 
 	//移動ベクトル
@@ -1103,7 +1098,6 @@ void Player::DashUpdate()
 
 void Player::JumpingUpdate()
 {
-	m_stateName = "Jumping";
 	m_state = State::Jump;
 
 	//Aボタンが入力されているか
@@ -1139,7 +1133,6 @@ void Player::JumpingUpdate()
 
 void Player::DashJumpUpdate()
 {
-	m_stateName = "DashJumping";
 	m_state = State::DashJump;
 
 	//Aボタンが入力されているか
@@ -1180,7 +1173,6 @@ void Player::JumpActionUpdate()
 
 void Player::JumpBoostUpdate()
 {
-	m_stateName = "JumpBoost";
 	m_state = State::JumpBoost;
 
 	//XBoxのAボタンの入力があったら
@@ -1210,7 +1202,6 @@ void Player::DropAttackUpdate()
 
 void Player::NormalDropAttackUpdate()
 {
-	m_stateName = "DropAttack";
 
 	m_state = State::JumpDrop;
 
@@ -1239,7 +1230,6 @@ void Player::NormalDropAttackUpdate()
 
 void Player::FullPowerDropAttackUpdate()
 {
-	m_stateName = "FullPowerDrop";
 	m_state = State::FullpowerJumpDrop;
 
 
@@ -1277,7 +1267,6 @@ void Player::FullPowerDropAttackUpdate()
 
 void Player::LandingUpdate()
 {
-	m_stateName = "Landing";
 	m_state = State::Land;
 	m_landingStanFrame--;
 
@@ -1321,8 +1310,6 @@ void Player::LandingUpdate()
 
 void Player::AimingUpdate()
 {
-	m_stateName = "Aiming";
-
 	//移動ベクトル
 	Vec3 move;
 	move = Move();
@@ -1368,7 +1355,6 @@ void Player::SpinActionUpdate()
 void Player::SpiningUpdate()
 {
 	m_state = State::Spin;
-	m_stateName = "Spining";
 
 	//移動ベクトル
 	Vec3 move;
@@ -1392,7 +1378,6 @@ void Player::SpiningUpdate()
 void Player::RollingAttackUpdate()
 {
 	m_state = State::Spin;
-	m_stateName = "RollingAttack";
 
 	//正面ベクトルの更新
 	m_frontVec = Cross(m_sideVec, m_upVec);
@@ -1411,7 +1396,6 @@ void Player::RollingAttackUpdate()
 void Player::JumpingSpinUpdate()
 {
 	m_state = State::Spin;
-	m_stateName = "JumpSpin";
 
 	//アナログスティックを使って移動
 
@@ -1448,7 +1432,6 @@ void Player::CommandJump()
 
 void Player::BoostUpdate()
 {
-	m_stateName = "BoostingGolira";
 	m_state = State::Boosting;
 
 	//正面ベクトルの計算
@@ -1468,8 +1451,6 @@ void Player::BoostUpdate()
 
 void Player::OperationUpdate()
 {
-	m_stateName = "NowControl";
-
 	//移動ベクトルを設定
 	m_rigid->SetVelocity(m_velocity);
 
@@ -1634,7 +1615,6 @@ void Player::ShotTheStickStar()
 
 void Player::DamegeUpdate()
 {
-	m_stateName = "Damege";
 	m_state = State::Damage;
 
 
@@ -1666,8 +1646,6 @@ void Player::DamegeUpdate()
 
 void Player::DeathUpdate()
 {
-
-	m_stateName = "Death";
 	m_state = State::Death;
 
 	//現在のアニメーションの時間の取得
@@ -1775,7 +1753,6 @@ void Player::DeleteManage()
 
 void Player::TalkingUpdate()
 {
-	m_stateName = "Talking";
 	m_state = State::Talk;
 
 	//コントローラー入力を管理するクラスの状態がプレイヤーの入力受付状態だったら
