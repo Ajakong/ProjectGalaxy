@@ -26,6 +26,7 @@
 
 #include"UI.h"
 #include"Game.h"
+#include"GameStopManager.h"
 
 ///Collidableにpowerを持たせて衝突時はそのパワー分のダメージを受けるようにする(現在はPlayer側が直値を書き込んでいる)
 ///その他直値の解決
@@ -516,6 +517,8 @@ void Player::OnDamege(Vec3 knockBackVec, float damage)
 {
 	m_state = State::Damage;
 
+	GameStopManager::GetInstance().SetStopFrame(5);
+
 	//ノックバック
 	m_rigid->SetVelocity(knockBackVec);
 	StartJoypadVibration(DX_INPUT_PAD1, kOnDamageJoypadVibrationPower, kOnDamageJoypadVibrationTime);
@@ -562,17 +565,14 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 	{
 		printf("Kuribo\n");
 
+		GameStopManager::GetInstance().SetStopFrame(5);
+
 		//スピンしていたら
 		if (m_state == State::Spin)
 		{
 			auto kuribo = std::dynamic_pointer_cast<Kuribo>(colider);
-			//ノックバックするベクトルを計算
-			Vec3 enemyAttackDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
-			enemyAttackDir.Normalize();
-			Vec3 knockBackVec = enemyAttackDir * 2;
+			
 
-			//ダメージを受ける
-			OnDamege(knockBackVec, colider->GetPower());
 
 			//60フレームスタンさせる
 			kuribo->Stan(60);
@@ -587,6 +587,13 @@ void Player::OnCollideEnter(std::shared_ptr<Collidable> colider, ColideTag ownTa
 
 			m_postState = m_state;
 			//HPを減らす
+
+			//ダメージを受ける
+			//ノックバックするベクトルを計算
+			Vec3 enemyAttackDir = m_rigid->GetPos() - colider->GetRigidbody()->GetPos();
+			enemyAttackDir.Normalize();
+			Vec3 knockBackVec = enemyAttackDir * 2;
+			OnDamege(knockBackVec, colider->GetPower());
 			PlaySoundMem(m_hitSEHandle, DX_PLAYTYPE_BACK);
 
 		}

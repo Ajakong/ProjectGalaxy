@@ -95,6 +95,8 @@ Vec3 SpherePlanet::GravityEffect(std::shared_ptr<Collidable> obj)//成分ごと�
 	///一番重力が強い惑星の影響を受ける
 	obj->AddNextUpVec(toObj * gravityPower);
 
+	if (obj->IsAntiGravity())return Vec3::Zero();
+
 	//重力のみ
 	GravityDir = GravityDir * kGravityPower;
 
